@@ -82,9 +82,9 @@ export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
 
 const styles = createStyle({
   tagContainer: {
-    paddingTop: 15,
-    paddingLeft: 15,
-    paddingBottom: 15,
+    paddingTop: 8,
+    paddingHorizontal: 14,
+    paddingBottom: 18,
   },
   blankView: {
     paddingTop: '15%',

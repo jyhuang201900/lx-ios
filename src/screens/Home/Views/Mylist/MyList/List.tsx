@@ -1,198 +1,119 @@
-import { memo, useEffect, useRef } from 'react'
-import { View, TouchableOpacity, FlatList, type NativeScrollEvent, type NativeSyntheticEvent, type FlatListProps, StyleSheet } from 'react-native'
+import { memo, useRef } from 'react'
+import { View, TouchableOpacity, FlatList, type FlatListProps, StyleSheet } from 'react-native'
 
 import { Icon } from '@/components/common/Icon'
-
 import { useTheme } from '@/store/theme/hook'
 import { useActiveListId, useListFetching, useMyList } from '@/store/list/hook'
 import { createStyle } from '@/utils/tools'
-import { LIST_SCROLL_POSITION_KEY } from '@/config/constant'
-import { getListPosition, saveListPosition } from '@/utils/data'
 import { setActiveList } from '@/core/list'
 import Text from '@/components/common/Text'
 import { type Position } from './ListMenu'
-import { scaleSizeH } from '@/utils/pixelRatio'
+import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 import Loading from '@/components/common/Loading'
+import listState from '@/store/list/state'
+import { LIST_IDS } from '@/config/constant'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
+const CARD_WIDTH = scaleSizeW(142)
+const CARD_HEIGHT = scaleSizeH(74)
 
-const ITEM_HEIGHT = scaleSizeH(40)
+const getListKind = (id: string) => {
+  if (id === LIST_IDS.LOVE) return '收藏'
+  if (id === LIST_IDS.DEFAULT) return '默认'
+  if (id === LIST_IDS.TEMP) return '临时'
+  return '自建歌单'
+}
 
 const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   onPress: (item: LX.List.MyListInfo) => void
   index: number
   activeId: string
   item: LX.List.MyListInfo
-  onShowMenu: (item: LX.List.MyListInfo, index: number, position: { x: number, y: number, w: number, h: number }) => void
+  onShowMenu: (item: LX.List.MyListInfo, index: number, position: Position) => void
 }) => {
   const theme = useTheme()
   const moreButtonRef = useRef<TouchableOpacity>(null)
   const fetching = useListFetching(item.id)
-
-  const active = activeId == item.id
+  const active = activeId === item.id
+  const count = listState.allMusicList.get(item.id)?.length
 
   const handleShowMenu = () => {
-    if (moreButtonRef.current?.measure) {
-      moreButtonRef.current.measure((fx, fy, width, height, px, py) => {
-        // console.log(fx, fy, width, height, px, py)
-        onShowMenu(item, index, { x: Math.ceil(px), y: Math.ceil(py), w: Math.ceil(width), h: Math.ceil(height) })
-      })
-    }
-  }
-
-  const handlePress = () => {
-    onPress(item)
+    moreButtonRef.current?.measure?.((fx, fy, width, height, px, py) => {
+      onShowMenu(item, index, { x: Math.ceil(px), y: Math.ceil(py), w: Math.ceil(width), h: Math.ceil(height) })
+    })
   }
 
   return (
-    <View style={{
-      ...styles.listItem,
-      height: ITEM_HEIGHT,
-      backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-primary-input-background'],
-      borderColor: active ? theme['c-primary'] : theme['c-border-background'],
-    }}>
-      {
-        active
-          ? <Icon style={styles.listActiveIcon} name="chevron-right" size={12} color={theme['c-primary-font']} />
-          : null
-      }
-      { fetching ? <Loading color={active ? theme['c-primary-font'] : theme['c-font']} style={styles.loading} /> : null }
-      <TouchableOpacity style={styles.listName} onPress={handlePress}>
-        <Text numberOfLines={1} color={active ? theme['c-primary-font'] : theme['c-font']}>{item.name}</Text>
+    <View style={{ ...styles.card, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: active ? theme['c-primary'] : theme['c-border-background'] }}>
+      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} style={styles.cardMain} onPress={() => onPress(item)}>
+        <View style={{ ...styles.cardIcon, backgroundColor: active ? theme['c-primary'] : theme['c-primary-background-active'] }}>
+          <Icon name={item.id === LIST_IDS.LOVE ? 'love' : item.id === LIST_IDS.DEFAULT ? 'play-outline' : 'album'} size={17} color={active ? theme['c-primary-font'] : theme['c-font-label']} />
+        </View>
+        <View style={styles.cardCopy}>
+          <Text numberOfLines={1} size={14} color={active ? theme['c-primary-font'] : theme['c-font']}>{item.name}</Text>
+          <Text numberOfLines={1} size={11} color={active ? theme['c-primary-alpha-200'] : theme['c-font-label']}>{getListKind(item.id)}{count == null ? '' : ` · ${count} 首`}</Text>
+        </View>
+        {fetching ? <Loading color={active ? theme['c-primary-font'] : theme['c-font-label']} /> : null}
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleShowMenu} ref={moreButtonRef} style={styles.listMoreBtn}>
-        <Icon name="dots-vertical" color={theme['c-350']} size={12} />
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel={`${item.name} 更多操作`} ref={moreButtonRef} onPress={handleShowMenu} style={styles.moreButton}>
+        <Icon name="dots-vertical" color={active ? theme['c-primary-font'] : theme['c-350']} size={15} />
       </TouchableOpacity>
     </View>
   )
-}, (prevProps, nextProps) => {
-  return !!(prevProps.item === nextProps.item &&
-    prevProps.index === nextProps.index &&
-    prevProps.item.name == nextProps.item.name &&
-    prevProps.activeId != nextProps.item.id &&
-    nextProps.activeId != nextProps.item.id
-  )
-})
+}, (prevProps, nextProps) => prevProps.item === nextProps.item && prevProps.activeId === nextProps.activeId)
 
-
-export default ({ onShowMenu }: {
+export default ({ onShowMenu, onCreate }: {
   onShowMenu: (info: { listInfo: LX.List.MyListInfo, index: number }, position: Position) => void
+  onCreate?: () => void
 }) => {
-  const flatListRef = useRef<FlatList>(null)
+  const theme = useTheme()
   const allList = useMyList()
   const activeListId = useActiveListId()
 
-  const handleToggleList = (item: LX.List.MyListInfo) => {
-    // setVisiblePanel(false)
-    global.app_event.changeLoveListVisible(false)
-    requestAnimationFrame(() => {
-      setActiveList(item.id)
-    })
-  }
-
-
-  const handleScroll = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
-    void saveListPosition(LIST_SCROLL_POSITION_KEY, nativeEvent.contentOffset.y)
-  }
-
-  const showMenu = (listInfo: LX.List.MyListInfo, index: number, position: Position) => {
-    onShowMenu({ listInfo, index }, position)
-  }
-
-  useEffect(() => {
-    void getListPosition(LIST_SCROLL_POSITION_KEY).then((offset) => {
-      flatListRef.current?.scrollToOffset({ offset, animated: false })
-    })
-  }, [])
-
   const renderItem: FlatListType['renderItem'] = ({ item, index }) => (
     <ListItem
-      key={item.id}
       item={item}
       index={index}
       activeId={activeListId}
-      onPress={handleToggleList}
-      onShowMenu={showMenu}
+      onPress={selected => { if (selected.id !== activeListId) setActiveList(selected.id) }}
+      onShowMenu={(info, itemIndex, position) => onShowMenu({ listInfo: info, index: itemIndex }, position)}
     />
   )
-  const getkey: FlatListType['keyExtractor'] = item => item.id
-  const getItemLayout: FlatListType['getItemLayout'] = (data, index) => {
-    return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
-  }
 
   return (
-    <FlatList
-      ref={flatListRef}
-      onScroll={handleScroll}
-      style={styles.container}
-      data={allList}
-      maxToRenderPerBatch={9}
-      // updateCellsBatchingPeriod={80}
-      windowSize={9}
-      removeClippedSubviews={true}
-      initialNumToRender={18}
-      renderItem={renderItem}
-      keyExtractor={getkey}
-      // extraData={activeIndex}
-      getItemLayout={getItemLayout}
-    />
+    <View style={{ ...styles.library, borderBottomColor: theme['c-border-background'] }}>
+      <View style={styles.libraryHeader}>
+        <View style={styles.headerCopy}>
+          <Text size={17} color={theme['c-font']}>我的歌单</Text>
+          <Text size={11} color={theme['c-font-label']}>点击歌单即可切换，更多操作保留在右侧菜单</Text>
+        </View>
+        <TouchableOpacity accessibilityRole="button" onPress={onCreate} style={{ ...styles.createButton, backgroundColor: theme['c-primary'] }}>
+          <Icon name="add-music" color={theme['c-primary-font']} size={15} />
+          <Text size={12} color={theme['c-primary-font']}>新建</Text>
+        </TouchableOpacity>
+      </View>
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.rail}
+        data={allList}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        extraData={activeListId}
+      />
+    </View>
   )
 }
 
-
 const styles = createStyle({
-  container: {
-    flexShrink: 1,
-    flexGrow: 0,
-    paddingHorizontal: 10,
-    paddingBottom: 8,
-  },
-  // listContainer: {
-  //   // borderBottomWidth: BorderWidths.normal2,
-  // },
-
-  listItem: {
-    height: 'auto',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingRight: 4,
-    paddingLeft: 7,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 11,
-    marginTop: 5,
-  },
-  listActiveIcon: {
-    // width: 18,
-    marginLeft: 3,
-    // paddingRight: 5,
-    textAlign: 'center',
-  },
-  loading: {
-    marginLeft: 5,
-  },
-  listName: {
-    height: '100%',
-    // height: 46,
-    // paddingTop: 12,
-    // paddingBottom: 12,
-    justifyContent: 'center',
-    flexGrow: 1,
-    flexShrink: 1,
-    paddingLeft: 8,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
-  },
-  // listNameText: {
-  //   // height: 46,
-  //   fontSize: 14,
-  // },
-  listMoreBtn: {
-    height: '100%',
-    width: 42,
-    // height: 46,
-    // paddingTop: 12,
-    // paddingBottom: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.1)',
-  },
+  library: { flexGrow: 0, flexShrink: 0, paddingTop: 10, paddingBottom: 7, borderBottomWidth: StyleSheet.hairlineWidth },
+  libraryHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, marginBottom: 8 },
+  headerCopy: { flex: 1 },
+  createButton: { minHeight: 36, paddingHorizontal: 12, borderRadius: 18, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  rail: { paddingHorizontal: 12, gap: 8 },
+  card: { width: CARD_WIDTH, height: CARD_HEIGHT, borderWidth: StyleSheet.hairlineWidth, borderRadius: 14, flexDirection: 'row', overflow: 'hidden' },
+  cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 10 },
+  cardIcon: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  cardCopy: { flex: 1, paddingLeft: 8, paddingRight: 3, gap: 3 },
+  moreButton: { width: 34, alignItems: 'center', justifyContent: 'center' },
 })

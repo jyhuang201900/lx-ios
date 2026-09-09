@@ -78,16 +78,16 @@ export default forwardRef<SearchInputType, SearchInputProps>(({ onChangeText, on
 
 const styles = createStyle({
   shell: {
-    height: 42,
+    height: 44,
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 13,
     paddingRight: 3,
-    borderRadius: 13,
+    borderRadius: 14,
   },
   input: {
-    height: 40,
+    height: 42,
     paddingLeft: 9,
     fontSize: 15,
   },

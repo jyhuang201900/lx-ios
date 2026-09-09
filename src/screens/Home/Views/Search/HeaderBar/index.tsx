@@ -70,17 +70,17 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
 const styles = createStyle({
   searchBar: {
     flexDirection: 'row',
-    height: 62,
+    height: 68,
     zIndex: 2,
     alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingBottom: 10,
+    paddingHorizontal: 14,
+    paddingBottom: 12,
     borderBottomWidth: BorderWidths.normal,
   },
   selector: {
-    height: 42,
-    marginRight: 9,
-    borderRadius: 13,
+    height: 44,
+    marginRight: 8,
+    borderRadius: 14,
     borderWidth: BorderWidths.normal,
     overflow: 'hidden',
   },

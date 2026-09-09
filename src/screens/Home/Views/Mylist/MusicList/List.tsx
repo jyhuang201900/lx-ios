@@ -285,6 +285,7 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
       keyExtractor={getkey}
       extraData={activeIndex}
       getItemLayout={getItemLayout}
+      contentContainerStyle={styles.content}
     />
   )
 })
@@ -296,6 +297,9 @@ const styles = createStyle({
   list: {
     flexGrow: 1,
     flexShrink: 1,
+  },
+  content: {
+    paddingBottom: 14,
   },
 })
 

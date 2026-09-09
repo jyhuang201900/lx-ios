@@ -1,14 +1,12 @@
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react'
-import { TouchableOpacity } from 'react-native'
+import { forwardRef, useImperativeHandle, useMemo, useState } from 'react'
+import { TouchableOpacity, View } from 'react-native'
 
 import { Icon } from '@/components/common/Icon'
 import { BorderRadius, BorderWidths } from '@/theme'
 import { useTheme } from '@/store/theme/hook'
-import { useActiveListId, useListFetching } from '@/store/list/hook'
+import { useActiveListId, useListFetching, useMusicList } from '@/store/list/hook'
 import listState from '@/store/list/state'
 import { createStyle } from '@/utils/tools'
-import { getListPrevSelectId } from '@/utils/data'
-import { setActiveList } from '@/core/list'
 import Text from '@/components/common/Text'
 import { LIST_IDS } from '@/config/constant'
 import Loading from '@/components/common/Loading'
@@ -26,6 +24,7 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
   const theme = useTheme()
   const currentListId = useActiveListId()
   const fetching = useListFetching(currentListId)
+  const musicList = useMusicList()
   const langId = useSettingValue('common.langId')
   const currentListName = useMemo(() => {
     switch (currentListId) {
@@ -48,25 +47,22 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
     },
   }))
 
-  const showList = () => {
-    global.app_event.changeLoveListVisible(true)
-  }
-
-  useEffect(() => {
-    void getListPrevSelectId().then((id) => {
-      setActiveList(id)
-    })
-  }, [])
-
   return (
-    <TouchableOpacity accessibilityHint="轻点切换歌单，长按回到顶部" onPress={showList} onLongPress={onScrollToTop} style={{ ...styles.currentList, opacity: visibleBar ? 1 : 0, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
-      <Icon style={styles.currentListIcon} color={theme['c-button-font']} name="chevron-right" size={12} />
-      { fetching ? <Loading color={theme['c-button-font']} style={styles.loading} /> : null }
-      <Text style={styles.currentListText} numberOfLines={1} color={theme['c-button-font']}>{currentListName}</Text>
-      <TouchableOpacity style={styles.currentListBtns} onPress={onShowSearchBar}>
-        <Icon color={theme['c-button-font']} name="search-2" />
+    <View style={{ ...styles.currentList, opacity: visibleBar ? 1 : 0, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
+      <TouchableOpacity accessibilityRole="button" accessibilityHint="长按回到歌曲开头" onPress={onScrollToTop} onLongPress={onScrollToTop} style={styles.currentListMain}>
+        <View style={{ ...styles.currentListIcon, backgroundColor: theme['c-primary-background-active'] }}>
+          <Icon color={theme['c-primary-font']} name="album" size={15} />
+        </View>
+        <View style={styles.currentListCopy}>
+          <Text style={styles.currentListText} numberOfLines={1} color={theme['c-font']}>{currentListName}</Text>
+          <Text numberOfLines={1} size={11} color={theme['c-font-label']}>{fetching ? '正在更新歌曲…' : `${musicList.length} 首歌曲`}</Text>
+        </View>
+        { fetching ? <Loading color={theme['c-primary']} style={styles.loading} /> : null }
       </TouchableOpacity>
-    </TouchableOpacity>
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel="在当前歌单中搜索" style={{ ...styles.currentListBtns, backgroundColor: theme['c-primary-background-active'] }} onPress={onShowSearchBar}>
+        <Icon color={theme['c-primary-font']} name="search-2" size={16} />
+      </TouchableOpacity>
+    </View>
   )
 })
 
@@ -74,38 +70,46 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
 const styles = createStyle({
   currentList: {
     flexDirection: 'row',
-    paddingRight: 3,
-    height: 42,
+    paddingRight: 8,
+    height: 52,
     marginHorizontal: 10,
     marginTop: 7,
     marginBottom: 5,
     alignItems: 'center',
     borderWidth: BorderWidths.normal,
-    borderRadius: BorderRadius.normal + 3,
+    borderRadius: BorderRadius.normal + 5,
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
   currentListIcon: {
-    paddingLeft: 15,
-    paddingRight: 10,
-    // paddingTop: 10,
-    // paddingBottom: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  currentListMain: {
+    flex: 1,
+    height: '100%',
+    paddingLeft: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  currentListCopy: {
+    flex: 1,
+    paddingLeft: 9,
   },
   currentListText: {
-    flex: 1,
-    // minWidth: 70,
-    // paddingLeft: 10,
     paddingRight: 10,
-    // paddingTop: 10,
-    // paddingBottom: 10,
   },
   loading: {
     marginRight: 5,
   },
   currentListBtns: {
-    width: 50,
+    width: 38,
+    height: 38,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
 })

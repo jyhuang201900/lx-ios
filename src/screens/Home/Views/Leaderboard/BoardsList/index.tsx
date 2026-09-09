@@ -51,7 +51,7 @@ export default forwardRef<BoardsListType, BoardsListProps>(({ onBoundChange, onP
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    flexShrink: 1,
+    flexGrow: 0,
+    flexShrink: 0,
   },
 })

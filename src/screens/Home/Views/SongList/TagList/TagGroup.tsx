@@ -26,13 +26,13 @@ export default ({ name, list, onTagChange, activeId }: TagGroupProps) => {
         {list.map(item => (
           activeId == item.id
             ? (
-                <View style={{ ...styles.tagButton, backgroundColor: theme['c-button-background'] }} key={item.id}>
+                <View style={{ ...styles.tagButton, backgroundColor: theme['c-primary-background-active'], borderColor: theme['c-primary'] }} key={item.id}>
                   <Text style={styles.tagButtonText} color={theme['c-primary-font-active']}>{item.name}</Text>
                 </View>
               )
             : (
                 <Button
-                  style={{ ...styles.tagButton, backgroundColor: theme['c-button-background'] }}
+                  style={{ ...styles.tagButton, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}
                   key={item.id}
                   onPress={() => { onTagChange(item.name, item.id) }}
                 >
@@ -48,8 +48,8 @@ export default ({ name, list, onTagChange, activeId }: TagGroupProps) => {
 
 const styles = createStyle({
   tagTypeTitle: {
-    marginTop: 15,
-    marginBottom: 10,
+    marginTop: 17,
+    marginBottom: 11,
   },
   tagTypeList: {
     flexDirection: 'row',
@@ -57,15 +57,14 @@ const styles = createStyle({
   },
   tagButton: {
     // marginRight: 10,
-    borderRadius: 4,
-    marginRight: 10,
-    marginBottom: 10,
+    borderRadius: 12,
+    marginRight: 8,
+    marginBottom: 8,
+    borderWidth: 1,
   },
   tagButtonText: {
     fontSize: 13,
-    paddingLeft: 12,
-    paddingRight: 12,
-    paddingTop: 8,
-    paddingBottom: 8,
+    paddingHorizontal: 13,
+    paddingVertical: 9,
   },
 })

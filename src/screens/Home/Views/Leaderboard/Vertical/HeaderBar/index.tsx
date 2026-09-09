@@ -15,7 +15,6 @@ import ActiveListName, { type ActiveListNameType } from './ActiveListName'
 import { BorderRadius, BorderWidths } from '@/theme'
 
 export interface HeaderBarProps {
-  onShowBound: () => void
   onSourceChange: (source: LX.OnlineSource) => void
 }
 
@@ -24,7 +23,7 @@ export interface HeaderBarType {
 }
 
 
-export default forwardRef<HeaderBarType, HeaderBarProps>(({ onShowBound, onSourceChange }, ref) => {
+export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange }, ref) => {
   const activeListNameRef = useRef<ActiveListNameType>(null)
   const sourceSelectorRef = useRef<SourceSelectorType>(null)
   const theme = useTheme()
@@ -40,7 +39,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onShowBound, onSourc
   return (
     <View style={{ ...styles.currentList, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
       <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
-      <ActiveListName ref={activeListNameRef} onShowBound={onShowBound} />
+      <ActiveListName ref={activeListNameRef} />
     </View>
   )
 })
@@ -48,13 +47,13 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onShowBound, onSourc
 const styles = createStyle({
   currentList: {
     flexDirection: 'row',
-    height: 44,
+    height: 48,
     zIndex: 2,
     marginHorizontal: 10,
-    marginTop: 7,
-    marginBottom: 5,
+    marginTop: 9,
+    marginBottom: 7,
     borderWidth: BorderWidths.normal,
-    borderRadius: BorderRadius.normal + 3,
+    borderRadius: BorderRadius.normal + 5,
   },
   selector: {
     width: 86,

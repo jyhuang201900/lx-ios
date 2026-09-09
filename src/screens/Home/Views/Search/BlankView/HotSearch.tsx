@@ -25,7 +25,7 @@ const ListItem = ({ keyword, onSearch }: {
 }) => {
   const theme = useTheme()
   return (
-    <Button style={{ ...styles.button, backgroundColor: theme['c-button-background'] }} onPress={() => { onSearch(keyword) }}>
+    <Button style={{ ...styles.button, backgroundColor: theme['c-primary-input-background'] }} onPress={() => { onSearch(keyword) }}>
       <Text color={theme['c-button-font']} size={13}>{keyword}</Text>
     </Button>
   )
@@ -74,7 +74,7 @@ export default forwardRef<HotSearchType, ListProps>((props, ref) => {
 
 const styles = createStyle({
   title: {
-    paddingTop: 22,
+    paddingTop: 20,
     fontWeight: '600',
     letterSpacing: 0.2,
   },
@@ -84,11 +84,9 @@ const styles = createStyle({
   },
   button: {
     textAlign: 'center',
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
-    borderRadius: 13,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 14,
     marginRight: 8,
     marginTop: 10,
   },

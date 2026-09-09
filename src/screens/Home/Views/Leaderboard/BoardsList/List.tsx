@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useState } from 'react'
-import { View, ScrollView } from 'react-native'
+import { FlatList, type FlatListProps, View } from 'react-native'
 
 import { createStyle } from '@/utils/tools'
 import { type Position } from './ListMenu'
@@ -14,6 +14,8 @@ export interface ListType {
   setList: (list: BoardItem[], activeId: string) => void
   hideMenu: () => void
 }
+
+type BoardListType = FlatListProps<BoardItem>
 
 export default forwardRef<ListType, ListProps>(({ onBoundChange, onShowMenu }, ref) => {
   const [activeId, setActiveId] = useState('')
@@ -35,38 +37,38 @@ export default forwardRef<ListType, ListProps>(({ onBoundChange, onShowMenu }, r
     onBoundChange(item.id)
   }
 
-  const handleShowMenu: ListItemProps['onShowMenu'] = (listId, name, index, position: Position) => {
+  const handleShowMenu: ListItemProps['onShowMenu'] = (listId, name, index, position) => {
     setLongPressIndex(index)
     onShowMenu({ listId, name, index }, position)
   }
 
+  const renderItem: BoardListType['renderItem'] = ({ item, index }) => (
+    <ListItem
+      item={item}
+      index={index}
+      longPressIndex={longPressIndex}
+      activeId={activeId}
+      onShowMenu={handleShowMenu}
+      onBoundChange={handleBoundChange}
+    />
+  )
+
   return (
-    <ScrollView style={styles.scrollView} keyboardShouldPersistTaps={'always'}>
-      <View>
-        {
-          list.map((item, index) => {
-            return (
-              <ListItem
-                key={item.id}
-                item={item}
-                index={index}
-                longPressIndex={longPressIndex}
-                activeId={activeId}
-                onShowMenu={handleShowMenu}
-                onBoundChange={handleBoundChange}
-              />
-            )
-          })
-        }
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="always"
+        data={list}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+      />
+    </View>
   )
 })
 
-
 const styles = createStyle({
-  scrollView: {
-    flexShrink: 1,
-  },
+  container: { flexGrow: 0, flexShrink: 0 },
+  content: { paddingHorizontal: 10, paddingBottom: 8 },
 })
-

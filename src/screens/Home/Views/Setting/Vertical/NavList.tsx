@@ -63,7 +63,7 @@ export default ({ onChangeId }: {
 
 const styles = createStyle({
   container: {
-    height: 56,
+    height: 60,
     flexGrow: 0,
     flexShrink: 0,
     borderBottomWidth: BorderWidths.normal,
@@ -72,8 +72,8 @@ const styles = createStyle({
   contentContainer: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
     // backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
   // listContainer: {
@@ -82,14 +82,10 @@ const styles = createStyle({
 
   listItem: {
     // width: '33.33%',
-    height: 39,
+    height: 40,
     paddingHorizontal: 14,
-    // height: 'auto',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    paddingHorizontal: 5,
     // paddingVertical: 10,
-    borderRadius: BorderRadius.normal + 5,
+    borderRadius: BorderRadius.normal + 6,
     marginBottom: 5,
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },

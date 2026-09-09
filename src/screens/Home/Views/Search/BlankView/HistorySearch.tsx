@@ -20,7 +20,7 @@ const ListItem = ({ keyword, onSearch, onRemove }: {
   const theme = useTheme()
   return (
     <Button
-      style={{ ...styles.button, backgroundColor: theme['c-button-background'] }}
+      style={{ ...styles.button, backgroundColor: theme['c-primary-input-background'] }}
       onPress={() => { onSearch(keyword) }}
       onLongPress={() => { onRemove(keyword) }}
     >
@@ -98,7 +98,7 @@ export default forwardRef<HistorySearchType, HistorySearchProps>((props, ref) =>
 
 const styles = createStyle({
   titleContent: {
-    paddingTop: 22,
+    paddingTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -117,11 +117,9 @@ const styles = createStyle({
   },
   button: {
     textAlign: 'center',
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
-    borderRadius: 13,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 14,
     marginRight: 8,
     marginTop: 10,
   },
