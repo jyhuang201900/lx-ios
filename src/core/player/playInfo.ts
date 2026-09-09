@@ -121,6 +121,7 @@ const setPlayerMusicInfo = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
  */
 export const setPlayMusicInfo = (listId: string | null, musicInfo: LX.Download.ListItem | LX.Music.MusicInfo | null, isTempPlay: boolean = false) => {
   playerActions.setPlayMusicInfo(listId, musicInfo, isTempPlay)
+  playerActions.setStreamInfo({ source: null, quality: null })
   setPlayerMusicInfo(musicInfo)
 
   setProgress(0, 0)

@@ -29,7 +29,7 @@ export default () => {
   // console.log('render playInfo')
 
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.progress}><Progress progress={progress} duration={maxPlayTime} buffered={buffered} /></View>
       <View style={styles.info}>
         <PlayTimeCurrent timeStr={nowPlayTimeStr} />
@@ -38,12 +38,16 @@ export default () => {
         </View>
         <PlayTimeMax timeStr={maxPlayTimeStr} />
       </View>
-    </>
+    </View>
   )
 }
 
 
 const styles = createStyle({
+  container: {
+    paddingTop: 10,
+    paddingBottom: 2,
+  },
   progress: {
     flexGrow: 1,
     flexShrink: 0,
@@ -53,8 +57,8 @@ const styles = createStyle({
   info: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // alignItems: 'center',
-    // backgroundColor: '#ccc',
+    alignItems: 'center',
+    paddingTop: 5,
   },
   status: {
     flexGrow: 1,

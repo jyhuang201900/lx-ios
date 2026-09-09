@@ -28,7 +28,7 @@ const NavButtons = () => {
       key={menu.id}
       accessibilityRole="button"
       accessibilityLabel={global.i18n.t(menu.id)}
-      style={{ ...styles.navButton, backgroundColor: activeId == menu.id ? theme['c-primary-background-active'] : 'transparent' }}
+      style={{ ...styles.navButton, backgroundColor: activeId == menu.id ? theme['c-primary-background-active'] : 'transparent', borderColor: activeId == menu.id ? theme['c-border-background'] : 'transparent' }}
       onPress={() => { if (activeId != menu.id) setNavActiveId(menu.id) }}
     >
       <Icon color={activeId == menu.id ? theme['c-primary-font-active'] : theme['c-font-label']} name={menu.icon} size={18} />
@@ -149,12 +149,13 @@ const styles = createStyle({
     top: 4,
     left: 5,
     right: 5,
-    height: scaleSizeH(38),
+    height: scaleSizeH(40),
   },
   navButton: {
-    width: 38,
-    height: 34,
-    borderRadius: 10,
+    width: 40,
+    height: 36,
+    borderRadius: 12,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 1,

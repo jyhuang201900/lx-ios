@@ -55,7 +55,7 @@ const LrcLine = memo(({ line, lineNum, activeLine, activeWordIndex, activeWordPr
   // textBreakStrategy="simple" 用于解决某些设备上字体被截断的问题
   // https://stackoverflow.com/a/72822360
   return (
-    <View style={styles.line} onLayout={handleLayout}>
+    <View style={{ ...styles.line, opacity: activeLine == lineNum ? 1 : 0.72 }} onLayout={handleLayout}>
       {
         lineNum == activeLine && line.words?.length
           ? (
@@ -323,16 +323,16 @@ export default () => {
 const styles = createStyle({
   container: {
     flex: 1,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: 28,
+    paddingRight: 28,
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },
   space: {
     paddingTop: '100%',
   },
   line: {
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 12,
+    paddingBottom: 12,
     // opacity: 0,
   },
   lineText: {
@@ -347,7 +347,7 @@ const styles = createStyle({
     textAlign: 'center',
     // fontSize: 13,
     // lineHeight: 17,
-    paddingTop: 5,
+    paddingTop: 6,
     // paddingBottom: 5,
   },
 })

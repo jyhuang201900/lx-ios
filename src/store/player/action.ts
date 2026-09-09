@@ -48,6 +48,10 @@ export default {
     state.statusText = statusText
     global.state_event.playStateTextChanged(statusText)
   },
+  setStreamInfo(streamInfo: InitState['streamInfo']) {
+    state.streamInfo = streamInfo
+    global.state_event.playStreamInfoChanged({ ...streamInfo })
+  },
   setNowPlayTime(time: number) {
     state.progress.nowPlayTime = time
     state.progress.nowPlayTimeStr = formatPlayTime2(time)

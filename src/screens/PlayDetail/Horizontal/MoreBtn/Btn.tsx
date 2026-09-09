@@ -14,7 +14,7 @@ export default ({ icon, color, onPress }: {
 }) => {
   const theme = useTheme()
   return (
-    <TouchableOpacity style={{ ...styles.cotrolBtn, width: BTN_WIDTH, height: BTN_WIDTH }} activeOpacity={0.5} onPress={onPress}>
+    <TouchableOpacity accessibilityRole="button" style={{ ...styles.cotrolBtn, width: BTN_WIDTH, height: BTN_WIDTH }} activeOpacity={0.5} onPress={onPress}>
       <Icon name={icon} color={color ?? theme['c-font-label']} size={BTN_ICON_SIZE} />
     </TouchableOpacity>
   )
@@ -22,7 +22,8 @@ export default ({ icon, color, onPress }: {
 
 const styles = createStyle({
   cotrolBtn: {
-    marginBottom: 5,
+    marginBottom: 7,
+    borderRadius: BTN_WIDTH / 2,
     justifyContent: 'center',
     alignItems: 'center',
 

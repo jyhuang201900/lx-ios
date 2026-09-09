@@ -20,6 +20,10 @@ export interface InitState {
   volume: number
   playRate: number
   statusText: string
+  streamInfo: {
+    source: LX.Source | null
+    quality: LX.Quality | null
+  }
 
   playedList: LX.Player.PlayMusicInfo[]
   tempPlayList: LX.Player.PlayMusicInfo[]
@@ -67,6 +71,10 @@ const state: InitState = {
   volume: 1,
   playRate: 1,
   statusText: '',
+  streamInfo: {
+    source: null,
+    quality: null,
+  },
   loadErrorPicUrl: '',
 
   playedList: [],

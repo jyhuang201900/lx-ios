@@ -1,5 +1,5 @@
 import { memo, useRef } from 'react'
-import { View, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { LIST_ITEM_HEIGHT } from '@/config/constant'
 // import { BorderWidths } from '@/theme'
 import { Icon } from '@/components/common/Icon'
@@ -45,7 +45,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
 
   return (
     <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)', opacity: isSupported ? 1 : 0.5 }}>
-      <TouchableOpacity style={styles.listItemLeft} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
+      <TouchableOpacity accessibilityRole="button" style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
         {
           active
             ? <Icon style={styles.sn} name="play-outline" size={13} color={theme['c-primary-font']} />
@@ -69,7 +69,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
         }
       </TouchableOpacity>
       {/* <View style={styles.listItemRight}> */}
-      <TouchableOpacity onPress={handleShowMenu} ref={moreButtonRef} style={styles.moreButton}>
+      <TouchableOpacity accessibilityRole="button" onPress={handleShowMenu} ref={moreButtonRef} style={styles.moreButton}>
         <Icon name="dots-vertical" style={{ color: theme['c-350'] }} size={12} />
       </TouchableOpacity>
       {/* </View> */}
@@ -95,7 +95,8 @@ const styles = createStyle({
     // paddingLeft: 10,
     paddingRight: 2,
     alignItems: 'center',
-    // borderBottomWidth: BorderWidths.normal,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(128,128,128,0.12)',
   },
   listItemLeft: {
     flex: 1,
@@ -149,9 +150,10 @@ const styles = createStyle({
   },
 
   moreButton: {
-    height: '80%',
-    paddingLeft: 16,
-    paddingRight: 16,
+    height: '84%',
+    minWidth: 44,
+    paddingLeft: 12,
+    paddingRight: 12,
     // paddingTop: 10,
     // paddingBottom: 10,
     // backgroundColor: 'rgba(0,0,0,0.2)',

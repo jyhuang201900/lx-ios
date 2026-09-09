@@ -60,6 +60,10 @@ export class StateEvent extends Event {
     this.emit('playStateTextChanged', text)
   }
 
+  playStreamInfoChanged(streamInfo: PlayerState['streamInfo']) {
+    this.emit('playStreamInfoChanged', streamInfo)
+  }
+
   playStateChanged(state: PlayerState['isPlay']) {
     this.emit('playStateChanged', state)
   }

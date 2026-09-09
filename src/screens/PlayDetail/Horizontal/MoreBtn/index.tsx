@@ -3,12 +3,14 @@ import { View } from 'react-native'
 import PlayModeBtn from './PlayModeBtn'
 import MusicAddBtn from './MusicAddBtn'
 import TimeoutExitBtn from './TimeoutExitBtn'
+import QualityBtn from './QualityBtn'
 
 export default () => {
   return (
     <View style={styles.container}>
       <TimeoutExitBtn />
       <MusicAddBtn />
+      <QualityBtn />
       <PlayModeBtn />
     </View>
   )
@@ -26,7 +28,7 @@ const styles = createStyle({
     position: 'absolute',
     height: '100%',
     left: 0,
-    gap: 16,
+    gap: 9,
     zIndex: 1,
   },
 })

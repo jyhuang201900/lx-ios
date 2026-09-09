@@ -1,5 +1,5 @@
 import { useImperativeHandle, forwardRef, useMemo, useRef, useState, type Ref } from 'react'
-import { View, Animated, TouchableHighlight } from 'react-native'
+import { View, Animated, TouchableHighlight, StyleSheet } from 'react-native'
 import { useWindowSize } from '@/utils/hooks'
 
 import Modal, { type ModalType } from './Modal'
@@ -28,15 +28,20 @@ const styles = createStyle({
   },
   menu: {
     position: 'absolute',
-    // borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'lightgray',
-    borderRadius: 2,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(128,128,128,0.22)',
+    borderRadius: 12,
     backgroundColor: 'white',
     elevation: 3,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.16,
+    shadowRadius: 10,
   },
   menuItem: {
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: 14,
+    paddingRight: 14,
     // height: menuItemHeight,
     // width: menuItemWidth,
     // alignItems: 'center',

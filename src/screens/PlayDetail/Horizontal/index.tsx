@@ -17,6 +17,7 @@ import Player from './Player'
 import { createStyle } from '@/utils/tools'
 import { marginLeftRaw } from './constant'
 import { useStatusbarHeight } from '@/store/common/hook'
+import StreamInfo from '../components/StreamInfo'
 // import MoreBtn from './MoreBtn2'
 
 export default memo(({ componentId }: { componentId: string }) => {
@@ -61,6 +62,7 @@ export default memo(({ componentId }: { componentId: string }) => {
             <MoreBtn />
             <Pic componentId={componentId} />
           </View>
+          <StreamInfo />
           <Player />
           {/* <View style={styles.controlBtn} nativeID="pageIndicator">
             <MoreBtn />
@@ -83,7 +85,7 @@ const styles = createStyle({
   left: {
     flex: 1,
     width: '45%',
-    paddingBottom: 10,
+    paddingBottom: 14,
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },
   leftContent: {
@@ -98,6 +100,7 @@ const styles = createStyle({
     width: '55%',
     flexGrow: 0,
     flexShrink: 0,
+    paddingRight: 10,
   },
   controlBtn: {
     flex: 1,

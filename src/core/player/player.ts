@@ -4,6 +4,7 @@ import {
 } from '@/core/player/playStatus'
 import { setProgress as updatePlayProgress } from '@/core/player/progress'
 import playerState from '@/store/player/state'
+import playerActions from '@/store/player/action'
 import settingState from '@/store/setting/state'
 import {
   getList,
@@ -68,28 +69,32 @@ const createGettingUrlId = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
 interface PlayUrlInfo {
   url: string
   quality: LX.Quality | null
+  source: LX.Source
 }
 const currentStreamInfo = {
   musicId: null as string | null,
   url: '',
   quality: null as LX.Quality | null,
+  source: null as LX.Source | null,
 }
 /**
  * 检查音乐信息是否已更改
  */
-const diffCurrentMusicInfo = (curMusicInfo: LX.Music.MusicInfo | LX.Download.ListItem): boolean => {
+const diffCurrentMusicInfo = (curMusicInfo: LX.Music.MusicInfo | LX.Download.ListItem, allowCurrentPlayback = false): boolean => {
   // return curMusicInfo !== playerState.playMusicInfo.musicInfo || playerState.isPlay
-  return createGettingUrlId(curMusicInfo) != global.lx.gettingUrlId || curMusicInfo.id != playerState.playMusicInfo.musicInfo?.id || playerState.isPlay
+  return createGettingUrlId(curMusicInfo) != global.lx.gettingUrlId || curMusicInfo.id != playerState.playMusicInfo.musicInfo?.id || (!allowCurrentPlayback && playerState.isPlay)
 }
 
 let cancelDelayRetry: (() => void) | null = null
-const delayRetry = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh = false): Promise<PlayUrlInfo | null> => {
+const getMusicSource = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem): LX.Source => 'progress' in musicInfo ? musicInfo.metadata.musicInfo.source : musicInfo.source
+
+const delayRetry = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh = false, quality?: LX.Quality, allowCurrentPlayback = false): Promise<PlayUrlInfo | null> => {
   // if (cancelDelayRetry) cancelDelayRetry()
   return new Promise<PlayUrlInfo | null>((resolve, reject) => {
     const time = getRandom(2, 6)
     setStatusText(global.i18n.t('player__getting_url_delay_retry', { time }))
     const tiemout = setTimeout(() => {
-      getMusicPlayUrl(musicInfo, isRefresh, true).then((result) => {
+      getMusicPlayUrl(musicInfo, isRefresh, true, quality, allowCurrentPlayback).then((result) => {
         cancelDelayRetry = null
         resolve(result)
       }).catch(async(err: any) => {
@@ -104,59 +109,66 @@ const delayRetry = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, i
     }
   })
 }
-const getMusicPlayUrl = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh = false, isRetryed = false): Promise<PlayUrlInfo | null> => {
+const getMusicPlayUrl = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh = false, isRetryed = false, quality?: LX.Quality, allowCurrentPlayback = false): Promise<PlayUrlInfo | null> => {
   // this.musicInfo.url = await getMusicPlayUrl(targetSong, type)
   setStatusText(global.i18n.t('player__getting_url'))
   addLoadTimeout()
 
   // const type = getPlayType(settingState.setting['player.isPlayHighQuality'], musicInfo)
   let toggleMusicInfo = ('progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo).meta.toggleMusicInfo
+  let source = toggleMusicInfo?.source ?? getMusicSource(musicInfo)
+  const onToggleSource = (targetMusicInfo?: LX.Music.MusicInfoOnline) => {
+    if (targetMusicInfo) source = targetMusicInfo.source
+    if (diffCurrentMusicInfo(musicInfo, allowCurrentPlayback)) return
+    setStatusText(global.i18n.t('toggle_source_try'))
+  }
 
   return (toggleMusicInfo ? getMusicUrlInfo({
     musicInfo: toggleMusicInfo,
     isRefresh,
+    quality,
     allowToggleSource: false,
   }) : Promise.reject(new Error('not found'))).catch(async() => {
     return getMusicUrlInfo({
       musicInfo,
       isRefresh,
-      onToggleSource(mInfo) {
-        if (diffCurrentMusicInfo(musicInfo)) return
-        setStatusText(global.i18n.t('toggle_source_try'))
-      },
+      quality,
+      onToggleSource,
     })
   }).then(url => {
-    if (global.lx.isPlayedStop || diffCurrentMusicInfo(musicInfo)) return null
+    if (global.lx.isPlayedStop || diffCurrentMusicInfo(musicInfo, allowCurrentPlayback)) return null
 
-    return url
+    return { ...url, source }
   }).catch(async err => {
     // console.log('err', err.message)
     if (global.lx.isPlayedStop ||
-      diffCurrentMusicInfo(musicInfo) ||
+      diffCurrentMusicInfo(musicInfo, allowCurrentPlayback) ||
       err.message == requestMsg.cancelRequest) return null
 
-    if (err.message == requestMsg.tooManyRequests) return delayRetry(musicInfo, isRefresh)
+    if (err.message == requestMsg.tooManyRequests) return delayRetry(musicInfo, isRefresh, quality, allowCurrentPlayback)
 
-    if (!isRetryed) return getMusicPlayUrl(musicInfo, isRefresh, true)
+    if (!isRetryed) return getMusicPlayUrl(musicInfo, isRefresh, true, quality, allowCurrentPlayback)
 
     throw err
   })
 }
 
-export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh?: boolean) => {
+export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh?: boolean, quality?: LX.Quality, allowCurrentPlayback = false) => {
   // addLoadTimeout()
-  if (!diffCurrentMusicInfo(musicInfo)) return
+  if (!allowCurrentPlayback && !diffCurrentMusicInfo(musicInfo)) return
   if (cancelDelayRetry) cancelDelayRetry()
   global.lx.gettingUrlId = createGettingUrlId(musicInfo)
   const currentTimePromise = isRefresh
     ? getPosition().catch(() => playerState.progress.nowPlayTime)
     : Promise.resolve(playerState.progress.nowPlayTime)
-  void getMusicPlayUrl(musicInfo, isRefresh).then(async(result) => {
+  void getMusicPlayUrl(musicInfo, isRefresh, false, quality, allowCurrentPlayback).then(async(result) => {
     if (!result) return
     const currentTime = await currentTimePromise
     currentStreamInfo.musicId = musicInfo.id
     currentStreamInfo.url = result.url
     currentStreamInfo.quality = result.quality
+    currentStreamInfo.source = result.source
+    playerActions.setStreamInfo({ source: result.source, quality: result.quality })
     setResource(musicInfo, result.url, currentTime, result.quality)
   }).catch((err: any) => {
     setStatusText(err.message as string)
@@ -168,6 +180,13 @@ export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
       clearLoadTimeout()
     }
   })
+}
+
+/** Re-fetch the current track at the selected quality without losing its playback position. */
+export const changeCurrentMusicQuality = (quality: LX.Quality) => {
+  const musicInfo = playerState.playMusicInfo.musicInfo
+  if (!musicInfo) return
+  setMusicUrl(musicInfo, true, quality, true)
 }
 
 // 恢复上次播放的状态
@@ -686,4 +705,3 @@ export const dislikeMusic = async() => {
   await addDislikeInfo([{ name: minfo.name, singer: minfo.singer }])
   await playNext(true)
 }
-

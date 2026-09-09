@@ -36,11 +36,11 @@ export default memo(({ componentId }: { componentId: string }) => {
 
   return (
     <View style={{ ...styles.container, height: contentHeight }}>
-      <View style={{ ...styles.content, elevation: animated ? 3 : 0 }}>
+      <View style={{ ...styles.content, elevation: animated ? 5 : 0 }}>
         <Image url={pic} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_pic} style={{
           width: imgWidth,
           height: imgWidth,
-          borderRadius: 2,
+          borderRadius: 16,
         }} />
       </View>
     </View>
@@ -57,8 +57,12 @@ const styles = createStyle({
     overflow: 'hidden',
   },
   content: {
-    // elevation: 3,
     backgroundColor: 'rgba(0,0,0,0)',
-    borderRadius: 4,
+    borderRadius: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    overflow: 'hidden',
   },
 })

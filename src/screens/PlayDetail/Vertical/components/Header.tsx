@@ -56,7 +56,7 @@ export default memo(() => {
   }
 
   return (
-    <View style={{ height: HEADER_HEIGHT + statusBarHeight, paddingTop: statusBarHeight }} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_header}>
+    <View style={{ height: HEADER_HEIGHT + statusBarHeight, paddingTop: statusBarHeight, borderBottomColor: theme['c-border-background'], borderBottomWidth: StyleSheet.hairlineWidth }} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_header}>
       <StatusBar />
       <View style={styles.container}>
         <Btn icon="chevron-left" onPress={back} />
@@ -80,13 +80,11 @@ const styles = StyleSheet.create({
   },
   titleContent: {
     flex: 1,
-    paddingHorizontal: 5,
-    // alignItems: 'center',
+    paddingHorizontal: 9,
     justifyContent: 'center',
   },
   title: {
-    // flex: 1,
-    // textAlign: 'center',
+    textAlign: 'center',
   },
   icon: {
     paddingLeft: 4,

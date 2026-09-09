@@ -13,7 +13,7 @@ export default ({ icon, size = 18, color, onPress }: {
   onPress: () => void
 }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={{ ...styles.button, width: HEADER_HEIGHT }}>
+    <TouchableOpacity accessibilityRole="button" onPress={onPress} style={{ ...styles.button, width: HEADER_HEIGHT }}>
       <Icon name={icon} color={color} size={size} />
     </TouchableOpacity>
   )
@@ -25,5 +25,6 @@ const styles = createStyle({
     alignItems: 'center',
     height: '100%',
     flex: 0,
+    borderRadius: HEADER_HEIGHT / 2,
   },
 })
