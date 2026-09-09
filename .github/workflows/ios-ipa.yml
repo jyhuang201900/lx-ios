@@ -3,6 +3,7 @@ name: Build iOS IPA
 on:
   push:
     branches:
+      - main
       - ios-adaptation
     tags:
       - 'v*'
