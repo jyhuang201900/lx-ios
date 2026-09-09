@@ -70,5 +70,5 @@ export default forwardRef<ListType, ListProps>(({ onBoundChange, onShowMenu }, r
 
 const styles = createStyle({
   container: { flexGrow: 0, flexShrink: 0 },
-  content: { paddingHorizontal: 10, paddingBottom: 8 },
+  content: { paddingHorizontal: 12, paddingBottom: 10 },
 })

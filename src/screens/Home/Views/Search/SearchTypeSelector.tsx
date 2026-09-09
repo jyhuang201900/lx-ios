@@ -54,20 +54,20 @@ export default () => {
 
 const styles = createStyle({
   container: {
-    height: 32,
+    height: 34,
     flexGrow: 0,
     flexShrink: 1,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 3,
-    borderRadius: 10,
+    borderRadius: 12,
   },
   button: {
     height: '100%',
-    minWidth: 48,
+    minWidth: 52,
     justifyContent: 'center',
     paddingHorizontal: 9,
-    borderRadius: 7,
+    borderRadius: 9,
   },
   buttonText: {
     textAlign: 'center',

@@ -54,14 +54,14 @@ export default ({ item, activeId, index, longPressIndex, onBoundChange, onShowMe
 
 const styles = createStyle({
   button: {
-    height: 40,
-    minWidth: 100,
-    maxWidth: 150,
-    paddingHorizontal: 11,
-    marginRight: 7,
+    height: 42,
+    minWidth: 104,
+    maxWidth: 156,
+    paddingHorizontal: 13,
+    marginRight: 8,
     marginTop: 0,
     borderWidth: 1,
-    borderRadius: 13,
+    borderRadius: 14,
     flexDirection: 'row',
     alignItems: 'center',
   },

@@ -94,9 +94,8 @@ const styles = createStyle({
     flexWrap: 'nowrap',
     // paddingLeft: 10,
     paddingRight: 4,
-    marginHorizontal: 10,
-    marginTop: 3,
-    borderRadius: 12,
+    marginHorizontal: 12,
+    borderRadius: 14,
     alignItems: 'center',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: 'rgba(128,128,128,0.12)',
@@ -109,7 +108,7 @@ const styles = createStyle({
     alignItems: 'center',
   },
   sn: {
-    width: 40,
+    width: 42,
     // fontSize: 12,
     textAlign: 'center',
     // backgroundColor: 'rgba(0,0,0,0.2)',
@@ -121,7 +120,7 @@ const styles = createStyle({
     flexShrink: 1,
     // paddingTop: 10,
     // paddingBottom: 10,
-    paddingRight: 6,
+    paddingRight: 8,
   },
   // listItemTitle: {
   //   flexGrow: 0,
@@ -153,7 +152,7 @@ const styles = createStyle({
   },
 
   moreButton: {
-    height: '88%',
+    height: '92%',
     minWidth: 44,
     paddingLeft: 12,
     paddingRight: 12,

@@ -9,7 +9,7 @@ import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 
-const menuItemHeight = scaleSizeH(40)
+const menuItemHeight = scaleSizeH(44)
 const menuItemWidth = scaleSizeW(100)
 
 export interface Position { w: number, h: number, x: number, y: number, menuWidth?: number, menuHeight?: number }
@@ -30,18 +30,17 @@ const styles = createStyle({
     position: 'absolute',
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: 'rgba(128,128,128,0.22)',
-    borderRadius: 12,
+    borderRadius: 16,
     backgroundColor: 'white',
     elevation: 3,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.16,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.14,
+    shadowRadius: 16,
   },
   menuItem: {
-    paddingLeft: 14,
-    paddingRight: 14,
+    paddingHorizontal: 16,
     // height: menuItemHeight,
     // width: menuItemWidth,
     // alignItems: 'center',

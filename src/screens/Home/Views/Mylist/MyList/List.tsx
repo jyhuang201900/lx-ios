@@ -18,10 +18,10 @@ const CARD_WIDTH = scaleSizeW(142)
 const CARD_HEIGHT = scaleSizeH(74)
 
 const getListKind = (id: string) => {
-  if (id === LIST_IDS.LOVE) return '收藏'
-  if (id === LIST_IDS.DEFAULT) return '默认'
-  if (id === LIST_IDS.TEMP) return '临时'
-  return '自建歌单'
+  if (id === LIST_IDS.LOVE) return global.i18n.t('list_name_love')
+  if (id === LIST_IDS.DEFAULT) return global.i18n.t('list_name_default')
+  if (id === LIST_IDS.TEMP) return global.i18n.t('list_name_temp')
+  return global.i18n.t('list_create')
 }
 
 const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
@@ -51,11 +51,11 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
         </View>
         <View style={styles.cardCopy}>
           <Text numberOfLines={1} size={14} color={active ? theme['c-primary-font'] : theme['c-font']}>{item.name}</Text>
-          <Text numberOfLines={1} size={11} color={active ? theme['c-primary-alpha-200'] : theme['c-font-label']}>{getListKind(item.id)}{count == null ? '' : ` · ${count} 首`}</Text>
+          <Text numberOfLines={1} size={11} color={active ? theme['c-primary-alpha-200'] : theme['c-font-label']}>{getListKind(item.id)}{count == null ? '' : ` · ${global.i18n.t('list_song_count', { num: count })}`}</Text>
         </View>
         {fetching ? <Loading color={active ? theme['c-primary-font'] : theme['c-font-label']} /> : null}
       </TouchableOpacity>
-      <TouchableOpacity accessibilityRole="button" accessibilityLabel={`${item.name} 更多操作`} ref={moreButtonRef} onPress={handleShowMenu} style={styles.moreButton}>
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel={`${item.name} menu`} ref={moreButtonRef} onPress={handleShowMenu} style={styles.moreButton}>
         <Icon name="dots-vertical" color={active ? theme['c-primary-font'] : theme['c-350']} size={15} />
       </TouchableOpacity>
     </View>
@@ -84,12 +84,12 @@ export default ({ onShowMenu, onCreate }: {
     <View style={{ ...styles.library, borderBottomColor: theme['c-border-background'] }}>
       <View style={styles.libraryHeader}>
         <View style={styles.headerCopy}>
-          <Text size={17} color={theme['c-font']}>我的歌单</Text>
-          <Text size={11} color={theme['c-font-label']}>点击歌单即可切换，更多操作保留在右侧菜单</Text>
+          <Text size={17} color={theme['c-font']}>{global.i18n.t('nav_love')}</Text>
+          <Text size={11} color={theme['c-font-label']}>{global.i18n.t('list_total', { num: allList.length })}</Text>
         </View>
         <TouchableOpacity accessibilityRole="button" onPress={onCreate} style={{ ...styles.createButton, backgroundColor: theme['c-primary'] }}>
           <Icon name="add-music" color={theme['c-primary-font']} size={15} />
-          <Text size={12} color={theme['c-primary-font']}>新建</Text>
+          <Text size={12} color={theme['c-primary-font']}>{global.i18n.t('list_create')}</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -106,14 +106,14 @@ export default ({ onShowMenu, onCreate }: {
 }
 
 const styles = createStyle({
-  library: { flexGrow: 0, flexShrink: 0, paddingTop: 10, paddingBottom: 7, borderBottomWidth: StyleSheet.hairlineWidth },
-  libraryHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, marginBottom: 8 },
+  library: { flexGrow: 0, flexShrink: 0, paddingTop: 12, paddingBottom: 10, borderBottomWidth: StyleSheet.hairlineWidth },
+  libraryHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, marginBottom: 10 },
   headerCopy: { flex: 1 },
-  createButton: { minHeight: 36, paddingHorizontal: 12, borderRadius: 18, flexDirection: 'row', alignItems: 'center', gap: 6 },
-  rail: { paddingHorizontal: 12, gap: 8 },
-  card: { width: CARD_WIDTH, height: CARD_HEIGHT, borderWidth: StyleSheet.hairlineWidth, borderRadius: 14, flexDirection: 'row', overflow: 'hidden' },
-  cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 10 },
-  cardIcon: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  cardCopy: { flex: 1, paddingLeft: 8, paddingRight: 3, gap: 3 },
-  moreButton: { width: 34, alignItems: 'center', justifyContent: 'center' },
+  createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: 20, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  rail: { paddingHorizontal: 12, gap: 10 },
+  card: { width: CARD_WIDTH, height: CARD_HEIGHT, borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, flexDirection: 'row', overflow: 'hidden' },
+  cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 11 },
+  cardIcon: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  cardCopy: { flex: 1, paddingLeft: 9, paddingRight: 4, gap: 4 },
+  moreButton: { width: 40, alignItems: 'center', justifyContent: 'center' },
 })

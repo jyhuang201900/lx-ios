@@ -55,11 +55,11 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
         </View>
         <View style={styles.currentListCopy}>
           <Text style={styles.currentListText} numberOfLines={1} color={theme['c-font']}>{currentListName}</Text>
-          <Text numberOfLines={1} size={11} color={theme['c-font-label']}>{fetching ? '正在更新歌曲…' : `${musicList.length} 首歌曲`}</Text>
+          <Text numberOfLines={1} size={11} color={theme['c-font-label']}>{fetching ? global.i18n.t('list_loading') : global.i18n.t('list_song_count', { num: musicList.length })}</Text>
         </View>
         { fetching ? <Loading color={theme['c-primary']} style={styles.loading} /> : null }
       </TouchableOpacity>
-      <TouchableOpacity accessibilityRole="button" accessibilityLabel="在当前歌单中搜索" style={{ ...styles.currentListBtns, backgroundColor: theme['c-primary-background-active'] }} onPress={onShowSearchBar}>
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel={global.i18n.t('nav_search')} style={{ ...styles.currentListBtns, backgroundColor: theme['c-primary-background-active'] }} onPress={onShowSearchBar}>
         <Icon color={theme['c-primary-font']} name="search-2" size={16} />
       </TouchableOpacity>
     </View>
@@ -70,33 +70,33 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
 const styles = createStyle({
   currentList: {
     flexDirection: 'row',
-    paddingRight: 8,
-    height: 52,
-    marginHorizontal: 10,
-    marginTop: 7,
-    marginBottom: 5,
+    paddingRight: 10,
+    height: 56,
+    marginHorizontal: 12,
+    marginTop: 10,
+    marginBottom: 8,
     alignItems: 'center',
     borderWidth: BorderWidths.normal,
-    borderRadius: BorderRadius.normal + 5,
+    borderRadius: BorderRadius.normal + 8,
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
   currentListIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
+    width: 36,
+    height: 36,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   currentListMain: {
     flex: 1,
     height: '100%',
-    paddingLeft: 10,
+    paddingLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
   },
   currentListCopy: {
     flex: 1,
-    paddingLeft: 9,
+    paddingLeft: 10,
   },
   currentListText: {
     paddingRight: 10,
@@ -105,9 +105,9 @@ const styles = createStyle({
     marginRight: 5,
   },
   currentListBtns: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: 'rgba(0,0,0,0.2)',

@@ -47,13 +47,13 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange }, re
 const styles = createStyle({
   currentList: {
     flexDirection: 'row',
-    height: 48,
+    height: 52,
     zIndex: 2,
-    marginHorizontal: 10,
-    marginTop: 9,
-    marginBottom: 7,
+    marginHorizontal: 12,
+    marginTop: 12,
+    marginBottom: 9,
     borderWidth: BorderWidths.normal,
-    borderRadius: BorderRadius.normal + 5,
+    borderRadius: BorderRadius.normal + 8,
   },
   selector: {
     width: 86,

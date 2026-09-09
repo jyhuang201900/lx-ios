@@ -26,14 +26,14 @@ export default ({ title, children }: Props) => {
 
 const styles = createStyle({
   container: {
-    padding: 15,
-    marginBottom: 12,
+    padding: 16,
+    marginBottom: 14,
     borderWidth: 1,
-    borderRadius: 15,
+    borderRadius: 16,
   },
   title: {
     paddingLeft: 1,
-    marginBottom: 13,
+    marginBottom: 14,
     // lineHeight: 16,
   },
 })

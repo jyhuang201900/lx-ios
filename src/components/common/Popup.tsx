@@ -23,14 +23,14 @@ const styles = createStyle({
   header: {
     flex: 0,
     flexDirection: 'row',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   title: {
-    paddingLeft: 16,
-    paddingRight: 38,
-    paddingTop: 14,
-    paddingBottom: 12,
+    paddingLeft: 20,
+    paddingRight: 44,
+    paddingTop: 16,
+    paddingBottom: 14,
     // lineHeight: 20,
   },
   closeBtn: {
@@ -39,8 +39,8 @@ const styles = createStyle({
     // borderTopRightRadius: 8,
     flexGrow: 0,
     flexShrink: 0,
-    height: 40,
-    width: 40,
+    height: 44,
+    width: 44,
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: '#eee',
@@ -161,8 +161,8 @@ export default forwardRef<PopupType, PopupProps>(({
             maxHeight: '78%',
             minHeight: '20%',
             // backgroundColor: 'white',
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
           },
         ] as const
     }
@@ -171,7 +171,7 @@ export default forwardRef<PopupType, PopupProps>(({
   return (
     <Modal onHide={onHide} keyHide={keyHide} bgHide={bgHide} bgColor="rgba(50,50,50,.2)" ref={modalRef}>
       <View style={{ ...styles.centeredView, ...centeredViewStyle, paddingBottom: keyboardShown ? keyboardHeight : 0 }}>
-        <View style={{ ...styles.modalView, ...modalViewStyle, backgroundColor: theme['c-content-background'], shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.18, shadowRadius: 12 }} onStartShouldSetResponder={() => true}>
+        <View style={{ ...styles.modalView, ...modalViewStyle, backgroundColor: theme['c-content-background'], shadowColor: '#000', shadowOffset: { width: 0, height: -6 }, shadowOpacity: 0.16, shadowRadius: 18 }} onStartShouldSetResponder={() => true}>
           <View style={styles.header}>
             <Text size={13} style={styles.title} numberOfLines={1}>{title}</Text>
             {closeBtnComponent}

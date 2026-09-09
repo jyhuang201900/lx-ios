@@ -48,8 +48,8 @@ export default ({ name, list, onTagChange, activeId }: TagGroupProps) => {
 
 const styles = createStyle({
   tagTypeTitle: {
-    marginTop: 17,
-    marginBottom: 11,
+    marginTop: 19,
+    marginBottom: 12,
   },
   tagTypeList: {
     flexDirection: 'row',
@@ -57,14 +57,14 @@ const styles = createStyle({
   },
   tagButton: {
     // marginRight: 10,
-    borderRadius: 12,
+    borderRadius: 14,
     marginRight: 8,
     marginBottom: 8,
     borderWidth: 1,
   },
   tagButtonText: {
     fontSize: 13,
-    paddingHorizontal: 13,
-    paddingVertical: 9,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
 })

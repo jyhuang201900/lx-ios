@@ -15,6 +15,7 @@ interface SearchInputProps {
 type SearchInputType = InputType
 
 const SearchInput = forwardRef<SearchInputType, SearchInputProps>(({ onSearch }, ref) => {
+  const t = useI18n()
   const [text, setText] = useState('')
   const isComposingRef = useRef(false)
   const pendingTextRef = useRef('')
@@ -66,7 +67,7 @@ const SearchInput = forwardRef<SearchInputType, SearchInputProps>(({ onSearch },
     <Input
       onChangeText={handleChangeText}
       onSelectionChange={handleSelectionChange}
-      placeholder="Search for something..."
+      placeholder={t('search_input_placeholder')}
       value={text}
       style={styles.input}
       // onFocus={showTipList}
@@ -190,7 +191,7 @@ const styles = createStyle({
     width: '100%',
     height: '100%',
     flexDirection: 'row',
-    paddingLeft: 10,
+    paddingLeft: 12,
     borderBottomWidth: BorderWidths.normal,
   },
   content: {
@@ -201,9 +202,8 @@ const styles = createStyle({
     height: '100%',
   },
   btn: {
-    // flex: 1,
-    paddingLeft: 15,
-    paddingRight: 15,
+    minWidth: 56,
+    paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
