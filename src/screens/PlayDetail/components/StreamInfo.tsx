@@ -6,39 +6,56 @@ import { useI18n } from '@/lang'
 import { usePlayMusicInfo, useStreamInfo } from '@/store/player/hook'
 import { useSettingValue } from '@/store/setting/hook'
 import { useTheme } from '@/store/theme/hook'
+import { useUserApiList } from '@/store/userApi'
 import { createStyle } from '@/utils/tools'
 
 const getMusicInfo = (musicInfo: LX.Player.PlayMusic | null) => musicInfo && 'progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo
 
 export const useAvailableQualities = () => {
   const playMusicInfo = usePlayMusicInfo()
+  const apiSource = useSettingValue('common.apiSource')
 
   return useMemo(() => {
     const musicInfo = getMusicInfo(playMusicInfo.musicInfo)
     if (!musicInfo || musicInfo.source == 'local') return [] as LX.Quality[]
-    const sourceQualities = global.lx.qualityList[musicInfo.source] ?? Object.keys(musicInfo.meta._qualitys) as LX.Quality[]
-    return sourceQualities.filter((quality) => !!musicInfo.meta._qualitys[quality])
-  }, [playMusicInfo])
+    const sourceQualities = global.lx.qualityList[musicInfo.source] ?? []
+    const trackQualities = Object.keys(musicInfo.meta._qualitys).filter((quality): quality is LX.Quality => !!musicInfo.meta._qualitys[quality as LX.Quality])
+    // A user API may advertise qualities not used by the bundled providers. Preserve
+    // its declared order, then include any track-specific quality that it omitted.
+    return [
+      ...sourceQualities.filter(quality => trackQualities.includes(quality)),
+      ...trackQualities.filter(quality => !sourceQualities.includes(quality)),
+    ]
+  }, [apiSource, playMusicInfo])
 }
 
 export const useStreamLabels = () => {
   const t = useI18n()
   const sourceNameType = useSettingValue('common.sourceNameType')
+  const apiSource = useSettingValue('common.apiSource')
+  const userApiList = useUserApiList()
   const preferredQuality = useSettingValue('player.playQuality')
   const streamInfo = useStreamInfo()
   const playMusicInfo = usePlayMusicInfo()
   const currentMusicInfo = getMusicInfo(playMusicInfo.musicInfo)
   const source = streamInfo.source ?? currentMusicInfo?.source ?? null
   const quality = streamInfo.quality ?? (currentMusicInfo?.source == 'local' ? null : preferredQuality)
+  const customApi = apiSource.startsWith('user_api')
+    ? userApiList.find(api => api.id == apiSource)
+    : undefined
+  const sourceLabel = source == 'local'
+    ? t('player_local_source')
+    : source
+      ? t(`source_${sourceNameType}_${source}` as any)
+      : ''
+  const customSourceName = source ? customApi?.sources?.[source]?.name : undefined
 
   return useMemo(() => ({
-    source: source == 'local'
-      ? t('player_local_source')
-      : source
-        ? t(`source_${sourceNameType}_${source}` as any)
-        : '',
+    source: customApi && customSourceName
+      ? `${customApi.name} · ${customSourceName || sourceLabel}`
+      : sourceLabel,
     quality: quality ?? '',
-  }), [quality, source, sourceNameType, t])
+  }), [customApi, customSourceName, quality, source, sourceLabel])
 }
 
 export default () => {

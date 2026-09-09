@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'r
 import { TouchableOpacity } from 'react-native'
 
 import { Icon } from '@/components/common/Icon'
-import { BorderWidths } from '@/theme'
+import { BorderRadius, BorderWidths } from '@/theme'
 import { useTheme } from '@/store/theme/hook'
 import { useActiveListId, useListFetching } from '@/store/list/hook'
 import listState from '@/store/list/state'
@@ -59,7 +59,7 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
   }, [])
 
   return (
-    <TouchableOpacity onPress={showList} onLongPress={onScrollToTop} style={{ ...styles.currentList, opacity: visibleBar ? 1 : 0, borderBottomColor: theme['c-border-background'] }}>
+    <TouchableOpacity accessibilityHint="轻点切换歌单，长按回到顶部" onPress={showList} onLongPress={onScrollToTop} style={{ ...styles.currentList, opacity: visibleBar ? 1 : 0, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
       <Icon style={styles.currentListIcon} color={theme['c-button-font']} name="chevron-right" size={12} />
       { fetching ? <Loading color={theme['c-button-font']} style={styles.loading} /> : null }
       <Text style={styles.currentListText} numberOfLines={1} color={theme['c-button-font']}>{currentListName}</Text>
@@ -74,10 +74,14 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
 const styles = createStyle({
   currentList: {
     flexDirection: 'row',
-    paddingRight: 2,
-    height: 36,
+    paddingRight: 3,
+    height: 42,
+    marginHorizontal: 10,
+    marginTop: 7,
+    marginBottom: 5,
     alignItems: 'center',
-    borderBottomWidth: BorderWidths.normal,
+    borderWidth: BorderWidths.normal,
+    borderRadius: BorderRadius.normal + 3,
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
   currentListIcon: {
@@ -98,7 +102,7 @@ const styles = createStyle({
     marginRight: 5,
   },
   currentListBtns: {
-    width: 46,
+    width: 50,
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',

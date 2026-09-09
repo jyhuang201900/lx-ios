@@ -19,11 +19,12 @@ export default memo(({ title, children }: {
 
 const styles = createStyle({
   container: {
-    paddingLeft: 25,
-    marginBottom: 18,
+    paddingLeft: 10,
+    paddingRight: 5,
+    marginBottom: 16,
   },
   title: {
-    marginLeft: -10,
+    marginLeft: 0,
     marginBottom: 10,
     // lineHeight: 16,
   },

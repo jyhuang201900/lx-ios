@@ -4,12 +4,14 @@ import PlayModeBtn from './PlayModeBtn'
 import MusicAddBtn from './MusicAddBtn'
 import TimeoutExitBtn from './TimeoutExitBtn'
 import QualityBtn from './QualityBtn'
+import DownloadBtn from './DownloadBtn'
 
 export default () => {
   return (
     <View style={styles.container}>
       <TimeoutExitBtn />
       <MusicAddBtn />
+      <DownloadBtn />
       <QualityBtn />
       <PlayModeBtn />
     </View>

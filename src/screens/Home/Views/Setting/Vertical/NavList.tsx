@@ -63,17 +63,17 @@ export default ({ onChangeId }: {
 
 const styles = createStyle({
   container: {
-    height: 54,
+    height: 56,
     flexGrow: 0,
     flexShrink: 0,
     borderBottomWidth: BorderWidths.normal,
-    opacity: 0.7,
+    opacity: 1,
   },
   contentContainer: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    paddingHorizontal: 8,
-    paddingVertical: 7,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     // backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
   // listContainer: {
@@ -82,15 +82,14 @@ const styles = createStyle({
 
   listItem: {
     // width: '33.33%',
-    height: 40,
-    paddingLeft: 15,
-    paddingRight: 15,
+    height: 39,
+    paddingHorizontal: 14,
     // height: 'auto',
     // flexDirection: 'row',
     // alignItems: 'center',
     paddingHorizontal: 5,
     // paddingVertical: 10,
-    borderRadius: BorderRadius.normal + 2,
+    borderRadius: BorderRadius.normal + 5,
     marginBottom: 5,
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },

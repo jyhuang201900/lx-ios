@@ -6,6 +6,7 @@ import DesktopLyricBtn from './DesktopLyricBtn'
 import CommentBtn from './CommentBtn'
 import CollectBtn from './CollectBtn'
 import QualityBtn from './QualityBtn'
+import DownloadBtn from './DownloadBtn'
 
 export default () => {
   return (
@@ -13,6 +14,7 @@ export default () => {
       <DesktopLyricBtn />
       <CollectBtn />
       <MusicAddBtn />
+      <DownloadBtn />
       <QualityBtn />
       <PlayModeBtn />
       <CommentBtn />

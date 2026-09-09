@@ -44,7 +44,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
   const singer = `${item.singer}${isShowAlbumName && item.meta.albumName ? ` · ${item.meta.albumName}` : ''}`
 
   return (
-    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)', opacity: isSupported ? 1 : 0.5 }}>
+    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : active ? theme['c-primary-input-background'] : 'rgba(0,0,0,0)', opacity: isSupported ? 1 : 0.5 }}>
       <TouchableOpacity accessibilityRole="button" style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
         {
           active
@@ -93,7 +93,10 @@ const styles = createStyle({
     flexDirection: 'row',
     flexWrap: 'nowrap',
     // paddingLeft: 10,
-    paddingRight: 2,
+    paddingRight: 4,
+    marginHorizontal: 7,
+    marginTop: 2,
+    borderRadius: 10,
     alignItems: 'center',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: 'rgba(128,128,128,0.12)',

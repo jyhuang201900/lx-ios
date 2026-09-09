@@ -7,7 +7,6 @@ import CheckBox from '@/components/common/CheckBox'
 import { useSettingValue } from '@/store/setting/hook'
 import { updateSetting } from '@/core/common'
 import { useI18n } from '@/lang'
-import { TRY_QUALITYS_LIST } from '@/core/music/utils'
 
 const useActive = (id: LX.Quality) => {
   const q = useSettingValue('player.playQuality')
@@ -27,7 +26,7 @@ const Item = ({ id, name }: {
 export default memo(() => {
   const t = useI18n()
   const playQualityList = useMemo(() => {
-    return [...TRY_QUALITYS_LIST, '128k'].reverse() as LX.Quality[]
+    return ['128k', '192k', '320k', 'flac', 'flac24bit', 'ape', 'wav'] as LX.Quality[]
   }, [])
 
   return (
@@ -69,4 +68,3 @@ const styles = StyleSheet.create({
 //     marginTop: 5,
 //   },
 // })
-

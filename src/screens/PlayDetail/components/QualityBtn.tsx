@@ -22,11 +22,12 @@ export default memo(({ compact = false }: Props) => {
   const currentQuality = useSettingValue('player.playQuality')
   const qualities = useAvailableQualities()
   const menus = useMemo(() => qualities.map((quality) => ({ action: quality, label: quality })), [qualities])
+  const selectedQuality = qualities.includes(currentQuality) ? currentQuality : qualities[0]
 
   if (!menus.length) return null
 
   const handlePress = ({ action }: typeof menus[number]) => {
-    if (action == currentQuality) return
+    if (action == selectedQuality) return
     hapticFeedback('light')
     updateSetting({ 'player.playQuality': action })
     toast(t('player_quality_switching'))
@@ -36,7 +37,7 @@ export default memo(({ compact = false }: Props) => {
   return (
     <DorpDownMenu
       menus={menus}
-      activeId={currentQuality}
+      activeId={selectedQuality}
       onPress={handlePress}
       center
       height={42}
@@ -48,7 +49,7 @@ export default memo(({ compact = false }: Props) => {
         paddingHorizontal: compact ? 7 : 10,
       }}>
         <Text style={styles.caption} size={10} color={theme['c-font-label']}>{t('player_quality')}</Text>
-        <Text style={styles.value} size={compact ? 11 : 12} color={theme['c-primary-font-active']} numberOfLines={1}>{currentQuality}</Text>
+        <Text style={styles.value} size={compact ? 11 : 12} color={theme['c-primary-font-active']} numberOfLines={1}>{selectedQuality}</Text>
       </View>
     </DorpDownMenu>
   )

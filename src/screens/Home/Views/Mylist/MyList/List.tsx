@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef } from 'react'
-import { View, TouchableOpacity, FlatList, type NativeScrollEvent, type NativeSyntheticEvent, type FlatListProps } from 'react-native'
+import { View, TouchableOpacity, FlatList, type NativeScrollEvent, type NativeSyntheticEvent, type FlatListProps, StyleSheet } from 'react-native'
 
 import { Icon } from '@/components/common/Icon'
 
@@ -45,7 +45,12 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   }
 
   return (
-    <View style={{ ...styles.listItem, height: ITEM_HEIGHT }}>
+    <View style={{
+      ...styles.listItem,
+      height: ITEM_HEIGHT,
+      backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-primary-input-background'],
+      borderColor: active ? theme['c-primary'] : theme['c-border-background'],
+    }}>
       {
         active
           ? <Icon style={styles.listActiveIcon} name="chevron-right" size={12} color={theme['c-primary-font']} />
@@ -139,6 +144,8 @@ const styles = createStyle({
   container: {
     flexShrink: 1,
     flexGrow: 0,
+    paddingHorizontal: 10,
+    paddingBottom: 8,
   },
   // listContainer: {
   //   // borderBottomWidth: BorderWidths.normal2,
@@ -148,9 +155,11 @@ const styles = createStyle({
     height: 'auto',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingRight: 5,
-    paddingLeft: 5,
-    // borderBottomWidth: BorderWidths.normal,
+    paddingRight: 4,
+    paddingLeft: 7,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 11,
+    marginTop: 5,
   },
   listActiveIcon: {
     // width: 18,
@@ -169,7 +178,7 @@ const styles = createStyle({
     justifyContent: 'center',
     flexGrow: 1,
     flexShrink: 1,
-    paddingLeft: 5,
+    paddingLeft: 8,
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },
   // listNameText: {
@@ -178,7 +187,7 @@ const styles = createStyle({
   // },
   listMoreBtn: {
     height: '100%',
-    width: 36,
+    width: 42,
     // height: 46,
     // paddingTop: 12,
     // paddingBottom: 12,
@@ -187,4 +196,3 @@ const styles = createStyle({
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },
 })
-

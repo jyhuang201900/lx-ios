@@ -14,7 +14,7 @@ export default ({ title, children }: Props) => {
   const theme = useTheme()
 
   return (
-    <View style={styles.container}>
+    <View style={{ ...styles.container, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
       <Text style={{ ...styles.title, borderLeftColor: theme['c-primary'] }} size={16} >{title}</Text>
       <View>
         {children}
@@ -26,13 +26,15 @@ export default ({ title, children }: Props) => {
 
 const styles = createStyle({
   container: {
-    // paddingLeft: 10,
-    // backgroundColor: 'rgba(0,0,0,0.2)',
+    padding: 14,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderRadius: 14,
   },
   title: {
     borderLeftWidth: 5,
     paddingLeft: 12,
-    marginBottom: 10,
+    marginBottom: 12,
     // lineHeight: 16,
   },
 })

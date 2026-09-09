@@ -9,8 +9,9 @@ import {
 } from './online'
 import { buildLyricInfo, getCachedLyricInfo } from './utils'
 
-export const getMusicUrl = async({ musicInfo, isRefresh, allowToggleSource = true, onToggleSource = () => {} }: {
+export const getMusicUrl = async({ musicInfo, quality, isRefresh, allowToggleSource = true, onToggleSource = () => {} }: {
   musicInfo: LX.Download.ListItem
+  quality?: LX.Quality
   isRefresh: boolean
   onToggleSource?: (musicInfo?: LX.Music.MusicInfoOnline) => void
   allowToggleSource?: boolean
@@ -20,15 +21,16 @@ export const getMusicUrl = async({ musicInfo, isRefresh, allowToggleSource = tru
   //   if (path) return path
   // }
 
-  return getOnlineMusicUrl({ musicInfo: musicInfo.metadata.musicInfo, isRefresh, onToggleSource, allowToggleSource })
+  return getOnlineMusicUrl({ musicInfo: musicInfo.metadata.musicInfo, quality, isRefresh, onToggleSource, allowToggleSource })
 }
 
-export const getMusicUrlInfo = async({ musicInfo, isRefresh, allowToggleSource = true, onToggleSource = () => {} }: {
+export const getMusicUrlInfo = async({ musicInfo, quality, isRefresh, allowToggleSource = true, onToggleSource = () => {} }: {
   musicInfo: LX.Download.ListItem
+  quality?: LX.Quality
   isRefresh: boolean
   onToggleSource?: (musicInfo?: LX.Music.MusicInfoOnline) => void
   allowToggleSource?: boolean
-}) => getOnlineMusicUrlInfo({ musicInfo: musicInfo.metadata.musicInfo, isRefresh, onToggleSource, allowToggleSource })
+}) => getOnlineMusicUrlInfo({ musicInfo: musicInfo.metadata.musicInfo, quality, isRefresh, onToggleSource, allowToggleSource })
 
 export const getPicUrl = async({ musicInfo, isRefresh, listId, onToggleSource = () => {} }: {
   musicInfo: LX.Download.ListItem
