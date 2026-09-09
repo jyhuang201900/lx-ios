@@ -15,7 +15,7 @@ import ListMusicSearch, { type ListMusicSearchType } from './ListMusicSearch'
 import MusicPositionModal, { type MusicPositionModalType } from './MusicPositionModal'
 import MetadataEditModal, { type MetadataEditType, type MetadataEditProps } from '@/components/MetadataEditModal'
 import MusicToggleModal, { type MusicToggleModalType } from './MusicToggleModal'
-import { downloadMusic } from '@/core/download'
+import DownloadQualityPicker, { type DownloadQualityPickerType } from '@/components/DownloadQualityPicker'
 
 
 export default () => {
@@ -31,6 +31,7 @@ export default () => {
   const metadataEditTypeRef = useRef<MetadataEditType>(null)
   const listMenuRef = useRef<ListMenuType>(null)
   const musicToggleModalRef = useRef<MusicToggleModalType>(null)
+  const downloadQualityPickerRef = useRef<DownloadQualityPickerType>(null)
   const layoutHeightRef = useRef<number>(0)
   const isShowMultipleModeBar = useRef(false)
   const isShowSearchBarModeBar = useRef(false)
@@ -159,7 +160,7 @@ export default () => {
         onRemove={info => { hancelExitSelect(); handleRemove(info.listId, info.musicInfo, info.selectedList, hancelExitSelect) }}
         onDislikeMusic={info => { void handleDislikeMusic(info.musicInfo) }}
         onDownload={info => {
-          if (info.musicInfo.source != 'local') void downloadMusic(info.musicInfo)
+          if (info.musicInfo.source != 'local') downloadQualityPickerRef.current?.show(info.musicInfo)
         }}
         onCopyName={info => { handleShare(info.musicInfo) }}
         onMusicSourceDetail={info => { void handleShowMusicSourceDetail(info.musicInfo) }}
@@ -174,6 +175,7 @@ export default () => {
         onUpdate={handleUpdateMetadata}
       />
       <MusicToggleModal ref={musicToggleModalRef} />
+      <DownloadQualityPicker ref={downloadQualityPickerRef} />
     </View>
   )
 }

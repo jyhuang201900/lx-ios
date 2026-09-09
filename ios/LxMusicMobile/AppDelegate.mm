@@ -818,7 +818,13 @@ static NSString *LXPrepareImportedFilePath(NSString *targetPath, NSURL *sourceUR
       if (![fileManager createDirectoryAtPath:basePath withIntermediateDirectories:YES attributes:nil error:error]) return nil;
     }
     NSString *fileName = sourceURL.lastPathComponent.length ? sourceURL.lastPathComponent : [NSString stringWithFormat:@"%@.tmp", NSUUID.UUID.UUIDString];
-    return [basePath stringByAppendingPathComponent:fileName];
+    NSString *candidatePath = [basePath stringByAppendingPathComponent:fileName];
+    if (![fileManager fileExistsAtPath:candidatePath]) return candidatePath;
+
+    NSString *extension = fileName.pathExtension;
+    NSString *stem = [fileName stringByDeletingPathExtension];
+    NSString *suffix = extension.length ? [@"." stringByAppendingString:extension] : @"";
+    return [basePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_%@%@", stem, NSUUID.UUID.UUIDString, suffix]];
   }
 
   NSString *parentPath = [basePath stringByDeletingLastPathComponent];

@@ -15,6 +15,8 @@ const qualityExtensions: Record<LX.Quality, string> = {
   wav: 'wav',
 }
 
+export const getLocalMusicDirectory = () => `${externalStorageDirectoryPath}/Music`
+
 const getOnlineMusicInfo = (musicInfo: LX.Player.PlayMusic | null): LX.Music.MusicInfoOnline | null => {
   if (!musicInfo) return null
   const target = 'progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo
@@ -30,8 +32,19 @@ const createFileName = (musicInfo: LX.Music.MusicInfoOnline, quality: LX.Quality
   return `${title}.${qualityExtensions[quality]}`
 }
 
+/** Return qualities advertised by the source and supported by this track. */
+export const getDownloadQualities = (musicInfo: LX.Music.MusicInfoOnline): LX.Quality[] => {
+  const sourceQualities = global.lx.qualityList[musicInfo.source] ?? []
+  const trackQualities = Object.keys(musicInfo.meta._qualitys ?? {}).filter((quality): quality is LX.Quality => !!musicInfo.meta._qualitys[quality as LX.Quality])
+  const qualities = [
+    ...sourceQualities.filter(quality => trackQualities.includes(quality)),
+    ...trackQualities.filter(quality => !sourceQualities.includes(quality)),
+  ]
+  return qualities
+}
+
 /** Download an online track to Files > On My iPhone > LX Music > Music. */
-export const downloadMusic = async(musicInfo: LX.Music.MusicInfoOnline) => {
+export const downloadMusic = async(musicInfo: LX.Music.MusicInfoOnline, requestedQuality?: LX.Quality) => {
   if (musicInfo.source == 'local') {
     toast(global.i18n.t('player_download_unavailable'))
     return
@@ -47,12 +60,13 @@ export const downloadMusic = async(musicInfo: LX.Music.MusicInfoOnline) => {
   try {
     const { url, quality } = await getMusicUrlInfo({
       musicInfo,
+      quality: requestedQuality,
       isRefresh: false,
       allowToggleSource: true,
     })
     if (!quality) throw new Error('quality unavailable')
 
-    const directory = `${externalStorageDirectoryPath}/Music`
+    const directory = getLocalMusicDirectory()
     if (!await existsFile(directory)) await mkdir(directory)
     const fileName = createFileName(musicInfo, quality)
     let path = `${directory}/${fileName}`
@@ -68,11 +82,11 @@ export const downloadMusic = async(musicInfo: LX.Music.MusicInfoOnline) => {
   }
 }
 
-export const downloadCurrentMusic = async() => {
+export const downloadCurrentMusic = async(quality?: LX.Quality) => {
   const musicInfo = getOnlineMusicInfo(playerState.playMusicInfo.musicInfo)
   if (!musicInfo) {
     toast(global.i18n.t('player_download_unavailable'))
     return
   }
-  return downloadMusic(musicInfo)
+  return downloadMusic(musicInfo, quality)
 }

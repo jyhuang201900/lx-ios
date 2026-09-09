@@ -7,7 +7,7 @@ import ListMusicMultiAdd, { type MusicMultiAddModalType as ListAddMultiType } fr
 import ListMusicAdd, { type MusicAddModalType as ListMusicAddType } from '@/components/MusicAddModal'
 import MultipleModeBar, { type MultipleModeBarType, type SelectMode } from './MultipleModeBar'
 import { handleDislikeMusic, handlePlay, handlePlayLater, handleShare, handleShowMusicSourceDetail } from './listAction'
-import { downloadMusic } from '@/core/download'
+import DownloadQualityPicker, { type DownloadQualityPickerType } from '@/components/DownloadQualityPicker'
 import { createStyle } from '@/utils/tools'
 
 export interface OnlineListProps {
@@ -38,6 +38,7 @@ export default forwardRef<OnlineListType, OnlineListProps>(({
   const listMusicAddRef = useRef<ListMusicAddType>(null)
   const listMusicMultiAddRef = useRef<ListAddMultiType>(null)
   const listMenuRef = useRef<ListMenuType>(null)
+  const downloadQualityPickerRef = useRef<DownloadQualityPickerType>(null)
   // const loadingMaskRef = useRef<LoadingMaskType>(null)
 
   useImperativeHandle(ref, () => ({
@@ -112,8 +113,9 @@ export default forwardRef<OnlineListType, OnlineListProps>(({
         onAdd={handleAddMusic}
         onMusicSourceDetail={info => { void handleShowMusicSourceDetail(info.musicInfo) }}
         onDislikeMusic={info => { void handleDislikeMusic(info.musicInfo) }}
-        onDownload={info => { void downloadMusic(info.musicInfo) }}
+        onDownload={info => { downloadQualityPickerRef.current?.show(info.musicInfo) }}
       />
+      <DownloadQualityPicker ref={downloadQualityPickerRef} />
       {/* <LoadingMask ref={loadingMaskRef} /> */}
     </View>
   )
