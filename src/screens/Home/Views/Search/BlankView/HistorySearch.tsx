@@ -79,7 +79,7 @@ export default forwardRef<HistorySearchType, HistorySearchProps>((props, ref) =>
       ? (
           <View>
             <View style={styles.titleContent}>
-              <Text size={16}>{t('search_history_search')}</Text>
+              <Text style={styles.title} size={16}>{t('search_history_search')}</Text>
               <TouchableOpacity onPress={handleClear} style={styles.titleBtn}>
                 <Icon name="eraser" color={theme['c-300']} size={14} />
               </TouchableOpacity>
@@ -98,21 +98,19 @@ export default forwardRef<HistorySearchType, HistorySearchProps>((props, ref) =>
 
 const styles = createStyle({
   titleContent: {
-    paddingTop: 15,
+    paddingTop: 22,
     flexDirection: 'row',
     alignItems: 'center',
   },
   title: {
-    // paddingLeft: 15,
-    // paddingBottom: 5,
+    fontWeight: '600',
+    letterSpacing: 0.2,
   },
   titleBtn: {
-    marginLeft: 10,
-    padding: 5,
+    marginLeft: 'auto',
+    padding: 8,
   },
   list: {
-    // paddingLeft: 15,
-    // paddingRight: 15,
     flexDirection: 'row',
     flexWrap: 'wrap',
     // paddingBottom: 15,
@@ -123,8 +121,8 @@ const styles = createStyle({
     paddingRight: 10,
     paddingTop: 5,
     paddingBottom: 5,
-    borderRadius: 4,
-    marginRight: 10,
-    marginTop: 8,
+    borderRadius: 13,
+    marginRight: 8,
+    marginTop: 10,
   },
 })
