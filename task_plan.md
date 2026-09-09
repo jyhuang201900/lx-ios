@@ -4,7 +4,7 @@
 在不破坏现有 React Native 功能的前提下，改善 iOS 版本的界面完成度与核心使用体验，并完成可验证的代码检查。
 
 ## Current Phase
-Phase 3
+Phase 6
 
 ## Phases
 ### Phase 1: Requirements & Discovery
@@ -28,6 +28,16 @@ Phase 3
 - [ ] 汇总改动与 IPA 构建方式
 - **Status:** complete
 
+### Phase 6: iOS CI Ruby Compatibility
+- [ ] 定位 `unknown keyword: quirks_mode` 的依赖来源
+- [ ] 修复并约束 iOS 构建的 Ruby 依赖
+- **Status:** in_progress
+
+### Phase 7: CI Fix Verification & Delivery
+- [ ] 复现并验证 JSON/Codegen 兼容性，检查 workflow 和差异
+- [ ] 说明修复内容和 macOS 构建验证边界
+- **Status:** pending
+
 ## Decisions Made
 | Decision | Rationale |
 |---|---|
@@ -37,4 +47,7 @@ Phase 3
 ## Errors Encountered
 | Error | Attempt | Resolution |
 |---|---:|---|
-| | 1 | |
+| 在外层工作区运行 git status，目录不是 Git 仓库 | 1 | 已切换到 lx-music-mobile-ios-adaptation 子目录 |
+| Windows 未安装 Ruby，无法直接运行 CocoaPods | 1 | 检查可用的 WSL / Docker Ruby 验证环境 |
+| rg 的 README 通配参数及未安装的 node_modules 路径不存在 | 1 | 改为按实际文件清单和上游固定版本源码排查 |
+| Python 默认 GBK 输出无法编码上游 issue 的 emoji | 1 | 后续网络诊断统一输出 ASCII JSON 或显式 UTF-8 |
