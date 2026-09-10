@@ -13,6 +13,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { type Source as MusicSource } from '@/store/search/music/state'
 import { type Source as SonglistSource } from '@/store/search/songlist/state'
+import SearchTypeSelector from '../SearchTypeSelector'
 
 type Sources = Readonly<Array<MusicSource | SonglistSource>>
 type SourceSelectorProps = _SourceSelectorProps<Sources>
@@ -63,6 +64,9 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
         onBlur={onHideTipList}
         onTouchStart={onShowTipList}
       />
+      <View style={styles.typeSelector}>
+        <SearchTypeSelector />
+      </View>
     </View>
   )
 })
@@ -83,5 +87,10 @@ const styles = createStyle({
     borderRadius: 16,
     borderWidth: BorderWidths.normal,
     overflow: 'hidden',
+  },
+  typeSelector: {
+    marginLeft: 9,
+    flexGrow: 0,
+    flexShrink: 0,
   },
 })

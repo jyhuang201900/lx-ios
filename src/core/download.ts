@@ -3,6 +3,7 @@ import playerState from '@/store/player/state'
 import settingState from '@/store/setting/state'
 import { downloadFile, existsFile, externalStorageDirectoryPath, mkdir } from '@/utils/fs'
 import { toast } from '@/utils/tools'
+import { sortQualities } from '@/utils/quality'
 
 const activeDownloadIds = new Set<string>()
 const qualityExtensions: Record<LX.Quality, string> = {
@@ -40,7 +41,7 @@ export const getDownloadQualities = (musicInfo: LX.Music.MusicInfoOnline): LX.Qu
     ...sourceQualities.filter(quality => trackQualities.includes(quality)),
     ...trackQualities.filter(quality => !sourceQualities.includes(quality)),
   ]
-  return qualities
+  return sortQualities(qualities)
 }
 
 /** Download an online track to Files > On My iPhone > LX Music > Music. */

@@ -8,6 +8,7 @@ import { useSettingValue } from '@/store/setting/hook'
 import { useTheme } from '@/store/theme/hook'
 import { useUserApiList } from '@/store/userApi'
 import { createStyle } from '@/utils/tools'
+import { sortQualities } from '@/utils/quality'
 
 const getMusicInfo = (musicInfo: LX.Player.PlayMusic | null) => musicInfo && 'progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo
 
@@ -20,12 +21,12 @@ export const useAvailableQualities = () => {
     if (!musicInfo || musicInfo.source == 'local') return [] as LX.Quality[]
     const sourceQualities = global.lx.qualityList[musicInfo.source] ?? []
     const trackQualities = Object.keys(musicInfo.meta._qualitys).filter((quality): quality is LX.Quality => !!musicInfo.meta._qualitys[quality as LX.Quality])
-    // A user API may advertise qualities not used by the bundled providers. Preserve
-    // its declared order, then include any track-specific quality that it omitted.
-    return [
+    // A user API may advertise qualities not used by the bundled providers. Include
+    // its advertised values and track-specific values, then present the best first.
+    return sortQualities([
       ...sourceQualities.filter(quality => trackQualities.includes(quality)),
       ...trackQualities.filter(quality => !sourceQualities.includes(quality)),
-    ]
+    ])
   }, [apiSource, playMusicInfo])
 }
 

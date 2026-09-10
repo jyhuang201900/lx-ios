@@ -99,8 +99,8 @@ export default () => {
     </View>
     <View style={styles.actions}>
       <TouchableOpacity accessibilityRole="button" style={{ ...styles.primaryAction, backgroundColor: theme['c-primary'] }} onPress={() => { void importMusic() }}>
-        <Icon name="add-music" size={15} color={theme['c-button-font']} />
-        <Text size={12} color={theme['c-button-font']}>{global.i18n.t('local_music_import')}</Text>
+        <Icon name="add-music" size={15} color={theme['c-primary-button-font']} />
+        <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('local_music_import')}</Text>
       </TouchableOpacity>
       <TouchableOpacity accessibilityRole="button" style={{ ...styles.refreshAction, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }} onPress={() => { void refresh() }}>
         <Text size={12} color={theme['c-font']}>{refreshing ? global.i18n.t('loading') : global.i18n.t('local_music_refresh')}</Text>

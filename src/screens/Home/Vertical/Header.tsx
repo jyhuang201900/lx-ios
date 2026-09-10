@@ -11,14 +11,8 @@ import Text from '@/components/common/Text'
 import StatusBar from '@/components/common/StatusBar'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { HEADER_HEIGHT, NAV_MENUS } from '@/config/constant'
-import { type InitState as CommonState } from '@/store/common/state'
-import SearchTypeSelector from '@/screens/Home/Views/Search/SearchTypeSelector'
 import { setNavActiveId } from '@/core/common'
 import { useSettingValue } from '@/store/setting/hook'
-
-const headerComponents: Partial<Record<CommonState['navActiveId'], React.ReactNode>> = {
-  nav_search: <SearchTypeSelector />,
-}
 
 const NavButtons = () => {
   const theme = useTheme()
@@ -61,8 +55,6 @@ const LeftHeader = () => {
           <Text style={styles.leftTitle} size={18}>{t(id)}</Text>
         </View>
       </View>
-      {headerComponents[id] ?? null}
-
       {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
         <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />
       </TouchableOpacity> */}
@@ -94,7 +86,6 @@ const RightHeader = () => {
           <Text style={styles.rightTitle} size={18}>{t(id)}</Text>
         </View>
       </View>
-      {headerComponents[id] ?? null}
       <NavButtons />
       {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
         <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />

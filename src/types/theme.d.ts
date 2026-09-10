@@ -270,6 +270,7 @@ declare global {
       'c-primary-background-hover': string
       'c-primary-background-active': string
       'c-primary-input-background': string
+      'c-primary-button-font': string
       'c-button-font': string
       'c-button-font-selected': string
       'c-button-background': string
