@@ -60,7 +60,7 @@ const Component = <S extends Sources>({ fontSize = 15, center, onSourceChange }:
       activeId={source}
     >
       <View style={styles.sourceMenu}>
-        <Text style={{ textAlign: center ? 'center' : 'left' }} numberOfLines={1} size={fontSize}>{t(`source_${sourceNameType}_${source}`)}</Text>
+        <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} numberOfLines={1} size={fontSize}>{t(`source_${sourceNameType}_${source}`)}</Text>
       </View>
     </DorpDownMenu>
   )
@@ -73,6 +73,7 @@ const styles = createStyle({
   sourceMenu: {
     height: '100%',
     justifyContent: 'center',
+    alignItems: 'center',
     // paddingTop: 12,
     // paddingBottom: 12,
     paddingLeft: 15,

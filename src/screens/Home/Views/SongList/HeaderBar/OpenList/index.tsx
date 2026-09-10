@@ -64,5 +64,7 @@ const styles = createStyle({
     justifyContent: 'center',
     paddingLeft: 12,
     paddingRight: 12,
+    minHeight: 40,
+    borderRadius: 14,
   },
 })

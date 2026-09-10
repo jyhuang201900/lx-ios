@@ -51,7 +51,7 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
     <View style={{ ...styles.currentList, opacity: visibleBar ? 1 : 0, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
       <TouchableOpacity accessibilityRole="button" accessibilityHint="长按回到歌曲开头" onPress={onScrollToTop} onLongPress={onScrollToTop} style={styles.currentListMain}>
         <View style={{ ...styles.currentListIcon, backgroundColor: theme['c-primary-background-active'] }}>
-          <Icon color={theme['c-primary-font']} name="album" size={15} />
+          <Icon color={theme['c-font']} name="album" size={15} />
         </View>
         <View style={styles.currentListCopy}>
           <Text style={styles.currentListText} numberOfLines={1} color={theme['c-font']}>{currentListName}</Text>
@@ -60,7 +60,7 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
         { fetching ? <Loading color={theme['c-primary']} style={styles.loading} /> : null }
       </TouchableOpacity>
       <TouchableOpacity accessibilityRole="button" accessibilityLabel={global.i18n.t('nav_search')} style={{ ...styles.currentListBtns, backgroundColor: theme['c-primary-background-active'] }} onPress={onShowSearchBar}>
-        <Icon color={theme['c-primary-font']} name="search-2" size={16} />
+        <Icon color={theme['c-font']} name="search-2" size={16} />
       </TouchableOpacity>
     </View>
   )

@@ -46,6 +46,8 @@ const styles = createStyle({
     // alignItems: 'center',
     justifyContent: 'center',
     alignItems: 'center',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(128,128,128,0.10)',
     // backgroundColor: '#ccc',
   },
   // menuText: {
@@ -151,7 +153,7 @@ const Menu = ({
                 ? (
                     <View
                       key={menu.action}
-                      style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height }}
+                      style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height, backgroundColor: theme['c-primary-background-active'] }}
                     >
                       <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} color={theme['c-primary-font-active']} size={fontSize} numberOfLines={1}>{menu.label}</Text>
                     </View>

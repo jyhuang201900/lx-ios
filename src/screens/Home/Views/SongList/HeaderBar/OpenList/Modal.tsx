@@ -114,10 +114,11 @@ const styles = createStyle({
     flexGrow: 1,
     flexShrink: 1,
     flexDirection: 'column',
+    paddingVertical: 2,
   },
   col: {
     flexDirection: 'row',
-    height: 38,
+    minHeight: 44,
   },
   // selector: {
   //   borderTopLeftRadius: 4,
@@ -133,11 +134,13 @@ const styles = createStyle({
     // paddingTop: 2,
     // paddingBottom: 2,
     height: '100%',
+    borderRadius: 14,
   },
   inputTipText: {
     marginTop: 15,
+    textAlign: 'center',
+    textAlignVertical: 'center',
     // lineHeight: 18,
   },
 })
-
 

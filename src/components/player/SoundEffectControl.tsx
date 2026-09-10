@@ -837,15 +837,14 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
 
 const styles = createStyle({
   container: {
-    paddingTop: 5,
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingBottom: 15,
+    paddingTop: 12,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   layout: {
     flexDirection: 'row',
     alignItems: 'stretch',
-    gap: 12,
+    gap: 14,
   },
   leftColumn: {
     flex: 1,
@@ -856,26 +855,25 @@ const styles = createStyle({
     minWidth: 0,
   },
   columnDivider: {
-    width: 1,
-    borderRightWidth: 1,
-    borderStyle: 'dashed',
-    borderRightColor: 'rgba(120, 180, 160, 0.5)',
-    marginVertical: 2,
+    width: 0,
   },
   sectionBlock: {
     minWidth: 0,
+    borderRadius: 16,
+    padding: 12,
   },
   sectionBlockWithDivider: {
     borderTopWidth: 1,
-    borderStyle: 'dashed',
-    paddingTop: 14,
-    marginTop: 12,
+    borderStyle: 'solid',
+    paddingTop: 12,
+    marginTop: 10,
   },
   section: {
     paddingBottom: 2,
   },
   sectionTitle: {
     fontWeight: '600',
+    textAlignVertical: 'center',
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -894,12 +892,18 @@ const styles = createStyle({
     gap: 8,
   },
   tipButton: {
-    padding: 2,
+    width: 32,
+    height: 32,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   resetButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 4,
+    minHeight: 32,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   envList: {
     flexDirection: 'row',
@@ -909,15 +913,18 @@ const styles = createStyle({
   placeholderCheckbox: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 10,
-    marginBottom: 6,
-    gap: 3,
+    minHeight: 34,
+    paddingHorizontal: 9,
+    marginRight: 8,
+    marginBottom: 8,
+    borderRadius: 12,
+    gap: 5,
   },
   placeholderGroup: {
     gap: 8,
   },
   placeholderSliderItem: {
-    gap: 2,
+    gap: 5,
   },
   placeholderSliderContent: {
     flexDirection: 'row',
@@ -927,6 +934,7 @@ const styles = createStyle({
   placeholderValue: {
     width: 48,
     textAlign: 'right',
+    textAlignVertical: 'center',
   },
   tip: {
     marginTop: 10,
@@ -939,7 +947,7 @@ const styles = createStyle({
   },
   equalizerItem: {
     flex: 1,
-    marginBottom: 6,
+    marginBottom: 8,
   },
   equalizerSliderRow: {
     flexDirection: 'row',
@@ -947,11 +955,14 @@ const styles = createStyle({
     width: '100%',
   },
   equalizerLabel: {
-    width: 24,
+    width: 30,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
   equalizerValue: {
-    width: 38,
+    width: 46,
     textAlign: 'right',
+    textAlignVertical: 'center',
   },
   stackedEqualizerList: {
     marginBottom: 10,
@@ -965,19 +976,21 @@ const styles = createStyle({
     alignItems: 'flex-start',
   },
   presetButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+    minHeight: 34,
+    paddingHorizontal: 11,
+    borderRadius: 12,
     marginRight: 8,
     marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   presetAddButton: {
-    minWidth: 24,
+    minWidth: 34,
+    minHeight: 34,
     paddingHorizontal: 8,
-    paddingVertical: 4,
     marginRight: 8,
     marginBottom: 8,
-    borderRadius: 4,
+    borderRadius: 12,
     borderWidth: 1,
     borderStyle: 'dashed',
     alignItems: 'center',
