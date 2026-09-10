@@ -96,8 +96,11 @@ const styles = createStyle({
     paddingHorizontal: 9,
     paddingVertical: 4,
     gap: 4,
+    justifyContent: 'center',
   },
   label: {
     opacity: 0.8,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
 })

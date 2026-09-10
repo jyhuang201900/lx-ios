@@ -65,9 +65,13 @@ const styles = createStyle({
   },
   caption: {
     lineHeight: 11,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
   value: {
     fontWeight: '600',
     lineHeight: 15,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
 })

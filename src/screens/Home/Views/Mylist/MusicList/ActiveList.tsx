@@ -105,9 +105,9 @@ const styles = createStyle({
     marginRight: 5,
   },
   currentListBtns: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
+    width: 42,
+    height: 42,
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: 'rgba(0,0,0,0.2)',

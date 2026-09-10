@@ -109,11 +109,11 @@ const styles = createStyle({
   library: { flexGrow: 0, flexShrink: 0, paddingTop: 12, paddingBottom: 10, borderBottomWidth: StyleSheet.hairlineWidth },
   libraryHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, marginBottom: 10 },
   headerCopy: { flex: 1 },
-  createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: 20, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   rail: { paddingHorizontal: 12, gap: 10 },
   card: { width: CARD_WIDTH, height: CARD_HEIGHT, borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, flexDirection: 'row', overflow: 'hidden' },
   cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 11 },
   cardIcon: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   cardCopy: { flex: 1, paddingLeft: 9, paddingRight: 4, gap: 4 },
-  moreButton: { width: 40, alignItems: 'center', justifyContent: 'center' },
+  moreButton: { width: 44, height: '100%', alignItems: 'center', justifyContent: 'center' },
 })

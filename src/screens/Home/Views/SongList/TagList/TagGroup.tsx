@@ -61,10 +61,15 @@ const styles = createStyle({
     marginRight: 8,
     marginBottom: 8,
     borderWidth: 1,
+    minHeight: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tagButtonText: {
     fontSize: 13,
     paddingHorizontal: 14,
     paddingVertical: 10,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
 })

@@ -109,12 +109,12 @@ const styles = createStyle({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 16,
+    height: 20,
     gap: 5,
   },
   pageIndicatorItem: {
-    height: 3,
-    borderRadius: 3,
+    height: 4,
+    borderRadius: 4,
     opacity: 0.9,
   },
 })

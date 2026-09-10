@@ -173,7 +173,7 @@ export default forwardRef<ListSearchBarType, ListSearchBarProps>(({ onSearch, on
           <SearchInput ref={searchInputRef} onSearch={onSearch} />
         </View>
         <TouchableOpacity onPress={onExitSearch} style={styles.btn}>
-          <Text color={theme['c-button-font']}>{t('list_select_cancel')}</Text>
+          <Text style={styles.btnText} color={theme['c-button-font']}>{t('list_select_cancel')}</Text>
         </TouchableOpacity>
       </Animated.View>
     )
@@ -203,8 +203,11 @@ const styles = createStyle({
   },
   btn: {
     minWidth: 56,
+    minHeight: 44,
     paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 14,
   },
+  btnText: { textAlign: 'center', textAlignVertical: 'center' },
 })

@@ -64,6 +64,7 @@ const styles = createStyle({
     borderRadius: 14,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   listActiveIcon: {
     // width: 18,
@@ -72,8 +73,10 @@ const styles = createStyle({
     textAlign: 'center',
   },
   listName: {
-    height: '100%',
-    justifyContent: 'center',
+    flexGrow: 0,
+    flexShrink: 1,
+    textAlign: 'center',
+    textAlignVertical: 'center',
     paddingLeft: 6,
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },

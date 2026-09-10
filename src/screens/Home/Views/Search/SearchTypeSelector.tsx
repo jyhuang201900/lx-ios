@@ -66,11 +66,13 @@ const styles = createStyle({
     height: '100%',
     minWidth: 52,
     justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 9,
     borderRadius: 9,
   },
   buttonText: {
     textAlign: 'center',
+    textAlignVertical: 'center',
     paddingHorizontal: 2,
   },
 })

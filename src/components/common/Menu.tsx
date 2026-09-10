@@ -45,6 +45,7 @@ const styles = createStyle({
     // width: menuItemWidth,
     // alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     // backgroundColor: '#ccc',
   },
   // menuText: {
@@ -143,7 +144,7 @@ const Menu = ({
                     key={menu.action}
                     style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height, opacity: 0.4 }}
                   >
-                    <Text style={{ textAlign: center ? 'center' : 'left' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                    <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
                   </View>
                 )
               : menu.action == activeId
@@ -152,7 +153,7 @@ const Menu = ({
                       key={menu.action}
                       style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height }}
                     >
-                      <Text style={{ textAlign: center ? 'center' : 'left' }} color={theme['c-primary-font-active']} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                      <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} color={theme['c-primary-font-active']} size={fontSize} numberOfLines={1}>{menu.label}</Text>
                     </View>
                   )
                 : (
@@ -162,7 +163,7 @@ const Menu = ({
                       underlayColor={theme['c-primary-background-active']}
                       onPress={() => { menuPress(menu) }}
                     >
-                      <Text style={{ textAlign: center ? 'center' : 'left' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                      <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
                     </TouchableHighlight>
                   )
 

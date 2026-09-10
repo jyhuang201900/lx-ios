@@ -21,6 +21,7 @@ const styles = createStyle({
     paddingLeft: 10,
     paddingRight: 10,
   },
+  contentText: { textAlign: 'center', textAlignVertical: 'center' },
   btns: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -36,13 +37,15 @@ const styles = createStyle({
   },
   btn: {
     flex: 1,
+    minHeight: 42,
     paddingTop: 9,
     paddingBottom: 9,
     paddingLeft: 10,
     paddingRight: 10,
     alignItems: 'center',
-    borderRadius: 4,
+    borderRadius: 14,
   },
+  btnText: { width: '100%', textAlign: 'center', textAlignVertical: 'center' },
   btnDirection: {
     marginRight: 15,
   },
@@ -108,16 +111,16 @@ export default forwardRef<ConfirmAlertType, ConfirmAlertProps>(({
     <Dialog onHide={onHide} keyHide={keyHide} bgHide={bgHide} closeBtn={closeBtn} title={title} ref={dialogRef}>
       <View style={styles.main}>
         <ScrollView style={styles.content} keyboardShouldPersistTaps={'always'}>
-          {children ?? <Text>{text}</Text>}
+          {children ?? <Text style={styles.contentText}>{text}</Text>}
         </ScrollView>
       </View>
       <View style={{ ...styles.btns, ...(reverseBtn ? styles.btnsReversedDirection : styles.btnsDirection) }}>
         <Button style={{ ...styles.btn, ...(reverseBtn ? styles.btnReversedDirection : styles.btnDirection), backgroundColor: theme['c-button-background'] }} onPress={handleCancel}>
-          <Text color={theme['c-button-font']}>{cancelText || t('cancel')}</Text>
+          <Text style={styles.btnText} color={theme['c-button-font']}>{cancelText || t('cancel')}</Text>
         </Button>
         {showConfirm
           ? <Button style={{ ...styles.btn, ...(reverseBtn ? styles.btnReversedDirection : styles.btnDirection), backgroundColor: theme['c-button-background'] }} onPress={onConfirm} disabled={disabledConfirm}>
-              <Text color={theme['c-button-font']}>{confirmText || t('confirm')}</Text>
+              <Text style={styles.btnText} color={theme['c-button-font']}>{confirmText || t('confirm')}</Text>
             </Button>
           : null}
       </View>

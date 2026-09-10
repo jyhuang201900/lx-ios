@@ -9,7 +9,7 @@ import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { scaleSizeH } from '@/utils/pixelRatio'
 
-const HEADER_HEIGHT = 20
+const HEADER_HEIGHT = 48
 const styles = createStyle({
   centeredView: {
     flex: 1,
@@ -21,7 +21,7 @@ const styles = createStyle({
     minWidth: '60%',
     maxHeight: '78%',
     // backgroundColor: 'white',
-    borderRadius: 4,
+    borderRadius: 18,
     // shadowColor: '#000',
     // shadowOffset: {
     //   width: 0,
@@ -35,19 +35,21 @@ const styles = createStyle({
     flexGrow: 0,
     flexShrink: 0,
     flexDirection: 'row',
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
     height: HEADER_HEIGHT,
   },
   title: {
-    paddingLeft: 5,
-    paddingRight: 25,
-    lineHeight: HEADER_HEIGHT,
+    flex: 1,
+    paddingLeft: 20,
+    paddingRight: 48,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
   closeBtn: {
     position: 'absolute',
     right: 0,
-    borderTopRightRadius: 4,
+    borderTopRightRadius: 18,
     flexGrow: 0,
     flexShrink: 0,
     height: HEADER_HEIGHT,

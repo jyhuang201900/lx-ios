@@ -12,7 +12,7 @@ export default memo(({ disabled, onPress, children }: ButtonProps) => {
 
   return (
     <Button style={{ ...styles.button, backgroundColor: theme['c-button-background'] }} onPress={onPress} disabled={disabled}>
-      <Text size={14} color={theme['c-button-font']}>{children}</Text>
+      <Text style={styles.label} size={14} color={theme['c-button-font']}>{children}</Text>
     </Button>
   )
 })
@@ -24,5 +24,8 @@ const styles = createStyle({
     paddingVertical: 8,
     borderRadius: 12,
     marginRight: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  label: { textAlign: 'center', textAlignVertical: 'center' },
 })

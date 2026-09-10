@@ -23,14 +23,18 @@ const styles = createStyle({
   header: {
     flex: 0,
     flexDirection: 'row',
+    alignItems: 'center',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
   title: {
+    flex: 1,
     paddingLeft: 20,
     paddingRight: 44,
     paddingTop: 16,
     paddingBottom: 14,
+    textAlign: 'center',
+    textAlignVertical: 'center',
     // lineHeight: 20,
   },
   closeBtn: {

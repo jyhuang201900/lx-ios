@@ -18,7 +18,7 @@ const styles = createStyle({
   input: {
     // backgroundColor: 'rgba(0,0,0,0.1)',
     // backgroundColor: 'white',
-    borderRadius: 2,
+    borderRadius: 10,
     paddingTop: 0,
     paddingBottom: 0,
     height: 32,
@@ -35,10 +35,10 @@ const styles = createStyle({
     flexShrink: 0,
   },
   clearBtn: {
-    height: '70%',
-    paddingLeft: 5,
-    paddingRight: 5,
+    width: 36,
+    height: 36,
     justifyContent: 'center',
+    alignItems: 'center',
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
 })
@@ -134,4 +134,3 @@ export default forwardRef<InputType, InputProps>(({ onChangeText, onClearText, c
     </View>
   )
 })
-

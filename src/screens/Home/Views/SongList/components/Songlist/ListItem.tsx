@@ -27,7 +27,7 @@ export default memo(({ item, index, width, showSource, onPress }: {
           <View style={{ ...styles.listItem, width: itemWidth }}>
             <View style={{ ...styles.listItemImg, backgroundColor: theme['c-content-background'] }}>
               <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
-                <Image url={item.img} nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_from_${item.id}`} style={{ width: itemWidth, height: itemWidth, borderRadius: 4 }} />
+                <Image url={item.img} nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_from_${item.id}`} style={{ width: itemWidth, height: itemWidth, borderRadius: 16 }} />
                 { showSource ? <Text style={styles.sourceLabel} size={9} color="#fff" >{item.source}</Text> : null }
               </TouchableOpacity>
             </View>
@@ -48,7 +48,7 @@ const styles = createStyle({
   },
   listItemImg: {
     // backgroundColor: '#eee',
-    borderRadius: 4,
+    borderRadius: 16,
     marginBottom: 5,
     overflow: 'hidden',
     ...Platform.select({
@@ -73,7 +73,7 @@ const styles = createStyle({
     position: 'absolute',
     top: 0,
     right: 0,
-    borderBottomLeftRadius: 3,
+    borderBottomLeftRadius: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   listItemTitle: {

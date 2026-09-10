@@ -26,7 +26,7 @@ const ListItem = ({ keyword, onSearch }: {
   const theme = useTheme()
   return (
     <Button style={{ ...styles.button, backgroundColor: theme['c-primary-input-background'] }} onPress={() => { onSearch(keyword) }}>
-      <Text color={theme['c-button-font']} size={13}>{keyword}</Text>
+      <Text style={styles.buttonText} color={theme['c-button-font']} size={13}>{keyword}</Text>
     </Button>
   )
 }
@@ -83,11 +83,14 @@ const styles = createStyle({
     flexWrap: 'wrap',
   },
   button: {
-    textAlign: 'center',
+    minHeight: 38,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 7,
     borderRadius: 14,
     marginRight: 8,
     marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  buttonText: { textAlign: 'center', textAlignVertical: 'center' },
 })

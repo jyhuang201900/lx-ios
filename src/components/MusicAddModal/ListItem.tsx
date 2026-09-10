@@ -29,7 +29,7 @@ export default ({ listInfo, onPress, musicInfo, width }: {
         style={{ ...styles.button, backgroundColor: theme['c-button-background'], borderColor: theme['c-primary-light-400-alpha-300'], opacity: isExists ? 0.4 : 1 }}
         onPress={handlePress}
       >
-        <Text numberOfLines={1} size={14} color={theme['c-button-font']}>{listInfo.name}</Text>
+        <Text style={styles.label} numberOfLines={1} size={14} color={theme['c-button-font']}>{listInfo.name}</Text>
       </Button>
     </View>
   )
@@ -42,15 +42,16 @@ export const styles = createStyle({
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
   button: {
-    height: 36,
+    minHeight: 40,
     paddingLeft: 10,
     paddingRight: 10,
     marginRight: 10,
     marginBottom: 10,
-    borderRadius: 4,
+    borderRadius: 13,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: BorderWidths.normal1,
   },
+  label: { width: '100%', textAlign: 'center', textAlignVertical: 'center' },
 })

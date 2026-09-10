@@ -67,7 +67,7 @@ const styles = createStyle({
   track: { minHeight: 58, borderRadius: 15, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center' },
   trackIcon: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   trackCopy: { flex: 1, gap: 4, paddingLeft: 10 },
-  hint: { paddingTop: 18, paddingBottom: 8 },
+  hint: { paddingTop: 18, paddingBottom: 8, textAlign: 'center', textAlignVertical: 'center' },
   qualityList: { gap: 8 },
   qualityButton: { minHeight: 48, borderWidth: 1, borderRadius: 14, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   empty: { paddingVertical: 22, textAlign: 'center' },

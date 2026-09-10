@@ -24,7 +24,7 @@ const ListItem = ({ keyword, onSearch, onRemove }: {
       onPress={() => { onSearch(keyword) }}
       onLongPress={() => { onRemove(keyword) }}
     >
-      <Text color={theme['c-button-font']} size={13}>{keyword}</Text>
+      <Text style={styles.buttonText} color={theme['c-button-font']} size={13}>{keyword}</Text>
     </Button>
   )
 }
@@ -108,7 +108,10 @@ const styles = createStyle({
   },
   titleBtn: {
     marginLeft: 'auto',
-    padding: 8,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   list: {
     flexDirection: 'row',
@@ -116,11 +119,14 @@ const styles = createStyle({
     // paddingBottom: 15,
   },
   button: {
-    textAlign: 'center',
+    minHeight: 38,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 7,
     borderRadius: 14,
     marginRight: 8,
     marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  buttonText: { textAlign: 'center', textAlignVertical: 'center' },
 })

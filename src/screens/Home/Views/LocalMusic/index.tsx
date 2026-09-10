@@ -114,7 +114,7 @@ export default () => {
       data={files}
       keyExtractor={item => item.path}
       contentContainerStyle={files.length ? styles.list : styles.emptyList}
-      renderItem={({ item }) => <View style={{ ...styles.row, borderBottomColor: theme['c-border-background'] }}>
+      renderItem={({ item }) => <View style={{ ...styles.row, borderColor: theme['c-border-background'] }}>
         <TouchableOpacity accessibilityRole="button" style={styles.rowMain} onPress={() => { void playFile(item) }}>
           <View style={{ ...styles.fileIcon, backgroundColor: theme['c-primary-background-active'] }}>
             <Icon name="play-outline" size={15} color={theme['c-primary-font-active']} />
@@ -141,18 +141,18 @@ const styles = createStyle({
   container: { flex: 1, paddingTop: 14 },
   summary: { minHeight: 76, marginHorizontal: 16, borderRadius: 18, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center' },
   summaryIcon: { width: 46, height: 46, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
-  summaryCopy: { flex: 1, paddingLeft: 12, gap: 5 },
+  summaryCopy: { flex: 1, paddingLeft: 12, gap: 5, justifyContent: 'center' },
   actions: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 14, gap: 9 },
   primaryAction: { flex: 1, minHeight: 43, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 },
   refreshAction: { minWidth: 82, minHeight: 43, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
-  sectionHeader: { paddingHorizontal: 17, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sectionHeader: { minHeight: 32, paddingHorizontal: 17, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   list: { paddingHorizontal: 16, paddingBottom: 24 },
   emptyList: { flexGrow: 1 },
-  row: { minHeight: 64, flexDirection: 'row', alignItems: 'center', borderBottomWidth: StyleSheet.hairlineWidth },
+  row: { minHeight: 64, marginBottom: 6, paddingHorizontal: 8, flexDirection: 'row', alignItems: 'center', borderWidth: StyleSheet.hairlineWidth, borderRadius: 16 },
   rowMain: { flex: 1, minHeight: 64, flexDirection: 'row', alignItems: 'center' },
   fileIcon: { width: 38, height: 38, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
-  fileCopy: { flex: 1, paddingHorizontal: 11, gap: 5 },
-  deleteButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  fileCopy: { flex: 1, paddingHorizontal: 11, gap: 5, justifyContent: 'center' },
+  deleteButton: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   empty: { alignItems: 'center', paddingHorizontal: 42, paddingTop: 58 },
   emptyTitle: { marginTop: 15 },
   emptyDescription: { marginTop: 7, textAlign: 'center', lineHeight: 19 },

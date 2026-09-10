@@ -136,10 +136,9 @@ const styles = createStyle({
     flexGrow: 1,
     flexShrink: 1,
     minWidth: 290,
-    borderRadius: 4,
+    borderRadius: 14,
     // paddingTop: 2,
     // paddingBottom: 2,
   },
 })
-
 

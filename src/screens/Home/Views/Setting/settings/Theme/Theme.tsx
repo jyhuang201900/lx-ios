@@ -37,7 +37,7 @@ const ThemeItem = ({ id, name, color, image, setTheme, showAll }: {
           {
             image
               ? <ImageBackground style={{ ...styles.imageContent, width: scaleSizeH(IMAGE_HEIGHT), backgroundColor: color }}
-                  imageStyle={{ borderRadius: 4 }}
+                  imageStyle={{ borderRadius: 12 }}
                   source={image} />
               : <View style={{ ...styles.imageContent, width: scaleSizeH(IMAGE_HEIGHT), backgroundColor: color }}></View>
             }
@@ -133,12 +133,13 @@ const styles = createStyle({
   item: {
     // marginRight: 15,
     alignItems: 'center',
+    justifyContent: 'center',
     // marginTop: 5,
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
   colorContent: {
     height: COLOR_ITEM_HEIGHT,
-    borderRadius: 4,
+    borderRadius: 12,
     borderWidth: 1.6,
     alignItems: 'center',
     justifyContent: 'center',
@@ -146,17 +147,22 @@ const styles = createStyle({
   },
   imageContent: {
     height: IMAGE_HEIGHT,
-    borderRadius: 4,
+    borderRadius: 10,
     // elevation: 1,
   },
   name: {
     marginTop: 2,
+    textAlign: 'center',
+    textAlignVertical: 'center',
   },
   moreBtn: {
-    marginLeft: 10,
+    minHeight: 40,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    marginLeft: 2,
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'center',
+    justifyContent: 'center',
     gap: 8,
   },
 })

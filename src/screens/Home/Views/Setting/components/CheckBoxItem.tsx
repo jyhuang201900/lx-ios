@@ -19,6 +19,7 @@ const styles = createStyle({
     paddingHorizontal: 10,
     minHeight: 42,
     justifyContent: 'center',
+    borderRadius: 12,
     // marginTop: -10,
     // marginBottom: 0,
   },

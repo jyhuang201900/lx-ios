@@ -129,6 +129,7 @@ const styles = createStyle({
   listItemSingle: {
     paddingTop: 4,
     flexDirection: 'row',
+    alignItems: 'center',
     // alignItems: 'flex-end',
   },
   listItemSingleText: {
@@ -152,13 +153,15 @@ const styles = createStyle({
   },
 
   moreButton: {
-    height: '92%',
+    height: 44,
     minWidth: 44,
+    borderRadius: 14,
     paddingLeft: 12,
     paddingRight: 12,
     // paddingTop: 10,
     // paddingBottom: 10,
     // backgroundColor: 'rgba(0,0,0,0.2)',
     justifyContent: 'center',
+    alignItems: 'center',
   },
 })
