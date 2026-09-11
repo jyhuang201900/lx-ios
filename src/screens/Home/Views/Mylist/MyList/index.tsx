@@ -4,7 +4,7 @@ import ListMenu, { type ListMenuType } from './ListMenu'
 import ListNameEdit, { type ListNameEditType } from './ListNameEdit'
 import List from './List'
 import ListImportExport, { type ListImportExportType } from './ListImportExport'
-import { handleRemove, handleSync } from './listAction'
+import { handleExportQQMusicText, handleRemove, handleSync } from './listAction'
 import ListMusicSort, { type ListMusicSortType } from './ListMusicSort'
 import DuplicateMusic, { type DuplicateMusicType } from './DuplicateMusic'
 import { useMyList } from '@/store/list/hook'
@@ -36,6 +36,7 @@ export default () => {
         onDuplicateMusic={info => duplicateMusicRef.current?.show(info)}
         onImport={(info, position) => listImportExportRef.current?.import(info, position)}
         onExport={(info, position) => listImportExportRef.current?.export(info, position)}
+        onExportQQMusicText={info => { void handleExportQQMusicText(info) }}
         onRemove={info => { handleRemove(info) }}
         onSync={info => { handleSync(info) }}
         onSelectLocalFile={(info, position) => listImportExportRef.current?.selectFile(info, position)}

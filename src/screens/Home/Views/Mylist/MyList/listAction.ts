@@ -1,5 +1,5 @@
 import { addListMusics, getListMusics, removeListMusics, removeUserList, setFetchingListStatus, updateListMusics } from '@/core/list'
-import { confirmDialog, handleReadFile, handleSaveFile, showImportTip, toast } from '@/utils/tools'
+import { clipboardWriteText, confirmDialog, handleReadFile, handleSaveFile, showImportTip, toast } from '@/utils/tools'
 import syncSourceList from '@/core/syncSourceList'
 import { log } from '@/utils/log'
 import { filterFileName, filterMusicList, formatPlayTime2, toNewMusicInfo } from '@/utils'
@@ -89,6 +89,32 @@ export const handleExport = (listInfo: LX.List.MyListInfo, path?: string) => {
     log.error(err.message)
     toast(global.i18n.t('setting_backup_part_export_list_tip_failed') + ': ' + (err.message as string))
   })
+}
+
+const formatQQMusicImportMusic = (musicInfo: LX.Music.MusicInfo) => {
+  const name = musicInfo.name.trim()
+  const singer = musicInfo.singer.trim()
+  return name && singer ? `${name} - ${singer}` : name
+}
+
+export const handleExportQQMusicText = async(listInfo: LX.List.MyListInfo) => {
+  try {
+    const lines = (await getListMusics(listInfo.id))
+      .map(formatQQMusicImportMusic)
+      .filter(Boolean)
+    if (!lines.length) {
+      toast(global.i18n.t('list_export_qq_text_empty_tip'))
+      return
+    }
+
+    clipboardWriteText(lines.join('\n'))
+    toast(global.i18n.t(lines.length > 500
+      ? 'list_export_qq_text_limit_tip'
+      : 'list_export_qq_text_tip', { num: lines.length }), 'long')
+  } catch (err: any) {
+    log.error(err.stack ?? err.message)
+    toast(global.i18n.t('list_export_qq_text_failed_tip'), 'long')
+  }
 }
 
 export const handleSync = (listInfo: LX.List.UserListInfo) => {

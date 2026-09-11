@@ -25,6 +25,7 @@ export interface ListMenuProps {
   onDuplicateMusic: (listInfo: LX.List.MyListInfo) => void
   onImport: (listInfo: LX.List.MyListInfo, index: number) => void
   onExport: (listInfo: LX.List.MyListInfo, index: number) => void
+  onExportQQMusicText: (listInfo: LX.List.MyListInfo) => void
   onSync: (listInfo: LX.List.UserListInfo) => void
   onSelectLocalFile: (listInfo: LX.List.MyListInfo, index: number) => void
   onRemove: (listInfo: LX.List.UserListInfo) => void
@@ -44,6 +45,7 @@ export default forwardRef<ListMenuType, ListMenuProps>(({
   onDuplicateMusic,
   onImport,
   onExport,
+  onExportQQMusicText,
   onSync,
   onSelectLocalFile,
   onRemove,
@@ -95,6 +97,7 @@ export default forwardRef<ListMenuType, ListMenuProps>(({
       { action: 'sync', disabled: !sync || !local_file, label: t('list_sync') },
       { action: 'import', label: t('list_import') },
       { action: 'export', label: t('list_export') },
+      { action: 'exportQQMusicText', label: t('list_export_qq_text') },
       // { action: 'changePosition', label: t('change_position') },
       { action: 'remove', disabled: !remove, label: t('list_remove') },
     ])
@@ -120,6 +123,9 @@ export default forwardRef<ListMenuType, ListMenuProps>(({
         break
       case 'export':
         onExport(selectInfo.listInfo, selectInfo.index)
+        break
+      case 'exportQQMusicText':
+        onExportQQMusicText(selectInfo.listInfo)
         break
       case 'sync':
         onSync(selectInfo.listInfo as LX.List.UserListInfo)
