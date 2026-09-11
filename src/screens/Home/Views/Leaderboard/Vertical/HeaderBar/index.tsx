@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { View } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 
 // import { useGetter, useDispatch } from '@/store'
 // import Tag from './Tag'
@@ -20,6 +20,7 @@ import { type BoardItem } from '@/store/leaderboard/state'
 export interface HeaderBarProps {
   onSourceChange: (source: LX.OnlineSource) => void
   onBoardChange: (id: string) => void
+  onPlayAll: () => void
 }
 
 export interface HeaderBarType {
@@ -27,7 +28,7 @@ export interface HeaderBarType {
 }
 
 
-export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBoardChange }, ref) => {
+export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBoardChange, onPlayAll }, ref) => {
   const sourceSelectorRef = useRef<SourceSelectorType>(null)
   const theme = useTheme()
   const [boards, setBoards] = useState<BoardItem[]>([])
@@ -52,7 +53,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 
   return (
     <View style={{ ...styles.currentList, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
-      <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
+      <View style={styles.segment}><SourceSelector ref={sourceSelectorRef} style={styles.sourceSelector} onSourceChange={onSourceChange} /></View>
       <DorpDownMenu
         menus={menus}
         onPress={handleBoardChange}
@@ -68,6 +69,10 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
           <Icon name="chevron-right" size={12} color={theme['c-font-label']} />
         </View>
       </DorpDownMenu>
+      <TouchableOpacity accessibilityRole="button" onPress={onPlayAll} style={{ ...styles.playAllButton, backgroundColor: theme['c-primary'] }}>
+        <Icon name="play" size={15} color={theme['c-primary-button-font']} />
+        <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('play_all')}</Text>
+      </TouchableOpacity>
     </View>
   )
 })
@@ -83,10 +88,10 @@ const styles = createStyle({
     borderWidth: BorderWidths.normal,
     borderRadius: BorderRadius.normal + 8,
   },
-  selector: {
-    width: 86,
-  },
-  boardSelector: { flex: 1, height: '100%', marginLeft: 8, borderRadius: 15 },
+  segment: { flex: 1, minWidth: 0, borderRightWidth: BorderWidths.normal, borderRightColor: 'rgba(128,128,128,0.28)' },
+  sourceSelector: { flex: 1 },
+  boardSelector: { flex: 1, height: '100%', marginHorizontal: 4, borderRadius: 15 },
   boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13 },
   boardSelectorText: { flex: 1, textAlign: 'center', textAlignVertical: 'center', paddingRight: 6 },
+  playAllButton: { flex: 1, minWidth: 0, margin: 4, borderRadius: 15, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center' },
 })

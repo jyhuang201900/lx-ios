@@ -74,6 +74,26 @@ export const equalizerPresets: readonly EqualizerPreset[] = Object.freeze([
     nameKey: 'setting_play_sound_effect_preset_soft',
     gains: [-5, -5, -4, -4, 3, 2, 4, 4, 0, 0],
   },
+  {
+    id: 'acoustic',
+    nameKey: 'setting_play_sound_effect_preset_acoustic',
+    gains: [-3, -2, 0, 1, 2, 3, 3, 2, 1, 0],
+  },
+  {
+    id: 'cinema',
+    nameKey: 'setting_play_sound_effect_preset_cinema',
+    gains: [5, 4, 2, 0, -1, 1, 3, 4, 4, 3],
+  },
+  {
+    id: 'night',
+    nameKey: 'setting_play_sound_effect_preset_night',
+    gains: [-4, -3, -2, -1, 2, 3, 2, 1, 0, -1],
+  },
+  {
+    id: 'gaming',
+    nameKey: 'setting_play_sound_effect_preset_gaming',
+    gains: [2, 1, -1, -2, 0, 3, 5, 4, 2, 1],
+  },
 ])
 
 export const soundEffectConvolutionOptions: readonly SoundEffectConvolutionOption[] = Object.freeze([

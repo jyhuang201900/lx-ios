@@ -44,6 +44,10 @@ export type EqualizerPresetNameKey =
   | 'setting_play_sound_effect_preset_slow'
   | 'setting_play_sound_effect_preset_subwoofer'
   | 'setting_play_sound_effect_preset_soft'
+  | 'setting_play_sound_effect_preset_acoustic'
+  | 'setting_play_sound_effect_preset_cinema'
+  | 'setting_play_sound_effect_preset_night'
+  | 'setting_play_sound_effect_preset_gaming'
 
 export interface EqualizerPreset {
   id: Exclude<LX.SoundEffectPresetId, 'custom'>

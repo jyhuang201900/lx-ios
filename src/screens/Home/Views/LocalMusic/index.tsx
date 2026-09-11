@@ -79,6 +79,7 @@ export default () => {
     if (!confirmed) return
     try {
       await unlink(file.path)
+      await unlink(file.path.replace(/\.[^.]+$/, '.lrc')).catch(() => {})
       await removeListMusics(LIST_IDS.DEFAULT, [file.path])
       setFiles(current => current.filter(item => item.path != file.path))
       toast(global.i18n.t('local_music_delete_success'))

@@ -58,6 +58,7 @@ const Component = <S extends Sources>({ fontSize = 15, center, onSourceChange }:
       onPress={handleChangeSource}
       fontSize={fontSize}
       activeId={source}
+      btnStyle={styles.sourceMenuButton}
     >
       <View style={styles.sourceMenu}>
         <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} numberOfLines={1} size={fontSize}>{t(`source_${sourceNameType}_${source}`)}</Text>
@@ -70,6 +71,9 @@ export default forwardRef(Component) as <S extends Sources>(p: SourceSelectorPro
 
 
 const styles = createStyle({
+  sourceMenuButton: {
+    flex: 1,
+  },
   sourceMenu: {
     height: '100%',
     justifyContent: 'center',

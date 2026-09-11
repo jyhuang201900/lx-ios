@@ -12,6 +12,7 @@ import { handlePlay } from './listAction'
 
 export interface MusicListType {
   loadList: (source: LX.OnlineSource, listId: string) => void
+  playAll: () => void
 }
 
 export default forwardRef<MusicListType, {}>((props, ref) => {
@@ -47,6 +48,10 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
   }, [applyListResult])
 
   useImperativeHandle(ref, () => ({
+    playAll() {
+      const info = boardState.listDetailInfo
+      if (info.id) void handlePlay(info.id, info.list, 0)
+    },
     async loadList(source, id) {
       const requestId = ++loadRequestIdRef.current
       currentListIdRef.current = id
@@ -116,4 +121,3 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
     rowType='medium'
    />
 })
-

@@ -14,6 +14,10 @@ declare global {
       | 'electronic'
       | 'subwoofer'
       | 'soft'
+      | 'acoustic'
+      | 'cinema'
+      | 'night'
+      | 'gaming'
       | 'custom'
       | 'slowSong'
       | 'bass'
@@ -467,4 +471,3 @@ declare global {
     }
   }
 }
-

@@ -40,12 +40,12 @@ const styles = createStyle({
   currentList: {
     flexDirection: 'row',
     paddingRight: 2,
-    minHeight: 48,
+    minHeight: 42,
     alignItems: 'center',
     borderBottomWidth: BorderWidths.normal,
     borderRadius: 16,
     marginHorizontal: 10,
-    marginTop: 8,
+    marginTop: 6,
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
   currentListIcon: {

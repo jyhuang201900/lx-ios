@@ -19,6 +19,7 @@ import {
   equalizerFrequencies,
   equalizerPresets,
   getEqualizerGains,
+  isSoundEffectActive,
   normalizeEqualizerPresetId,
   soundEffectController,
   soundEffectConvolutionOptions,
@@ -47,6 +48,22 @@ const formatGain = (gain: number) => `${gain > 0 ? '+' : ''}${Number.isInteger(g
 const formatPercent = (value: number) => `${Math.round(value) * 10}%`
 const formatPlaybackRate = (value: number) => `${value.toFixed(2)}x`
 const formatPlain = (value: number) => `${Math.round(value)}`
+
+const SoundEffectOverview = memo(({ presetName, active }: { presetName: string, active: boolean }) => {
+  const t = useI18n()
+  const theme = useTheme()
+  return (
+    <View style={{ ...styles.overview, backgroundColor: active ? theme['c-primary-background-active'] : theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
+      <View style={styles.overviewCopy}>
+        <Text size={16} style={styles.overviewTitle}>{t('setting_play_sound_effect')}</Text>
+        <Text size={12} color={theme['c-font-label']}>{t('setting_play_sound_effect_preset')} · {presetName}</Text>
+      </View>
+      <View style={{ ...styles.overviewStatus, backgroundColor: active ? theme['c-primary'] : theme['c-button-background'] }}>
+        <Text size={12} color={active ? theme['c-primary-button-font'] : theme['c-button-font']}>{active ? t('setting_play_sound_effect_enable') : t('setting_play_sound_effect_preset_none')}</Text>
+      </View>
+    </View>
+  )
+})
 
 const PlaceholderCheckbox = memo(({
   checked,
@@ -517,6 +534,9 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
   )?.id ?? null, [convolutionMainGain, convolutionSendGain, convolutionSource, userConvolutionPresetList])
   const isEqPresetLimitReached = userEqPresetList.length >= maxUserPresetCount
   const isConvolutionPresetLimitReached = userConvolutionPresetList.length >= maxUserPresetCount
+  const active = isSoundEffectActive(setting)
+  const activePreset = equalizerPresets.find(item => item.id == presetId)
+  const presetName = t(activePreset?.nameKey ?? 'setting_play_sound_effect_preset_custom')
 
   useEffect(() => {
     setPreviewGains(getEqualizerGains(setting))
@@ -702,7 +722,8 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
   if (layoutMode == 'stacked') {
     return (
       <View style={styles.container}>
-        <View style={styles.sectionBlock}>
+        <SoundEffectOverview presetName={presetName} active={active} />
+        <View style={{ ...styles.sectionBlock, ...styles.sectionCard, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'] }}>
           <EnvironmentSection
             selectedSource={convolutionSource}
             mainGain={convolutionMainGain}
@@ -718,7 +739,7 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
             onUserPresetLongPress={preset => { void handleRemoveConvolutionPreset(preset) }}
           />
         </View>
-        <View style={{ ...styles.sectionBlock, ...styles.sectionBlockWithDivider, borderTopColor: dividerColor }}>
+        <View style={{ ...styles.sectionBlock, ...styles.sectionCard, ...styles.sectionBlockWithDivider, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'], borderTopColor: dividerColor }}>
           <EqualizerSection
             presetId={presetId}
             previewGains={previewGains}
@@ -735,7 +756,7 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
             layoutMode={layoutMode}
           />
         </View>
-        <View style={{ ...styles.sectionBlock, ...styles.sectionBlockWithDivider, borderTopColor: dividerColor }}>
+        <View style={{ ...styles.sectionBlock, ...styles.sectionCard, ...styles.sectionBlockWithDivider, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'], borderTopColor: dividerColor }}>
           <PitchSection
             playbackRate={pitchPlaybackRate}
             onReset={handleResetPitch}
@@ -743,7 +764,7 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
             onShowTip={handleShowPitchTip}
           />
         </View>
-        <View style={{ ...styles.sectionBlock, ...styles.sectionBlockWithDivider, borderTopColor: dividerColor }}>
+        <View style={{ ...styles.sectionBlock, ...styles.sectionCard, ...styles.sectionBlockWithDivider, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'], borderTopColor: dividerColor }}>
           <SurroundSection
             enabled={surroundEnabled}
             speed={surroundSpeed}
@@ -765,9 +786,10 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
 
   return (
     <View style={styles.container}>
+      <SoundEffectOverview presetName={presetName} active={active} />
       <View style={styles.layout}>
         <View style={styles.leftColumn}>
-          <View style={styles.sectionBlock}>
+          <View style={{ ...styles.sectionBlock, ...styles.sectionCard, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'] }}>
             <EnvironmentSection
               selectedSource={convolutionSource}
               mainGain={convolutionMainGain}
@@ -783,7 +805,7 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
               onUserPresetLongPress={preset => { void handleRemoveConvolutionPreset(preset) }}
             />
           </View>
-          <View style={{ ...styles.sectionBlock, ...styles.sectionBlockWithDivider, borderTopColor: dividerColor }}>
+          <View style={{ ...styles.sectionBlock, ...styles.sectionCard, ...styles.sectionBlockWithDivider, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'], borderTopColor: dividerColor }}>
             <PitchSection
               playbackRate={pitchPlaybackRate}
               onReset={handleResetPitch}
@@ -791,7 +813,7 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
               onShowTip={handleShowPitchTip}
             />
           </View>
-          <View style={{ ...styles.sectionBlock, ...styles.sectionBlockWithDivider, borderTopColor: dividerColor }}>
+          <View style={{ ...styles.sectionBlock, ...styles.sectionCard, ...styles.sectionBlockWithDivider, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'], borderTopColor: dividerColor }}>
             <SurroundSection
               enabled={surroundEnabled}
               speed={surroundSpeed}
@@ -811,7 +833,7 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
         <View style={{ ...styles.columnDivider, borderRightColor: dividerColor }} />
 
         <View style={styles.rightColumn}>
-          <View style={styles.sectionBlock}>
+          <View style={{ ...styles.sectionBlock, ...styles.sectionCard, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'] }}>
             <EqualizerSection
               presetId={presetId}
               previewGains={previewGains}
@@ -841,6 +863,10 @@ const styles = createStyle({
     paddingHorizontal: 16,
     paddingBottom: 8,
   },
+  overview: { minHeight: 68, borderRadius: 18, borderWidth: 1, paddingHorizontal: 14, marginBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  overviewCopy: { flex: 1, minWidth: 0, gap: 4 },
+  overviewTitle: { fontWeight: '600' },
+  overviewStatus: { maxWidth: '48%', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 7 },
   layout: {
     flexDirection: 'row',
     alignItems: 'stretch',
@@ -862,6 +888,7 @@ const styles = createStyle({
     borderRadius: 16,
     padding: 12,
   },
+  sectionCard: { borderWidth: 1 },
   sectionBlockWithDivider: {
     borderTopWidth: 1,
     borderStyle: 'solid',

@@ -6,6 +6,7 @@ import { useTheme } from '@/store/theme/hook'
 import { useActiveListId, useListFetching, useMyList } from '@/store/list/hook'
 import { createStyle } from '@/utils/tools'
 import { setActiveList } from '@/core/list'
+import { playList } from '@/core/player/player'
 import Text from '@/components/common/Text'
 import { type Position } from './ListMenu'
 import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
@@ -81,10 +82,16 @@ export default ({ onShowMenu, onCreate }: {
     <View style={{ ...styles.library, borderBottomColor: theme['c-border-background'] }}>
       <View style={styles.libraryHeader}>
         <Text size={11} color={theme['c-font-label']}>{global.i18n.t('list_total', { num: allList.length })}</Text>
-        <TouchableOpacity accessibilityRole="button" onPress={onCreate} style={{ ...styles.createButton, backgroundColor: theme['c-primary'] }}>
-          <Icon name="add-music" color={theme['c-primary-button-font']} size={15} />
-          <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('list_create')}</Text>
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity accessibilityRole="button" onPress={() => { void playList(activeListId, 0) }} style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-background-active'] }}>
+            <Icon name="play" color={theme['c-primary-font-active']} size={15} />
+            <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('play_all')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity accessibilityRole="button" onPress={onCreate} style={{ ...styles.createButton, backgroundColor: theme['c-primary'] }}>
+            <Icon name="add-music" color={theme['c-primary-button-font']} size={15} />
+            <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('list_create')}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <FlatList
         horizontal
@@ -102,6 +109,8 @@ export default ({ onShowMenu, onCreate }: {
 const styles = createStyle({
   library: { flexGrow: 0, flexShrink: 0, paddingTop: 12, paddingBottom: 10, borderBottomWidth: StyleSheet.hairlineWidth },
   libraryHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 10 },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   rail: { paddingHorizontal: 12, gap: 10 },
   card: { width: scaleSizeW(180), height: scaleSizeH(82), borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, flexDirection: 'row', overflow: 'hidden' },

@@ -7,6 +7,7 @@ import { getLeaderboardSetting, saveLeaderboardSetting } from '@/utils/data'
 import HeaderBar, { type HeaderBarType, type HeaderBarProps } from './HeaderBar'
 import { getBoardsList } from '@/core/leaderboard'
 import { type BoardItem } from '@/store/leaderboard/state'
+import boardState from '@/store/leaderboard/state'
 
 export default () => {
   const musicListRef = useRef<MusicListType>(null)
@@ -28,6 +29,10 @@ export default () => {
   const onBoundChange = (id: string) => {
     boundInfo.current.id = id
     handleBoundChange(boundInfo.current.source, id)
+  }
+  const handlePlayAll = () => {
+    const info = boardState.listDetailInfo
+    if (info.id) void musicListRef.current?.playAll()
   }
   const onSourceChange: HeaderBarProps['onSourceChange'] = (source) => {
     boundInfo.current.source = source
@@ -71,7 +76,7 @@ export default () => {
 
   return (
     <View style={styles.container}>
-      <HeaderBar ref={headerBarRef} onSourceChange={onSourceChange} onBoardChange={onBoundChange} />
+      <HeaderBar ref={headerBarRef} onSourceChange={onSourceChange} onBoardChange={onBoundChange} onPlayAll={handlePlayAll} />
       <MusicList ref={musicListRef} />
     </View>
   )

@@ -14,7 +14,7 @@ import {
 } from './utils'
 import { getLocalFilePath } from '@/utils/music'
 import { readLyric, readPic } from '@/utils/localMediaMetadata'
-import { stat } from '@/utils/fs'
+import { readFile, stat } from '@/utils/fs'
 
 const getOtherSourceByLocal = async<T>(musicInfo: LX.Music.MusicInfoLocal, handler: (infos: LX.Music.MusicInfoOnline[]) => Promise<T>) => {
   let result: LX.Music.MusicInfoOnline[] = []
@@ -217,6 +217,13 @@ const getMusicFileLyric = async(filePath: string) => {
   if (!lyric) return null
   return parseLyric(lyric)
 }
+const getMusicSidecarLyric = async(filePath: string) => {
+  const lrcPath = filePath.replace(/\.[^.\\/]+$/, '.lrc')
+  if (lrcPath == filePath) return null
+  const lyric = await readFile(lrcPath).catch(() => null)
+  if (!lyric) return null
+  return parseLyric(lyric)
+}
 export const getLyricInfo = async({ musicInfo, isRefresh, skipFileLyric, onToggleSource = () => {} }: {
   musicInfo: LX.Music.MusicInfoLocal
   skipFileLyric?: boolean
@@ -233,6 +240,11 @@ export const getLyricInfo = async({ musicInfo, isRefresh, skipFileLyric, onToggl
     // 尝试读取文件内歌词
     const rawlrcInfo = await getMusicFileLyric(musicInfo.meta.filePath)
     if (rawlrcInfo) return buildLyricInfo(rawlrcInfo)
+
+    // Downloaded tracks keep a standard same-name .lrc file so lyrics remain
+    // available after the original online source is no longer reachable.
+    const sidecarLyricInfo = await getMusicSidecarLyric(musicInfo.meta.filePath)
+    if (sidecarLyricInfo) return buildLyricInfo(sidecarLyricInfo)
 
     const lyricInfo = await getCachedLyricInfo(musicInfo)
     if (lyricInfo?.lyric) return buildLyricInfo(lyricInfo)

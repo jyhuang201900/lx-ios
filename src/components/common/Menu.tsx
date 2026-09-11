@@ -29,15 +29,15 @@ const styles = createStyle({
   menu: {
     position: 'absolute',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(128,128,128,0.22)',
+    borderColor: 'rgba(128,128,128,0.34)',
     borderRadius: 16,
     backgroundColor: 'white',
-    elevation: 3,
+    elevation: 8,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.14,
-    shadowRadius: 16,
+    shadowOpacity: 0.22,
+    shadowRadius: 20,
   },
   menuItem: {
     paddingHorizontal: 16,
@@ -144,7 +144,7 @@ const Menu = ({
               ? (
                   <View
                     key={menu.action}
-                    style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height, opacity: 0.4 }}
+                    style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height, opacity: 0.4 }}
                   >
                     <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
                   </View>
@@ -153,7 +153,7 @@ const Menu = ({
                 ? (
                     <View
                       key={menu.action}
-                      style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height, backgroundColor: theme['c-primary-background-active'] }}
+                      style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height, backgroundColor: theme['c-primary-background-active'] }}
                     >
                       <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} color={theme['c-primary-font-active']} size={fontSize} numberOfLines={1}>{menu.label}</Text>
                     </View>
@@ -161,7 +161,7 @@ const Menu = ({
                 : (
                     <TouchableHighlight
                       key={menu.action}
-                      style={{ ...styles.menuItem, width: menuItemStyle.width, height: menuItemStyle.height }}
+                      style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height }}
                       underlayColor={theme['c-primary-background-active']}
                       onPress={() => { menuPress(menu) }}
                     >
