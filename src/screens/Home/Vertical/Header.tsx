@@ -46,7 +46,7 @@ const LeftHeader = () => {
   return (
     <View style={{
       ...styles.container,
-      height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight + scaleSizeH(42),
+      height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
       paddingTop: statusBarHeight,
     }}>
       <View style={styles.left}>
@@ -78,7 +78,7 @@ const RightHeader = () => {
   return (
     <View style={{
       ...styles.container,
-      height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight + scaleSizeH(42),
+      height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
       paddingTop: statusBarHeight,
     }}>
       <View style={styles.left}>
@@ -123,7 +123,6 @@ const styles = createStyle({
     paddingLeft: 7,
     alignItems: 'center',
     height: '100%',
-    paddingTop: scaleSizeH(42),
   },
   btn: {
     // flex: 1,
@@ -136,11 +135,9 @@ const styles = createStyle({
   navButtons: {
     flexDirection: 'row',
     alignItems: 'center',
-    position: 'absolute',
-    top: 4,
-    left: 10,
-    right: 10,
-    height: scaleSizeH(42),
+    flexShrink: 0,
+    height: '100%',
+    marginRight: 4,
   },
   navButton: {
     width: 44,
