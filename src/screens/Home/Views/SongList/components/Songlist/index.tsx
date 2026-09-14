@@ -1,4 +1,4 @@
-import { useRef, forwardRef, useImperativeHandle } from 'react'
+import { useCallback, useRef, forwardRef, useImperativeHandle } from 'react'
 import { type ListInfoItem } from '@/store/songlist/state'
 // import LoadingMask, { LoadingMaskType } from '@/components/common/LoadingMask'
 import List, { type ListProps, type ListType, type Status } from './List'
@@ -30,9 +30,9 @@ export default forwardRef<SonglistType, SonglistProps>(({
     },
   }))
 
-  const handleOpenDetail = (item: ListInfoItem, index: number) => {
+  const handleOpenDetail = useCallback((item: ListInfoItem, index: number) => {
     navigations.pushSonglistDetailScreen(commonState.componentIds.home!, item)
-  }
+  }, [])
 
   return (
     <List

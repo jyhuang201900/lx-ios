@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import { View, Platform, TouchableOpacity } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import { type ListInfoItem } from '@/store/songlist/state'
@@ -18,9 +18,9 @@ export default memo(({ item, index, width, showSource, onPress }: {
 }) => {
   const theme = useTheme()
   const itemWidth = width - gap
-  const handlePress = () => {
+  const handlePress = useCallback(() => {
     onPress(item, index)
-  }
+  }, [index, item, onPress])
   return (
     item.source
       ? (
@@ -39,7 +39,13 @@ export default memo(({ item, index, width, showSource, onPress }: {
         )
       : <View style={{ ...styles.listItem, width: itemWidth }} />
   )
-})
+}, (prevProps, nextProps) => (
+  prevProps.item === nextProps.item &&
+  prevProps.index === nextProps.index &&
+  prevProps.width === nextProps.width &&
+  prevProps.showSource === nextProps.showSource &&
+  prevProps.onPress === nextProps.onPress
+))
 
 const styles = createStyle({
   listItem: {

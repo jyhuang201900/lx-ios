@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react'
 import Songlist, { type SonglistProps, type SonglistType } from './components/Songlist'
 import { clearList, getList, setList, setListInfo } from '@/core/songlist'
 import songlistState from '@/store/songlist/state'
@@ -50,7 +50,7 @@ export default forwardRef<ListType, {}>((props, ref) => {
   }, [])
 
 
-  const handleRefresh: SonglistProps['onRefresh'] = () => {
+  const handleRefresh = useCallback<SonglistProps['onRefresh']>(() => {
     const page = 1
     const requestId = ++requestIdRef.current
     const source = songlistState.listInfo.source
@@ -67,8 +67,8 @@ export default forwardRef<ListType, {}>((props, ref) => {
       if (songlistState.listInfo.list.length && page == 1) clearList()
       listRef.current?.setStatus('error')
     })
-  }
-  const handleLoadMore: SonglistProps['onLoadMore'] = () => {
+  }, [])
+  const handleLoadMore = useCallback<SonglistProps['onLoadMore']>(() => {
     const requestId = ++requestIdRef.current
     const source = songlistState.listInfo.source
     const tagId = songlistState.listInfo.tagId
@@ -85,7 +85,7 @@ export default forwardRef<ListType, {}>((props, ref) => {
       if (songlistState.listInfo.list.length && page == 1) clearList()
       listRef.current?.setStatus('error')
     })
-  }
+  }, [])
 
   return <Songlist
     ref={listRef}

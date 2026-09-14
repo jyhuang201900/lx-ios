@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, forwardRef, useImperativeHandle } from 'react'
+import { useCallback, useRef, useState, useMemo, forwardRef, useImperativeHandle } from 'react'
 import { FlatList, View, RefreshControl, type FlatListProps } from 'react-native'
 
 import ListItem from './ListItem'
@@ -49,12 +49,12 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
     },
   }))
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (status != 'idle') return
     onLoadMore()
-  }
+  }, [status, onLoadMore])
 
-  const renderItem: FlatListType['renderItem'] = ({ item, index }) => (
+  const renderItem = useCallback<FlatListType['renderItem']>(({ item, index }) => (
     <ListItem
       item={item}
       index={index}
@@ -62,8 +62,8 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
       showSource={showSource}
       onPress={onOpenDetail}
     />
-  )
-  const getkey: FlatListType['keyExtractor'] = item => item.id
+  ), [rowInfo.width, showSource, onOpenDetail])
+  const getkey = useCallback<FlatListType['keyExtractor']>(item => item.id, [])
   // const getItemLayout: FlatListType['getItemLayout'] = (data, index) => {
   //   return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
   // }

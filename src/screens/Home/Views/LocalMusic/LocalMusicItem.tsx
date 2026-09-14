@@ -5,7 +5,8 @@ import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { formatPlayTime2 } from '@/utils'
 import { extname, type FileType } from '@/utils/fs'
-import { readMetadata, type MusicMetadataFull } from '@/utils/localMediaMetadata'
+import { readMetadataCached } from '@/utils/localMediaMetadataCache'
+import { type MusicMetadataFull } from '@/utils/localMediaMetadata'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 
@@ -29,7 +30,7 @@ export default memo(({ file, onPlay, onDelete }: {
 
   useEffect(() => {
     let isActive = true
-    void readMetadata(file.path)
+    void readMetadataCached(file)
       .then(info => {
         if (isActive) setMetadata(info)
       })
@@ -78,7 +79,11 @@ export default memo(({ file, onPlay, onDelete }: {
       </TouchableOpacity>
     </View>
   )
-}, (prevProps, nextProps) => prevProps.file === nextProps.file)
+}, (prevProps, nextProps) => (
+  prevProps.file === nextProps.file &&
+  prevProps.onPlay === nextProps.onPlay &&
+  prevProps.onDelete === nextProps.onDelete
+))
 
 const styles = createStyle({
   row: {

@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react'
 import OnlineList, { type OnlineListType, type OnlineListProps } from '@/components/OnlineList'
 import { search } from '@/core/search/music'
 import searchMusicState, { type Source } from '@/store/search/music/state'
@@ -55,7 +55,7 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
   }, [])
 
 
-  const handleRefresh: OnlineListProps['onRefresh'] = () => {
+  const handleRefresh = useCallback<OnlineListProps['onRefresh']>(() => {
     const page = 1
     const requestId = ++requestIdRef.current
     const text = searchInfoRef.current.text
@@ -70,8 +70,8 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
       if (isUnmountedRef.current || requestId != requestIdRef.current) return
       listRef.current?.setStatus('error')
     })
-  }
-  const handleLoadMore: OnlineListProps['onLoadMore'] = () => {
+  }, [])
+  const handleLoadMore = useCallback<OnlineListProps['onLoadMore']>(() => {
     const requestId = ++requestIdRef.current
     const text = searchInfoRef.current.text
     const source = searchInfoRef.current.source
@@ -87,7 +87,7 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
       if (isUnmountedRef.current || requestId != requestIdRef.current) return
       listRef.current?.setStatus('error')
     })
-  }
+  }, [])
 
   return <OnlineList
     ref={listRef}

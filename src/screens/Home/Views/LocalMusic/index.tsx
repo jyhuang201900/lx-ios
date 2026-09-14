@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AppState, FlatList, Platform, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { AppState, FlatList, Platform, RefreshControl, StyleSheet, TouchableOpacity, View, type FlatListProps } from 'react-native'
 
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
@@ -66,7 +66,7 @@ export default () => {
     void refresh(true)
   }), [refresh])
 
-  const importMusic = async() => {
+  const importMusic = useCallback(async() => {
     try {
       if (!await existsFile(directory)) await mkdir(directory)
       const file = await selectFile({ extTypes: audioExtensions, toPath: directory })
@@ -75,20 +75,20 @@ export default () => {
         toast(global.i18n.t('storage_file_no_match'), 'long')
         return
       }
-      await refresh()
+      await refresh(true)
       toast(global.i18n.t('local_music_import_success'))
     } catch (error: any) {
       if (!String(error?.code ?? '').includes('picker_cancelled')) toast(global.i18n.t('local_music_import_failed'))
     }
-  }
+  }, [directory, refresh])
 
-  const playFile = async(file: FileType, metadata: MusicMetadataFull | null) => {
+  const playFile = useCallback(async(file: FileType, metadata: MusicMetadataFull | null) => {
     const musicInfo = metadata ? buildLocalMusicInfo(file.path, metadata) : buildLocalMusicInfoByFilePath(file)
     await addListMusics(LIST_IDS.DEFAULT, [musicInfo], 'bottom')
     await playListById(LIST_IDS.DEFAULT, musicInfo.id)
-  }
+  }, [])
 
-  const removeFile = async(file: FileType) => {
+  const removeFile = useCallback(async(file: FileType) => {
     const confirmed = await confirmDialog({
       title: global.i18n.t('local_music_delete_title'),
       message: global.i18n.t('local_music_delete_confirm', { name: file.name }),
@@ -104,7 +104,11 @@ export default () => {
     } catch {
       toast(global.i18n.t('local_music_delete_failed'))
     }
-  }
+  }, [])
+
+  const renderItem = useCallback<FlatListProps<FileType>['renderItem']>(({ item }) => (
+    <LocalMusicItem file={item} onPlay={playFile} onDelete={removeFile} />
+  ), [playFile, removeFile])
 
   return <View style={styles.container}>
     <View style={{ ...styles.summary, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
@@ -152,9 +156,7 @@ export default () => {
           onRefresh={() => { void refresh(true) }}
         />
       )}
-      renderItem={({ item }) => (
-        <LocalMusicItem file={item} onPlay={(file, metadata) => { void playFile(file, metadata) }} onDelete={file => { void removeFile(file) }} />
-      )}
+      renderItem={renderItem}
       ListEmptyComponent={<View style={styles.empty}>
         <Icon name="music_time" size={32} color={theme['c-font-label']} />
         <Text style={styles.emptyTitle} size={15}>{global.i18n.t('local_music_empty_title')}</Text>

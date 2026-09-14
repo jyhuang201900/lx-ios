@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react'
 
 import { search } from '@/core/search/songlist'
 import Songlist, { type SonglistProps, type SonglistType } from '@/screens/Home/Views/SongList/components/Songlist'
@@ -56,7 +56,7 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
   }, [])
 
 
-  const handleRefresh: SonglistProps['onRefresh'] = () => {
+  const handleRefresh = useCallback<SonglistProps['onRefresh']>(() => {
     const page = 1
     const requestId = ++requestIdRef.current
     const text = searchInfoRef.current.text
@@ -71,8 +71,8 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
       if (isUnmountedRef.current || requestId != requestIdRef.current) return
       listRef.current?.setStatus('error')
     })
-  }
-  const handleLoadMore: SonglistProps['onLoadMore'] = () => {
+  }, [])
+  const handleLoadMore = useCallback<SonglistProps['onLoadMore']>(() => {
     const requestId = ++requestIdRef.current
     const text = searchInfoRef.current.text
     const source = searchInfoRef.current.source
@@ -88,7 +88,7 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
       if (isUnmountedRef.current || requestId != requestIdRef.current) return
       listRef.current?.setStatus('error')
     })
-  }
+  }, [])
 
   return <Songlist
     ref={listRef}
