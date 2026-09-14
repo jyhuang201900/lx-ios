@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { AppState, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { addListMusics, removeListMusics } from '@/core/list'
 import { getLocalMusicDirectory } from '@/core/download'
+import { subscribeDownloadTasks } from '@/core/download'
+import DownloadQueue from './DownloadQueue'
 import { playListById } from '@/core/player/player'
 import { LIST_IDS } from '@/config/constant'
 import { buildLocalMusicInfoByFilePath } from '@/screens/Home/Views/Mylist/MyList/listAction'
@@ -25,14 +27,20 @@ export default () => {
   const theme = useTheme()
   const [files, setFiles] = useState<FileType[]>([])
   const [refreshing, setRefreshing] = useState(false)
+  const hasLoadedRef = useRef(false)
+  const lastRefreshRef = useRef(0)
+  const completedTaskIdsRef = useRef(new Set<string>())
   const directory = useMemo(() => getLocalMusicDirectory(), [])
 
-  const refresh = useCallback(async() => {
+  const refresh = useCallback(async(force = false) => {
+    if (!force && hasLoadedRef.current && Date.now() - lastRefreshRef.current < 1500) return
     setRefreshing(true)
     try {
       if (!await existsFile(directory)) await mkdir(directory)
       const entries = await readDir(directory)
       setFiles(entries.filter(isAudioFile).sort((a, b) => b.lastModified - a.lastModified))
+      hasLoadedRef.current = true
+      lastRefreshRef.current = Date.now()
     } catch (error) {
       console.warn('read local music failed', error)
       toast(global.i18n.t('local_music_load_failed'))
@@ -42,11 +50,24 @@ export default () => {
   }, [directory])
 
   useEffect(() => {
-    void refresh()
+    void refresh(true)
     const handleNav = (id: string) => { if (id == 'nav_local') void refresh() }
     global.state_event.on('navActiveIdUpdated', handleNav)
-    return () => { global.state_event.off('navActiveIdUpdated', handleNav) }
+    const appStateSubscription = AppState.addEventListener('change', state => {
+      if (state == 'active') void refresh(true)
+    })
+    return () => {
+      global.state_event.off('navActiveIdUpdated', handleNav)
+      appStateSubscription.remove()
+    }
   }, [refresh])
+
+  useEffect(() => subscribeDownloadTasks(tasks => {
+    const completed = tasks.filter(task => task.status == 'completed' && !completedTaskIdsRef.current.has(task.id))
+    if (!completed.length) return
+    for (const task of completed) completedTaskIdsRef.current.add(task.id)
+    void refresh(true)
+  }), [refresh])
 
   const importMusic = async() => {
     try {
@@ -107,6 +128,7 @@ export default () => {
         <Text size={12} color={theme['c-font']}>{refreshing ? global.i18n.t('loading') : global.i18n.t('local_music_refresh')}</Text>
       </TouchableOpacity>
     </View>
+    {Platform.OS == 'ios' ? <DownloadQueue /> : null}
     <View style={styles.sectionHeader}>
       <Text size={12} color={theme['c-font-label']}>{global.i18n.t('local_music_storage')}</Text>
       <Text size={11} color={theme['c-font-label']}>{global.i18n.t('local_music_storage_hint')}</Text>
