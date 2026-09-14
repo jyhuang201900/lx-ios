@@ -19,7 +19,13 @@ const PrevBtn = ({ size }: { size: number }) => {
     void playPrev()
   }
   return (
-    <TouchableOpacity accessibilityRole="button" style={{ ...styles.cotrolBtn, width: size, height: size }} activeOpacity={0.5} onPress={handlePlayPrev}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={global.i18n.t('play_prev')}
+      style={{ ...styles.cotrolBtn, width: size, height: size }}
+      activeOpacity={0.5}
+      onPress={handlePlayPrev}
+    >
       <Icon name='prevMusic' color={theme['c-button-font']} rawSize={size * 0.7} />
     </TouchableOpacity>
   )
@@ -31,7 +37,13 @@ const NextBtn = ({ size }: { size: number }) => {
     void playNext()
   }
   return (
-    <TouchableOpacity accessibilityRole="button" style={{ ...styles.cotrolBtn, width: size, height: size }} activeOpacity={0.5} onPress={handlePlayNext}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={global.i18n.t('play_next')}
+      style={{ ...styles.cotrolBtn, width: size, height: size }}
+      activeOpacity={0.5}
+      onPress={handlePlayNext}
+    >
       <Icon name='nextMusic' color={theme['c-button-font']} rawSize={size * 0.7} />
     </TouchableOpacity>
   )
@@ -41,10 +53,16 @@ const TogglePlayBtn = ({ size }: { size: number }) => {
   const theme = useTheme()
   const isPlay = useIsPlay()
   return (
-    <TouchableOpacity accessibilityRole="button" style={{ ...styles.playBtn, width: size, height: size, backgroundColor: theme['c-button-background-selected'] }} activeOpacity={0.6} onPress={() => {
-      markTimeoutExitInteraction()
-      togglePlay()
-    }}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={global.i18n.t(isPlay ? 'pause' : 'play')}
+      style={{ ...styles.playBtn, width: size, height: size, backgroundColor: theme['c-button-background-selected'] }}
+      activeOpacity={0.6}
+      onPress={() => {
+        markTimeoutExitInteraction()
+        togglePlay()
+      }}
+    >
       <Icon name={isPlay ? 'pause' : 'play'} color={theme['c-button-font']} rawSize={size * 0.7} />
     </TouchableOpacity>
   )

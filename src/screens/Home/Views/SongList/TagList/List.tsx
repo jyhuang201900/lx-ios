@@ -23,6 +23,7 @@ export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
   const [list, setList] = useState<TagInfo['tags']>([])
   const t = useI18n()
   const prevSource = useRef('')
+  const requestIdRef = useRef(0)
 
   const isUnmountedRef = useRef(false)
   useEffect(() => {
@@ -37,8 +38,9 @@ export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
       if (id != activeId) setActiveId(id)
       if (source != prevSource.current) {
         setList([{ name: '', list: [{ name: t('songlist_tag_default'), id: '', parent_id: '', parent_name: '', source }] }])
+        const requestId = ++requestIdRef.current
         void getTags(source).then(tagInfo => {
-          if (isUnmountedRef.current) return
+          if (isUnmountedRef.current || requestId != requestIdRef.current) return
           prevSource.current = source
           setList([
             { name: '', list: [{ name: t('songlist_tag_default'), id: '', parent_id: '', parent_name: '', source }] },

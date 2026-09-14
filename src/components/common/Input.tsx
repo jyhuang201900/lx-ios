@@ -123,7 +123,12 @@ export default forwardRef<InputType, InputProps>(({ onChangeText, onClearText, c
       <Animated.View style={{ ...styles.clearBtnContent, transform: [{ scale: scaleClearBtn }] }}> */}
         {clearBtn
           ? <View style={styles.clearBtnContent}>
-              <TouchableOpacity style={styles.clearBtn} onPress={clearText}>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel={global.i18n.t('input_clear')}
+                style={styles.clearBtn}
+                onPress={clearText}
+              >
                 <Icon name="remove" color={theme['c-primary-dark-100-alpha-500']} size={11} />
               </TouchableOpacity>
             </View>

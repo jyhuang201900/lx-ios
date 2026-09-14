@@ -29,7 +29,12 @@ export default memo(({ musicInfo }: {
     <View style={{ height: HEADER_HEIGHT + statusBarHeight, paddingTop: statusBarHeight }}>
       <StatusBar />
       <View style={{ ...styles.container }}>
-        <TouchableOpacity onPress={back} style={{ ...styles.button, width: HEADER_HEIGHT }}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={t('back')}
+          onPress={back}
+          style={{ ...styles.button, width: HEADER_HEIGHT }}
+        >
           <Icon name="chevron-left" size={18} />
         </TouchableOpacity>
         <Text numberOfLines={1} size={16} style={styles.title}>{t('comment_title', { name: musicInfo.name, singer: musicInfo.singer })}</Text>

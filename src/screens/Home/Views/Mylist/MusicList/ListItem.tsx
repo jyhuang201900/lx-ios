@@ -69,7 +69,13 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
         }
       </TouchableOpacity>
       {/* <View style={styles.listItemRight}> */}
-      <TouchableOpacity accessibilityRole="button" onPress={handleShowMenu} ref={moreButtonRef} style={styles.moreButton}>
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={`${item.name} ${global.i18n.t('list_more')}`}
+        onPress={handleShowMenu}
+        ref={moreButtonRef}
+        style={styles.moreButton}
+      >
         <Icon name="dots-vertical" style={{ color: theme['c-350'] }} size={12} />
       </TouchableOpacity>
       {/* </View> */}

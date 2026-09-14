@@ -18,6 +18,7 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
   const listRef = useRef<OnlineListType>(null)
   const headerRef = useRef<HeaderType>(null)
   const isUnmountedRef = useRef(false)
+  const requestIdRef = useRef(0)
   const info = useListInfo()
 
   useImperativeHandle(ref, () => ({
@@ -39,6 +40,7 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
       } else {
         listRef.current?.setStatus('loading')
         const page = 1
+        const requestId = ++requestIdRef.current
         setListDetailInfo(info.source, info.id)
         headerRef.current?.setInfo({
           name: (info.name || listDetailInfo.info.name) ?? '',
@@ -49,7 +51,7 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
         })
         return getListDetail(id, source, page).then((listDetail) => {
           const result = setListDetail(listDetail, id, page)
-          if (isUnmountedRef.current) return
+          if (isUnmountedRef.current || requestId != requestIdRef.current) return
           requestAnimationFrame(() => {
             headerRef.current?.setInfo({
               name: (info.name || listDetailInfo.info.name) ?? '',
@@ -62,6 +64,7 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
             listRef.current?.setStatus(songlistState.listDetailInfo.maxPage <= page ? 'end' : 'idle')
           })
         }).catch(() => {
+          if (isUnmountedRef.current || requestId != requestIdRef.current) return
           if (songlistState.listDetailInfo.list.length && page == 1) clearListDetail()
           listRef.current?.setStatus('error')
         })
@@ -84,26 +87,34 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
   }
   const handleRefresh: OnlineListProps['onRefresh'] = () => {
     const page = 1
+    const requestId = ++requestIdRef.current
+    const id = songlistState.listDetailInfo.id
+    const source = songlistState.listDetailInfo.source
     listRef.current?.setStatus('refreshing')
-    getListDetail(songlistState.listDetailInfo.id, songlistState.listDetailInfo.source, page, true).then((listDetail) => {
-      const result = setListDetail(listDetail, songlistState.listDetailInfo.id, page)
-      if (isUnmountedRef.current) return
+    getListDetail(id, source, page, true).then((listDetail) => {
+      const result = setListDetail(listDetail, id, page)
+      if (isUnmountedRef.current || requestId != requestIdRef.current) return
       listRef.current?.setList(result.list)
       listRef.current?.setStatus(songlistState.listDetailInfo.maxPage <= page ? 'end' : 'idle')
     }).catch(() => {
+      if (isUnmountedRef.current || requestId != requestIdRef.current) return
       if (songlistState.listDetailInfo.list.length && page == 1) clearListDetail()
       listRef.current?.setStatus('error')
     })
   }
   const handleLoadMore: OnlineListProps['onLoadMore'] = () => {
+    const requestId = ++requestIdRef.current
+    const id = songlistState.listDetailInfo.id
+    const source = songlistState.listDetailInfo.source
     listRef.current?.setStatus('loading')
     const page = songlistState.listDetailInfo.list.length ? songlistState.listDetailInfo.page + 1 : 1
-    getListDetail(songlistState.listDetailInfo.id, songlistState.listDetailInfo.source, page).then((listDetail) => {
-      const result = setListDetail(listDetail, songlistState.listDetailInfo.id, page)
-      if (isUnmountedRef.current) return
+    getListDetail(id, source, page).then((listDetail) => {
+      const result = setListDetail(listDetail, id, page)
+      if (isUnmountedRef.current || requestId != requestIdRef.current) return
       listRef.current?.setList(result.list, true)
       listRef.current?.setStatus(songlistState.listDetailInfo.maxPage <= page ? 'end' : 'idle')
     }).catch(() => {
+      if (isUnmountedRef.current || requestId != requestIdRef.current) return
       if (songlistState.listDetailInfo.list.length && page == 1) clearListDetail()
       listRef.current?.setStatus('error')
     })
@@ -121,4 +132,3 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
     // progressViewOffset={}
    />
 })
-

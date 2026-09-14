@@ -87,7 +87,12 @@ export default forwardRef<PopupType, PopupProps>(({
   }))
 
   const closeBtnComponent = useMemo(() => closeBtn
-    ? <TouchableOpacity accessibilityRole="button" style={styles.closeBtn} onPress={() => modalRef.current?.setVisible(false)}>
+    ? <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={global.i18n.t('close')}
+        style={styles.closeBtn}
+        onPress={() => modalRef.current?.setVisible(false)}
+      >
         <Icon name="close" style={{ color: theme['c-font-label'] }} size={12} />
       </TouchableOpacity>
     : null, [closeBtn, theme])
