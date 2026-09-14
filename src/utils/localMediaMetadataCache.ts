@@ -19,11 +19,6 @@ export const readMetadataCached = async(file: FileType): Promise<MusicMetadataFu
   }
 
   const metadata = await promise
-  if (!metadata) {
-    metadataPromises.delete(key)
-    return null
-  }
-
   metadataCache.set(key, metadata)
   metadataPromises.delete(key)
 
