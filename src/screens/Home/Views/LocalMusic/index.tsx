@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AppState, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { AppState, FlatList, Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
@@ -9,17 +9,14 @@ import { subscribeDownloadTasks } from '@/core/download'
 import DownloadQueue from './DownloadQueue'
 import { playListById } from '@/core/player/player'
 import { LIST_IDS } from '@/config/constant'
-import { buildLocalMusicInfoByFilePath } from '@/screens/Home/Views/Mylist/MyList/listAction'
+import { buildLocalMusicInfo, buildLocalMusicInfoByFilePath } from '@/screens/Home/Views/Mylist/MyList/listAction'
 import { existsFile, extname, mkdir, readDir, selectFile, unlink, type FileType } from '@/utils/fs'
 import { confirmDialog, createStyle, toast } from '@/utils/tools'
+import type { MusicMetadataFull } from '@/utils/localMediaMetadata'
 import { useTheme } from '@/store/theme/hook'
+import LocalMusicItem from './LocalMusicItem'
 
 const audioExtensions = ['mp3', 'flac', 'wav', 'ape', 'ogg', 'm4a', 'aac']
-
-const formatSize = (size: number) => {
-  if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`
-  return `${(size / 1024 / 1024).toFixed(size >= 100 * 1024 * 1024 ? 0 : 1)} MB`
-}
 
 const isAudioFile = (file: FileType) => file.isFile && (file.mimeType?.startsWith('audio/') || audioExtensions.includes(extname(file.name).toLowerCase()))
 
@@ -85,8 +82,8 @@ export default () => {
     }
   }
 
-  const playFile = async(file: FileType) => {
-    const musicInfo = buildLocalMusicInfoByFilePath(file)
+  const playFile = async(file: FileType, metadata: MusicMetadataFull | null) => {
+    const musicInfo = metadata ? buildLocalMusicInfo(file.path, metadata) : buildLocalMusicInfoByFilePath(file)
     await addListMusics(LIST_IDS.DEFAULT, [musicInfo], 'bottom')
     await playListById(LIST_IDS.DEFAULT, musicInfo.id)
   }
@@ -137,20 +134,9 @@ export default () => {
       data={files}
       keyExtractor={item => item.path}
       contentContainerStyle={files.length ? styles.list : styles.emptyList}
-      renderItem={({ item }) => <View style={{ ...styles.row, borderColor: theme['c-border-background'] }}>
-        <TouchableOpacity accessibilityRole="button" style={styles.rowMain} onPress={() => { void playFile(item) }}>
-          <View style={{ ...styles.fileIcon, backgroundColor: theme['c-primary-background-active'] }}>
-            <Icon name="play-outline" size={15} color={theme['c-primary-font-active']} />
-          </View>
-          <View style={styles.fileCopy}>
-            <Text size={14} numberOfLines={1}>{item.name.replace(/\.[^.]+$/, '')}</Text>
-            <Text size={11} color={theme['c-font-label']} numberOfLines={1}>{extname(item.name).toUpperCase()} · {formatSize(item.size)}</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity accessibilityRole="button" accessibilityLabel={`${global.i18n.t('delete')} ${item.name}`} style={styles.deleteButton} onPress={() => { void removeFile(item) }}>
-          <Icon name="remove" size={14} color={theme['c-font-label']} />
-        </TouchableOpacity>
-      </View>}
+      renderItem={({ item }) => (
+        <LocalMusicItem file={item} onPlay={(file, metadata) => { void playFile(file, metadata) }} onDelete={file => { void removeFile(file) }} />
+      )}
       ListEmptyComponent={<View style={styles.empty}>
         <Icon name="music_time" size={32} color={theme['c-font-label']} />
         <Text style={styles.emptyTitle} size={15}>{global.i18n.t('local_music_empty_title')}</Text>
@@ -171,11 +157,6 @@ const styles = createStyle({
   sectionHeader: { minHeight: 32, paddingHorizontal: 17, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   list: { paddingHorizontal: 16, paddingBottom: 24 },
   emptyList: { flexGrow: 1 },
-  row: { minHeight: 64, marginBottom: 6, paddingHorizontal: 8, flexDirection: 'row', alignItems: 'center', borderWidth: StyleSheet.hairlineWidth, borderRadius: 16 },
-  rowMain: { flex: 1, minHeight: 64, flexDirection: 'row', alignItems: 'center' },
-  fileIcon: { width: 38, height: 38, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
-  fileCopy: { flex: 1, paddingHorizontal: 11, gap: 5, justifyContent: 'center' },
-  deleteButton: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   empty: { alignItems: 'center', paddingHorizontal: 42, paddingTop: 58 },
   emptyTitle: { marginTop: 15 },
   emptyDescription: { marginTop: 7, textAlign: 'center', lineHeight: 19 },
