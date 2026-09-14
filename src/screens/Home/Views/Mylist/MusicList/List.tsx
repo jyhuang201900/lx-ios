@@ -1,5 +1,5 @@
 import { playList } from '@/core/player/player'
-import { useMemo, useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
+import { useCallback, useMemo, useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 import { FlatList, type NativeScrollEvent, type NativeSyntheticEvent, type FlatListProps } from 'react-native'
 
 import listState from '@/store/list/state'
@@ -54,6 +54,7 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
   const prevSelectIndexRef = useRef(-1)
   const [selectedList, setSelectedList] = useState<LX.List.ListMusics>([])
   const selectedListRef = useRef<LX.List.ListMusics>([])
+  const selectedIds = useMemo(() => new Set(selectedList.map(item => item.id)), [selectedList])
   const currentListIdRef = useRef('')
   const waitJumpListPositionRef = useRef(false)
   const rowInfo = useRef(getRowInfo())
@@ -188,7 +189,7 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
     selectedListRef.current = newList
     setSelectedList(newList)
   }
-  const handleSelect = (item: LX.Music.MusicInfo, pressIndex: number) => {
+  const handleSelect = useCallback((item: LX.Music.MusicInfo, pressIndex: number) => {
     let newList: LX.List.ListMusics
     if (selectModeRef.current == 'single') {
       prevSelectIndexRef.current = pressIndex
@@ -218,9 +219,9 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
     }
 
     handleUpdateSelectedList(newList)
-  }
+  }, [currentList, onSelectAll])
 
-  const handlePress = (item: LX.Music.MusicInfo, index: number) => {
+  const handlePress = useCallback((item: LX.Music.MusicInfo, index: number) => {
     // console.log(global.lx.homePagerIdle)
     requestAnimationFrame(() => {
       // console.log(global.lx.homePagerIdle)
@@ -231,14 +232,14 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
         handlePlay(index)
       }
     })
-  }
+  }, [currentList, handleSelect])
 
-  const handleLongPress = (item: LX.Music.MusicInfo, index: number) => {
+  const handleLongPress = useCallback((item: LX.Music.MusicInfo, index: number) => {
     if (isMultiSelectModeRef.current) return
     prevSelectIndexRef.current = index
     handleUpdateSelectedList([item])
     onMuiltSelectMode()
-  }
+  }, [currentList, onMuiltSelectMode, handleSelect])
 
   const handleScroll = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (listFirstScrollRef.current) {
@@ -249,7 +250,7 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
   }
 
 
-  const renderItem: FlatListType['renderItem'] = ({ item, index }) => (
+  const renderItem = useCallback<FlatListType['renderItem']>(({ item, index }) => (
     <ListItem
       item={item}
       index={index}
@@ -257,16 +258,16 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
       onPress={handlePress}
       onLongPress={handleLongPress}
       onShowMenu={onShowMenu}
-      selectedList={selectedList}
+      selectedIds={selectedIds}
       rowInfo={rowInfo.current}
       isShowAlbumName={isShowAlbumName}
       isShowInterval={isShowInterval}
     />
-  )
-  const getkey: FlatListType['keyExtractor'] = item => item.id
-  const getItemLayout: FlatListType['getItemLayout'] = (data, index) => {
+  ), [activeIndex, handlePress, handleLongPress, onShowMenu, selectedList, isShowAlbumName, isShowInterval])
+  const getkey = useCallback<FlatListType['keyExtractor']>(item => item.id, [])
+  const getItemLayout = useCallback<FlatListType['getItemLayout']>((data, index) => {
     return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
-  }
+  }, [])
 
   return (
     <FlatList

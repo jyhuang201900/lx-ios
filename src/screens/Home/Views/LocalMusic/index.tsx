@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AppState, FlatList, Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { AppState, FlatList, Platform, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
@@ -144,6 +144,14 @@ export default () => {
       data={files}
       keyExtractor={item => item.path}
       contentContainerStyle={files.length ? styles.list : styles.emptyList}
+      refreshControl={(
+        <RefreshControl
+          refreshing={refreshing}
+          colors={[theme['c-primary']]}
+          progressViewOffset={64}
+          onRefresh={() => { void refresh(true) }}
+        />
+      )}
       renderItem={({ item }) => (
         <LocalMusicItem file={item} onPlay={(file, metadata) => { void playFile(file, metadata) }} onDelete={file => { void removeFile(file) }} />
       )}

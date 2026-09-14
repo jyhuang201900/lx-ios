@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, forwardRef, useImperativeHandle } from 'react'
+import { useCallback, useMemo, useRef, useState, forwardRef, useImperativeHandle } from 'react'
 import { FlatList, type FlatListProps, RefreshControl, View } from 'react-native'
 
 // import { useMusicList } from '@/store/list/hook'
@@ -66,6 +66,7 @@ const List = forwardRef<ListType, ListProps>(({
   const prevSelectIndexRef = useRef(-1)
   const [selectedList, setSelectedList] = useState<LX.Music.MusicInfoOnline[]>([])
   const selectedListRef = useRef<LX.Music.MusicInfoOnline[]>([])
+  const selectedIds = useMemo(() => new Set(selectedList.map(item => item.id)), [selectedList])
   const [visibleMultiSelect, setVisibleMultiSelect] = useState(false)
   const [status, setStatus] = useState<Status>('idle')
   const rowInfo = useRef(getRowInfo(rowType))
@@ -119,7 +120,7 @@ const List = forwardRef<ListType, ListProps>(({
     selectedListRef.current = newList
     setSelectedList(newList)
   }
-  const handleSelect = (item: LX.Music.MusicInfoOnline, pressIndex: number) => {
+  const handleSelect = useCallback((item: LX.Music.MusicInfoOnline, pressIndex: number) => {
     let newList: LX.Music.MusicInfoOnline[]
     if (selectModeRef.current == 'single') {
       prevSelectIndexRef.current = pressIndex
@@ -149,9 +150,9 @@ const List = forwardRef<ListType, ListProps>(({
     }
 
     handleUpdateSelectedList(newList)
-  }
+  }, [currentList, onSelectAll])
 
-  const handlePress = (item: LX.Music.MusicInfoOnline, index: number) => {
+  const handlePress = useCallback((item: LX.Music.MusicInfoOnline, index: number) => {
     requestAnimationFrame(() => {
       if (checkHomePagerIdle && !global.lx.homePagerIdle) return
       if (isMultiSelectModeRef.current) {
@@ -165,22 +166,22 @@ const List = forwardRef<ListType, ListProps>(({
         }
       }
     })
-  }
+  }, [checkHomePagerIdle, currentList, onPlayList, handleSelect])
 
-  const handleLongPress = (item: LX.Music.MusicInfoOnline, index: number) => {
+  const handleLongPress = useCallback((item: LX.Music.MusicInfoOnline, index: number) => {
     if (isMultiSelectModeRef.current) return
     prevSelectIndexRef.current = index
     handleUpdateSelectedList([item])
     onMuiltSelectMode()
-  }
+  }, [currentList, onMuiltSelectMode, handleSelect])
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (status != 'idle') return
     onLoadMore()
-  }
+  }, [status, onLoadMore])
 
 
-  const renderItem: FlatListType['renderItem'] = ({ item, index }) => (
+  const renderItem = useCallback<FlatListType['renderItem']>(({ item, index }) => (
     <ListItem
       item={item}
       index={index}
@@ -188,16 +189,16 @@ const List = forwardRef<ListType, ListProps>(({
       onPress={handlePress}
       onLongPress={handleLongPress}
       onShowMenu={onShowMenu}
-      selectedList={selectedList}
+      selectedIds={selectedIds}
       rowInfo={rowInfo.current}
       isShowAlbumName={isShowAlbumName}
       isShowInterval={isShowInterval}
     />
-  )
-  const getkey: FlatListType['keyExtractor'] = item => item.id
-  const getItemLayout: FlatListType['getItemLayout'] = (data, index) => {
+  ), [showSource, handlePress, handleLongPress, onShowMenu, selectedList, isShowAlbumName, isShowInterval])
+  const getkey = useCallback<FlatListType['keyExtractor']>(item => item.id, [])
+  const getItemLayout = useCallback<FlatListType['getItemLayout']>((data, index) => {
     return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
-  }
+  }, [])
   const refreshControl = useMemo(() => (
     <RefreshControl
       colors={[theme['c-primary']]}

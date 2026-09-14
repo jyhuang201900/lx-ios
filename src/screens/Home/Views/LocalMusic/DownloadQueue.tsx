@@ -21,6 +21,11 @@ const statusKeys: Record<DownloadTask['status'], string> = {
   canceled: 'download_queue_canceled',
 }
 
+const formatSize = (size: number) => {
+  if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`
+  return `${(size / 1024 / 1024).toFixed(size >= 100 * 1024 * 1024 ? 0 : 1)} MB`
+}
+
 export default () => {
   const theme = useTheme()
   const [tasks, setTasks] = useState<DownloadTask[]>([])
@@ -40,10 +45,12 @@ export default () => {
             <Icon name="download-2" size={15} color={theme['c-primary-font-active']} />
           </View>
           <View style={styles.taskCopy}>
-            <Text size={13} numberOfLines={1}>{task.name}</Text>
+            <Text size={13} numberOfLines={1}>{task.name}{task.singer ? ` - ${task.singer}` : ''}</Text>
             <Text size={11} color={theme['c-font-label']} numberOfLines={1}>
               {global.i18n.t(statusKeys[task.status])}
+              {task.quality ? ` · ${task.quality.toUpperCase()}` : ''}
               {task.status == 'downloading' && task.totalBytes > 0 ? ` · ${Math.round(task.progress * 100)}%` : ''}
+              {task.status == 'downloading' && task.totalBytes > 0 ? ` · ${formatSize(task.receivedBytes)}/${formatSize(task.totalBytes)}` : ''}
             </Text>
             {task.status == 'downloading' ? (
               <View style={styles.progressTrack}>

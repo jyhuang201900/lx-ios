@@ -13,21 +13,21 @@ import Badge from '@/components/common/Badge'
 export const ITEM_HEIGHT = scaleSizeH(LIST_ITEM_HEIGHT)
 
 
-export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPress, selectedList, rowInfo, isShowAlbumName, isShowInterval }: {
+export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPress, selectedIds, rowInfo, isShowAlbumName, isShowInterval }: {
   item: LX.Music.MusicInfo
   index: number
   activeIndex: number
   onPress: (item: LX.Music.MusicInfo, index: number) => void
   onLongPress: (item: LX.Music.MusicInfo, index: number) => void
   onShowMenu: (item: LX.Music.MusicInfo, index: number, position: { x: number, y: number, w: number, h: number }) => void
-  selectedList: LX.Music.MusicInfo[]
+  selectedIds: Set<string>
   rowInfo: RowInfo
   isShowAlbumName: boolean
   isShowInterval: boolean
 }) => {
   const theme = useTheme()
 
-  const isSelected = selectedList.includes(item)
+  const isSelected = selectedIds.has(item.id)
   // console.log(item.name, selectedList, selectedList.includes(item))
   const isSupported = useAssertApiSupport(item.source)
   const moreButtonRef = useRef<TouchableOpacity>(null)
@@ -88,7 +88,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
     prevProps.isShowInterval === nextProps.isShowInterval &&
     prevProps.activeIndex != nextProps.index &&
     nextProps.activeIndex != nextProps.index &&
-    nextProps.selectedList.includes(nextProps.item) == prevProps.selectedList.includes(nextProps.item)
+    nextProps.selectedIds.has(nextProps.item.id) == prevProps.selectedIds.has(prevProps.item.id)
   )
 })
 
