@@ -165,13 +165,21 @@ export const onRemoteCommand = (handler: (event: {
 }
 
 export const getWindowSize = async(): Promise<{ width: number, height: number }> => {
-  if (typeof UtilsModule?.getWindowSize == 'function') return UtilsModule.getWindowSize()
-
   const window = Dimensions.get('window')
-  return {
+  const fallbackSize = {
     width: Math.round(window.width * window.scale),
     height: Math.round(window.height * window.scale),
   }
+
+  if (typeof UtilsModule?.getWindowSize != 'function') return fallbackSize
+
+  const size = await UtilsModule.getWindowSize()
+  return size?.width && size?.height
+    ? {
+        width: Math.round(size.width),
+        height: Math.round(size.height),
+      }
+    : fallbackSize
 }
 
 export const onWindowSizeChange = (handler: (size: { width: number, height: number }) => void): () => void => {
