@@ -5,7 +5,7 @@ import Popup, { type PopupType } from '@/components/common/Popup'
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { useTempPlayList } from '@/store/player/hook'
-import { clearTempPlayeList } from '@/core/player/tempPlayList'
+import { clearTempPlayeList, removeTempPlayList } from '@/core/player/tempPlayList'
 import { playTempPlayListItem } from '@/core/player/player'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
@@ -36,6 +36,10 @@ export default forwardRef<QueuePopupType>((_, ref) => {
     popupRef.current?.setVisible(false)
   }
 
+  const handleRemoveItem = (index: number) => {
+    removeTempPlayList(index)
+  }
+
   const handleClearQueue = () => {
     clearTempPlayeList()
     popupRef.current?.setVisible(false)
@@ -56,6 +60,14 @@ export default forwardRef<QueuePopupType>((_, ref) => {
           <Text size={11} color={theme['c-font-label']} numberOfLines={1}>{musicInfo.singer}</Text>
         </View>
         <Icon name="play-outline" size={13} color={theme['c-font-label']} />
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={`${global.i18n.t('delete')} ${musicInfo.name}`}
+          style={styles.removeButton}
+          onPress={() => handleRemoveItem(index)}
+        >
+          <Icon name="close" size={11} color={theme['c-font-label']} />
+        </TouchableOpacity>
       </TouchableOpacity>
     )
   }, [theme])
@@ -133,6 +145,14 @@ const styles = createStyle({
     flex: 1,
     paddingHorizontal: 10,
     gap: 3,
+    justifyContent: 'center',
+  },
+  removeButton: {
+    width: 32,
+    height: 32,
+    marginLeft: 4,
+    borderRadius: 12,
+    alignItems: 'center',
     justifyContent: 'center',
   },
   empty: {
