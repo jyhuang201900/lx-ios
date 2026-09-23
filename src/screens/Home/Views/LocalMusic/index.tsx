@@ -3,6 +3,7 @@ import { AppState, FlatList, Platform, RefreshControl, StyleSheet, TouchableOpac
 
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
+import Input from '@/components/common/Input'
 import { addListMusics, removeListMusics } from '@/core/list'
 import { getLocalMusicDirectory } from '@/core/download'
 import { subscribeDownloadTasks } from '@/core/download'
@@ -23,6 +24,8 @@ const isAudioFile = (file: FileType) => file.isFile && (file.mimeType?.startsWit
 export default () => {
   const theme = useTheme()
   const [files, setFiles] = useState<FileType[]>([])
+  const [search, setSearch] = useState('')
+  const [sortMode, setSortMode] = useState<'latest' | 'name'>('latest')
   const [refreshing, setRefreshing] = useState(false)
   const hasLoadedRef = useRef(false)
   const lastRefreshRef = useRef(0)
@@ -109,6 +112,15 @@ export default () => {
   const renderItem = useCallback<FlatListProps<FileType>['renderItem']>(({ item }) => (
     <LocalMusicItem file={item} onPlay={playFile} onDelete={removeFile} />
   ), [playFile, removeFile])
+  const keyExtractor = useCallback<FlatListProps<FileType>['keyExtractor']>(item => item.path, [])
+  const visibleFiles = useMemo(() => {
+    const keyword = search.trim().toLowerCase()
+    return files
+      .filter(file => !keyword || file.name.toLowerCase().includes(keyword))
+      .sort((a, b) => sortMode == 'name'
+        ? a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+        : b.lastModified - a.lastModified)
+  }, [files, search, sortMode])
 
   return <View style={styles.container}>
     <View style={{ ...styles.summary, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
@@ -140,14 +152,43 @@ export default () => {
       </TouchableOpacity>
     </View>
     {Platform.OS == 'ios' ? <DownloadQueue /> : null}
+    <View style={{ ...styles.searchCard, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
+      <Icon name="search-2" size={15} color={theme['c-font-label']} />
+      <Input
+        value={search}
+        onChangeText={setSearch}
+        onClearText={() => setSearch('')}
+        clearBtn
+        placeholder={global.i18n.t('local_music_search')}
+        style={styles.searchInput}
+        size={13}
+      />
+    </View>
     <View style={styles.sectionHeader}>
       <Text size={12} color={theme['c-font-label']}>{global.i18n.t('local_music_storage')}</Text>
-      <Text size={11} color={theme['c-font-label']}>{global.i18n.t('local_music_storage_hint')}</Text>
+      <View style={styles.sortBar}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('local_music_sort_latest')}
+          style={{ ...styles.sortButton, backgroundColor: sortMode == 'latest' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'latest' ? theme['c-primary'] : theme['c-border-background'] }}
+          onPress={() => setSortMode('latest')}
+        >
+          <Text size={11} color={sortMode == 'latest' ? theme['c-font'] : theme['c-font-label']}>{global.i18n.t('local_music_sort_latest')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('local_music_sort_name')}
+          style={{ ...styles.sortButton, backgroundColor: sortMode == 'name' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'name' ? theme['c-primary'] : theme['c-border-background'] }}
+          onPress={() => setSortMode('name')}
+        >
+          <Text size={11} color={sortMode == 'name' ? theme['c-font'] : theme['c-font-label']}>{global.i18n.t('local_music_sort_name')}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
     <FlatList
-      data={files}
-      keyExtractor={item => item.path}
-      contentContainerStyle={files.length ? styles.list : styles.emptyList}
+      data={visibleFiles}
+      keyExtractor={keyExtractor}
+      contentContainerStyle={visibleFiles.length ? styles.list : styles.emptyList}
       refreshControl={(
         <RefreshControl
           refreshing={refreshing}
@@ -157,7 +198,10 @@ export default () => {
         />
       )}
       renderItem={renderItem}
-      ListEmptyComponent={<View style={styles.empty}>
+      ListEmptyComponent={search ? <View style={styles.empty}>
+        <Icon name="search-2" size={28} color={theme['c-font-label']} />
+        <Text style={styles.emptyTitle} size={15}>{global.i18n.t('local_music_no_match')}</Text>
+      </View> : <View style={styles.empty}>
         <Icon name="music_time" size={32} color={theme['c-font-label']} />
         <Text style={styles.emptyTitle} size={15}>{global.i18n.t('local_music_empty_title')}</Text>
         <Text style={styles.emptyDescription} size={12} color={theme['c-font-label']}>{global.i18n.t('local_music_empty_desc')}</Text>
@@ -174,7 +218,11 @@ const styles = createStyle({
   actions: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 14, gap: 9 },
   primaryAction: { flex: 1, minHeight: 43, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 },
   refreshAction: { minWidth: 82, minHeight: 43, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
+  searchCard: { marginHorizontal: 16, marginBottom: 10, minHeight: 42, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 11, flexDirection: 'row', alignItems: 'center' },
+  searchInput: { height: 38, paddingLeft: 8, fontSize: 13 },
   sectionHeader: { minHeight: 32, paddingHorizontal: 17, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sortBar: { flexDirection: 'row', gap: 6 },
+  sortButton: { minHeight: 28, paddingHorizontal: 9, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
   list: { paddingHorizontal: 16, paddingBottom: 24 },
   emptyList: { flexGrow: 1 },
   empty: { alignItems: 'center', paddingHorizontal: 42, paddingTop: 58 },
