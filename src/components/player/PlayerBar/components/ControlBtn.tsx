@@ -84,7 +84,7 @@ export default () => {
       </TouchableOpacity>
     */}
       {/* {btnPrev} */}
-      { isHorizontalMode ? <PlayPrevBtn /> : null }
+      <PlayPrevBtn />
       <TogglePlayBtn />
       <PlayNextBtn />
     </>
