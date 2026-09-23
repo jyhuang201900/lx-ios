@@ -118,7 +118,7 @@ export default () => {
     return files
       .filter(file => !keyword || file.name.toLowerCase().includes(keyword))
       .sort((a, b) => sortMode == 'name'
-        ? a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+        ? a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
         : b.lastModified - a.lastModified)
   }, [files, search, sortMode])
 
@@ -160,6 +160,10 @@ export default () => {
         onClearText={() => setSearch('')}
         clearBtn
         placeholder={global.i18n.t('local_music_search')}
+        returnKeyType="search"
+        enterKeyHint="search"
+        autoCorrect={false}
+        spellCheck={false}
         style={styles.searchInput}
         size={13}
       />
@@ -170,6 +174,7 @@ export default () => {
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={global.i18n.t('local_music_sort_latest')}
+          accessibilityState={{ selected: sortMode == 'latest' }}
           style={{ ...styles.sortButton, backgroundColor: sortMode == 'latest' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'latest' ? theme['c-primary'] : theme['c-border-background'] }}
           onPress={() => setSortMode('latest')}
         >
@@ -178,6 +183,7 @@ export default () => {
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={global.i18n.t('local_music_sort_name')}
+          accessibilityState={{ selected: sortMode == 'name' }}
           style={{ ...styles.sortButton, backgroundColor: sortMode == 'name' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'name' ? theme['c-primary'] : theme['c-border-background'] }}
           onPress={() => setSortMode('name')}
         >
