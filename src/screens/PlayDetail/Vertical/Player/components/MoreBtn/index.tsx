@@ -7,6 +7,7 @@ import CommentBtn from './CommentBtn'
 import CollectBtn from './CollectBtn'
 import QualityBtn from './QualityBtn'
 import DownloadBtn from './DownloadBtn'
+import QueueBtn from './QueueBtn'
 
 export default () => {
   return (
@@ -18,6 +19,7 @@ export default () => {
       <QualityBtn />
       <PlayModeBtn />
       <CommentBtn />
+      <QueueBtn />
     </View>
   )
 }

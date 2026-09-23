@@ -5,6 +5,7 @@ import MusicAddBtn from './MusicAddBtn'
 import TimeoutExitBtn from './TimeoutExitBtn'
 import QualityBtn from './QualityBtn'
 import DownloadBtn from './DownloadBtn'
+import QueueBtn from './QueueBtn'
 
 export default () => {
   return (
@@ -14,6 +15,7 @@ export default () => {
       <DownloadBtn />
       <QualityBtn />
       <PlayModeBtn />
+      <QueueBtn />
     </View>
   )
 }

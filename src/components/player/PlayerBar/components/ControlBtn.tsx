@@ -1,5 +1,7 @@
 import { TouchableOpacity } from 'react-native'
 import { Icon } from '@/components/common/Icon'
+import { useRef } from 'react'
+import QueuePopup, { type QueuePopupType } from '@/screens/PlayDetail/components/QueuePopup'
 import { useIsPlay } from '@/store/player/hook'
 import { useTheme } from '@/store/theme/hook'
 import { playNext, playPrev, togglePlay } from '@/core/player/player'
@@ -75,6 +77,8 @@ const TogglePlayBtn = () => {
 
 export default () => {
   const isHorizontalMode = useHorizontalMode()
+  const queuePopupRef = useRef<QueuePopupType>(null)
+
   return (
     <>
       {/* <TouchableOpacity activeOpacity={0.5} onPress={toggleNextPlayMode}>
@@ -87,6 +91,19 @@ export default () => {
       <PlayPrevBtn />
       <TogglePlayBtn />
       <PlayNextBtn />
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={global.i18n.t('play_queue_title')}
+        style={styles.cotrolBtn}
+        activeOpacity={0.5}
+        onPress={() => {
+          hapticFeedback('light')
+          queuePopupRef.current?.open()
+        }}
+      >
+        <Icon name='list-order' color={theme['c-button-font']} size={BTN_SIZE} />
+      </TouchableOpacity>
+      <QueuePopup ref={queuePopupRef} />
     </>
   )
 }
