@@ -3,6 +3,8 @@ import OnlineList, { type OnlineListType, type OnlineListProps } from '@/compone
 import { search } from '@/core/search/music'
 import searchMusicState, { type Source } from '@/store/search/music/state'
 import { handlePlay } from '@/components/OnlineList/listAction'
+import { addTempPlayList } from '@/core/player/tempPlayList'
+import { playNext } from '@/core/player/player'
 
 // export type MusicListProps = Pick<OnlineListProps,
 // 'onLoadMore'
@@ -49,7 +51,13 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
     },
     playAll() {
       const list = listRef.current?.getList() ?? []
-      if (list.length) handlePlay(list[0])
+      if (!list.length) return
+      addTempPlayList(list.map(item => ({
+        listId: '',
+        musicInfo: item,
+        isTop: true,
+      })))
+      void playNext()
     },
   }), [])
 
