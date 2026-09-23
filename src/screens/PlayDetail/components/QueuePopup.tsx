@@ -16,6 +16,12 @@ const getMusicInfo = (item: QueueItem) => 'progress' in item.musicInfo
   ? item.musicInfo.metadata.musicInfo
   : item.musicInfo
 
+const getSourceLabel = (source: string) => {
+  const key = `source_real_${source}` as any
+  const label = global.i18n.t(key)
+  return label === key ? source.toUpperCase() : label
+}
+
 export interface QueuePopupType {
   open: () => void
 }
@@ -47,6 +53,7 @@ export default forwardRef<QueuePopupType>((_, ref) => {
 
   const renderItem = useMemo<FlatListProps<QueueItem>['renderItem']>(({ item, index }) => {
     const musicInfo = getMusicInfo(item)
+    const sourceLabel = getSourceLabel(musicInfo.source)
     return (
       <TouchableOpacity
         accessibilityRole="button"
@@ -57,7 +64,10 @@ export default forwardRef<QueuePopupType>((_, ref) => {
         <Text style={styles.order} size={11} color={theme['c-300']}>{String(index + 1).padStart(2, '0')}</Text>
         <View style={styles.itemCopy}>
           <Text size={13} numberOfLines={1}>{musicInfo.name}</Text>
-          <Text size={11} color={theme['c-font-label']} numberOfLines={1}>{musicInfo.singer}</Text>
+          <View style={styles.itemMeta}>
+            <Text size={11} color={theme['c-font-label']} numberOfLines={1}>{musicInfo.singer}</Text>
+            <Text style={styles.sourceBadge} size={10} color={theme['c-font-label']} numberOfLines={1}>{sourceLabel}</Text>
+          </View>
         </View>
         <Icon name="play-outline" size={13} color={theme['c-font-label']} />
         <TouchableOpacity
@@ -146,6 +156,19 @@ const styles = createStyle({
     paddingHorizontal: 10,
     gap: 3,
     justifyContent: 'center',
+  },
+  itemMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  sourceBadge: {
+    flexGrow: 0,
+    flexShrink: 0,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+    backgroundColor: 'rgba(128,128,128,0.16)',
   },
   removeButton: {
     width: 32,
