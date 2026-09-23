@@ -35,6 +35,8 @@ const Title = () => {
 export default memo(() => {
   const popupRef = useRef<SettingPopupType>(null)
   const soundEffectPopupRef = useRef<SoundEffectPopupType>(null)
+  const timeoutModalRef = useRef<TimeoutExitEditModalType>(null)
+  const timeInfo = useTimeInfo()
   const theme = useTheme()
   const setting = useSetting()
 
@@ -47,6 +49,9 @@ export default memo(() => {
   const showSoundEffect = () => {
     soundEffectPopupRef.current?.show()
   }
+  const showTimeoutExit = () => {
+    timeoutModalRef.current?.show()
+  }
 
   return (
     <View style={{ height: HEADER_HEIGHT }} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_header}>
@@ -56,11 +61,13 @@ export default memo(() => {
         </TouchableOpacity>
         <Title />
         <CommentBtn />
+        <Btn icon="music_time" color={timeInfo.active ? theme['c-primary-font-active'] : undefined} onPress={showTimeoutExit} />
         <Btn icon="slider" color={isSoundEffectActive(setting) ? theme['c-primary-font-active'] : undefined} onPress={showSoundEffect} />
         <Btn icon="setting" size={18} onPress={showSetting} />
       </View>
       <SoundEffectPopup ref={soundEffectPopupRef} position="bottom" layoutMode="split" />
       <SettingPopup ref={popupRef} position="left" direction="horizontal" />
+      <TimeoutExitEditModal ref={timeoutModalRef} timeInfo={timeInfo} />
     </View>
   )
 })

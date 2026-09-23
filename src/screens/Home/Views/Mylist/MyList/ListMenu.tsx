@@ -29,6 +29,7 @@ export interface ListMenuProps {
   onSync: (listInfo: LX.List.UserListInfo) => void
   onSelectLocalFile: (listInfo: LX.List.MyListInfo, index: number) => void
   onRemove: (listInfo: LX.List.UserListInfo) => void
+  onMoveToTop: (listInfo: LX.List.MyListInfo) => void
 }
 export interface ListMenuType {
   show: (selectInfo: SelectInfo, position: Position) => void
@@ -49,6 +50,7 @@ export default forwardRef<ListMenuType, ListMenuProps>(({
   onSync,
   onSelectLocalFile,
   onRemove,
+  onMoveToTop,
 }, ref) => {
   const t = useI18n()
   const menuRef = useRef<MenuType>(null)
@@ -98,7 +100,7 @@ export default forwardRef<ListMenuType, ListMenuProps>(({
       { action: 'import', label: t('list_import') },
       { action: 'export', label: t('list_export') },
       { action: 'exportQQMusicText', label: t('list_export_qq_text') },
-      // { action: 'changePosition', label: t('change_position') },
+      { action: 'changePosition', disabled: !rename, label: t('list_move_to_top') },
       { action: 'remove', disabled: !remove, label: t('list_remove') },
     ])
   }
@@ -130,9 +132,9 @@ export default forwardRef<ListMenuType, ListMenuProps>(({
       case 'sync':
         onSync(selectInfo.listInfo as LX.List.UserListInfo)
         break
-        // case 'changePosition':
-
-        //   break
+      case 'changePosition':
+        onMoveToTop(selectInfo.listInfo)
+        break
       case 'local_file':
         onSelectLocalFile(selectInfo.listInfo, selectInfo.index)
         break

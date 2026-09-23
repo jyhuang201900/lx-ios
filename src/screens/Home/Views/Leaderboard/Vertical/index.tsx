@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { View, TouchableOpacity } from 'react-native'
+import { View } from 'react-native'
 import { createStyle } from '@/utils/tools'
 
 import MusicList, { type MusicListType } from '../MusicList'
@@ -9,6 +9,7 @@ import { getBoardsList } from '@/core/leaderboard'
 import { type BoardItem } from '@/store/leaderboard/state'
 import boardState from '@/store/leaderboard/state'
 import Text from '@/components/common/Text'
+import RetryButton from '@/components/common/RetryButton'
 import { useI18n } from '@/lang'
 import { useTheme } from '@/store/theme/hook'
 
@@ -83,15 +84,8 @@ export default () => {
         boardsFailed
           ? (
               <View style={styles.errorView}>
-                <Text size={13} color={theme['c-font-label']}>{t('list_error')}</Text>
-                <TouchableOpacity
-                  accessibilityRole="button"
-                  accessibilityLabel={t('retry_button_text')}
-                  style={{ ...styles.retryBtn, borderColor: theme['c-border-background'] }}
-                  onPress={initBoards}
-                >
-                  <Text size={12} color={theme['c-font-label']}>{t('retry_button_text')}</Text>
-                </TouchableOpacity>
+                <Text size={14} color={theme['c-font-label']}>{t('list_error')}</Text>
+                <RetryButton label={t('retry_button_text')} onPress={initBoards} />
               </View>
             )
           : (
@@ -119,14 +113,6 @@ const styles = createStyle({
     justifyContent: 'center',
     gap: 14,
     paddingVertical: 30,
-  },
-  retryBtn: {
-    minHeight: 34,
-    paddingHorizontal: 18,
-    borderRadius: 17,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   // content: {
   //   flex: 1,

@@ -44,7 +44,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
   const singer = `${item.singer}${isShowAlbumName && item.meta.albumName ? ` · ${item.meta.albumName}` : ''}`
 
   return (
-    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : active ? theme['c-primary-input-background'] : 'rgba(0,0,0,0)', opacity: isSupported ? 1 : 0.5 }}>
+    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : active ? theme['c-primary-input-background'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'], opacity: isSupported ? 1 : 0.5 }}>
       <TouchableOpacity accessibilityRole="button" style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
         {
           active
@@ -64,7 +64,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
         </View>
         {
           isShowInterval ? (
-            <Text size={12} color={active ? theme['c-primary-alpha-400'] : theme['c-250']} numberOfLines={1}>{item.interval}</Text>
+            <Text size={12} color={active ? theme['c-primary-alpha-400'] : theme['c-font-label']} numberOfLines={1}>{item.interval}</Text>
           ) : null
         }
       </TouchableOpacity>
@@ -76,7 +76,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
         ref={moreButtonRef}
         style={styles.moreButton}
       >
-        <Icon name="dots-vertical" style={{ color: theme['c-350'] }} size={12} />
+        <Icon name="dots-vertical" style={{ color: theme['c-font-label'] }} size={12} />
       </TouchableOpacity>
       {/* </View> */}
     </View>
@@ -104,7 +104,7 @@ const styles = createStyle({
     borderRadius: 14,
     alignItems: 'center',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(128,128,128,0.12)',
+    borderBottomColor: 'transparent', // 主题色在渲染处以内联样式提供
   },
   listItemLeft: {
     flex: 1,

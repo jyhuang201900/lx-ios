@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
-import { View, ScrollView, TouchableOpacity } from 'react-native'
+import { View, ScrollView } from 'react-native'
 
 import { createStyle } from '@/utils/tools'
 import TagGroup, { type TagGroupProps } from './TagGroup'
@@ -7,6 +7,7 @@ import { useI18n } from '@/lang'
 import { type TagInfo, type Source } from '@/store/songlist/state'
 import { getTags } from '@/core/songlist'
 import Text from '@/components/common/Text'
+import RetryButton from '@/components/common/RetryButton'
 import { useTheme } from '@/store/theme/hook'
 // import { BorderWidths } from '@/theme'
 
@@ -86,15 +87,8 @@ export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
                     failedSource
                       ? (
                           <>
-                            <Text size={13} color={theme['c-font-label']}>{t('list_error')}</Text>
-                            <TouchableOpacity
-                              accessibilityRole="button"
-                              accessibilityLabel={t('retry_button_text')}
-                              style={{ ...styles.retryBtn, borderColor: theme['c-border-background'] }}
-                              onPress={() => { loadTags(failedSource) }}
-                            >
-                              <Text size={12} color={theme['c-font-label']}>{t('retry_button_text')}</Text>
-                            </TouchableOpacity>
+                            <Text size={14} color={theme['c-font-label']}>{t('list_error')}</Text>
+                            <RetryButton label={t('retry_button_text')} onPress={() => { loadTags(failedSource) }} />
                           </>
                         )
                       : <Text>{t('list_loading')}</Text>
@@ -112,7 +106,7 @@ export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
 const styles = createStyle({
   tagContainer: {
     paddingTop: 8,
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     paddingBottom: 18,
   },
   blankView: {
@@ -121,13 +115,5 @@ const styles = createStyle({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 12,
-  },
-  retryBtn: {
-    minHeight: 34,
-    paddingHorizontal: 18,
-    borderRadius: 17,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 })

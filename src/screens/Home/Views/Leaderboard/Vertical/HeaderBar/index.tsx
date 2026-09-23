@@ -11,7 +11,7 @@ import SourceSelector, {
 } from './SourceSelector'
 import { useTheme } from '@/store/theme/hook'
 // import { BorderWidths } from '@/theme'
-import { BorderRadius, BorderWidths } from '@/theme'
+import { BorderWidths } from '@/theme'
 import DorpDownMenu from '@/components/common/DorpDownMenu'
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
@@ -53,7 +53,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 
   return (
     <View style={{ ...styles.currentList, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
-      <View style={styles.segment}><SourceSelector ref={sourceSelectorRef} style={styles.sourceSelector} onSourceChange={onSourceChange} /></View>
+      <View style={{ ...styles.segment, borderRightColor: theme['c-border-background'] }}><SourceSelector ref={sourceSelectorRef} style={styles.sourceSelector} onSourceChange={onSourceChange} /></View>
       <DorpDownMenu
         menus={menus}
         onPress={handleBoardChange}
@@ -82,13 +82,13 @@ const styles = createStyle({
     flexDirection: 'row',
     height: 52,
     zIndex: 2,
-    marginHorizontal: 12,
+    marginHorizontal: 16,
     marginTop: 12,
     marginBottom: 9,
     borderWidth: BorderWidths.normal,
-    borderRadius: BorderRadius.normal + 8,
+    borderRadius: 14,
   },
-  segment: { flex: 1, minWidth: 0, borderRightWidth: BorderWidths.normal, borderRightColor: 'rgba(128,128,128,0.28)' },
+  segment: { flex: 1, minWidth: 0, borderRightWidth: BorderWidths.normal },
   sourceSelector: { flex: 1 },
   boardSelector: { flex: 1, height: '100%', marginHorizontal: 4, borderRadius: 15 },
   boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13 },

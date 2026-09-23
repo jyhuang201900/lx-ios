@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState, forwardRef, useImperativeHandle } from 'react'
-import { FlatList, type FlatListProps, RefreshControl, View, TouchableOpacity, StyleSheet } from 'react-native'
+import { FlatList, type FlatListProps, RefreshControl, View } from 'react-native'
 
 // import { useMusicList } from '@/store/list/hook'
 import ListItem, { ITEM_HEIGHT } from './ListItem'
@@ -13,6 +13,7 @@ import { useI18n } from '@/lang'
 import Text from '@/components/common/Text'
 import Loading from '@/components/common/Loading'
 import { Icon } from '@/components/common/Icon'
+import RetryButton from '@/components/common/RetryButton'
 import { handlePlay } from './listAction'
 import { useSettingValue } from '@/store/setting/hook'
 
@@ -248,14 +249,7 @@ const List = forwardRef<ListType, ListProps>(({
         return (
           <View style={styles.empty}>
             <Text style={styles.emptyTitle} size={14} color={theme['c-font-label']}>{t('list_error')}</Text>
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel={t('list_error')}
-              style={{ ...styles.retryBtn, borderColor: theme['c-border-background'] }}
-              onPress={onLoadMore}
-            >
-              <Text size={12} color={theme['c-font-label']}>{t('retry_button_text')}</Text>
-            </TouchableOpacity>
+            <RetryButton label={t('retry_button_text')} onPress={onLoadMore} />
           </View>
         )
       case 'end':
@@ -353,14 +347,6 @@ const styles = createStyle({
   },
   emptyTitle: {
     opacity: 0.9,
-  },
-  retryBtn: {
-    minHeight: 34,
-    paddingHorizontal: 18,
-    borderRadius: 17,
-    borderWidth: StyleSheet.hairlineWidth,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 })
 

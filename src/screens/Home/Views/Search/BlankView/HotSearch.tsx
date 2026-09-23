@@ -4,6 +4,7 @@ import { type Source, type InitState } from '@/store/hotSearch/state'
 import Button from '@/components/common/Button'
 import { getList } from '@/core/hotSearch'
 import Text from '@/components/common/Text'
+import Loading from '@/components/common/Loading'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
@@ -35,6 +36,7 @@ export default forwardRef<HotSearchType, ListProps>((props, ref) => {
   // const [listType, setListType] = useState<SearchState['searchType']>('music')
   // const listRef = useRef<MusicListType>(null)
   const [list, setList] = useState<List>([])
+  const [loading, setLoading] = useState(false)
   const t = useI18n()
   // const theme = useTheme()
 
@@ -48,9 +50,14 @@ export default forwardRef<HotSearchType, ListProps>((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     show(source) {
+      setLoading(true)
       void getList(source).then((list) => {
         if (isUnmountedRef.current) return
         setList(list)
+        setLoading(false)
+      }).catch(() => {
+        if (isUnmountedRef.current) return
+        setLoading(false)
       })
     },
   }), [])
@@ -67,12 +74,24 @@ export default forwardRef<HotSearchType, ListProps>((props, ref) => {
             </View>
           </ScrollView>
         )
-      : null
+      : loading
+        ? (
+            <View style={styles.loading}>
+              <Loading size={16} label={t('list_loading')} />
+            </View>
+          )
+        : null
   )
 })
 
 
 const styles = createStyle({
+  loading: {
+    paddingTop: 20,
+    minHeight: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   title: {
     paddingTop: 20,
     fontWeight: '600',

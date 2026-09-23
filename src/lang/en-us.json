@@ -641,5 +641,6 @@
   "retry_button_text": "Retry",
   "search_history_clear_confirm": "Clear all search history?",
   "search_history_cleared": "Search history cleared",
-  "play_list_add_song_tip": "Find songs to add"
+  "play_list_add_song_tip": "Find songs to add",
+  "list_move_to_top": "Move to top"
 }

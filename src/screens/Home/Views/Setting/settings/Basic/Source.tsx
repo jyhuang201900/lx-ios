@@ -44,7 +44,7 @@ const Item = ({ id, name, desc, statusLabel, change }: {
       <Text style={styles.sourceLabel}>
         {name}
         {
-          desc ? <Text style={styles.sourceDesc} color={theme['c-500']} size={13}>  {desc}</Text> : null
+          desc ? <Text style={styles.sourceDesc} color={theme['c-font-label']} size={13}>  {desc}</Text> : null
         }
         {
           statusLabel ? <Text style={styles.sourceStatus} size={13}>  {statusLabel}</Text> : null

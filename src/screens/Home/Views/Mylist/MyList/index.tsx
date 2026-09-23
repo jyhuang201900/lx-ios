@@ -5,6 +5,8 @@ import ListNameEdit, { type ListNameEditType } from './ListNameEdit'
 import List from './List'
 import ListImportExport, { type ListImportExportType } from './ListImportExport'
 import { handleExportQQMusicText, handleRemove, handleSync } from './listAction'
+import { updateUserListPosition } from '@/core/list'
+import { toast } from '@/utils/tools'
 import ListMusicSort, { type ListMusicSortType } from './ListMusicSort'
 import DuplicateMusic, { type DuplicateMusicType } from './DuplicateMusic'
 import { useMyList } from '@/store/list/hook'
@@ -38,6 +40,11 @@ export default () => {
         onExport={(info, position) => listImportExportRef.current?.export(info, position)}
         onExportQQMusicText={info => { void handleExportQQMusicText(info) }}
         onRemove={info => { handleRemove(info) }}
+        onMoveToTop={info => {
+          void updateUserListPosition(0, [info.id]).catch(() => {
+            toast(global.i18n.t('list_update_error', { name: info.name }))
+          })
+        }}
         onSync={info => { handleSync(info) }}
         onSelectLocalFile={(info, position) => listImportExportRef.current?.selectFile(info, position)}
       />

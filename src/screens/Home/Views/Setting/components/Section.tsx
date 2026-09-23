@@ -34,6 +34,7 @@ const styles = createStyle({
   title: {
     paddingLeft: 1,
     marginBottom: 14,
+    fontWeight: '600',
     textAlignVertical: 'center',
     // lineHeight: 16,
   },

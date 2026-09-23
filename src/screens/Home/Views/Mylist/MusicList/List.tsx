@@ -1,6 +1,6 @@
 import { playList } from '@/core/player/player'
 import { useCallback, useMemo, useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
-import { FlatList, View, TouchableOpacity, StyleSheet, type NativeScrollEvent, type NativeSyntheticEvent, type FlatListProps } from 'react-native'
+import { FlatList, View, type NativeScrollEvent, type NativeSyntheticEvent, type FlatListProps } from 'react-native'
 
 import listState from '@/store/list/state'
 import playerState from '@/store/player/state'
@@ -16,6 +16,7 @@ import { useActiveListId } from '@/store/list/hook'
 import { useSettingValue } from '@/store/setting/hook'
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
+import RetryButton from '@/components/common/RetryButton'
 import { useI18n } from '@/lang'
 import { useTheme } from '@/store/theme/hook'
 import { setNavActiveId } from '@/core/common'
@@ -283,16 +284,9 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
     if (currentList.length) return null
     return (
       <View style={styles.empty}>
-        <Icon name="add-music" size={30} color={theme['c-font-label']} style={styles.emptyIcon} />
+        <Icon name="add-music" size={28} color={theme['c-font-label']} style={styles.emptyIcon} />
         <Text style={styles.emptyTitle} size={14} color={theme['c-font-label']}>{t('no_item')}</Text>
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={t('play_list_add_song_tip')}
-          style={{ ...styles.retryBtn, borderColor: theme['c-border-background'] }}
-          onPress={handleGoSearch}
-        >
-          <Text size={12} color={theme['c-font-label']}>{t('play_list_add_song_tip')}</Text>
-        </TouchableOpacity>
+        <RetryButton label={t('play_list_add_song_tip')} onPress={handleGoSearch} />
       </View>
     )
   }, [currentList.length, t, theme, handleGoSearch])
@@ -344,14 +338,6 @@ const styles = createStyle({
   },
   emptyTitle: {
     opacity: 0.9,
-  },
-  retryBtn: {
-    minHeight: 34,
-    paddingHorizontal: 18,
-    borderRadius: 17,
-    borderWidth: StyleSheet.hairlineWidth,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 })
 

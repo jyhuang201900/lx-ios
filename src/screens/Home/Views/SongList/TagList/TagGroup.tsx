@@ -50,6 +50,8 @@ const styles = createStyle({
   tagTypeTitle: {
     marginTop: 19,
     marginBottom: 12,
+    fontSize: 14,
+    fontWeight: '600',
   },
   tagTypeList: {
     flexDirection: 'row',

@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useMemo, useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
 
 import { Icon } from '@/components/common/Icon'
-import { BorderRadius, BorderWidths } from '@/theme'
+import { BorderWidths } from '@/theme'
 import { useTheme } from '@/store/theme/hook'
 import { useActiveListId, useListFetching, useMusicList } from '@/store/list/hook'
 import listState from '@/store/list/state'
@@ -71,13 +71,13 @@ const styles = createStyle({
   currentList: {
     flexDirection: 'row',
     paddingRight: 10,
-    height: 56,
-    marginHorizontal: 12,
-    marginTop: 10,
-    marginBottom: 8,
+    height: 52,
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 9,
     alignItems: 'center',
     borderWidth: BorderWidths.normal,
-    borderRadius: BorderRadius.normal + 8,
+    borderRadius: 14,
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
   currentListIcon: {
@@ -107,7 +107,7 @@ const styles = createStyle({
   currentListBtns: {
     width: 42,
     height: 42,
-    borderRadius: 15,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: 'rgba(0,0,0,0.2)',

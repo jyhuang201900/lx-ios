@@ -60,9 +60,13 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
 const styles = createStyle({
   searchBar: {
     flexDirection: 'row',
-    height: 50,
+    height: 52,
     zIndex: 2,
-    borderBottomWidth: BorderWidths.normal,
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 9,
+    borderWidth: BorderWidths.normal,
+    borderRadius: 14,
     paddingLeft: 8,
   },
   selector: {

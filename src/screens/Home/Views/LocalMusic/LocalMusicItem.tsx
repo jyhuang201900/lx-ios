@@ -67,12 +67,12 @@ export default memo(({ file, onPlay, onDelete, onMetadata }: {
         <View style={styles.fileCopy}>
           <Text size={14} numberOfLines={1}>{title}</Text>
           {detail ? <Text size={11} color={theme['c-font-label']} numberOfLines={1}>{detail}</Text> : null}
-          <RNText style={{ ...styles.fileMeta, color: theme['c-250'] }} numberOfLines={1}>
+          <RNText style={{ ...styles.fileMeta, color: theme['c-font-label'] }} numberOfLines={1}>
             {fileType} · {formatSize(file.size)}
           </RNText>
         </View>
       </TouchableOpacity>
-      {interval ? <RNText style={{ ...styles.interval, color: theme['c-250'] }}>{interval}</RNText> : null}
+      {interval ? <RNText style={{ ...styles.interval, color: theme['c-font-label'] }}>{interval}</RNText> : null}
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel={`${global.i18n.t('delete')} ${title}`}

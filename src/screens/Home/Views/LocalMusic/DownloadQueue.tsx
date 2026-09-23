@@ -53,7 +53,7 @@ export default () => {
               {task.status == 'downloading' && task.totalBytes > 0 ? ` · ${formatSize(task.receivedBytes)}/${formatSize(task.totalBytes)}` : ''}
             </Text>
             {task.status == 'downloading' ? (
-              <View style={styles.progressTrack}>
+              <View style={{ ...styles.progressTrack, backgroundColor: theme['c-primary-input-background'] }}>
                 <View style={{
                   ...styles.progressValue,
                   width: `${Math.max(2, Math.round(task.progress * 100))}%`,
@@ -133,7 +133,7 @@ const styles = createStyle({
   progressTrack: {
     height: 3,
     borderRadius: 2,
-    backgroundColor: 'rgba(127,127,127,0.22)',
+    backgroundColor: 'transparent', // 主题色在渲染处以内联样式提供
     overflow: 'hidden',
   },
   progressValue: {

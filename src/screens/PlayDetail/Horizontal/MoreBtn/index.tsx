@@ -14,6 +14,7 @@ export default () => {
       <MusicAddBtn />
       <DownloadBtn />
       <QualityBtn />
+      <PlaybackRateBtn compact />
       <PlayModeBtn />
       <QueueBtn />
     </View>

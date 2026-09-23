@@ -74,9 +74,8 @@ export default () => {
     listRef.current?.loadList(searchState.searchText, source, searchInfo.current.searchType)
   }
   const handleTipSearch: HeaderBarProps['onTipSearch'] = (text) => {
-    setTimeout(() => {
-      searchTipListRef.current?.search(text, layoutHeightRef.current)
-    }, 500)
+    // TipList 内部已做 200ms 防抖，直接请求避免叠加延迟
+    searchTipListRef.current?.search(text, layoutHeightRef.current)
   }
   const handleHideTipList = () => {
     if (timeoutRef.current) {

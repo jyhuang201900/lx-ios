@@ -56,7 +56,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
 
 
   return (
-    <View style={{ ...styles.searchBar, borderBottomColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.searchBar, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
       <View style={{ ...styles.selector, backgroundColor: theme['c-button-background'], borderColor: theme['c-border-background'] }}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} center />
       </View>
@@ -74,10 +74,10 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={global.i18n.t('play_all')}
-          style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-background-active'] }}
+          style={{ ...styles.playAllButton, backgroundColor: theme['c-primary'] }}
           onPress={onPlayAll}
         >
-          <Icon name="play" size={13} color={theme['c-primary-font-active']} />
+          <Icon name="play" size={13} color={theme['c-primary-button-font']} />
         </TouchableOpacity>
       ) : null}
     </View>
@@ -87,17 +87,20 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
 const styles = createStyle({
   searchBar: {
     flexDirection: 'row',
-    height: 58,
+    height: 52,
     zIndex: 2,
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingBottom: 6,
-    borderBottomWidth: BorderWidths.normal,
+    paddingHorizontal: 12,
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 9,
+    borderWidth: BorderWidths.normal,
+    borderRadius: 14,
   },
   selector: {
-    height: 42,
+    height: 40,
     marginRight: 9,
-    borderRadius: 16,
+    borderRadius: 12,
     borderWidth: BorderWidths.normal,
     overflow: 'hidden',
   },

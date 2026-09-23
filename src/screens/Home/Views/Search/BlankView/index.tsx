@@ -70,7 +70,7 @@ const styles = createStyle({
   content: {
     paddingTop: 8,
     paddingBottom: 28,
-    paddingHorizontal: 18,
+    paddingHorizontal: 16,
   },
   scrollContent: {
     flexGrow: 1,

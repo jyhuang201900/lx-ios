@@ -228,7 +228,7 @@ export default () => {
         <Icon name="music_time" size={20} color={theme['c-primary-font-active']} />
       </View>
       <View style={styles.summaryCopy}>
-        <Text size={16}>{global.i18n.t('local_music_title')}</Text>
+        <Text size={16} style={styles.summaryTitle}>{global.i18n.t('local_music_title')}</Text>
         <Text size={11} color={theme['c-font-label']}>{global.i18n.t('local_music_summary', { num: search ? visibleFiles.length : files.length })}</Text>
       </View>
     </View>
@@ -236,11 +236,11 @@ export default () => {
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel={global.i18n.t('local_music_import')}
-        style={{ ...styles.primaryAction, backgroundColor: theme['c-primary'] }}
+        style={{ ...styles.primaryAction, backgroundColor: theme['c-primary-background-active'] }}
         onPress={() => { void importMusic() }}
       >
-        <Icon name="add-music" size={15} color={theme['c-primary-button-font']} />
-        <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('local_music_import')}</Text>
+        <Icon name="add-music" size={15} color={theme['c-primary-font-active']} />
+        <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('local_music_import')}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityRole="button"
@@ -254,11 +254,11 @@ export default () => {
         accessibilityRole="button"
         accessibilityLabel={global.i18n.t('play_all')}
         disabled={!visibleFiles.length}
-        style={{ ...styles.playAllAction, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'], opacity: visibleFiles.length ? 1 : 0.4 }}
+        style={{ ...styles.playAllAction, backgroundColor: theme['c-primary'], opacity: visibleFiles.length ? 1 : 0.4 }}
         onPress={() => { void playAllVisible() }}
       >
-        <Icon name="play" size={14} color={theme['c-font']} />
-        <Text size={12} color={theme['c-font']}>{global.i18n.t('play_all')}</Text>
+        <Icon name="play" size={15} color={theme['c-primary-button-font']} />
+        <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('play_all')}</Text>
       </TouchableOpacity>
     </View>
     {Platform.OS == 'ios' ? <DownloadQueue /> : null}
@@ -280,43 +280,28 @@ export default () => {
     </View>
     <View style={styles.sectionHeader}>
       <Text size={12} color={theme['c-font-label']}>{global.i18n.t('local_music_storage')}</Text>
-      <View style={styles.sortBar}>
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={global.i18n.t('local_music_sort_latest')}
-          accessibilityState={{ selected: sortMode == 'latest' }}
-          style={{ ...styles.sortButton, backgroundColor: sortMode == 'latest' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'latest' ? theme['c-primary'] : theme['c-border-background'] }}
-          onPress={() => setSortMode('latest')}
-        >
-          <Text size={11} color={sortMode == 'latest' ? theme['c-font'] : theme['c-font-label']}>{global.i18n.t('local_music_sort_latest')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={global.i18n.t('local_music_sort_name')}
-          accessibilityState={{ selected: sortMode == 'name' }}
-          style={{ ...styles.sortButton, backgroundColor: sortMode == 'name' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'name' ? theme['c-primary'] : theme['c-border-background'] }}
-          onPress={() => setSortMode('name')}
-        >
-          <Text size={11} color={sortMode == 'name' ? theme['c-font'] : theme['c-font-label']}>{global.i18n.t('local_music_sort_name')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={global.i18n.t('local_music_sort_artist')}
-          accessibilityState={{ selected: sortMode == 'artist' }}
-          style={{ ...styles.sortButton, backgroundColor: sortMode == 'artist' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'artist' ? theme['c-primary'] : theme['c-border-background'] }}
-          onPress={() => setSortMode('artist')}
-        >
-          <Text size={11} color={sortMode == 'artist' ? theme['c-font'] : theme['c-font-label']}>{global.i18n.t('local_music_sort_artist')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={global.i18n.t('local_music_sort_duration')}
-          accessibilityState={{ selected: sortMode == 'duration' }}
-          style={{ ...styles.sortButton, backgroundColor: sortMode == 'duration' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'duration' ? theme['c-primary'] : theme['c-border-background'] }}
-          onPress={() => setSortMode('duration')}
-        >
-          <Text size={11} color={sortMode == 'duration' ? theme['c-font'] : theme['c-font-label']}>{global.i18n.t('local_music_sort_duration')}</Text>
-        </TouchableOpacity>
+      <View style={{ ...styles.sortBar, backgroundColor: theme['c-primary-input-background'] }}>
+        {
+          (
+            [
+              ['latest', 'local_music_sort_latest'],
+              ['name', 'local_music_sort_name'],
+              ['artist', 'local_music_sort_artist'],
+              ['duration', 'local_music_sort_duration'],
+            ] as const
+          ).map(([mode, labelKey]) => (
+            <TouchableOpacity
+              key={mode}
+              accessibilityRole="button"
+              accessibilityLabel={global.i18n.t(labelKey)}
+              accessibilityState={{ selected: sortMode == mode }}
+              style={{ ...styles.sortButton, backgroundColor: sortMode == mode ? theme['c-button-background-selected'] : 'transparent' }}
+              onPress={() => setSortMode(mode)}
+            >
+              <Text size={12} color={sortMode == mode ? theme['c-button-font-selected'] : theme['c-font-label']}>{global.i18n.t(labelKey)}</Text>
+            </TouchableOpacity>
+          ))
+        }
       </View>
     </View>
     <FlatList
@@ -349,15 +334,16 @@ const styles = createStyle({
   summary: { minHeight: 76, marginHorizontal: 16, borderRadius: 18, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center' },
   summaryIcon: { width: 46, height: 46, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   summaryCopy: { flex: 1, paddingLeft: 12, gap: 5, justifyContent: 'center' },
+  summaryTitle: { fontWeight: '600' },
   actions: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 14, gap: 9 },
-  primaryAction: { flex: 1, minHeight: 43, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 },
-  refreshAction: { minWidth: 82, minHeight: 43, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
-  playAllAction: { minWidth: 88, minHeight: 43, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 },
+  primaryAction: { flex: 1, minHeight: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 },
+  refreshAction: { minWidth: 82, minHeight: 44, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
+  playAllAction: { minWidth: 88, minHeight: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 },
   searchCard: { marginHorizontal: 16, marginBottom: 10, minHeight: 42, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 11, flexDirection: 'row', alignItems: 'center' },
   searchInput: { height: 38, paddingLeft: 8, fontSize: 13 },
-  sectionHeader: { minHeight: 32, paddingHorizontal: 17, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sortBar: { flexDirection: 'row', gap: 6 },
-  sortButton: { minHeight: 28, paddingHorizontal: 9, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
+  sectionHeader: { minHeight: 32, paddingHorizontal: 16, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sortBar: { height: 34, flexGrow: 0, flexShrink: 1, flexDirection: 'row', alignItems: 'center', padding: 3, borderRadius: 12, gap: 2 },
+  sortButton: { height: '100%', flexGrow: 1, paddingHorizontal: 7, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
   list: { paddingHorizontal: 16, paddingBottom: 24 },
   emptyList: { flexGrow: 1 },
   empty: { alignItems: 'center', paddingHorizontal: 42, paddingTop: 58 },

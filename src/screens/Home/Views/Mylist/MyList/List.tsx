@@ -60,7 +60,7 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
         onPress={handleShowMenu}
         style={styles.moreButton}
       >
-        <Icon name="dots-vertical" color={active ? theme['c-font'] : theme['c-350']} size={15} />
+        <Icon name="dots-vertical" color={active ? theme['c-font'] : theme['c-font-label']} size={15} />
       </TouchableOpacity>
     </View>
   )
@@ -93,19 +93,19 @@ export default ({ onShowMenu, onCreate }: {
             accessibilityRole="button"
             accessibilityLabel={global.i18n.t('play_all')}
             onPress={() => { void playList(activeListId, 0) }}
-            style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-background-active'] }}
+            style={{ ...styles.playAllButton, backgroundColor: theme['c-primary'] }}
           >
-            <Icon name="play" color={theme['c-primary-font-active']} size={15} />
-            <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('play_all')}</Text>
+            <Icon name="play" color={theme['c-primary-button-font']} size={15} />
+            <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('play_all')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel={global.i18n.t('list_create')}
             onPress={onCreate}
-            style={{ ...styles.createButton, backgroundColor: theme['c-primary'] }}
+            style={{ ...styles.createButton, backgroundColor: theme['c-primary-background-active'] }}
           >
-            <Icon name="add-music" color={theme['c-primary-button-font']} size={15} />
-            <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('list_create')}</Text>
+            <Icon name="add-music" color={theme['c-primary-font-active']} size={15} />
+            <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('list_create')}</Text>
           </TouchableOpacity>
         </View>
       </View>
