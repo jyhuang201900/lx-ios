@@ -8,7 +8,7 @@ import { addListMusics, removeListMusics } from '@/core/list'
 import { getLocalMusicDirectory } from '@/core/download'
 import { subscribeDownloadTasks } from '@/core/download'
 import DownloadQueue from './DownloadQueue'
-import { playListById } from '@/core/player/player'
+import { playNext } from '@/core/player/player'
 import { LIST_IDS } from '@/config/constant'
 import { buildLocalMusicInfo, buildLocalMusicInfoByFilePath } from '@/screens/Home/Views/Mylist/MyList/listAction'
 import { existsFile, extname, mkdir, readDir, selectFile, unlink, type FileType } from '@/utils/fs'
@@ -16,6 +16,7 @@ import { confirmDialog, createStyle, toast } from '@/utils/tools'
 import type { MusicMetadataFull } from '@/utils/localMediaMetadata'
 import { getLocalMetadataCacheKey } from '@/utils/localMediaMetadataCache'
 import { useTheme } from '@/store/theme/hook'
+import { addTempPlayList } from '@/core/player/tempPlayList'
 import LocalMusicItem from './LocalMusicItem'
 
 const audioExtensions = ['mp3', 'flac', 'wav', 'ape', 'ogg', 'm4a', 'aac']
@@ -89,8 +90,8 @@ export default () => {
 
   const playFile = useCallback(async(file: FileType, metadata: MusicMetadataFull | null) => {
     const musicInfo = metadata ? buildLocalMusicInfo(file.path, metadata) : buildLocalMusicInfoByFilePath(file)
-    await addListMusics(LIST_IDS.DEFAULT, [musicInfo], 'bottom')
-    await playListById(LIST_IDS.DEFAULT, musicInfo.id)
+    addTempPlayList([{ listId: LIST_IDS.PLAY_LATER, musicInfo, isTop: true }])
+    await playNext()
   }, [])
 
   const removeFile = useCallback(async(file: FileType) => {
@@ -160,7 +161,7 @@ export default () => {
       </View>
       <View style={styles.summaryCopy}>
         <Text size={16}>{global.i18n.t('local_music_title')}</Text>
-        <Text size={11} color={theme['c-font-label']}>{global.i18n.t('local_music_summary', { num: files.length })}</Text>
+        <Text size={11} color={theme['c-font-label']}>{global.i18n.t('local_music_summary', { num: search ? visibleFiles.length : files.length })}</Text>
       </View>
     </View>
     <View style={styles.actions}>
