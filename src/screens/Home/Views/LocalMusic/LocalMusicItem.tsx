@@ -20,10 +20,11 @@ const getFileTitle = (file: FileType, metadata: MusicMetadataFull | null) => {
   return file.name.replace(/\.[^.]+$/, '')
 }
 
-export default memo(({ file, onPlay, onDelete }: {
+export default memo(({ file, onPlay, onDelete, onMetadata }: {
   file: FileType
   onPlay: (file: FileType, metadata: MusicMetadataFull | null) => void
   onDelete: (file: FileType) => void
+  onMetadata: (file: FileType, metadata: MusicMetadataFull | null) => void
 }) => {
   const theme = useTheme()
   const [metadata, setMetadata] = useState<MusicMetadataFull | null>(null)
@@ -32,7 +33,10 @@ export default memo(({ file, onPlay, onDelete }: {
     let isActive = true
     void readMetadataCached(file)
       .then(info => {
-        if (isActive) setMetadata(info)
+        if (isActive) {
+          setMetadata(info)
+          onMetadata(file, info)
+        }
       })
       .catch(() => {
         if (isActive) setMetadata(null)
@@ -40,7 +44,7 @@ export default memo(({ file, onPlay, onDelete }: {
     return () => {
       isActive = false
     }
-  }, [file.path, file.lastModified])
+  }, [file.path, file.lastModified, file.size, onMetadata])
 
   const title = getFileTitle(file, metadata)
   const artist = metadata?.singer ?? ''
@@ -82,7 +86,8 @@ export default memo(({ file, onPlay, onDelete }: {
 }, (prevProps, nextProps) => (
   prevProps.file === nextProps.file &&
   prevProps.onPlay === nextProps.onPlay &&
-  prevProps.onDelete === nextProps.onDelete
+  prevProps.onDelete === nextProps.onDelete &&
+  prevProps.onMetadata === nextProps.onMetadata
 ))
 
 const styles = createStyle({

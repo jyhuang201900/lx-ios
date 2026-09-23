@@ -14,6 +14,7 @@ import { buildLocalMusicInfo, buildLocalMusicInfoByFilePath } from '@/screens/Ho
 import { existsFile, extname, mkdir, readDir, selectFile, unlink, type FileType } from '@/utils/fs'
 import { confirmDialog, createStyle, toast } from '@/utils/tools'
 import type { MusicMetadataFull } from '@/utils/localMediaMetadata'
+import { getLocalMetadataCacheKey } from '@/utils/localMediaMetadataCache'
 import { useTheme } from '@/store/theme/hook'
 import LocalMusicItem from './LocalMusicItem'
 
@@ -25,7 +26,8 @@ export default () => {
   const theme = useTheme()
   const [files, setFiles] = useState<FileType[]>([])
   const [search, setSearch] = useState('')
-  const [sortMode, setSortMode] = useState<'latest' | 'name'>('latest')
+  const [sortMode, setSortMode] = useState<'latest' | 'name' | 'artist' | 'duration'>('latest')
+  const [metadataMap, setMetadataMap] = useState(() => new Map<string, MusicMetadataFull | null>())
   const [refreshing, setRefreshing] = useState(false)
   const hasLoadedRef = useRef(false)
   const lastRefreshRef = useRef(0)
@@ -109,18 +111,47 @@ export default () => {
     }
   }, [])
 
+  const handleMetadata = useCallback((file: FileType, metadata: MusicMetadataFull | null) => {
+    const key = getLocalMetadataCacheKey(file)
+    setMetadataMap(current => new Map(current).set(key, metadata))
+  }, [])
+
   const renderItem = useCallback<FlatListProps<FileType>['renderItem']>(({ item }) => (
-    <LocalMusicItem file={item} onPlay={playFile} onDelete={removeFile} />
-  ), [playFile, removeFile])
+    <LocalMusicItem
+      file={item}
+      onPlay={playFile}
+      onDelete={removeFile}
+      onMetadata={handleMetadata}
+    />
+  ), [playFile, removeFile, handleMetadata])
   const keyExtractor = useCallback<FlatListProps<FileType>['keyExtractor']>(item => item.path, [])
   const visibleFiles = useMemo(() => {
     const keyword = search.trim().toLowerCase()
-    return files
-      .filter(file => !keyword || file.name.toLowerCase().includes(keyword))
-      .sort((a, b) => sortMode == 'name'
-        ? a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
-        : b.lastModified - a.lastModified)
-  }, [files, search, sortMode])
+    return files.filter(file => {
+      if (!keyword) return true
+      const metadata = metadataMap.get(getLocalMetadataCacheKey(file))
+      return [
+        file.name,
+        metadata?.name,
+        metadata?.singer,
+        metadata?.albumName,
+      ].filter(Boolean).join(' ').toLowerCase().includes(keyword)
+    }).sort((a, b) => {
+      const metadataA = metadataMap.get(getLocalMetadataCacheKey(a))
+      const metadataB = metadataMap.get(getLocalMetadataCacheKey(b))
+      switch (sortMode) {
+        case 'name':
+          return (metadataA?.name || a.name).localeCompare(metadataB?.name || b.name, undefined, { numeric: true, sensitivity: 'base' })
+        case 'artist':
+          return (metadataA?.singer || '').localeCompare(metadataB?.singer || '', undefined, { numeric: true, sensitivity: 'base' })
+        case 'duration':
+          return (metadataB?.interval ?? 0) - (metadataA?.interval ?? 0)
+        case 'latest':
+        default:
+          return b.lastModified - a.lastModified
+      }
+    })
+  }, [files, metadataMap, search, sortMode])
 
   return <View style={styles.container}>
     <View style={{ ...styles.summary, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
@@ -188,6 +219,24 @@ export default () => {
           onPress={() => setSortMode('name')}
         >
           <Text size={11} color={sortMode == 'name' ? theme['c-font'] : theme['c-font-label']}>{global.i18n.t('local_music_sort_name')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('local_music_sort_artist')}
+          accessibilityState={{ selected: sortMode == 'artist' }}
+          style={{ ...styles.sortButton, backgroundColor: sortMode == 'artist' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'artist' ? theme['c-primary'] : theme['c-border-background'] }}
+          onPress={() => setSortMode('artist')}
+        >
+          <Text size={11} color={sortMode == 'artist' ? theme['c-font'] : theme['c-font-label']}>{global.i18n.t('local_music_sort_artist')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('local_music_sort_duration')}
+          accessibilityState={{ selected: sortMode == 'duration' }}
+          style={{ ...styles.sortButton, backgroundColor: sortMode == 'duration' ? theme['c-primary-background-hover'] : theme['c-primary-input-background'], borderColor: sortMode == 'duration' ? theme['c-primary'] : theme['c-border-background'] }}
+          onPress={() => setSortMode('duration')}
+        >
+          <Text size={11} color={sortMode == 'duration' ? theme['c-font'] : theme['c-font-label']}>{global.i18n.t('local_music_sort_duration')}</Text>
         </TouchableOpacity>
       </View>
     </View>

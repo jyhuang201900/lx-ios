@@ -5,10 +5,10 @@ const METADATA_CACHE_LIMIT = 300
 const metadataCache = new Map<string, MusicMetadataFull>()
 const metadataPromises = new Map<string, Promise<MusicMetadataFull | null>>()
 
-const getCacheKey = (file: FileType) => `${file.path}|${file.lastModified}|${file.size}`
+export const getLocalMetadataCacheKey = (file: FileType): string => `${file.path}|${file.lastModified}|${file.size}`
 
 export const readMetadataCached = async(file: FileType): Promise<MusicMetadataFull | null> => {
-  const key = getCacheKey(file)
+  const key = getLocalMetadataCacheKey(file)
   const cached = metadataCache.get(key)
   if (cached) return cached
 
