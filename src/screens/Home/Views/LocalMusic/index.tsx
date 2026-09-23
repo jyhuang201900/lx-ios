@@ -207,7 +207,7 @@ export default () => {
     addTempPlayList(visibleFiles.map(file => ({
       listId: LIST_IDS.PLAY_LATER,
       musicInfo: buildMusicInfoFromFile(file),
-      isTop: false,
+      isTop: true,
     })))
     await playNext()
   }, [visibleFiles, buildMusicInfoFromFile])
