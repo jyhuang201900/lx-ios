@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AppState, FlatList, Platform, RefreshControl, StyleSheet, TouchableOpacity, View, type FlatListProps } from 'react-native'
+import { AppState, FlatList, InteractionManager, Platform, RefreshControl, StyleSheet, TouchableOpacity, View, type FlatListProps } from 'react-native'
 
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
@@ -15,6 +15,7 @@ import { existsFile, extname, mkdir, readDir, selectFile, unlink, type FileType 
 import { confirmDialog, createStyle, toast } from '@/utils/tools'
 import type { MusicMetadataFull } from '@/utils/localMediaMetadata'
 import { getLocalMetadataCacheKey } from '@/utils/localMediaMetadataCache'
+import { readMetadataCached } from '@/utils/localMediaMetadataCache'
 import { useTheme } from '@/store/theme/hook'
 import { addTempPlayList } from '@/core/player/tempPlayList'
 import LocalMusicItem from './LocalMusicItem'
@@ -158,6 +159,48 @@ export default () => {
       }
     })
   }, [files, metadataMap, search, sortMode])
+
+  useEffect(() => {
+    let cancelled = false
+    const currentKeys = new Set(files.map(getLocalMetadataCacheKey))
+
+    setMetadataMap(previous => {
+      const next = new Map<string, MusicMetadataFull | null>()
+      for (const [key, metadata] of previous) {
+        if (currentKeys.has(key)) next.set(key, metadata)
+      }
+      return next
+    })
+
+    const pendingFiles = files.filter(file => !metadataMap.has(getLocalMetadataCacheKey(file)))
+    let index = 0
+
+    const readNextBatch = () => {
+      if (cancelled || index >= pendingFiles.length) return
+      const batch = pendingFiles.slice(index, index + 8)
+      index += batch.length
+
+      void Promise.all(batch.map(async file => ([
+        getLocalMetadataCacheKey(file),
+        await readMetadataCached(file).catch(() => null),
+      ] as const))).then(results => {
+        if (cancelled) return
+        setMetadataMap(previous => {
+          const next = new Map(previous)
+          for (const [key, metadata] of results) next.set(key, metadata)
+          return next
+        })
+        InteractionManager.runAfterInteractions(() => {
+          readNextBatch()
+        })
+      })
+    }
+
+    readNextBatch()
+    return () => {
+      cancelled = true
+    }
+  }, [files, metadataMap])
 
   const playAllVisible = useCallback(async() => {
     if (!visibleFiles.length) return
