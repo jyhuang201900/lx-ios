@@ -37,6 +37,10 @@ export interface ModalProps extends Omit<_ModalProps, 'visible'> {
    * 是否填充状态栏
    */
   statusBarPadding?: boolean
+  /**
+   * 动画类型，默认 fade；底部弹层传入 slide 会有滑入体验
+   */
+  animationType?: _ModalProps['animationType']
 }
 
 
@@ -50,6 +54,7 @@ export default forwardRef<ModalType, ModalProps>(({
   bgHide = true,
   bgColor = 'rgba(0,0,0,0)',
   statusBarPadding = true,
+  animationType = 'fade',
   children,
   ...props
 }: ModalProps, ref) => {
@@ -89,7 +94,7 @@ export default forwardRef<ModalType, ModalProps>(({
 
   return (
     <Modal
-      animationType="fade"
+      animationType={animationType}
       transparent={true}
       hardwareAccelerated={true}
       statusBarTranslucent={true}

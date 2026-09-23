@@ -1,7 +1,14 @@
 import { useCallback, useRef } from 'react'
 import { type LayoutChangeEvent } from 'react-native'
 
-export const useDrag = (onSetProgress: (progress: number) => void, onDragState: (drag: boolean) => void, setDragProgress: (progress: number) => void) => {
+interface DragOptions {
+  /**
+   * 提交进度所需的最小位移（px），低于该值不提交
+   */
+  minDragDistance?: number
+}
+
+export const useDrag = (onSetProgress: (progress: number) => void, onDragState: (drag: boolean) => void, setDragProgress: (progress: number) => void, options: DragOptions = {}) => {
   const info = useRef({
     isDraging: false,
     dragStartX: 0,
@@ -9,6 +16,8 @@ export const useDrag = (onSetProgress: (progress: number) => void, onDragState: 
     dragProgress: 0,
     progressWidth: 0,
   })
+  const optionsRef = useRef(options)
+  optionsRef.current = options
 
   const onDragStart = useCallback((offsetX: number, locationX: number) => {
     info.current.isDraging = true
@@ -22,8 +31,13 @@ export const useDrag = (onSetProgress: (progress: number) => void, onDragState: 
     // dragProgress.value = msEvent.msDownProgress = val
     onDragState(true)
   }, [onDragState, setDragProgress])
-  const onDragEnd = useCallback(() => {
-    if (info.current.isDraging) onSetProgress(info.current.dragProgress)
+  const onDragEnd = useCallback((dx = 0, dy = 0) => {
+    if (info.current.isDraging) {
+      const minDistance = optionsRef.current.minDragDistance ?? 0
+      if (Math.abs(dx) >= minDistance || Math.abs(dy) >= minDistance) {
+        onSetProgress(info.current.dragProgress)
+      }
+    }
     info.current.isDraging = false
     onDragState(false)
   }, [onDragState, onSetProgress])

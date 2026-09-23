@@ -635,5 +635,11 @@
   "version_title_new": "🌟 发现新版本 🌟",
   "version_title_unknown": "❓ 获取最新版本信息失败 ❓",
   "version_title_update": "🚀 软件更新 🚀",
-  "platform_feature_not_supported": "当前平台暂不支持此功能"
+  "platform_feature_not_supported": "当前平台暂不支持此功能",
+  "play_queue_now_playing": "正在播放",
+  "play_queue_clear_confirm": "确定要清空全部待播歌曲吗？",
+  "retry_button_text": "重试",
+  "search_history_clear_confirm": "确定要清空全部搜索历史吗？",
+  "search_history_cleared": "搜索历史已清空",
+  "play_list_add_song_tip": "去搜索添加歌曲"
 }

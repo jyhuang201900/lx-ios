@@ -69,15 +69,26 @@ export default forwardRef<PlayLineType, PlayLineProps>(({ onPlayLine }, ref) => 
 
   if (!scrollInfo || !visible) return null
   const offset = scrollInfo.contentOffset.y + scrollInfo.layoutMeasurement.height * 0.4
+  // FlatList 虚拟化下 lineHeights 只包含已渲染行，未渲染行用已知行高的平均值兜底，避免 NaN 导致定位到最后一行
+  const heights = listLayoutInfo.lineHeights
+  let heightSum = 0
+  let heightCount = 0
+  for (const h of heights) {
+    if (typeof h == 'number' && h > 0) {
+      heightSum += h
+      heightCount++
+    }
+  }
+  const avgHeight = heightCount ? heightSum / heightCount : 0
   let lineOffset = listLayoutInfo.spaceHeight
   let targetLineNum = -1
-  for (let line = 0; line < listLayoutInfo.lineHeights.length; line++) {
-    lineOffset += listLayoutInfo.lineHeights[line]
+  for (let line = 0; line < heights.length; line++) {
+    lineOffset += heights[line] ?? avgHeight
     if (lineOffset < offset) continue
     targetLineNum = line
     break
   }
-  if (targetLineNum == -1) targetLineNum = listLayoutInfo.lineHeights.length - 1
+  if (targetLineNum == -1) targetLineNum = heights.length - 1
   const time = lyricLines[targetLineNum]?.time ?? 0
   const timeLabel = formatPlayTime2(time / 1000)
   return (

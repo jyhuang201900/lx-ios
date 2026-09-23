@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
-import { View, ScrollView } from 'react-native'
+import { View, ScrollView, TouchableOpacity } from 'react-native'
 
 import { createStyle } from '@/utils/tools'
 import TagGroup, { type TagGroupProps } from './TagGroup'
@@ -7,6 +7,7 @@ import { useI18n } from '@/lang'
 import { type TagInfo, type Source } from '@/store/songlist/state'
 import { getTags } from '@/core/songlist'
 import Text from '@/components/common/Text'
+import { useTheme } from '@/store/theme/hook'
 // import { BorderWidths } from '@/theme'
 
 export interface ListProps {
@@ -19,8 +20,10 @@ export interface ListType {
 
 export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
   // const theme = useTheme()
+  const theme = useTheme()
   const [activeId, setActiveId] = useState('')
   const [list, setList] = useState<TagInfo['tags']>([])
+  const [failedSource, setFailedSource] = useState<Source | null>(null)
   const t = useI18n()
   const prevSource = useRef('')
   const requestIdRef = useRef(0)
@@ -33,21 +36,29 @@ export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
     }
   }, [])
 
+  const loadTags = (source: Source) => {
+    setFailedSource(null)
+    setList([{ name: '', list: [{ name: t('songlist_tag_default'), id: '', parent_id: '', parent_name: '', source }] }])
+    const requestId = ++requestIdRef.current
+    void getTags(source).then(tagInfo => {
+      if (isUnmountedRef.current || requestId != requestIdRef.current) return
+      prevSource.current = source
+      setList([
+        { name: '', list: [{ name: t('songlist_tag_default'), id: '', parent_id: '', parent_name: '', source }] },
+        { name: t('songlist_tag_hot'), list: [...tagInfo.hotTag] },
+        ...tagInfo.tags,
+      ].filter(t => t.list.length))
+    }).catch(() => {
+      if (isUnmountedRef.current || requestId != requestIdRef.current) return
+      setFailedSource(source)
+    })
+  }
+
   useImperativeHandle(ref, () => ({
     loadTag(source, id) {
       if (id != activeId) setActiveId(id)
       if (source != prevSource.current) {
-        setList([{ name: '', list: [{ name: t('songlist_tag_default'), id: '', parent_id: '', parent_name: '', source }] }])
-        const requestId = ++requestIdRef.current
-        void getTags(source).then(tagInfo => {
-          if (isUnmountedRef.current || requestId != requestIdRef.current) return
-          prevSource.current = source
-          setList([
-            { name: '', list: [{ name: t('songlist_tag_default'), id: '', parent_id: '', parent_name: '', source }] },
-            { name: t('songlist_tag_hot'), list: [...tagInfo.hotTag] },
-            ...tagInfo.tags,
-          ].filter(t => t.list.length))
-        })
+        loadTags(source)
       }
     },
   }))
@@ -71,7 +82,23 @@ export default forwardRef<ListType, ListProps>(({ onTagChange }, ref) => {
           list.length == 1
             ? (
                 <View style={styles.blankView}>
-                  <Text>{t('list_loading')}</Text>
+                  {
+                    failedSource
+                      ? (
+                          <>
+                            <Text size={13} color={theme['c-font-label']}>{t('list_error')}</Text>
+                            <TouchableOpacity
+                              accessibilityRole="button"
+                              accessibilityLabel={t('retry_button_text')}
+                              style={{ ...styles.retryBtn, borderColor: theme['c-border-background'] }}
+                              onPress={() => { loadTags(failedSource) }}
+                            >
+                              <Text size={12} color={theme['c-font-label']}>{t('retry_button_text')}</Text>
+                            </TouchableOpacity>
+                          </>
+                        )
+                      : <Text>{t('list_loading')}</Text>
+                  }
                 </View>
               )
             : null
@@ -91,6 +118,15 @@ const styles = createStyle({
   blankView: {
     paddingTop: '15%',
     paddingBottom: '15%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  retryBtn: {
+    minHeight: 34,
+    paddingHorizontal: 18,
+    borderRadius: 17,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },

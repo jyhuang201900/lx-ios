@@ -3,6 +3,7 @@ import OnlineList, { type OnlineListType, type OnlineListProps } from '@/compone
 import { clearListDetail, getListDetail, setListDetail, setListDetailInfo } from '@/core/leaderboard'
 import boardState from '@/store/leaderboard/state'
 import { handlePlay } from './listAction'
+import { toast } from '@/utils/tools'
 
 // export type MusicListProps = Pick<OnlineListProps,
 // 'onLoadMore'
@@ -50,7 +51,11 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
   useImperativeHandle(ref, () => ({
     playAll() {
       const info = boardState.listDetailInfo
-      if (info.id) void handlePlay(info.id, info.list, 0)
+      if (info.id) {
+        handlePlay(info.id, info.list, 0).catch(() => {
+          toast(global.i18n.t('load_failed'))
+        })
+      }
     },
     async loadList(source, id) {
       const requestId = ++loadRequestIdRef.current
@@ -81,7 +86,9 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
   const handlePlayList: OnlineListProps['onPlayList'] = (index) => {
     const listDetailInfo = boardState.listDetailInfo
     // console.log(boardState.listDetailInfo)
-    void handlePlay(listDetailInfo.id, listDetailInfo.list, index)
+    handlePlay(listDetailInfo.id, listDetailInfo.list, index).catch(() => {
+      toast(global.i18n.t('load_failed'))
+    })
   }
   const handleRefresh: OnlineListProps['onRefresh'] = () => {
     const requestId = ++loadRequestIdRef.current

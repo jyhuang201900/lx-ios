@@ -1,5 +1,5 @@
 import { memo, useMemo, useEffect, useRef, useCallback } from 'react'
-import { View, FlatList, type FlatListProps, type NativeSyntheticEvent, type NativeScrollEvent, type LayoutChangeEvent } from 'react-native'
+import { View, FlatList, TouchableOpacity, type FlatListProps, type NativeSyntheticEvent, type NativeScrollEvent, type LayoutChangeEvent } from 'react-native'
 // import { useLayout } from '@/utils/hooks'
 import { type Line, useLrcPlay, useLrcSet } from '@/plugins/lyric'
 import { createStyle } from '@/utils/tools'
@@ -27,13 +27,18 @@ interface LineProps {
   activeWordIndex: number
   activeWordProgress: number
   onLayout: (lineNum: number, height: number, width: number) => void
+  onPress: (time: number) => void
 }
-const LrcLine = memo(({ line, lineNum, activeLine, activeWordIndex, activeWordProgress, onLayout }: LineProps) => {
+const LrcLine = memo(({ line, lineNum, activeLine, activeWordIndex, activeWordProgress, onLayout, onPress }: LineProps) => {
   const theme = useTheme()
   const lrcFontSize = useSettingValue('playDetail.horizontal.style.lrcFontSize')
   const textAlign = useSettingValue('playDetail.style.align')
   const size = lrcFontSize / 10
   const lineHeight = setSpText(size) * 1.3
+
+  const handlePress = useCallback(() => {
+    onPress(line.time / 1000)
+  }, [line.time, onPress])
 
   const colors = useMemo(() => {
     const active = activeLine == lineNum
@@ -55,7 +60,13 @@ const LrcLine = memo(({ line, lineNum, activeLine, activeWordIndex, activeWordPr
   // textBreakStrategy="simple" 用于解决某些设备上字体被截断的问题
   // https://stackoverflow.com/a/72822360
   return (
-    <View style={{ ...styles.line, opacity: activeLine == lineNum ? 1 : 0.72 }} onLayout={handleLayout}>
+    <TouchableOpacity
+      style={{ ...styles.line, opacity: activeLine == lineNum ? 1 : 0.72 }}
+      onLayout={handleLayout}
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel={line.text}
+    >
       {
         lineNum == activeLine && line.words?.length
           ? (
@@ -87,10 +98,11 @@ const LrcLine = memo(({ line, lineNum, activeLine, activeWordIndex, activeWordPr
           }} textBreakStrategy="simple" key={index} color={colors[1]} opacity={colors[2]} size={size * 0.8}>{text}</AnimatedColorText>)
         })
       }
-    </View>
+    </TouchableOpacity>
   )
 }, (prevProps, nextProps) => {
   if (prevProps.line !== nextProps.line) return false
+  if (prevProps.onPress !== nextProps.onPress) return false
   const wasActive = prevProps.activeLine == prevProps.lineNum
   const isActive = nextProps.activeLine == nextProps.lineNum
   if (wasActive || isActive) {
@@ -136,7 +148,7 @@ export default () => {
       if (scrollInfoRef.current && lineRef.current.line - lineRef.current.prevLine == 1) {
         let offset = listLayoutInfoRef.current.spaceHeight
         for (let line = 0; line < index; line++) {
-          offset += listLayoutInfoRef.current.lineHeights[line]
+          offset += listLayoutInfoRef.current.lineHeights[line] ?? 0
         }
         offset += (listLayoutInfoRef.current.lineHeights[line] ?? 0) / 2
         try {
@@ -286,9 +298,14 @@ export default () => {
     global.app_event.setProgress(time)
   }, [])
 
+  const handleLinePress = useCallback((time: number) => {
+    markTimeoutExitInteraction()
+    global.app_event.setProgress(time)
+  }, [])
+
   const renderItem: FlatListType['renderItem'] = ({ item, index }) => {
     return (
-      <LrcLine line={item} lineNum={index} activeLine={line} activeWordIndex={wordIndex} activeWordProgress={wordProgress} onLayout={handleLineLayout} />
+      <LrcLine line={item} lineNum={index} activeLine={line} activeWordIndex={wordIndex} activeWordProgress={wordProgress} onLayout={handleLineLayout} onPress={handleLinePress} />
     )
   }
   const getkey: FlatListType['keyExtractor'] = (item, index) => `${index}${item.text}`
@@ -311,7 +328,7 @@ export default () => {
         onScrollBeginDrag={handleScrollBeginDrag}
         onScrollEndDrag={onScrollEndDrag}
         fadingEdgeLength={100}
-        initialNumToRender={Math.max(line + 10, 10)}
+        initialNumToRender={12}
         onScrollToIndexFailed={handleScrollToIndexFailed}
         onScroll={handleScroll}
       />

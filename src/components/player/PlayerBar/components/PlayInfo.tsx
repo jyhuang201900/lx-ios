@@ -1,14 +1,16 @@
 import { memo, useCallback, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
 
 import Progress, { ProgressPlain } from '@/components/player/Progress'
 import Status from './Status'
-import { useProgress } from '@/store/player/hook'
+import { useProgress, usePlayerMusicInfo } from '@/store/player/hook'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { COMPONENT_IDS } from '@/config/constant'
 import { usePageVisible } from '@/store/common/hook'
+import commonState from '@/store/common/state'
+import { navigations } from '@/navigation'
 import { scaleSizeH, scaleSizeW, scaleSizeWR } from '@/utils/pixelRatio'
 import { useBufferProgress } from '@/plugins/player'
 import { useSettingValue } from '@/store/setting/hook'
@@ -36,13 +38,19 @@ export default ({ isHome }: { isHome: boolean }) => {
   const { maxPlayTimeStr, nowPlayTimeStr, progress, maxPlayTime } = useProgress(autoUpdate)
   const buffered = useBufferProgress()
   const allowProgressBarSeek = useSettingValue('common.allowProgressBarSeek')
+  const musicInfo = usePlayerMusicInfo()
 
   usePageVisible([COMPONENT_IDS.home], useCallback((visible) => {
     if (isHome) setAutoUpdate(visible)
   }, [isHome]))
 
+  const handleOpenDetail = useCallback(() => {
+    if (!musicInfo.id) return
+    navigations.pushPlayDetailScreen(commonState.componentIds.home!)
+  }, [musicInfo.id])
+
   return (
-    <View style={stylesRaw.container}>
+    <TouchableOpacity style={stylesRaw.container} activeOpacity={0.8} onPress={handleOpenDetail}>
       {/* <MusicName /> */}
       <View style={styles.status}>
         <Status autoUpdate={autoUpdate} />
@@ -59,7 +67,7 @@ export default ({ isHome }: { isHome: boolean }) => {
             : <ProgressPlain progress={progress} duration={maxPlayTime} buffered={buffered} paddingTop={PADDING_TOP_PROGRESS} />
         }
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 

@@ -36,12 +36,7 @@ export default memo(({ item, index, width, showSource, onPress }: {
             <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
               <Text style={styles.listItemTitle} numberOfLines={ 2 }>{item.name}</Text>
             </TouchableOpacity>
-            {(item.author || item.play_count) ? (
-              <Text style={styles.listItemMeta} color={theme['c-500']} numberOfLines={1}>
-                {[item.author, item.play_count].filter(Boolean).join(' · ')}
-              </Text>
-            ) : null}
-            {(item.play_count || item.author) ? (
+            {(item.author || item.play_count || item.total) ? (
               <Text style={styles.listItemMeta} color={theme['c-500']} numberOfLines={1}>
                 {[
                   item.author,

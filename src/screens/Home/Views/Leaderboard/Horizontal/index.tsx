@@ -44,6 +44,8 @@ export default () => {
             boardId: resolvedId,
           })
         }
+      }).catch(() => {
+        // 榜单列表获取失败时保留空列表状态，用户可通过刷新入口重试
       })
     })
 

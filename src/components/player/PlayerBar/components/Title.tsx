@@ -26,6 +26,8 @@ export default ({ isHome }: { isHome: boolean }) => {
   }
 
   const handleLongPress = () => {
+    // 长按跳转定位仅对主页迷你条有意义，与 Pic 的行为保持一致
+    if (!isHome) return
     const listId = playerState.playMusicInfo.listId
     if (!listId || listId == LIST_IDS.DOWNLOAD) return
     global.app_event.jumpListPosition()

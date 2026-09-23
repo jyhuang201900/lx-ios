@@ -9,6 +9,7 @@ import { useLayout } from '@/utils/hooks'
 import { marginLeft } from '../constant'
 import { BTN_WIDTH } from '../MoreBtn/Btn'
 import { markTimeoutExitInteraction } from '@/core/player/timeoutExit'
+import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 // const WIDTH = scaleSizeW(48)
 
@@ -16,6 +17,7 @@ const PrevBtn = ({ size }: { size: number }) => {
   const theme = useTheme()
   const handlePlayPrev = () => {
     markTimeoutExitInteraction()
+    hapticFeedback('light')
     void playPrev()
   }
   return (
@@ -34,6 +36,7 @@ const NextBtn = ({ size }: { size: number }) => {
   const theme = useTheme()
   const handlePlayNext = () => {
     markTimeoutExitInteraction()
+    hapticFeedback('light')
     void playNext()
   }
   return (
@@ -60,6 +63,7 @@ const TogglePlayBtn = ({ size }: { size: number }) => {
       activeOpacity={0.6}
       onPress={() => {
         markTimeoutExitInteraction()
+        hapticFeedback('medium')
         togglePlay()
       }}
     >

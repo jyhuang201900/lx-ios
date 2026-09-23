@@ -244,6 +244,13 @@ export function useBufferProgress() {
           interval = setInterval(updateBuffer, 1000)
           void updateBuffer()
           break
+        case State.Playing:
+          // 播放中持续跟进缓冲进度，追平时长后 updateBuffer 会自动停止轮询
+          if (!interval) {
+            interval = setInterval(updateBuffer, 1000)
+            void updateBuffer()
+          }
+          break
         // case State.Connecting:
         //   console.log('state', 'Connecting')
         //   break

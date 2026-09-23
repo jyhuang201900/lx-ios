@@ -44,8 +44,9 @@ const PreassBar = memo(({ onDragState, setDragProgress, onSetProgress }: {
 
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+      // 轻点不抢占手势：由外层容器处理“点击迷你条打开播放页”，移动后才进入拖动
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2,
 
       // onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (evt, gestureState) => {
@@ -55,12 +56,12 @@ const PreassBar = memo(({ onDragState, setDragProgress, onSetProgress }: {
         // console.log(evt.nativeEvent.locationX, gestureState)
         onDragStart(gestureState.dx, evt.nativeEvent.locationX)
       },
-      onPanResponderRelease: () => {
-        onDragEnd()
+      onPanResponderRelease: (evt, gestureState) => {
+        onDragEnd(gestureState.dx, gestureState.dy)
       },
-      // onPanResponderTerminate: (evt, gestureState) => {
-      //   onDragEnd()
-      // },
+      onPanResponderTerminate: (evt, gestureState) => {
+        onDragEnd(gestureState.dx, gestureState.dy)
+      },
     }),
   ).current
 

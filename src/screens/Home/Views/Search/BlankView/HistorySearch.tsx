@@ -7,6 +7,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { clearHistoryList, getSearchHistory, removeHistoryWord } from '@/core/search/search'
+import { confirmDialog, toast } from '@/utils/tools'
 import { Icon } from '@/components/common/Icon'
 
 
@@ -67,9 +68,15 @@ export default forwardRef<HistorySearchType, HistorySearchProps>((props, ref) =>
     },
   }), [])
 
-  const handleClear = () => {
+  const handleClear = async() => {
+    if (!list.length) return
+    const confirmed = await confirmDialog({
+      message: t('search_history_clear_confirm'),
+    })
+    if (!confirmed) return
     clearHistoryList()
     setList([])
+    toast(t('search_history_cleared'))
   }
 
   const handleRemove = useCallback((keyword: string) => {
@@ -88,7 +95,7 @@ export default forwardRef<HistorySearchType, HistorySearchProps>((props, ref) =>
           <View>
             <View style={styles.titleContent}>
               <Text style={styles.title} size={16}>{t('search_history_search')}</Text>
-              <TouchableOpacity onPress={handleClear} style={styles.titleBtn}>
+              <TouchableOpacity onPress={() => { void handleClear() }} style={styles.titleBtn}>
                 <Icon name="eraser" color={theme['c-300']} size={14} />
               </TouchableOpacity>
             </View>

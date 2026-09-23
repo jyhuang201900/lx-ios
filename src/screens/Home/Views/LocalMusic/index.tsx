@@ -14,8 +14,7 @@ import { buildLocalMusicInfo, buildLocalMusicInfoByFilePath } from '@/screens/Ho
 import { existsFile, extname, mkdir, readDir, selectFile, unlink, type FileType } from '@/utils/fs'
 import { confirmDialog, createStyle, toast } from '@/utils/tools'
 import type { MusicMetadataFull } from '@/utils/localMediaMetadata'
-import { getLocalMetadataCacheKey } from '@/utils/localMediaMetadataCache'
-import { readMetadataCached } from '@/utils/localMediaMetadataCache'
+import { getLocalMetadataCacheKey, readMetadataCached } from '@/utils/localMediaMetadataCache'
 import { useTheme } from '@/store/theme/hook'
 import { addTempPlayList } from '@/core/player/tempPlayList'
 import LocalMusicItem from './LocalMusicItem'
@@ -30,6 +29,7 @@ export default () => {
   const [search, setSearch] = useState('')
   const [sortMode, setSortMode] = useState<'latest' | 'name' | 'artist' | 'duration'>('latest')
   const [metadataMap, setMetadataMap] = useState(() => new Map<string, MusicMetadataFull | null>())
+  const metadataMapRef = useRef(metadataMap)
   const [refreshing, setRefreshing] = useState(false)
   const hasLoadedRef = useRef(false)
   const lastRefreshRef = useRef(0)
@@ -120,7 +120,17 @@ export default () => {
 
   const handleMetadata = useCallback((file: FileType, metadata: MusicMetadataFull | null) => {
     const key = getLocalMetadataCacheKey(file)
-    setMetadataMap(current => new Map(current).set(key, metadata))
+    const next = new Map(metadataMapRef.current)
+    next.set(key, metadata)
+    metadataMapRef.current = next
+    setMetadataMap(next)
+  }, [])
+
+  const applyMetadataMap = useCallback((updater: (previous: Map<string, MusicMetadataFull | null>) => Map<string, MusicMetadataFull | null>) => {
+    const next = updater(metadataMapRef.current)
+    if (next === metadataMapRef.current) return
+    metadataMapRef.current = next
+    setMetadataMap(next)
   }, [])
 
   const renderItem = useCallback<FlatListProps<FileType>['renderItem']>(({ item }) => (
@@ -164,7 +174,7 @@ export default () => {
     let cancelled = false
     const currentKeys = new Set(files.map(getLocalMetadataCacheKey))
 
-    setMetadataMap(previous => {
+    applyMetadataMap(previous => {
       const next = new Map<string, MusicMetadataFull | null>()
       for (const [key, metadata] of previous) {
         if (currentKeys.has(key)) next.set(key, metadata)
@@ -172,7 +182,7 @@ export default () => {
       return next
     })
 
-    const pendingFiles = files.filter(file => !metadataMap.has(getLocalMetadataCacheKey(file)))
+    const pendingFiles = files.filter(file => !metadataMapRef.current.has(getLocalMetadataCacheKey(file)))
     let index = 0
 
     const readNextBatch = () => {
@@ -185,7 +195,7 @@ export default () => {
         await readMetadataCached(file).catch(() => null),
       ] as const))).then(results => {
         if (cancelled) return
-        setMetadataMap(previous => {
+        applyMetadataMap(previous => {
           const next = new Map(previous)
           for (const [key, metadata] of results) next.set(key, metadata)
           return next
@@ -200,7 +210,7 @@ export default () => {
     return () => {
       cancelled = true
     }
-  }, [files, metadataMap])
+  }, [files, applyMetadataMap])
 
   const playAllVisible = useCallback(async() => {
     if (!visibleFiles.length) return

@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
-import { View } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
+import { View, TouchableOpacity } from 'react-native'
 import { createStyle } from '@/utils/tools'
 
 import MusicList, { type MusicListType } from '../MusicList'
@@ -8,11 +8,17 @@ import HeaderBar, { type HeaderBarType, type HeaderBarProps } from './HeaderBar'
 import { getBoardsList } from '@/core/leaderboard'
 import { type BoardItem } from '@/store/leaderboard/state'
 import boardState from '@/store/leaderboard/state'
+import Text from '@/components/common/Text'
+import { useI18n } from '@/lang'
+import { useTheme } from '@/store/theme/hook'
 
 export default () => {
   const musicListRef = useRef<MusicListType>(null)
   const headerBarRef = useRef<HeaderBarType>(null)
   const boundInfo = useRef<{ source: LX.OnlineSource, id: string | null }>({ source: 'kw', id: null })
+  const [boardsFailed, setBoardsFailed] = useState(false)
+  const t = useI18n()
+  const theme = useTheme()
   // const [width, setWidth] = useState(0)
 
   const handleBoundChange = (source: LX.OnlineSource, id: string) => {
@@ -34,11 +40,11 @@ export default () => {
     const info = boardState.listDetailInfo
     if (info.id) void musicListRef.current?.playAll()
   }
-  const onSourceChange: HeaderBarProps['onSourceChange'] = (source) => {
-    boundInfo.current.source = source
+  const loadBoards = (source: LX.OnlineSource, boardId: string | null) => {
+    setBoardsFailed(false)
     void getBoardsList(source).then(list => {
       if (boundInfo.current.source != source) return
-      const id = resolveBoardId(list, null)
+      const id = resolveBoardId(list, boardId)
       if (!id) return
       boundInfo.current.id = id
       requestAnimationFrame(() => {
@@ -49,35 +55,52 @@ export default () => {
           handleBoundChange(source, id)
         })
       })
+    }).catch(() => {
+      if (boundInfo.current.source != source) return
+      setBoardsFailed(true)
+    })
+  }
+  const onSourceChange: HeaderBarProps['onSourceChange'] = (source) => {
+    boundInfo.current.source = source
+    loadBoards(source, null)
+  }
+  const initBoards = () => {
+    void getLeaderboardSetting().then(({ source, boardId }) => {
+      boundInfo.current.source = source
+      loadBoards(source, boardId)
     })
   }
 
   useEffect(() => {
-    void getLeaderboardSetting().then(({ source, boardId }) => {
-      boundInfo.current.source = source
-      void getBoardsList(source).then(list => {
-        if (boundInfo.current.source != source) return
-        const resolvedId = resolveBoardId(list, boardId)
-        if (!resolvedId) return
-        boundInfo.current.id = resolvedId
-        headerBarRef.current?.setBoards(source, list, resolvedId)
-        if (resolvedId != boardId) {
-          void saveLeaderboardSetting({
-            source,
-            boardId: resolvedId,
-          })
-        }
-        musicListRef.current?.loadList(source, resolvedId)
-      })
-    })
-
+    initBoards()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
 
   return (
     <View style={styles.container}>
-      <HeaderBar ref={headerBarRef} onSourceChange={onSourceChange} onBoardChange={onBoundChange} onPlayAll={handlePlayAll} />
-      <MusicList ref={musicListRef} />
+      {
+        boardsFailed
+          ? (
+              <View style={styles.errorView}>
+                <Text size={13} color={theme['c-font-label']}>{t('list_error')}</Text>
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityLabel={t('retry_button_text')}
+                  style={{ ...styles.retryBtn, borderColor: theme['c-border-background'] }}
+                  onPress={initBoards}
+                >
+                  <Text size={12} color={theme['c-font-label']}>{t('retry_button_text')}</Text>
+                </TouchableOpacity>
+              </View>
+            )
+          : (
+              <>
+                <HeaderBar ref={headerBarRef} onSourceChange={onSourceChange} onBoardChange={onBoundChange} onPlayAll={handlePlayAll} />
+                <MusicList ref={musicListRef} />
+              </>
+            )
+      }
     </View>
   )
 }
@@ -89,6 +112,21 @@ const styles = createStyle({
     flexDirection: 'column',
     overflow: 'hidden',
     // borderTopWidth: BorderWidths.normal,
+  },
+  errorView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 14,
+    paddingVertical: 30,
+  },
+  retryBtn: {
+    minHeight: 34,
+    paddingHorizontal: 18,
+    borderRadius: 17,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   // content: {
   //   flex: 1,

@@ -50,12 +50,13 @@ const PreassBar = memo(({ onDragState, setDragProgress, onSetProgress }: {
         // console.log(evt.nativeEvent.locationX, gestureState)
         onDragStart(gestureState.dx, evt.nativeEvent.locationX)
       },
-      onPanResponderRelease: () => {
-        onDragEnd()
+      onPanResponderRelease: (evt, gestureState) => {
+        onDragEnd(gestureState.dx, gestureState.dy)
       },
-      // onPanResponderTerminate: (evt, gestureState) => {
-      //   onDragEnd()
-      // },
+      onPanResponderTerminate: (evt, gestureState) => {
+        // 系统抢占手势（如来电横幅）时也要结束拖动态，避免覆盖条卡住
+        onDragEnd(gestureState.dx, gestureState.dy)
+      },
     }),
   ).current
 

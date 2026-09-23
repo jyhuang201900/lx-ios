@@ -635,5 +635,11 @@
   "version_title_new": "🌟 發現新版本 🌟",
   "version_title_unknown": "❓ 獲取最新版本資訊失敗 ❓",
   "version_title_update": "🚀 軟體更新 🚀",
-  "platform_feature_not_supported": "目前平台暫不支援此功能"
+  "platform_feature_not_supported": "目前平台暫不支援此功能",
+  "play_queue_now_playing": "正在播放",
+  "play_queue_clear_confirm": "確定要清空全部待播歌曲嗎？",
+  "retry_button_text": "重試",
+  "search_history_clear_confirm": "確定要清空全部搜尋歷史嗎？",
+  "search_history_cleared": "搜尋歷史已清空",
+  "play_list_add_song_tip": "去搜尋添加歌曲"
 }

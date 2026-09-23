@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { View } from 'react-native'
 import Button from '@/components/common/Button'
 
-import { createStyle } from '@/utils/tools'
+import { createStyle, toast } from '@/utils/tools'
 import { pop } from '@/navigation'
 import { useTheme } from '@/store/theme/hook'
 import commonState from '@/store/common/state'
@@ -22,23 +22,35 @@ export default memo(() => {
     void pop(commonState.componentIds.songlistDetail!)
   }
 
+  const isReady = !!songlistState.listDetailInfo.info.name
+
   const handlePlayAll = () => {
-    if (!songlistState.listDetailInfo.info.name) return
-    void handlePlay(info.id, info.source, songlistState.listDetailInfo.list)
+    if (!isReady) {
+      toast(t('load_failed'))
+      return
+    }
+    handlePlay(info.id, info.source, songlistState.listDetailInfo.list).catch(() => {
+      toast(t('load_failed'))
+    })
   }
 
   const handleCollection = () => {
-    if (!songlistState.listDetailInfo.info.name) return
-    void handleCollect(info.id, info.source, songlistState.listDetailInfo.info.name || info.name)
+    if (!isReady) {
+      toast(t('load_failed'))
+      return
+    }
+    handleCollect(info.id, info.source, songlistState.listDetailInfo.info.name || info.name).catch(() => {
+      toast(t('load_failed'))
+    })
   }
 
   return (
     <View style={styles.container}>
-      <Button onPress={handleCollection} style={styles.controlBtn}>
-        <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'] }}>{t('collect_songlist')}</Text>
+      <Button onPress={handleCollection} style={[styles.controlBtn, !isReady && styles.controlBtnDisabled]}>
+        <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'], ...(isReady ? undefined : styles.controlBtnTextDisabled) }}>{t('collect_songlist')}</Text>
       </Button>
-      <Button onPress={handlePlayAll} style={styles.controlBtn}>
-        <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'] }}>{t('play_all')}</Text>
+      <Button onPress={handlePlayAll} style={[styles.controlBtn, !isReady && styles.controlBtnDisabled]}>
+        <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'], ...(isReady ? undefined : styles.controlBtnTextDisabled) }}>{t('play_all')}</Text>
       </Button>
       <Button onPress={back} style={styles.controlBtn}>
         <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'] }}>{t('back')}</Text>
@@ -66,6 +78,12 @@ const styles = createStyle({
   controlBtnText: {
     fontSize: 13,
     textAlign: 'center',
+  },
+  controlBtnDisabled: {
+    opacity: 0.45,
+  },
+  controlBtnTextDisabled: {
+    opacity: 0.8,
   },
 })
 

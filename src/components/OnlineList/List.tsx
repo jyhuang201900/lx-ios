@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState, forwardRef, useImperativeHandle } from 'react'
-import { FlatList, type FlatListProps, RefreshControl, View } from 'react-native'
+import { FlatList, type FlatListProps, RefreshControl, View, TouchableOpacity, StyleSheet } from 'react-native'
 
 // import { useMusicList } from '@/store/list/hook'
 import ListItem, { ITEM_HEIGHT } from './ListItem'
@@ -11,6 +11,8 @@ import settingState from '@/store/setting/state'
 import { MULTI_SELECT_BAR_HEIGHT } from './MultipleModeBar'
 import { useI18n } from '@/lang'
 import Text from '@/components/common/Text'
+import Loading from '@/components/common/Loading'
+import { Icon } from '@/components/common/Icon'
 import { handlePlay } from './listAction'
 import { useSettingValue } from '@/store/setting/hook'
 
@@ -56,7 +58,7 @@ const List = forwardRef<ListType, ListProps>(({
   checkHomePagerIdle,
   rowType,
 }, ref) => {
-  // const t = useI18n()
+  const t = useI18n()
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
   const [currentList, setList] = useState<LX.Music.MusicInfoOnline[]>([])
@@ -207,6 +209,8 @@ const List = forwardRef<ListType, ListProps>(({
       onRefresh={onRefresh} />
   ), [status, onRefresh, theme])
   const footerComponent = useMemo(() => {
+    // 空列表时由空状态区负责反馈，避免空列表顶部出现游离的“加载中/到底啦”小字
+    if (!currentList.length) return null
     let label: FooterLabel
     switch (status) {
       case 'refreshing': return null
@@ -228,7 +232,42 @@ const List = forwardRef<ListType, ListProps>(({
         <Footer label={label} onLoadMore={onLoadMore} />
       </View>
     )
-  }, [onLoadMore, status, visibleMultiSelect])
+  }, [onLoadMore, status, visibleMultiSelect, currentList.length])
+
+  const emptyComponent = useMemo(() => {
+    if (currentList.length) return null
+    switch (status) {
+      case 'loading':
+      case 'refreshing':
+        return (
+          <View style={styles.empty}>
+            <Loading size={18} label={t('list_loading')} />
+          </View>
+        )
+      case 'error':
+        return (
+          <View style={styles.empty}>
+            <Text style={styles.emptyTitle} size={14} color={theme['c-font-label']}>{t('list_error')}</Text>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={t('list_error')}
+              style={{ ...styles.retryBtn, borderColor: theme['c-border-background'] }}
+              onPress={onLoadMore}
+            >
+              <Text size={12} color={theme['c-font-label']}>{t('retry_button_text')}</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      case 'end':
+        return (
+          <View style={styles.empty}>
+            <Icon name="album" size={28} color={theme['c-font-label']} style={styles.emptyIcon} />
+            <Text style={styles.emptyTitle} size={14} color={theme['c-font-label']}>{t('no_item')}</Text>
+          </View>
+        )
+      default: return null
+    }
+  }, [currentList.length, status, t, theme, onLoadMore])
 
   return (
     <FlatList
@@ -251,6 +290,7 @@ const List = forwardRef<ListType, ListProps>(({
       onEndReached={handleLoadMore}
       progressViewOffset={progressViewOffset}
       ListHeaderComponent={ListHeaderComponent}
+      ListEmptyComponent={emptyComponent}
       refreshControl={refreshControl}
       ListFooterComponent={footerComponent}
     />
@@ -271,8 +311,13 @@ const Footer = ({ label, onLoadMore }: {
   return (
     label
       ? (
-          <View>
-            <Text onPress={handlePress} style={styles.footer} color={theme['c-font-label']}>{t(label)}</Text>
+          <View style={label == 'list_error' ? styles.footerError : undefined}>
+            <Text
+              onPress={handlePress}
+              style={styles.footer}
+              size={label == 'list_error' ? 13 : 12}
+              color={theme['c-font-label']}
+            >{t(label)}</Text>
           </View>
         )
       : null
@@ -290,6 +335,32 @@ const styles = createStyle({
   footer: {
     textAlign: 'center',
     padding: 10,
+  },
+  footerError: {
+    paddingTop: 4,
+    paddingBottom: 10,
+  },
+  empty: {
+    flexGrow: 1,
+    minHeight: 220,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    paddingVertical: 30,
+  },
+  emptyIcon: {
+    opacity: 0.5,
+  },
+  emptyTitle: {
+    opacity: 0.9,
+  },
+  retryBtn: {
+    minHeight: 34,
+    paddingHorizontal: 18,
+    borderRadius: 17,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 })
 

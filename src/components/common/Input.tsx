@@ -1,4 +1,4 @@
-import { useRef, useImperativeHandle, forwardRef, useCallback } from 'react'
+import { useRef, useImperativeHandle, forwardRef, useCallback, useState, useEffect } from 'react'
 import { TextInput, View, TouchableOpacity, StyleSheet, type TextInputProps } from 'react-native'
 import { Icon } from '@/components/common/Icon'
 import { createStyle } from '@/utils/tools'
@@ -58,10 +58,10 @@ export interface InputType {
   isFocused: () => boolean
 }
 
-export default forwardRef<InputType, InputProps>(({ onChangeText, onClearText, clearBtn, style, size = 14, ...props }, ref) => {
+export default forwardRef<InputType, InputProps>(({ onChangeText, onClearText, clearBtn, style, size = 14, value, ...props }, ref) => {
   const inputRef = useRef<TextInput>(null)
   const theme = useTheme()
-  // const scaleClearBtn = useRef(new Animated.Value(0)).current
+  const [hasText, setHasText] = useState(() => String(value ?? '').length > 0)
 
   useImperativeHandle(ref, () => ({
     blur() {
@@ -72,40 +72,27 @@ export default forwardRef<InputType, InputProps>(({ onChangeText, onClearText, c
     },
     clear() {
       inputRef.current?.clear()
+      setHasText(false)
     },
     isFocused() {
       return inputRef.current?.isFocused() ?? false
     },
   }))
 
-  // const showClearBtn = useCallback(() => {
-  //   Animated.timing(scaleClearBtn, {
-  //     toValue: 1,
-  //     duration: 200,
-  //     useNativeDriver: true,
-  //   }).start()
-  // }, [scaleClearBtn])
-  // const hideClearBtn = useCallback(() => {
-  //   Animated.timing(scaleClearBtn, {
-  //     toValue: 0,
-  //     duration: 200,
-  //     useNativeDriver: true,
-  //   }).start()
-  // }, [scaleClearBtn])
+  // 受控模式下同步外部 value，避免外部清空后清除按钮残留
+  useEffect(() => {
+    if (value !== undefined) setHasText(String(value).length > 0)
+  }, [value])
 
   const clearText = useCallback(() => {
     inputRef.current?.clear()
-    // hideClearBtn()
+    setHasText(false)
     onChangeText?.('')
     onClearText?.()
   }, [onChangeText, onClearText])
 
   const changeText = useCallback((text: string) => {
-    // if (text.length) {
-    //   showClearBtn()
-    // } else {
-    //   hideClearBtn()
-    // }
+    setHasText(text.length > 0)
     onChangeText?.(text)
   }, [onChangeText])
 
@@ -115,13 +102,14 @@ export default forwardRef<InputType, InputProps>(({ onChangeText, onClearText, c
         autoCapitalize="none"
         onChangeText={changeText}
         autoComplete="off"
+        value={value}
         style={StyleSheet.compose({ ...styles.input, color: theme['c-font'], fontSize: setSpText(size) }, style)}
         placeholderTextColor={theme['c-primary-dark-100-alpha-600']}
         selectionColor={theme['c-primary-light-100-alpha-300']}
         ref={inputRef} {...props} />
       {/* <View style={styles.clearBtnContent}>
       <Animated.View style={{ ...styles.clearBtnContent, transform: [{ scale: scaleClearBtn }] }}> */}
-        {clearBtn
+        {clearBtn && hasText
           ? <View style={styles.clearBtnContent}>
               <TouchableOpacity
                 accessibilityRole="button"
