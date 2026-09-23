@@ -35,6 +35,7 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
             desc: listDetailInfo.info.desc || info.desc || '',
             playCount: (info.play_count ?? listDetailInfo.info.play_count) ?? '',
             imgUrl: info.img ?? listDetailInfo.info.img,
+            songCount: listDetailInfo.total,
           })
         })
       } else {
@@ -46,9 +47,10 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
           name: (info.name || listDetailInfo.info.name) ?? '',
           // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           desc: listDetailInfo.info.desc || info.desc || '',
-          playCount: (info.play_count ?? listDetailInfo.info.play_count) ?? '',
-          imgUrl: info.img ?? listDetailInfo.info.img,
-        })
+            playCount: (info.play_count ?? listDetailInfo.info.play_count) ?? '',
+            imgUrl: info.img ?? listDetailInfo.info.img,
+            songCount: songlistState.listDetailInfo.total,
+          })
         return getListDetail(id, source, page).then((listDetail) => {
           const result = setListDetail(listDetail, id, page)
           if (isUnmountedRef.current || requestId != requestIdRef.current) return
@@ -59,6 +61,7 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
               desc: listDetailInfo.info.desc || info.desc || '',
               playCount: (info.play_count ?? listDetailInfo.info.play_count) ?? '',
               imgUrl: info.img ?? listDetailInfo.info.img,
+              songCount: songlistState.listDetailInfo.total,
             })
             listRef.current?.setList(result.list)
             listRef.current?.setStatus(songlistState.listDetailInfo.maxPage <= page ? 'end' : 'idle')

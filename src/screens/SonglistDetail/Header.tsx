@@ -9,6 +9,7 @@ import { useTheme } from '@/store/theme/hook'
 import Text, { AnimatedText } from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
 import Image from '@/components/common/Image'
+import { useI18n } from '@/lang'
 import { useListInfo } from './state'
 import { useAnimateOnecNumber } from '@/utils/hooks/useAnimateNumber'
 import { useStatusbarHeight } from '@/store/common/hook'
@@ -70,12 +71,14 @@ export interface DetailInfo {
   playCount: string
   imgUrl?: string
   author?: string
+  songCount?: number
 }
 
 export default forwardRef<HeaderType, HeaderProps>(({ componentId }: { componentId: string }, ref) => {
   const statusBarHeight = useStatusbarHeight()
   const theme = useTheme()
   const info = useListInfo()
+  const t = useI18n()
   const [detailInfo, setDetailInfo] = useState<DetailInfo>({ name: '', desc: '', playCount: '', imgUrl: info.img, author: info.author })
 
   useImperativeHandle(ref, () => ({
@@ -97,6 +100,11 @@ export default forwardRef<HeaderType, HeaderProps>(({ componentId }: { component
                 </Text>
               : null
           }
+          {detailInfo.songCount ? (
+            <Text size={11} color={theme['c-font-label']} numberOfLines={1}>
+              {t('list_song_count', { num: detailInfo.songCount })}
+            </Text>
+          ) : null}
           <View style={{ flexGrow: 0, flexShrink: 1 }}>
             <Text size={13} color={theme['c-font-label']} numberOfLines={ 4 }>{detailInfo.desc}</Text>
           </View>

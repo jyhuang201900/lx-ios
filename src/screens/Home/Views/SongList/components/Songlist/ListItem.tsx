@@ -7,6 +7,7 @@ import { scaleSizeW } from '@/utils/pixelRatio'
 import { NAV_SHEAR_NATIVE_IDS } from '@/config/constant'
 import { useTheme } from '@/store/theme/hook'
 import Image from '@/components/common/Image'
+import { useI18n } from '@/lang'
 
 const gap = scaleSizeW(15)
 export default memo(({ item, index, width, showSource, onPress }: {
@@ -17,6 +18,7 @@ export default memo(({ item, index, width, showSource, onPress }: {
   onPress: (item: ListInfoItem, index: number) => void
 }) => {
   const theme = useTheme()
+  const t = useI18n()
   const itemWidth = width - gap
   const handlePress = useCallback(() => {
     onPress(item, index)
@@ -41,7 +43,11 @@ export default memo(({ item, index, width, showSource, onPress }: {
             ) : null}
             {(item.play_count || item.author) ? (
               <Text style={styles.listItemMeta} color={theme['c-500']} numberOfLines={1}>
-                {[item.author, item.play_count].filter(Boolean).join(' · ')}
+                {[
+                  item.author,
+                  item.play_count,
+                  item.total ? t('list_song_count', { num: item.total }) : '',
+                ].filter(Boolean).join(' · ')}
               </Text>
             ) : null}
             {/* <Text>{JSON.stringify(item)}</Text> */}
