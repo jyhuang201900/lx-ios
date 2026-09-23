@@ -17,6 +17,7 @@ import { useSetting } from '@/store/setting/hook'
 import { isSoundEffectActive } from '@/plugins/player/soundEffect'
 import Btn from './Btn'
 import TimeoutExitBtn from './TimeoutExitBtn'
+import PlaybackRateBtn from '../../components/PlaybackRateBtn'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 export const HEADER_HEIGHT = scaleSizeH(_HEADER_HEIGHT)
@@ -61,6 +62,7 @@ export default memo(() => {
       <View style={styles.container}>
         <Btn icon="chevron-left" onPress={back} />
         <Title />
+        <PlaybackRateBtn />
         <TimeoutExitBtn />
         <Btn icon="slider" color={isSoundEffectActive(setting) ? theme['c-primary-font-active'] : undefined} onPress={showSoundEffect} />
         <Btn icon="setting" size={16} onPress={showSetting} />

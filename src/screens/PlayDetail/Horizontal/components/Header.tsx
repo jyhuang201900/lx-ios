@@ -60,6 +60,7 @@ export default memo(() => {
           <Icon name="chevron-left" size={18} />
         </TouchableOpacity>
         <Title />
+        <PlaybackRateBtn />
         <CommentBtn />
         <Btn icon="music_time" color={timeInfo.active ? theme['c-primary-font-active'] : undefined} onPress={showTimeoutExit} />
         <Btn icon="slider" color={isSoundEffectActive(setting) ? theme['c-primary-font-active'] : undefined} onPress={showSoundEffect} />
