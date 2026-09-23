@@ -112,6 +112,11 @@ export default () => {
     }
   }, [])
 
+  const buildMusicInfoFromFile = useCallback((file: FileType) => {
+    const metadata = metadataMap.get(getLocalMetadataCacheKey(file))
+    return metadata ? buildLocalMusicInfo(file.path, metadata) : buildLocalMusicInfoByFilePath(file)
+  }, [metadataMap])
+
   const handleMetadata = useCallback((file: FileType, metadata: MusicMetadataFull | null) => {
     const key = getLocalMetadataCacheKey(file)
     setMetadataMap(current => new Map(current).set(key, metadata))
@@ -154,6 +159,16 @@ export default () => {
     })
   }, [files, metadataMap, search, sortMode])
 
+  const playAllVisible = useCallback(async() => {
+    if (!visibleFiles.length) return
+    addTempPlayList(visibleFiles.map(file => ({
+      listId: LIST_IDS.PLAY_LATER,
+      musicInfo: buildMusicInfoFromFile(file),
+      isTop: false,
+    })))
+    await playNext()
+  }, [visibleFiles, buildMusicInfoFromFile])
+
   return <View style={styles.container}>
     <View style={{ ...styles.summary, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
       <View style={{ ...styles.summaryIcon, backgroundColor: theme['c-primary-background-active'] }}>
@@ -181,6 +196,16 @@ export default () => {
         onPress={() => { void refresh() }}
       >
         <Text size={12} color={theme['c-font']}>{refreshing ? global.i18n.t('loading') : global.i18n.t('local_music_refresh')}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={global.i18n.t('play_all')}
+        disabled={!visibleFiles.length}
+        style={{ ...styles.playAllAction, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'], opacity: visibleFiles.length ? 1 : 0.4 }}
+        onPress={() => { void playAllVisible() }}
+      >
+        <Icon name="play" size={14} color={theme['c-font']} />
+        <Text size={12} color={theme['c-font']}>{global.i18n.t('play_all')}</Text>
       </TouchableOpacity>
     </View>
     {Platform.OS == 'ios' ? <DownloadQueue /> : null}
@@ -274,6 +299,7 @@ const styles = createStyle({
   actions: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 14, gap: 9 },
   primaryAction: { flex: 1, minHeight: 43, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 },
   refreshAction: { minWidth: 82, minHeight: 43, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
+  playAllAction: { minWidth: 88, minHeight: 43, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 },
   searchCard: { marginHorizontal: 16, marginBottom: 10, minHeight: 42, borderRadius: 14, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 11, flexDirection: 'row', alignItems: 'center' },
   searchInput: { height: 38, paddingLeft: 8, fontSize: 13 },
   sectionHeader: { minHeight: 32, paddingHorizontal: 17, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
