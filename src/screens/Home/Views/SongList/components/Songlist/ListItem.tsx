@@ -34,6 +34,11 @@ export default memo(({ item, index, width, showSource, onPress }: {
             <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
               <Text style={styles.listItemTitle} numberOfLines={ 2 }>{item.name}</Text>
             </TouchableOpacity>
+            {(item.play_count || item.author) ? (
+              <Text style={styles.listItemMeta} color={theme['c-500']} numberOfLines={1}>
+                {[item.author, item.play_count].filter(Boolean).join(' · ')}
+              </Text>
+            ) : null}
             {/* <Text>{JSON.stringify(item)}</Text> */}
           </View>
         )
@@ -86,5 +91,9 @@ const styles = createStyle({
     fontSize: 12,
     // overflow: 'hidden',
     marginBottom: 5,
+  },
+  listItemMeta: {
+    fontSize: 11,
+    lineHeight: 16,
   },
 })

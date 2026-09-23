@@ -25,6 +25,14 @@ const ListItem = ({ keyword, onSearch, onRemove }: {
       onLongPress={() => { onRemove(keyword) }}
     >
       <Text style={styles.buttonText} color={theme['c-button-font']} size={13}>{keyword}</Text>
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={`${global.i18n.t('delete')} ${keyword}`}
+        style={styles.removeButton}
+        onPress={() => { onRemove(keyword) }}
+      >
+        <Icon name="close" size={10} color={theme['c-300']} />
+      </TouchableOpacity>
     </Button>
   )
 }
@@ -125,6 +133,15 @@ const styles = createStyle({
     borderRadius: 14,
     marginRight: 8,
     marginTop: 10,
+    flexDirection: 'row',
+    gap: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  removeButton: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
