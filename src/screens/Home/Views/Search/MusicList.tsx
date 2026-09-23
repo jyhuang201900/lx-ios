@@ -2,6 +2,7 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 
 import OnlineList, { type OnlineListType, type OnlineListProps } from '@/components/OnlineList'
 import { search } from '@/core/search/music'
 import searchMusicState, { type Source } from '@/store/search/music/state'
+import { handlePlay } from '@/components/OnlineList/listAction'
 
 // export type MusicListProps = Pick<OnlineListProps,
 // 'onLoadMore'
@@ -11,6 +12,7 @@ import searchMusicState, { type Source } from '@/store/search/music/state'
 
 export interface MusicListType {
   loadList: (text: string, source: Source) => void
+  playAll: () => void
 }
 
 export default forwardRef<MusicListType, {}>((props, ref) => {
@@ -44,6 +46,10 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
           listRef.current?.setStatus('error')
         })
       }
+    },
+    playAll() {
+      const list = listRef.current?.getList() ?? []
+      if (list.length) handlePlay(list[0])
     },
   }), [])
 

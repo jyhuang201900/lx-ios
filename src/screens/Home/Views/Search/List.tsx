@@ -11,6 +11,7 @@ interface ListProps {
 }
 export interface ListType {
   loadList: (text: string, source: MusicSource | SongListSource, type: SearchState['searchType']) => void
+  playAll: () => void
 }
 
 export default forwardRef<ListType, ListProps>(({ onSearch }, ref) => {
@@ -34,6 +35,9 @@ export default forwardRef<ListType, ListProps>(({ onSearch }, ref) => {
           blankViewRef.current?.show(source)
         })
       }
+    },
+    playAll() {
+      if (listType == 'music') listRef.current?.playAll()
     },
   }), [])
 

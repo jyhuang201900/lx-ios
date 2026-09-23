@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { type LayoutChangeEvent, View } from 'react-native'
 
 // import music from '@/utils/musicSdk'
@@ -28,6 +28,7 @@ export default () => {
   const listRef = useRef<ListType>(null)
   const layoutHeightRef = useRef<number>(0)
   const searchInfo = useRef<SearchInfo>({ temp_source: 'kw', source: 'kw', searchType: 'music' })
+  const [searchType, setSearchType] = useState<SearchType>('music')
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export default () => {
       searchInfo.current.temp_source = info.temp_source
       searchInfo.current.source = info.source
       searchInfo.current.searchType = info.type
+      setSearchType(info.type)
       switch (info.type) {
         case 'music':
           headerBarRef.current?.setSourceList(searchMusicState.sources, info.source)
@@ -50,6 +52,7 @@ export default () => {
 
     const handleTypeChange = (type: SearchType) => {
       searchInfo.current.searchType = type
+      setSearchType(type)
       void saveSearchSetting({ type })
       listRef.current?.loadList(searchState.searchText, searchInfo.current.source, type)
     }
@@ -106,6 +109,8 @@ export default () => {
         onSearch={handleSearch}
         onHideTipList={handleHideTipList}
         onShowTipList={handleShowTipList}
+        showPlayAll={searchType == 'music'}
+        onPlayAll={() => listRef.current?.playAll()}
       />
       <View style={styles.content} onLayout={handleLayout}>
         <TipList ref={searchTipListRef} onSearch={handleSearch} />

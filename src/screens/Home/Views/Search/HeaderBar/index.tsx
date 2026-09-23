@@ -1,5 +1,6 @@
 import { useRef, forwardRef, useImperativeHandle } from 'react'
-import { View } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
+import { Icon } from '@/components/common/Icon'
 
 // import music from '@/utils/musicSdk'
 import { BorderWidths } from '@/theme'
@@ -25,6 +26,8 @@ export interface HeaderBarProps {
   onSearch: SearchInputProps['onSubmit']
   onHideTipList: SearchInputProps['onBlur']
   onShowTipList: SearchInputProps['onTouchStart']
+  showPlayAll?: boolean
+  onPlayAll?: () => void
 }
 
 export interface HeaderBarType {
@@ -34,7 +37,7 @@ export interface HeaderBarType {
 }
 
 
-export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTipSearch, onSearch, onHideTipList, onShowTipList }, ref) => {
+export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTipSearch, onSearch, onHideTipList, onShowTipList, showPlayAll = false, onPlayAll }, ref) => {
   const sourceSelectorRef = useRef<SourceSelectorType>(null)
   const searchInputRef = useRef<SearchInputType>(null)
   const theme = useTheme()
@@ -67,6 +70,16 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
       <View style={styles.typeSelector}>
         <SearchTypeSelector />
       </View>
+      {showPlayAll && onPlayAll ? (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('play_all')}
+          style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-background-active'] }}
+          onPress={onPlayAll}
+        >
+          <Icon name="play" size={13} color={theme['c-primary-font-active']} />
+        </TouchableOpacity>
+      ) : null}
     </View>
   )
 })
@@ -92,5 +105,13 @@ const styles = createStyle({
     marginLeft: 9,
     flexGrow: 0,
     flexShrink: 0,
+  },
+  playAllButton: {
+    marginLeft: 9,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 })
