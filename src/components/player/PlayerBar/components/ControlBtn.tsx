@@ -6,7 +6,6 @@ import { useIsPlay } from '@/store/player/hook'
 import { useTheme } from '@/store/theme/hook'
 import { playNext, playPrev, togglePlay } from '@/core/player/player'
 import { createStyle } from '@/utils/tools'
-import { useHorizontalMode } from '@/utils/hooks'
 import { markTimeoutExitInteraction } from '@/core/player/timeoutExit'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
 
@@ -76,8 +75,8 @@ const TogglePlayBtn = () => {
 }
 
 export default () => {
-  const isHorizontalMode = useHorizontalMode()
   const queuePopupRef = useRef<QueuePopupType>(null)
+  const theme = useTheme()
 
   return (
     <>

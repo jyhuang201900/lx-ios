@@ -12,10 +12,12 @@ import { HEADER_HEIGHT as _HEADER_HEIGHT, NAV_SHEAR_NATIVE_IDS } from '@/config/
 import commonState from '@/store/common/state'
 import CommentBtn from './CommentBtn'
 import Btn from './Btn'
+import PlaybackRateBtn from '../../components/PlaybackRateBtn'
 import SettingPopup, { type SettingPopupType } from '../../components/SettingPopup'
 import SoundEffectPopup, { type SoundEffectPopupType } from '../../components/SoundEffectPopup'
 import { useSetting } from '@/store/setting/hook'
 import { isSoundEffectActive } from '@/plugins/player/soundEffect'
+import TimeoutExitEditModal, { type TimeoutExitEditModalType, useTimeInfo } from '@/components/TimeoutExitEditModal'
 
 export const HEADER_HEIGHT = scaleSizeH(_HEADER_HEIGHT)
 

@@ -246,3 +246,11 @@
 - TrackPlayer 播放中持续更新缓冲进度（与 nativeFlac 分支对齐）；取流超时从 100s 缩短为 30s；迷你条标题长按补 isHome 守卫。
 - 删除未被引用的 Views/Download 占位死代码；补充 6 组三语 i18n 文案。
 - 验证：esbuild 全量转译 28 个修改文件零错误；三语 JSON 可解析且键集一致（643 键）；包含此前工作区遗留的 LocalMusic 元数据 Map 竞态修复。
+
+## Session: 2026-09-24 — startup crash fix
+- 用户反馈新构建启动即崩：Fatal ReferenceError Property 'theme' doesn't exist。
+- 定位：迷你播放条 ControlBtn 主组件在 01499b2(播放队列弹层)新增队列按钮时使用了 theme,但该组件内缺少 const theme = useTheme();子按钮组件各自有定义,因此此前只核对子组件时未暴露。esbuild 仅验证语法、不验证作用域,静态检查未能拦截。
+- 修复一:ControlBtn 主组件补 const theme = useTheme(),并删除未使用的 isHorizontalMode/useHorizontalMode 导入。
+- 修复二:横屏播放页 Header 此前用 python 批量插入 import 时因锚点带尾随空格未匹配,导致 TimeoutExitEditModal、useTimeInfo、PlaybackRateBtn 三个标识符被裸用(JSX 已插入而 import 缺失);已用 Edit 工具补齐 import。
+- 加固:新增两个全仓静态检查脚本并纳入本轮验证——静态 createStyle/StyleSheet.create 块内禁止引用 theme;JSX 使用的自定义组件必须有 import(修正了命名导入解析),全量重扫确认无其他同类问题。
+- 验证:修复文件 esbuild 通过;全仓 theme 作用域扫描与 import 完整性扫描均清零;node_modules 为空无法本地 bundle,真实构建仍由 GitHub Actions 承担。
