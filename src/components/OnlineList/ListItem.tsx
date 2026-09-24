@@ -9,6 +9,7 @@ import { useTheme } from '@/store/theme/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { LIST_ITEM_HEIGHT } from '@/config/constant'
 import { createStyle, type RowInfo } from '@/utils/tools'
+import { Radius } from '@/theme/layout'
 
 export const ITEM_HEIGHT = scaleSizeH(LIST_ITEM_HEIGHT)
 
@@ -59,7 +60,7 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
   const singer = `${item.singer}${isShowAlbumName && item.meta.albumName ? ` · ${item.meta.albumName}` : ''}`
 
   return (
-    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)' }}>
+    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'] }}>
       <TouchableOpacity accessibilityRole="button" style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
         <Text style={styles.sn} size={13} color={theme['c-300']}>{index + 1}</Text>
         <View style={styles.itemInfo}>
@@ -104,10 +105,10 @@ const styles = createStyle({
     // paddingLeft: 10,
     paddingRight: 6,
     marginHorizontal: 10,
-    borderRadius: 14,
+    borderRadius: Radius.control,
     alignItems: 'center',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(128,128,128,0.12)',
+    borderBottomColor: 'transparent', // 主题色在渲染处以内联样式提供
     // borderBottomWidth: BorderWidths.normal,
   },
   listItemLeft: {
@@ -148,6 +149,7 @@ const styles = createStyle({
   listItemTimeLabel: {
     marginRight: 5,
     fontWeight: '400',
+    fontVariant: ['tabular-nums'],
   },
   listItemSingleText: {
     // fontSize: 13,
@@ -171,7 +173,7 @@ const styles = createStyle({
   moreButton: {
     height: 44,
     minWidth: 44,
-    borderRadius: 14,
+    borderRadius: Radius.pill,
     paddingLeft: 12,
     paddingRight: 12,
     // paddingTop: 10,

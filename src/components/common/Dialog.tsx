@@ -8,6 +8,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { scaleSizeH } from '@/utils/pixelRatio'
+import { createShadow, Radius } from '@/theme/layout'
 
 const HEADER_HEIGHT = 48
 const styles = createStyle({
@@ -21,15 +22,8 @@ const styles = createStyle({
     minWidth: '60%',
     maxHeight: '78%',
     // backgroundColor: 'white',
-    borderRadius: 18,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 4,
-    elevation: 3,
+    borderRadius: Radius.sheet,
+    ...createShadow({ opacity: 0.22, radius: 16, offsetY: 6, elevation: 6 }),
   },
   header: {
     flexGrow: 0,

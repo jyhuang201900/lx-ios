@@ -8,6 +8,7 @@ import Loading from '@/components/common/Loading'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
+import { Radius } from '@/theme/layout'
 
 
 interface ListProps {
@@ -105,7 +106,7 @@ const styles = createStyle({
     minHeight: 38,
     paddingHorizontal: 12,
     paddingVertical: 7,
-    borderRadius: 14,
+    borderRadius: Radius.pill,
     marginRight: 8,
     marginTop: 10,
     alignItems: 'center',

@@ -122,6 +122,7 @@ const styles = createStyle({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
+    fontVariant: ['tabular-nums'],
   },
   lineContent: {
     // backgroundColor: 'rgba(0,0,0,0.1)',

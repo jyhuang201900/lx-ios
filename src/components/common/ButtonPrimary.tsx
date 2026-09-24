@@ -4,6 +4,7 @@ import Button, { type BtnProps } from '@/components/common/Button'
 import Text from '@/components/common/Text'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
+import { Radius } from '@/theme/layout'
 
 export interface ButtonProps extends BtnProps {
   size?: number
@@ -24,7 +25,7 @@ const styles = createStyle({
     minHeight: 40,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 13,
+    borderRadius: Radius.pill,
     marginRight: 10,
     alignItems: 'center',
     justifyContent: 'center',

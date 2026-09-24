@@ -12,6 +12,7 @@ import {
 } from '@/core/download'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
+import { Radius } from '@/theme/layout'
 
 type QueueStatusLabel = 'download_queue_queued' | 'download_queue_downloading' | 'download_queue_completed' | 'download_queue_failed' | 'download_queue_canceled'
 
@@ -114,14 +115,14 @@ const styles = createStyle({
     marginBottom: 6,
     paddingHorizontal: 9,
     borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 14,
+    borderRadius: Radius.control,
     flexDirection: 'row',
     alignItems: 'center',
   },
   taskIcon: {
     width: 34,
     height: 34,
-    borderRadius: 12,
+    borderRadius: Radius.control,
     alignItems: 'center',
     justifyContent: 'center',
   },

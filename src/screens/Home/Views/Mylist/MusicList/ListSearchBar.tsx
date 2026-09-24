@@ -8,6 +8,7 @@ import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { createStyle } from '@/utils/tools'
 import { BorderWidths } from '@/theme'
+import { Radius } from '@/theme/layout'
 
 interface SearchInputProps {
   onSearch: (keywork: string) => void
@@ -207,7 +208,7 @@ const styles = createStyle({
     paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 14,
+    borderRadius: Radius.control,
   },
   btnText: { textAlign: 'center', textAlignVertical: 'center' },
 })

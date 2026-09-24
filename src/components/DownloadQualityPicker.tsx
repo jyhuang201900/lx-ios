@@ -7,6 +7,7 @@ import { Icon } from '@/components/common/Icon'
 import { downloadMusic, getDownloadQualities } from '@/core/download'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
+import { Radius } from '@/theme/layout'
 
 export interface DownloadQualityPickerType {
   show: (musicInfo: LX.Music.MusicInfoOnline) => void
@@ -64,11 +65,11 @@ export default forwardRef<DownloadQualityPickerType>((_, ref) => {
 
 const styles = createStyle({
   content: { paddingHorizontal: 16, paddingBottom: 24 },
-  track: { minHeight: 58, borderRadius: 15, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center' },
+  track: { minHeight: 58, borderRadius: Radius.card, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center' },
   trackIcon: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   trackCopy: { flex: 1, gap: 4, paddingLeft: 10 },
   hint: { paddingTop: 18, paddingBottom: 8, textAlign: 'center', textAlignVertical: 'center' },
   qualityList: { gap: 8 },
-  qualityButton: { minHeight: 48, borderWidth: 1, borderRadius: 14, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  qualityButton: { minHeight: 48, borderWidth: 1, borderRadius: Radius.control, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   empty: { paddingVertical: 22, textAlign: 'center' },
 })

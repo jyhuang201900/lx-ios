@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import settingState from '@/store/setting/state'
 import Content from './Content'
 import TagList from './TagList'
@@ -7,6 +7,7 @@ import DrawerLayoutFixed, { type DrawerLayoutFixedType } from '@/components/comm
 import { COMPONENT_IDS } from '@/config/constant'
 import { scaleSizeW } from '@/utils/pixelRatio'
 import type { InitState as CommonState } from '@/store/common/state'
+import { createShadow } from '@/theme/layout'
 
 const MAX_WIDTH = scaleSizeW(560)
 
@@ -38,6 +39,7 @@ export default () => {
     }
   }, [])
 
+  const drawerShadow = useMemo(() => createShadow({ opacity: 0.12, radius: 14, offsetY: 0, elevation: 1 }), [])
   const navigationView = () => <TagList />
   // console.log('render drawer content')
 
@@ -50,7 +52,7 @@ export default () => {
       drawerPosition={settingState.setting['common.drawerLayoutPosition']}
       renderNavigationView={navigationView}
       drawerBackgroundColor={theme['c-content-background']}
-      style={{ elevation: 1 }}
+      style={drawerShadow}
     >
       <Content />
     </DrawerLayoutFixed>

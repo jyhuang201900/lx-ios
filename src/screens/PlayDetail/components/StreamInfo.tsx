@@ -9,6 +9,7 @@ import { useTheme } from '@/store/theme/hook'
 import { useUserApiList } from '@/store/userApi'
 import { createStyle } from '@/utils/tools'
 import { sortQualities } from '@/utils/quality'
+import { Radius } from '@/theme/layout'
 
 const getMusicInfo = (musicInfo: LX.Player.PlayMusic | null) => musicInfo && 'progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo
 
@@ -93,7 +94,7 @@ const styles = createStyle({
     flexDirection: 'row',
     alignItems: 'center',
     maxWidth: '48%',
-    borderRadius: 12,
+    borderRadius: Radius.pill,
     paddingHorizontal: 9,
     paddingVertical: 4,
     gap: 4,

@@ -8,6 +8,7 @@ import { playNext, playPrev, togglePlay } from '@/core/player/player'
 import { createStyle } from '@/utils/tools'
 import { markTimeoutExitInteraction } from '@/core/player/timeoutExit'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
+import { Radius } from '@/theme/layout'
 
 const BTN_SIZE = 24
 const handlePlayPrev = () => {
@@ -114,6 +115,6 @@ const styles = createStyle({
     height: 46,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 23,
+    borderRadius: Radius.pill,
   },
 })

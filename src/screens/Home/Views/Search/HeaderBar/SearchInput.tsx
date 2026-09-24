@@ -5,6 +5,7 @@ import { useI18n } from '@/lang'
 import { Icon } from '@/components/common/Icon'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
+import { Radius } from '@/theme/layout'
 
 export interface SearchInputProps {
   onChangeText: (text: string) => void
@@ -84,7 +85,7 @@ const styles = createStyle({
     alignItems: 'center',
     paddingLeft: 13,
     paddingRight: 3,
-    borderRadius: 14,
+    borderRadius: Radius.control,
   },
   input: {
     height: 42,

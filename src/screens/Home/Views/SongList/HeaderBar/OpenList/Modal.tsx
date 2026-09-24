@@ -8,6 +8,7 @@ import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 // import SourceSelector, { type SourceSelectorProps, type SourceSelectorType } from '../SourceSelector'
 import { type Source } from '@/store/songlist/state'
+import { Radius } from '@/theme/layout'
 
 interface IdInputType {
   setText: (text: string) => void
@@ -134,7 +135,7 @@ const styles = createStyle({
     // paddingTop: 2,
     // paddingBottom: 2,
     height: '100%',
-    borderRadius: 14,
+    borderRadius: Radius.control,
   },
   inputTipText: {
     marginTop: 15,

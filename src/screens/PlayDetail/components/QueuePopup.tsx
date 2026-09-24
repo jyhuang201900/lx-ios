@@ -9,6 +9,7 @@ import { clearTempPlayeList, removeTempPlayList } from '@/core/player/tempPlayLi
 import { playTempPlayListItem } from '@/core/player/player'
 import { confirmDialog, createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
+import { Radius } from '@/theme/layout'
 
 type QueueItem = LX.Player.PlayMusicInfo
 
@@ -163,7 +164,7 @@ const styles = createStyle({
     minHeight: 52,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 14,
+    borderRadius: Radius.card,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
@@ -187,7 +188,7 @@ const styles = createStyle({
   clearButton: {
     minHeight: 30,
     paddingHorizontal: 11,
-    borderRadius: 15,
+    borderRadius: Radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
@@ -200,13 +201,14 @@ const styles = createStyle({
     minHeight: 60,
     marginBottom: 6,
     paddingHorizontal: 10,
-    borderRadius: 14,
+    borderRadius: Radius.control,
     flexDirection: 'row',
     alignItems: 'center',
   },
   order: {
     width: 24,
     textAlign: 'center',
+    fontVariant: ['tabular-nums'],
   },
   itemCopy: {
     flex: 1,
@@ -224,14 +226,14 @@ const styles = createStyle({
     flexShrink: 0,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 8,
+    borderRadius: Radius.pill,
     backgroundColor: 'rgba(128,128,128,0.16)',
   },
   removeButton: {
     width: 32,
     height: 32,
     marginLeft: 4,
-    borderRadius: 12,
+    borderRadius: Radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },

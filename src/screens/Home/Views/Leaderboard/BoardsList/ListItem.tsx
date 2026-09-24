@@ -5,6 +5,7 @@ import Button, { type BtnType } from '@/components/common/Button'
 import { createStyle } from '@/utils/tools'
 import { type BoardItem } from '@/store/leaderboard/state'
 import { Icon } from '@/components/common/Icon'
+import { Radius } from '@/theme/layout'
 
 // index={index}
 // longPressIndex={longPressIndex}
@@ -61,7 +62,7 @@ const styles = createStyle({
     marginRight: 8,
     marginTop: 0,
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: Radius.control,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

@@ -11,6 +11,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useSettingValue } from '@/store/setting/hook'
 import { BorderWidths } from '@/theme'
+import { createShadow, Radius } from '@/theme/layout'
 
 
 export default memo(({ isHome = false }: { isHome?: boolean }) => {
@@ -53,12 +54,12 @@ const styles = createStyle({
     paddingLeft: 8,
     // backgroundColor: AppColors.primary,
     // backgroundColor: 'red',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
+    borderTopLeftRadius: Radius.card,
+    borderTopRightRadius: Radius.card,
     borderTopWidth: BorderWidths.normal,
     flexDirection: 'row',
     alignItems: 'center',
-    elevation: 10,
+    ...createShadow({ opacity: 0.14, radius: 16, offsetY: -4, elevation: 10 }),
   },
   left: {
     // borderRadius: 3,

@@ -17,6 +17,7 @@ import { type Source } from '@/store/songlist/state'
 // import { useTheme } from '@/store/theme/hook'
 import Tag, { type TagType, type TagProps } from './Tag'
 import OpenList, { type OpenListType } from './OpenList'
+import { Radius } from '@/theme/layout'
 // import { BorderWidths } from '@/theme'
 
 export interface HeaderBarProps {
@@ -66,7 +67,7 @@ const styles = createStyle({
     marginTop: 12,
     marginBottom: 9,
     borderWidth: BorderWidths.normal,
-    borderRadius: 14,
+    borderRadius: Radius.card,
     paddingLeft: 8,
   },
   selector: {

@@ -7,6 +7,7 @@ import { useI18n } from '@/lang'
 import Text from '@/components/common/Text'
 import { useTheme } from '@/store/theme/hook'
 import { getSearchSetting } from '@/utils/data'
+import { Radius } from '@/theme/layout'
 
 const SEARCH_TYPE_LIST = [
   'music',
@@ -60,7 +61,7 @@ const styles = createStyle({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 3,
-    borderRadius: 12,
+    borderRadius: Radius.pill,
   },
   button: {
     height: '100%',
@@ -68,7 +69,7 @@ const styles = createStyle({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 9,
-    borderRadius: 9,
+    borderRadius: Radius.pill,
   },
   buttonText: {
     textAlign: 'center',

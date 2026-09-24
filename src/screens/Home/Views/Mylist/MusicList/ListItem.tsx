@@ -9,6 +9,7 @@ import { useAssertApiSupport } from '@/store/common/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import Text from '@/components/common/Text'
 import Badge from '@/components/common/Badge'
+import { Radius, TabularNums } from '@/theme/layout'
 
 export const ITEM_HEIGHT = scaleSizeH(LIST_ITEM_HEIGHT)
 
@@ -64,7 +65,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
         </View>
         {
           isShowInterval ? (
-            <Text size={12} color={active ? theme['c-primary-alpha-400'] : theme['c-font-label']} numberOfLines={1}>{item.interval}</Text>
+            <Text size={12} color={active ? theme['c-primary-alpha-400'] : theme['c-font-label']} style={TabularNums} numberOfLines={1}>{item.interval}</Text>
           ) : null
         }
       </TouchableOpacity>
@@ -101,7 +102,7 @@ const styles = createStyle({
     // paddingLeft: 10,
     paddingRight: 4,
     marginHorizontal: 12,
-    borderRadius: 14,
+    borderRadius: Radius.control,
     alignItems: 'center',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: 'transparent', // 主题色在渲染处以内联样式提供
@@ -161,7 +162,7 @@ const styles = createStyle({
   moreButton: {
     height: 44,
     minWidth: 44,
-    borderRadius: 14,
+    borderRadius: Radius.pill,
     paddingLeft: 12,
     paddingRight: 12,
     // paddingTop: 10,

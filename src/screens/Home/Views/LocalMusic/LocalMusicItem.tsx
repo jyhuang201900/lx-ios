@@ -9,6 +9,7 @@ import { readMetadataCached } from '@/utils/localMediaMetadataCache'
 import { type MusicMetadataFull } from '@/utils/localMediaMetadata'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
+import { Radius, TabularNums } from '@/theme/layout'
 
 const formatSize = (size: number) => {
   if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`
@@ -72,7 +73,7 @@ export default memo(({ file, onPlay, onDelete, onMetadata }: {
           </RNText>
         </View>
       </TouchableOpacity>
-      {interval ? <RNText style={{ ...styles.interval, color: theme['c-font-label'] }}>{interval}</RNText> : null}
+      {interval ? <RNText style={{ ...styles.interval, ...TabularNums, color: theme['c-font-label'] }}>{interval}</RNText> : null}
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel={`${global.i18n.t('delete')} ${title}`}
@@ -110,7 +111,7 @@ const styles = createStyle({
   fileIcon: {
     width: 38,
     height: 38,
-    borderRadius: 13,
+    borderRadius: Radius.control,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -131,7 +132,7 @@ const styles = createStyle({
   deleteButton: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: Radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },

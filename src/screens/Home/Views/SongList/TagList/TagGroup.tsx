@@ -5,6 +5,7 @@ import { type TagInfoItem } from '@/store/songlist/state'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
+import { Radius } from '@/theme/layout'
 
 export interface TagGroupProps {
   name: string
@@ -59,7 +60,7 @@ const styles = createStyle({
   },
   tagButton: {
     // marginRight: 10,
-    borderRadius: 14,
+    borderRadius: Radius.pill,
     marginRight: 8,
     marginBottom: 8,
     borderWidth: 1,

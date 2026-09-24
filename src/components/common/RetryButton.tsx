@@ -4,6 +4,7 @@ import { StyleSheet, TouchableOpacity } from 'react-native'
 import Text from './Text'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
+import { Radius } from '@/theme/layout'
 
 // 各页面空态/错误态共用的重试按钮，保持一致的尺寸与圆角
 export default memo(({ label, onPress }: {
@@ -27,7 +28,7 @@ const styles = createStyle({
   button: {
     minHeight: 34,
     paddingHorizontal: 18,
-    borderRadius: 17,
+    borderRadius: Radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',

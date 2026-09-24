@@ -5,6 +5,7 @@ import type { InputType, InputProps } from '@/components/common/Input'
 import Input from '@/components/common/Input'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
+import { Radius } from '@/theme/layout'
 
 
 export interface InputItemProps extends InputProps {
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
   input: {
     flexGrow: 1,
     flexShrink: 1,
-    borderRadius: 13,
+    borderRadius: Radius.control,
     // paddingTop: 3,
     // paddingBottom: 3,
     maxWidth: 300,

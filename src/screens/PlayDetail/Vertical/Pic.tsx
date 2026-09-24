@@ -10,6 +10,7 @@ import { HEADER_HEIGHT } from './components/Header'
 import Image from '@/components/common/Image'
 import { useStatusbarHeight } from '@/store/common/hook'
 import commonState from '@/store/common/state'
+import { Radius } from '@/theme/layout'
 
 
 export default ({ componentId }: { componentId: string }) => {
@@ -33,7 +34,7 @@ export default ({ componentId }: { componentId: string }) => {
     return {
       width: imgWidth,
       height: imgWidth,
-      borderRadius: 18,
+      borderRadius: Radius.card,
     }
   }, [statusBarHeight, winHeight, winWidth])
 
@@ -56,7 +57,7 @@ const styles = createStyle({
   },
   content: {
     backgroundColor: 'rgba(0,0,0,0)',
-    borderRadius: 20,
+    borderRadius: Radius.card,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.22,

@@ -4,6 +4,7 @@ import { Icon } from '@/components/common/Icon'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { setSpText } from '@/utils/pixelRatio'
+import { Radius } from '@/theme/layout'
 
 const styles = createStyle({
   content: {
@@ -18,7 +19,7 @@ const styles = createStyle({
   input: {
     // backgroundColor: 'rgba(0,0,0,0.1)',
     // backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: Radius.control,
     paddingTop: 0,
     paddingBottom: 0,
     height: 32,

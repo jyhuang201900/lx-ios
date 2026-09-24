@@ -11,6 +11,7 @@ import Text from '@/components/common/Text'
 import { LIST_IDS } from '@/config/constant'
 import Loading from '@/components/common/Loading'
 import { useSettingValue } from '@/store/setting/hook'
+import { Radius } from '@/theme/layout'
 
 export interface ActiveListProps {
   onShowSearchBar: () => void
@@ -77,7 +78,7 @@ const styles = createStyle({
     marginBottom: 9,
     alignItems: 'center',
     borderWidth: BorderWidths.normal,
-    borderRadius: 14,
+    borderRadius: Radius.card,
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },
   currentListIcon: {
@@ -107,7 +108,7 @@ const styles = createStyle({
   currentListBtns: {
     width: 42,
     height: 42,
-    borderRadius: 12,
+    borderRadius: Radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: 'rgba(0,0,0,0.2)',

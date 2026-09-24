@@ -9,6 +9,7 @@ import Text from '@/components/common/Text'
 import { useI18n } from '@/lang'
 import { navigations } from '@/navigation'
 import commonState from '@/store/common/state'
+import { Radius } from '@/theme/layout'
 
 // export interface OpenListProps {
 //   onTagChange: (name: string, id: string) => void
@@ -65,6 +66,6 @@ const styles = createStyle({
     paddingLeft: 12,
     paddingRight: 12,
     minHeight: 40,
-    borderRadius: 14,
+    borderRadius: Radius.pill,
   },
 })

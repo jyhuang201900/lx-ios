@@ -13,6 +13,7 @@ import { scaleSizeH } from '@/utils/pixelRatio'
 import { HEADER_HEIGHT, NAV_MENUS } from '@/config/constant'
 import { setNavActiveId } from '@/core/common'
 import { useSettingValue } from '@/store/setting/hook'
+import { Radius } from '@/theme/layout'
 
 const NavButtons = () => {
   const theme = useTheme()
@@ -140,7 +141,7 @@ const styles = createStyle({
   navButton: {
     width: 44,
     height: 40,
-    borderRadius: 14,
+    borderRadius: Radius.control,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',

@@ -12,6 +12,7 @@ import { marginLeft } from './constant'
 import Image from '@/components/common/Image'
 import { useStatusbarHeight } from '@/store/common/hook'
 import commonState from '@/store/common/state'
+import { Radius } from '@/theme/layout'
 
 
 export default memo(({ componentId }: { componentId: string }) => {
@@ -40,7 +41,7 @@ export default memo(({ componentId }: { componentId: string }) => {
         <Image url={pic} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_pic} style={{
           width: imgWidth,
           height: imgWidth,
-          borderRadius: 16,
+          borderRadius: Radius.card,
         }} />
       </View>
     </View>
@@ -58,7 +59,7 @@ const styles = createStyle({
   },
   content: {
     backgroundColor: 'rgba(0,0,0,0)',
-    borderRadius: 18,
+    borderRadius: Radius.card,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.2,

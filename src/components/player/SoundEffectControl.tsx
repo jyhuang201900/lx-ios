@@ -32,6 +32,7 @@ import {
   saveUserConvolutionPreset,
   saveUserEQPreset,
 } from '@/store/soundEffect'
+import { Radius } from '@/theme/layout'
 
 const minGain = -15
 const maxGain = 15
@@ -863,7 +864,7 @@ const styles = createStyle({
     paddingHorizontal: 16,
     paddingBottom: 8,
   },
-  overview: { minHeight: 68, borderRadius: 18, borderWidth: 1, paddingHorizontal: 14, marginBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  overview: { minHeight: 68, borderRadius: Radius.card, borderWidth: 1, paddingHorizontal: 14, marginBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 10 },
   overviewCopy: { flex: 1, minWidth: 0, gap: 4 },
   overviewTitle: { fontWeight: '600' },
   overviewStatus: { maxWidth: '48%', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 7 },

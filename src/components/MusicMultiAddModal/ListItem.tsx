@@ -4,6 +4,7 @@ import Text from '@/components/common/Text'
 import { BorderWidths } from '@/theme'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
+import { Radius } from '@/theme/layout'
 
 export default ({ listInfo, onPress, width }: {
   listInfo: LX.List.MyListInfo
@@ -39,7 +40,7 @@ export const styles = createStyle({
     paddingRight: 10,
     marginRight: 10,
     marginBottom: 10,
-    borderRadius: 13,
+    borderRadius: Radius.control,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',

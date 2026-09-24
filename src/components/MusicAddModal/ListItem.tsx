@@ -5,6 +5,7 @@ import { BorderWidths } from '@/theme'
 import { createStyle, toast } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useMusicExistsList } from '@/store/list/hook'
+import { Radius } from '@/theme/layout'
 
 export default ({ listInfo, onPress, musicInfo, width }: {
   listInfo: LX.List.MyListInfo
@@ -47,7 +48,7 @@ export const styles = createStyle({
     paddingRight: 10,
     marginRight: 10,
     marginBottom: 10,
-    borderRadius: 13,
+    borderRadius: Radius.control,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',

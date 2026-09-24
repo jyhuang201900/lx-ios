@@ -12,6 +12,7 @@ import { createStyle } from '@/utils/tools'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { Icon } from '@/components/common/Icon'
 import ImageBackground from '@/components/common/ImageBackground'
+import { Radius } from '@/theme/layout'
 
 const useActive = (id: string) => {
   const activeThemeId = useSettingValue('theme.id')
@@ -147,7 +148,7 @@ const styles = createStyle({
   },
   imageContent: {
     height: IMAGE_HEIGHT,
-    borderRadius: 10,
+    borderRadius: Radius.control,
     // elevation: 1,
   },
   name: {
@@ -158,7 +159,7 @@ const styles = createStyle({
   moreBtn: {
     minHeight: 40,
     paddingHorizontal: 12,
-    borderRadius: 14,
+    borderRadius: Radius.pill,
     marginLeft: 2,
     flexDirection: 'row',
     alignItems: 'center',

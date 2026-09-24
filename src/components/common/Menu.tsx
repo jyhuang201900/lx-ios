@@ -8,6 +8,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
+import { Radius } from '@/theme/layout'
 
 const menuItemHeight = scaleSizeH(44)
 const menuItemWidth = scaleSizeW(100)
@@ -28,16 +29,21 @@ const styles = createStyle({
   },
   menu: {
     position: 'absolute',
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(128,128,128,0.34)',
-    borderRadius: 16,
+    borderRadius: Radius.card,
     backgroundColor: 'white',
     elevation: 8,
-    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.22,
     shadowRadius: 20,
+  },
+  // 圆角裁剪放在内层，否则 iOS 上外层的阴影会被 overflow: hidden 一起裁掉
+  menuClip: {
+    flex: 1,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(128,128,128,0.34)',
+    borderRadius: Radius.card,
+    overflow: 'hidden',
   },
   menuItem: {
     paddingHorizontal: 16,
@@ -137,41 +143,43 @@ const Menu = ({
   // console.log(menuItemStyle)
   return (
     <View style={{ ...styles.menu, ...menuStyle, backgroundColor: theme['c-content-background'] }} onStartShouldSetResponder={() => true}>
-      <Animated.ScrollView keyboardShouldPersistTaps={'always'}>
-        {
-          menus.map((menu, index) => (
-            menu.disabled
-              ? (
-                  <View
-                    key={menu.action}
-                    style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height, opacity: 0.4 }}
-                  >
-                    <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
-                  </View>
-                )
-              : menu.action == activeId
+      <View style={styles.menuClip}>
+        <Animated.ScrollView keyboardShouldPersistTaps={'always'}>
+          {
+            menus.map((menu, index) => (
+              menu.disabled
                 ? (
                     <View
                       key={menu.action}
-                      style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height, backgroundColor: theme['c-primary-background-active'] }}
-                    >
-                      <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} color={theme['c-primary-font-active']} size={fontSize} numberOfLines={1}>{menu.label}</Text>
-                    </View>
-                  )
-                : (
-                    <TouchableHighlight
-                      key={menu.action}
-                      style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height }}
-                      underlayColor={theme['c-primary-background-active']}
-                      onPress={() => { menuPress(menu) }}
+                      style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height, opacity: 0.4 }}
                     >
                       <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
-                    </TouchableHighlight>
+                    </View>
                   )
+                : menu.action == activeId
+                  ? (
+                      <View
+                        key={menu.action}
+                        style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height, backgroundColor: theme['c-primary-background-active'] }}
+                      >
+                        <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} color={theme['c-primary-font-active']} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                      </View>
+                    )
+                  : (
+                      <TouchableHighlight
+                        key={menu.action}
+                        style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height }}
+                        underlayColor={theme['c-primary-background-active']}
+                        onPress={() => { menuPress(menu) }}
+                      >
+                        <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                      </TouchableHighlight>
+                    )
 
-          ))
-        }
-      </Animated.ScrollView>
+            ))
+          }
+        </Animated.ScrollView>
+      </View>
     </View>
   )
 }

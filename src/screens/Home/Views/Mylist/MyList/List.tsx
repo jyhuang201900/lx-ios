@@ -13,6 +13,7 @@ import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 import Loading from '@/components/common/Loading'
 import listState from '@/store/list/state'
 import { LIST_IDS } from '@/config/constant'
+import { Radius } from '@/theme/layout'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
 const getListKind = (id: string) => {
@@ -126,8 +127,8 @@ const styles = createStyle({
   library: { flexGrow: 0, flexShrink: 0, paddingTop: 12, paddingBottom: 10, borderBottomWidth: StyleSheet.hairlineWidth },
   libraryHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 10 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
-  createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   rail: { paddingHorizontal: 12, gap: 10 },
   card: { width: scaleSizeW(180), height: scaleSizeH(82), borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, flexDirection: 'row', overflow: 'hidden' },
   cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 11 },

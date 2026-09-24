@@ -14,6 +14,7 @@ import { navigations } from '@/navigation'
 import { scaleSizeH, scaleSizeW, scaleSizeWR } from '@/utils/pixelRatio'
 import { useBufferProgress } from '@/plugins/player'
 import { useSettingValue } from '@/store/setting/hook'
+import { TabularNums } from '@/theme/layout'
 
 const FONT_SIZE = 13
 const PADDING_TOP_RAW = 1.8
@@ -24,12 +25,12 @@ const PADDING_TOP_PROGRESS = PADDING_TOP + MARGIN_TOP
 const PlayTimeCurrent = ({ timeStr }: { timeStr: string }) => {
   const theme = useTheme()
   // console.log(timeStr)
-  return <Text size={FONT_SIZE} color={theme['c-500']}>{timeStr}</Text>
+  return <Text size={FONT_SIZE} color={theme['c-500']} style={TabularNums}>{timeStr}</Text>
 }
 
 const PlayTimeMax = memo(({ timeStr }: { timeStr: string }) => {
   const theme = useTheme()
-  return <Text size={FONT_SIZE} color={theme['c-500']}>{timeStr}</Text>
+  return <Text size={FONT_SIZE} color={theme['c-500']} style={TabularNums}>{timeStr}</Text>
 })
 
 export default ({ isHome }: { isHome: boolean }) => {

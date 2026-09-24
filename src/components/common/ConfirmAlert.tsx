@@ -6,6 +6,7 @@ import { createStyle } from '@/utils/tools'
 import { useI18n } from '@/lang/index'
 import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
+import { Radius } from '@/theme/layout'
 
 const styles = createStyle({
   main: {
@@ -43,7 +44,7 @@ const styles = createStyle({
     paddingLeft: 10,
     paddingRight: 10,
     alignItems: 'center',
-    borderRadius: 14,
+    borderRadius: Radius.card,
   },
   btnText: { width: '100%', textAlign: 'center', textAlignVertical: 'center' },
   btnDirection: {

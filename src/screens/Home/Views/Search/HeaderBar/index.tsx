@@ -15,6 +15,7 @@ import { useTheme } from '@/store/theme/hook'
 import { type Source as MusicSource } from '@/store/search/music/state'
 import { type Source as SonglistSource } from '@/store/search/songlist/state'
 import SearchTypeSelector from '../SearchTypeSelector'
+import { Radius } from '@/theme/layout'
 
 type Sources = Readonly<Array<MusicSource | SonglistSource>>
 type SourceSelectorProps = _SourceSelectorProps<Sources>
@@ -95,7 +96,7 @@ const styles = createStyle({
     marginTop: 12,
     marginBottom: 9,
     borderWidth: BorderWidths.normal,
-    borderRadius: 14,
+    borderRadius: Radius.card,
   },
   selector: {
     height: 40,
@@ -113,7 +114,7 @@ const styles = createStyle({
     marginLeft: 9,
     width: 34,
     height: 34,
-    borderRadius: 17,
+    borderRadius: Radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },

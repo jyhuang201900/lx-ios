@@ -16,6 +16,7 @@ import DorpDownMenu from '@/components/common/DorpDownMenu'
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { type BoardItem } from '@/store/leaderboard/state'
+import { Radius } from '@/theme/layout'
 
 export interface HeaderBarProps {
   onSourceChange: (source: LX.OnlineSource) => void
@@ -86,12 +87,12 @@ const styles = createStyle({
     marginTop: 12,
     marginBottom: 9,
     borderWidth: BorderWidths.normal,
-    borderRadius: 14,
+    borderRadius: Radius.card,
   },
   segment: { flex: 1, minWidth: 0, borderRightWidth: BorderWidths.normal },
   sourceSelector: { flex: 1 },
-  boardSelector: { flex: 1, height: '100%', marginHorizontal: 4, borderRadius: 15 },
+  boardSelector: { flex: 1, height: '100%', marginHorizontal: 4, borderRadius: Radius.pill },
   boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13 },
   boardSelectorText: { flex: 1, textAlign: 'center', textAlignVertical: 'center', paddingRight: 6 },
-  playAllButton: { flex: 1, minWidth: 0, margin: 4, borderRadius: 15, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center' },
+  playAllButton: { flex: 1, minWidth: 0, margin: 4, borderRadius: Radius.pill, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center' },
 })
