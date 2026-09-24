@@ -106,7 +106,7 @@ export default forwardRef<HeaderType, HeaderProps>(({ componentId }: { component
             </Text>
           ) : null}
           <View style={{ flexGrow: 0, flexShrink: 1 }}>
-            <Text size={13} color={theme['c-font-label']} numberOfLines={ 4 }>{detailInfo.desc}</Text>
+            <Text size={13} style={styles.desc} color={theme['c-font-label']} numberOfLines={ 4 }>{detailInfo.desc}</Text>
           </View>
         </View>
       </View>
@@ -122,6 +122,7 @@ export default forwardRef<HeaderType, HeaderProps>(({ componentId }: { component
 })
 
 const styles = createStyle({
+  desc: { lineHeight: 19 },
   container: {
     flexDirection: 'column',
     flexWrap: 'nowrap',

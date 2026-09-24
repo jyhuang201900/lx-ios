@@ -8,7 +8,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { scaleSizeH } from '@/utils/pixelRatio'
-import { createShadow, Radius } from '@/theme/layout'
+import { Radius, createShadow } from '@/theme/layout'
 
 const HEADER_HEIGHT = 48
 const styles = createStyle({

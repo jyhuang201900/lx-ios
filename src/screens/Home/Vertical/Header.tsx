@@ -13,7 +13,7 @@ import { scaleSizeH } from '@/utils/pixelRatio'
 import { HEADER_HEIGHT, NAV_MENUS } from '@/config/constant'
 import { setNavActiveId } from '@/core/common'
 import { useSettingValue } from '@/store/setting/hook'
-import { Radius } from '@/theme/layout'
+import { Radius, Typography } from '@/theme/layout'
 
 const NavButtons = () => {
   const theme = useTheme()
@@ -36,7 +36,7 @@ const NavButtons = () => {
 //   const id = useNavActiveId()
 //   const t = useI18n()
 
-//   return <Text style={styles.leftTitle} size={18}>{t(id)}</Text>
+//   return <Text style={styles.leftTitle} size={Typography.page}>{t(id)}</Text>
 // }
 const LeftHeader = () => {
   const id = useNavActiveId()
@@ -52,7 +52,7 @@ const LeftHeader = () => {
       <View style={styles.left}>
         <NavButtons />
         <View style={styles.titleBtn}>
-          <Text style={styles.leftTitle} size={18}>{t(id)}</Text>
+          <Text style={styles.leftTitle} size={Typography.page}>{t(id)}</Text>
         </View>
       </View>
       {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
@@ -67,7 +67,7 @@ const LeftHeader = () => {
 //   const id = useNavActiveId()
 //   const t = useI18n()
 
-//   return <Text style={styles.rightTitle} size={18}>{t(id)}</Text>
+//   return <Text style={styles.rightTitle} size={Typography.page}>{t(id)}</Text>
 // }
 const RightHeader = () => {
   const t = useI18n()
@@ -82,7 +82,7 @@ const RightHeader = () => {
     }}>
       <View style={styles.left}>
         <View style={styles.titleBtn}>
-          <Text style={styles.rightTitle} size={18}>{t(id)}</Text>
+          <Text style={styles.rightTitle} size={Typography.page}>{t(id)}</Text>
         </View>
       </View>
       <NavButtons />

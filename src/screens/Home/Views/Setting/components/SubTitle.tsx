@@ -3,6 +3,7 @@ import { memo } from 'react'
 import { View } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
+import { FontWeight } from '@/theme/layout'
 
 export default memo(({ title, children }: {
   title: string
@@ -10,7 +11,7 @@ export default memo(({ title, children }: {
 }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title} size={14}>{title}</Text>
       {children}
     </View>
   )
@@ -26,6 +27,7 @@ const styles = createStyle({
   title: {
     marginLeft: 0,
     marginBottom: 10,
+    fontWeight: FontWeight.semibold,
     // lineHeight: 16,
   },
 })

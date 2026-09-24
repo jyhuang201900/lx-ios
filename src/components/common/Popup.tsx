@@ -32,7 +32,7 @@ const styles = createStyle({
     paddingLeft: 20,
     paddingRight: 44,
     paddingTop: 16,
-    paddingBottom: 14,
+    paddingBottom: 12,
     textAlign: 'center',
     textAlignVertical: 'center',
     // lineHeight: 20,

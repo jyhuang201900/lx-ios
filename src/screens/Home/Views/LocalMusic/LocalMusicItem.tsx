@@ -9,7 +9,7 @@ import { readMetadataCached } from '@/utils/localMediaMetadataCache'
 import { type MusicMetadataFull } from '@/utils/localMediaMetadata'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
-import { Radius, TabularNums } from '@/theme/layout'
+import { Radius, TabularNums, Typography } from '@/theme/layout'
 
 const formatSize = (size: number) => {
   if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`
@@ -66,8 +66,8 @@ export default memo(({ file, onPlay, onDelete, onMetadata }: {
           <Icon name="play-outline" size={15} color={theme['c-primary-font-active']} />
         </View>
         <View style={styles.fileCopy}>
-          <Text size={14} numberOfLines={1}>{title}</Text>
-          {detail ? <Text size={11} color={theme['c-font-label']} numberOfLines={1}>{detail}</Text> : null}
+          <Text size={Typography.body} numberOfLines={1}>{title}</Text>
+          {detail ? <Text size={Typography.sub} color={theme['c-font-label']} numberOfLines={1}>{detail}</Text> : null}
           <RNText style={{ ...styles.fileMeta, color: theme['c-font-label'] }} numberOfLines={1}>
             {fileType} · {formatSize(file.size)}
           </RNText>

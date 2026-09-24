@@ -9,7 +9,7 @@ import { clearTempPlayeList, removeTempPlayList } from '@/core/player/tempPlayLi
 import { playTempPlayListItem } from '@/core/player/player'
 import { confirmDialog, createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
-import { Radius } from '@/theme/layout'
+import { Radius, Typography } from '@/theme/layout'
 
 type QueueItem = LX.Player.PlayMusicInfo
 
@@ -81,9 +81,9 @@ export default forwardRef<QueuePopupType>((_, ref) => {
       >
         <Text style={styles.order} size={11} color={isPlaying ? theme['c-primary-dark-100'] : theme['c-300']}>{String(index + 1).padStart(2, '0')}</Text>
         <View style={styles.itemCopy}>
-          <Text size={13} numberOfLines={1} color={isPlaying ? theme['c-primary-dark-100'] : undefined}>{musicInfo.name}</Text>
+          <Text size={Typography.body} numberOfLines={1} color={isPlaying ? theme['c-primary-dark-100'] : undefined}>{musicInfo.name}</Text>
           <View style={styles.itemMeta}>
-            <Text size={11} color={theme['c-font-label']} numberOfLines={1}>{musicInfo.singer}</Text>
+            <Text size={Typography.sub} color={theme['c-font-label']} numberOfLines={1}>{musicInfo.singer}</Text>
             <Text style={styles.sourceBadge} size={10} color={theme['c-font-label']} numberOfLines={1}>{sourceLabel}</Text>
           </View>
         </View>
@@ -120,7 +120,7 @@ export default forwardRef<QueuePopupType>((_, ref) => {
         <View style={{ ...styles.nowPlaying, backgroundColor: theme['c-primary-light-100-alpha-200'] }}>
           <Text style={styles.nowPlayingLabel} size={10} color={theme['c-primary-dark-100']}>{global.i18n.t('play_queue_now_playing')}</Text>
           <View style={styles.nowPlayingInfo}>
-            <Text size={13} numberOfLines={1}>{nowPlaying.name}</Text>
+            <Text size={Typography.body} numberOfLines={1}>{nowPlaying.name}</Text>
             <Text size={11} color={theme['c-font-label']} numberOfLines={1}>
               {nowPlaying.singer}{nowPlayingSource ? ` · ${getSourceLabel(nowPlayingSource)}` : ''}
             </Text>

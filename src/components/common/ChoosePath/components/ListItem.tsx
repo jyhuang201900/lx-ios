@@ -39,7 +39,7 @@ export default memo(({ item, onPress, rowInfo }: {
         item.disabled ? (
           <View style={{ ...styles.listItem, opacity: 0.3 }}>
             <View style={styles.itemInfo}>
-              <Text style={styles.listItemTitleText}>{item.name}</Text>
+              <Text style={styles.listItemTitleText} numberOfLines={1}>{item.name}</Text>
               <Text style={styles.listItemDesc} size={12} color={theme['c-font-label']} numberOfLines={1}>{item.mtime ? new Date(item.mtime).toLocaleString() : item.desc}</Text>
             </View>
             {
@@ -50,7 +50,7 @@ export default memo(({ item, onPress, rowInfo }: {
         ) : (
           <TouchableOpacity style={styles.listItem} onPress={ () => { onPress(item) } }>
             <View style={styles.itemInfo}>
-              <Text style={styles.listItemTitleText}>{item.name}</Text>
+              <Text style={styles.listItemTitleText} numberOfLines={1}>{item.name}</Text>
               <Text style={styles.listItemDesc} size={12} color={theme['c-font-label']} numberOfLines={1}>{item.mtime ? new Date(item.mtime).toLocaleString() : item.desc}</Text>
             </View>
             {

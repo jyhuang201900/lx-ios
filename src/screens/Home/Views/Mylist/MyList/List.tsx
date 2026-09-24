@@ -13,7 +13,7 @@ import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 import Loading from '@/components/common/Loading'
 import listState from '@/store/list/state'
 import { LIST_IDS } from '@/config/constant'
-import { Radius } from '@/theme/layout'
+import { Radius, Typography } from '@/theme/layout'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
 const getListKind = (id: string) => {
@@ -49,8 +49,8 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
           <Icon name={item.id === LIST_IDS.LOVE ? 'love' : item.id === LIST_IDS.DEFAULT ? 'play-outline' : 'album'} size={17} color={active ? theme['c-font'] : theme['c-font-label']} />
         </View>
         <View style={styles.cardCopy}>
-          <Text numberOfLines={2} ellipsizeMode="tail" size={14} color={theme['c-font']}>{item.name}</Text>
-          <Text numberOfLines={1} size={11} color={active ? theme['c-font'] : theme['c-font-label']}>{getListKind(item.id)}{count == null ? '' : ` · ${global.i18n.t('list_song_count', { num: count })}`}</Text>
+          <Text numberOfLines={2} ellipsizeMode="tail" size={Typography.body} color={theme['c-font']}>{item.name}</Text>
+          <Text numberOfLines={1} size={Typography.sub} color={active ? theme['c-font'] : theme['c-font-label']}>{getListKind(item.id)}{count == null ? '' : ` · ${global.i18n.t('list_song_count', { num: count })}`}</Text>
         </View>
         {fetching ? <Loading color={active ? theme['c-font'] : theme['c-font-label']} /> : null}
       </TouchableOpacity>
@@ -130,7 +130,8 @@ const styles = createStyle({
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
-  rail: { paddingHorizontal: 12, gap: 10 },
+  // 与 libraryHeader 的 16 对齐，避免同一页出现两条左边缘
+  rail: { paddingHorizontal: 16, gap: 10 },
   card: { width: scaleSizeW(180), height: scaleSizeH(82), borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, flexDirection: 'row', overflow: 'hidden' },
   cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 11 },
   cardIcon: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },

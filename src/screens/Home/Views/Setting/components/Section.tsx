@@ -3,6 +3,7 @@ import { View } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
+import { FontWeight, Typography } from '@/theme/layout'
 
 
 interface Props {
@@ -15,7 +16,7 @@ export default ({ title, children }: Props) => {
 
   return (
     <View style={{ ...styles.container, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
-      <Text style={{ ...styles.title, color: theme['c-font'] }} size={16} >{title}</Text>
+      <Text style={{ ...styles.title, color: theme['c-font'] }} size={Typography.section} >{title}</Text>
       <View>
         {children}
       </View>
@@ -32,9 +33,10 @@ const styles = createStyle({
     borderRadius: 16,
   },
   title: {
-    paddingLeft: 1,
+    // 与内部设置项（paddingHorizontal: 10）左对齐
+    paddingLeft: 10,
     marginBottom: 14,
-    fontWeight: '600',
+    fontWeight: FontWeight.semibold,
     textAlignVertical: 'center',
     // lineHeight: 16,
   },

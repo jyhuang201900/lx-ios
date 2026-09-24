@@ -10,6 +10,7 @@ import StatusBar from '@/components/common/StatusBar'
 import { useSettingValue } from '@/store/setting/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { HEADER_HEIGHT as _HEADER_HEIGHT } from '@/config/constant'
+import { Typography } from '@/theme/layout'
 
 const HEADER_HEIGHT = _HEADER_HEIGHT * 0.8
 
@@ -18,7 +19,7 @@ const HEADER_HEIGHT = _HEADER_HEIGHT * 0.8
 //   const id = useNavActiveId()
 //   const t = useI18n()
 
-//   return <Text style={styles.leftTitle} size={18}>{t(id)}</Text>
+//   return <Text style={styles.leftTitle} size={Typography.page}>{t(id)}</Text>
 // }
 const LeftHeader = () => {
   const id = useNavActiveId()
@@ -32,7 +33,7 @@ const LeftHeader = () => {
       paddingTop: statusBarHeight,
     }}>
       <View style={styles.left}>
-        <Text style={styles.leftTitle} size={18}>{t(id)}</Text>
+        <Text style={styles.leftTitle} size={Typography.page}>{t(id)}</Text>
       </View>
       {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
         <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />
@@ -46,7 +47,7 @@ const LeftHeader = () => {
 //   const id = useNavActiveId()
 //   const t = useI18n()
 
-//   return <Text style={styles.rightTitle} size={18}>{t(id)}</Text>
+//   return <Text style={styles.rightTitle} size={Typography.page}>{t(id)}</Text>
 // }
 const RightHeader = () => {
   const t = useI18n()
@@ -60,7 +61,7 @@ const RightHeader = () => {
       paddingTop: statusBarHeight,
     }}>
       <View style={styles.left}>
-        <Text style={styles.rightTitle} size={18}>{t(id)}</Text>
+        <Text style={styles.rightTitle} size={Typography.page}>{t(id)}</Text>
       </View>
       {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
         <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />

@@ -11,7 +11,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useSettingValue } from '@/store/setting/hook'
 import { BorderWidths } from '@/theme'
-import { createShadow, Radius } from '@/theme/layout'
+import { Radius, createShadow } from '@/theme/layout'
 
 
 export default memo(({ isHome = false }: { isHome?: boolean }) => {

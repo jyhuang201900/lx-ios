@@ -8,6 +8,7 @@ import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { useI18n } from '@/lang'
 import { type SettingScreenIds } from '../Main'
+import { Typography } from '@/theme/layout'
 
 export interface HeaderProps {
   onShowNavBar: () => void
@@ -30,7 +31,7 @@ export default forwardRef<HeaderType, HeaderProps>(({ onShowNavBar }, ref) => {
   return (
     <TouchableOpacity accessibilityRole="button" onPress={onShowNavBar} style={{ ...styles.currentList, backgroundColor: theme['c-primary-input-background'], borderBottomColor: theme['c-border-background'] }}>
       <Icon style={styles.currentListIcon} color={theme['c-button-font']} name="chevron-right" size={12} />
-      <Text numberOfLines={1} size={16} style={styles.currentListText} color={theme['c-button-font']}>{t(`setting_${activeId}`)}</Text>
+      <Text numberOfLines={1} size={Typography.page} style={styles.currentListText} color={theme['c-button-font']}>{t(`setting_${activeId}`)}</Text>
     </TouchableOpacity>
   )
 })

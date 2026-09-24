@@ -9,7 +9,7 @@ import { useAssertApiSupport } from '@/store/common/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import Text from '@/components/common/Text'
 import Badge from '@/components/common/Badge'
-import { Radius, TabularNums } from '@/theme/layout'
+import { Radius, TabularNums, Typography } from '@/theme/layout'
 
 export const ITEM_HEIGHT = scaleSizeH(LIST_ITEM_HEIGHT)
 
@@ -58,7 +58,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
           {/* </View> */}
           <View style={styles.listItemSingle}>
             <Badge>{item.source.toUpperCase()}</Badge>
-            <Text style={styles.listItemSingleText} size={11} color={active ? theme['c-font-label'] : theme['c-500']} numberOfLines={1}>
+            <Text style={styles.listItemSingleText} size={Typography.sub} color={theme['c-font-label']} numberOfLines={1}>
               {singer}
             </Text>
           </View>

@@ -57,3 +57,25 @@ export const createShadow = ({
 
 /** 数字等宽，避免时间/计数跳动，提升精密感 */
 export const TabularNums: TextStyle = { fontVariant: ['tabular-nums'] }
+
+/**
+ * 字阶：全应用只使用这几级，避免出现 11/12/13/14/15/16 连续 1pt 递增导致层级无法辨认。
+ *  - page：页面/顶栏标题
+ *  - section：区块标题（配 600 字重）
+ *  - body：列表主标题、正文
+ *  - sub：次要信息（歌手、专辑、计数）
+ *  - caption：标签、徽章、极小注解
+ */
+export const Typography = {
+  page: 17,
+  section: 15,
+  body: 15,
+  sub: 12,
+  caption: 10,
+} as const
+
+/** 常用字重：仅保留常规与半粗，避免 bold/600/300 混用 */
+export const FontWeight = {
+  regular: '400',
+  semibold: '600',
+} as const

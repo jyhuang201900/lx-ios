@@ -17,7 +17,7 @@ import { getLocalMetadataCacheKey, readMetadataCached } from '@/utils/localMedia
 import { useTheme } from '@/store/theme/hook'
 import { addTempPlayList } from '@/core/player/tempPlayList'
 import LocalMusicItem from './LocalMusicItem'
-import { Radius } from '@/theme/layout'
+import { FontWeight, Radius, Typography } from '@/theme/layout'
 
 const audioExtensions = ['mp3', 'flac', 'wav', 'ape', 'ogg', 'm4a', 'aac']
 
@@ -330,12 +330,12 @@ export default () => {
       )}
       renderItem={renderItem}
       ListEmptyComponent={search ? <View style={styles.empty}>
-        <Icon name="search-2" size={28} color={theme['c-font-label']} />
-        <Text style={styles.emptyTitle} size={15}>{global.i18n.t('local_music_no_match')}</Text>
+        <Icon name="search-2" size={28} color={theme['c-font-label']} style={styles.emptyIcon} />
+        <Text style={styles.emptyTitle} size={14}>{global.i18n.t('local_music_no_match')}</Text>
       </View> : <View style={styles.empty}>
-        <Icon name="music_time" size={32} color={theme['c-font-label']} />
-        <Text style={styles.emptyTitle} size={15}>{global.i18n.t('local_music_empty_title')}</Text>
-        <Text style={styles.emptyDescription} size={12} color={theme['c-font-label']}>{global.i18n.t('local_music_empty_desc')}</Text>
+        <Icon name="music_time" size={28} color={theme['c-font-label']} style={styles.emptyIcon} />
+        <Text style={styles.emptyTitle} size={14}>{global.i18n.t('local_music_empty_title')}</Text>
+        <Text style={styles.emptyDescription} size={Typography.sub} color={theme['c-font-label']}>{global.i18n.t('local_music_empty_desc')}</Text>
       </View>}
     />
   </View>
@@ -346,7 +346,7 @@ const styles = createStyle({
   summary: { minHeight: 76, marginHorizontal: 16, borderRadius: Radius.card, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center' },
   summaryIcon: { width: 46, height: 46, borderRadius: Radius.control, alignItems: 'center', justifyContent: 'center' },
   summaryCopy: { flex: 1, paddingLeft: 12, gap: 5, justifyContent: 'center' },
-  summaryTitle: { fontWeight: '600' },
+  summaryTitle: { fontWeight: FontWeight.semibold },
   actions: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 14, gap: 9 },
   primaryAction: { flex: 1, minHeight: 44, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 },
   refreshAction: { minWidth: 82, minHeight: 44, borderRadius: Radius.pill, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
@@ -359,6 +359,7 @@ const styles = createStyle({
   list: { paddingHorizontal: 16, paddingBottom: 24 },
   emptyList: { flexGrow: 1 },
   empty: { alignItems: 'center', paddingHorizontal: 42, paddingTop: 58 },
-  emptyTitle: { marginTop: 15 },
+  emptyIcon: { opacity: 0.5 },
+  emptyTitle: { marginTop: 12 },
   emptyDescription: { marginTop: 7, textAlign: 'center', lineHeight: 19 },
 })

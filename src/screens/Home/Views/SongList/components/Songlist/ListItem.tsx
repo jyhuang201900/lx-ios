@@ -8,6 +8,7 @@ import { NAV_SHEAR_NATIVE_IDS } from '@/config/constant'
 import { useTheme } from '@/store/theme/hook'
 import Image from '@/components/common/Image'
 import { useI18n } from '@/lang'
+import { Typography } from '@/theme/layout'
 
 const gap = scaleSizeW(15)
 export default memo(({ item, index, width, showSource, onPress }: {
@@ -30,7 +31,7 @@ export default memo(({ item, index, width, showSource, onPress }: {
             <View style={{ ...styles.listItemImg, backgroundColor: theme['c-content-background'] }}>
               <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
                 <Image url={item.img} nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_from_${item.id}`} style={{ width: itemWidth, height: itemWidth, borderRadius: 16 }} />
-                { showSource ? <Text style={styles.sourceLabel} size={9} color="#fff" >{item.source}</Text> : null }
+                { showSource ? <Text style={styles.sourceLabel} size={Typography.caption} color="#fff" >{item.source}</Text> : null }
               </TouchableOpacity>
             </View>
             <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
@@ -94,7 +95,8 @@ const styles = createStyle({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   listItemTitle: {
-    fontSize: 12,
+    // 网格卡比列表更紧凑，使用 13pt 独立档位
+    fontSize: 13,
     // overflow: 'hidden',
     marginBottom: 5,
   },
