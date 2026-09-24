@@ -33,9 +33,13 @@ export const useDrag = (onSetProgress: (progress: number) => void, onDragState: 
   }, [onDragState, setDragProgress])
   const onDragEnd = useCallback((dx = 0, dy = 0) => {
     if (info.current.isDraging) {
-      const minDistance = optionsRef.current.minDragDistance ?? 0
-      if (Math.abs(dx) >= minDistance || Math.abs(dy) >= minDistance) {
-        onSetProgress(info.current.dragProgress)
+      // 宽度未知时（布局尚未完成）不提交，避免把 NaN 传给进度
+      const width = info.current.progressWidth
+      if (width > 0) {
+        const minDistance = optionsRef.current.minDragDistance ?? 0
+        if (Math.abs(dx) >= minDistance || Math.abs(dy) >= minDistance) {
+          onSetProgress(info.current.dragProgress)
+        }
       }
     }
     info.current.isDraging = false

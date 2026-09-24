@@ -267,6 +267,8 @@ const state: InitState = {
     'c-primary-background-hover': theme['c-primary-light-300-alpha-800'],
     'c-primary-background-active': theme['c-primary-light-100-alpha-800'],
     'c-primary-input-background': theme['c-primary-light-400-alpha-700'],
+    // 默认主题为浅色，实色主按钮上的前景色取白色，与 themes/index.ts 的取值规则保持一致
+    'c-primary-button-font': theme['c-000'],
     'c-button-font': theme['c-primary-alpha-100'],
     'c-button-font-selected': theme['c-primary-dark-100-alpha-100'],
     'c-button-background': theme['c-primary-light-400-alpha-700'],

@@ -270,7 +270,8 @@ export const getDownloadQualities = (musicInfo: LX.Music.MusicInfoOnline): LX.Qu
 
 /** Download an online track to Files > On My iPhone > LX Music > Music. */
 export const downloadMusic = async(musicInfo: LX.Music.MusicInfoOnline, requestedQuality?: LX.Quality) => {
-  if (musicInfo.source == 'local') {
+  // 调用方理论上只传在线歌曲，这里保留运行时防御
+  if ((musicInfo.source as string) == 'local') {
     toast(global.i18n.t('player_download_unavailable'))
     return
   }

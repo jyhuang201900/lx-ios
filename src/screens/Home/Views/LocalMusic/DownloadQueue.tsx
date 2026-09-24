@@ -13,7 +13,9 @@ import {
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 
-const statusKeys: Record<DownloadTask['status'], string> = {
+type QueueStatusLabel = 'download_queue_queued' | 'download_queue_downloading' | 'download_queue_completed' | 'download_queue_failed' | 'download_queue_canceled'
+
+const statusKeys: Record<DownloadTask['status'], QueueStatusLabel> = {
   queued: 'download_queue_queued',
   downloading: 'download_queue_downloading',
   completed: 'download_queue_completed',

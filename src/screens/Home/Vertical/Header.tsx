@@ -38,7 +38,6 @@ const NavButtons = () => {
 //   return <Text style={styles.leftTitle} size={18}>{t(id)}</Text>
 // }
 const LeftHeader = () => {
-  const theme = useTheme()
   const id = useNavActiveId()
   const t = useI18n()
   const statusBarHeight = useStatusbarHeight()
@@ -70,7 +69,6 @@ const LeftHeader = () => {
 //   return <Text style={styles.rightTitle} size={18}>{t(id)}</Text>
 // }
 const RightHeader = () => {
-  const theme = useTheme()
   const t = useI18n()
   const id = useNavActiveId()
   const statusBarHeight = useStatusbarHeight()

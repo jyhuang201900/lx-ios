@@ -2,7 +2,7 @@ import { readMetadata, type MusicMetadataFull } from './localMediaMetadata'
 import { type FileType } from './fs'
 
 const METADATA_CACHE_LIMIT = 300
-const metadataCache = new Map<string, MusicMetadataFull>()
+const metadataCache = new Map<string, MusicMetadataFull | null>()
 const metadataPromises = new Map<string, Promise<MusicMetadataFull | null>>()
 
 export const getLocalMetadataCacheKey = (file: FileType): string => `${file.path}|${file.lastModified}|${file.size}`

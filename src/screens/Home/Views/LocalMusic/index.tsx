@@ -4,9 +4,8 @@ import { AppState, FlatList, InteractionManager, Platform, RefreshControl, Style
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import Input from '@/components/common/Input'
-import { addListMusics, removeListMusics } from '@/core/list'
-import { getLocalMusicDirectory } from '@/core/download'
-import { subscribeDownloadTasks } from '@/core/download'
+import { removeListMusics } from '@/core/list'
+import { getLocalMusicDirectory, subscribeDownloadTasks } from '@/core/download'
 import DownloadQueue from './DownloadQueue'
 import { playNext } from '@/core/player/player'
 import { LIST_IDS } from '@/config/constant'
@@ -133,7 +132,7 @@ export default () => {
     setMetadataMap(next)
   }, [])
 
-  const renderItem = useCallback<FlatListProps<FileType>['renderItem']>(({ item }) => (
+  const renderItem = useCallback<NonNullable<FlatListProps<FileType>['renderItem']>>(({ item }) => (
     <LocalMusicItem
       file={item}
       onPlay={playFile}
@@ -141,7 +140,7 @@ export default () => {
       onMetadata={handleMetadata}
     />
   ), [playFile, removeFile, handleMetadata])
-  const keyExtractor = useCallback<FlatListProps<FileType>['keyExtractor']>(item => item.path, [])
+  const keyExtractor = useCallback<NonNullable<FlatListProps<FileType>['keyExtractor']>>(item => item.path, [])
   const visibleFiles = useMemo(() => {
     const keyword = search.trim().toLowerCase()
     return files.filter(file => {
@@ -200,7 +199,7 @@ export default () => {
           for (const [key, metadata] of results) next.set(key, metadata)
           return next
         })
-        InteractionManager.runAfterInteractions(() => {
+        void InteractionManager.runAfterInteractions(() => {
           readNextBatch()
         })
       })

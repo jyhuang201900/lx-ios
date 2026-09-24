@@ -20,7 +20,9 @@ const getPlayMusicInfo = (musicInfo: LX.Player.PlayMusic) => 'progress' in music
   ? musicInfo.metadata.musicInfo
   : musicInfo
 
-const getSourceLabel = (source: string) => {
+const getSourceLabel = (source?: string | null) => {
+  // 队列条目理论上都带来源，但缺字段时不应让整个弹层崩掉
+  if (!source) return ''
   const key = `source_real_${source}` as any
   const label = global.i18n.t(key)
   return label === key ? source.toUpperCase() : label
@@ -65,7 +67,7 @@ export default forwardRef<QueuePopupType>((_, ref) => {
 
   // 必须是 useCallback：useMemo 会在渲染时立即无参调用工厂函数，
   // 参数解构 { item } 会从 undefined 取值并抛错
-  const renderItem = useCallback<FlatListProps<QueueItem>['renderItem']>(({ item, index }) => {
+  const renderItem = useCallback<NonNullable<FlatListProps<QueueItem>['renderItem']>>(({ item, index }) => {
     const musicInfo = getMusicInfo(item)
     const sourceLabel = getSourceLabel(musicInfo.source)
     const isPlaying = playMusicInfo.musicInfo != null && getPlayMusicInfo(playMusicInfo.musicInfo).id == musicInfo.id

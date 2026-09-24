@@ -54,7 +54,21 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
     onLoadMore()
   }, [status, onLoadMore])
 
-  const renderItem = useCallback<FlatListType['renderItem']>(({ item, index }) => (
+  // 行列信息必须在 renderItem 之前计算：useCallback 的依赖数组在渲染时立即求值，
+  // 若声明在后面会因访问尚未初始化的变量抛 ReferenceError
+  const rowInfo = useMemo(() => {
+    let w = width - GAP
+    let n = width / (MIN_WIDTH + GAP)
+    if (n > 10) n = 10
+    let computedItemWidth = Math.floor(w / n)
+    const num = Math.max(Math.floor(width / computedItemWidth), 2)
+    return {
+      num,
+      width: (width - GAP) / num,
+    }
+  }, [width])
+
+  const renderItem = useCallback<NonNullable<FlatListType['renderItem']>>(({ item, index }) => (
     <ListItem
       item={item}
       index={index}
@@ -63,7 +77,7 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
       onPress={onOpenDetail}
     />
   ), [rowInfo.width, showSource, onOpenDetail])
-  const getkey = useCallback<FlatListType['keyExtractor']>(item => item.id, [])
+  const getkey = useCallback<NonNullable<FlatListType['keyExtractor']>>(item => item.id, [])
   // const getItemLayout: FlatListType['getItemLayout'] = (data, index) => {
   //   return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
   // }
@@ -111,17 +125,6 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
   // }, [width])
   // console.log(Math.trunc(width * 0.125), itemWidth)
   // console.log(itemWidth, MIN_WIDTH, GAP, width)
-  const rowInfo = useMemo(() => {
-    let w = width - GAP
-    let n = width / (MIN_WIDTH + GAP)
-    if (n > 10) n = 10
-    let computedItemWidth = Math.floor(w / n)
-    const num = Math.max(Math.floor(width / computedItemWidth), 2)
-    return {
-      num,
-      width: (width - GAP) / num,
-    }
-  }, [width])
   // console.log(rowNum)
   const list = useMemo(() => {
     const list = [...currentList]

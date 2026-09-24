@@ -257,7 +257,7 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
   }
 
 
-  const renderItem = useCallback<FlatListType['renderItem']>(({ item, index }) => (
+  const renderItem = useCallback<NonNullable<FlatListType['renderItem']>>(({ item, index }) => (
     <ListItem
       item={item}
       index={index}
@@ -271,8 +271,8 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
       isShowInterval={isShowInterval}
     />
   ), [activeIndex, handlePress, handleLongPress, onShowMenu, selectedList, isShowAlbumName, isShowInterval])
-  const getkey = useCallback<FlatListType['keyExtractor']>(item => item.id, [])
-  const getItemLayout = useCallback<FlatListType['getItemLayout']>((data, index) => {
+  const getkey = useCallback<NonNullable<FlatListType['keyExtractor']>>(item => item.id, [])
+  const getItemLayout = useCallback<NonNullable<FlatListType['getItemLayout']>>((data, index) => {
     return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
   }, [])
 

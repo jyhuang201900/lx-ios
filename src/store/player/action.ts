@@ -1,5 +1,5 @@
 import { arrPush, arrUnshift, formatPlayTime2 } from '@/utils'
-import state from './state'
+import state, { type InitState } from './state'
 
 type PlayerMusicInfoKeys = keyof LX.Player.MusicInfo
 const musicInfoKeys: PlayerMusicInfoKeys[] = Object.keys(state.musicInfo) as PlayerMusicInfoKeys[]

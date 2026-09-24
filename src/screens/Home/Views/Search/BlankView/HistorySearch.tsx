@@ -3,11 +3,10 @@ import { TouchableOpacity, View } from 'react-native'
 import { type InitState } from '@/store/hotSearch/state'
 import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
-import { createStyle } from '@/utils/tools'
+import { confirmDialog, createStyle, toast } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { clearHistoryList, getSearchHistory, removeHistoryWord } from '@/core/search/search'
-import { confirmDialog, toast } from '@/utils/tools'
 import { Icon } from '@/components/common/Icon'
 
 

@@ -48,6 +48,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 类型检查：拦截未定义标识符、缺失导入、变量先于声明使用等运行期崩溃问题
+      - name: Type check
+        run: npm run typecheck
+
       - name: Install CocoaPods dependencies
         shell: bash
         run: |
