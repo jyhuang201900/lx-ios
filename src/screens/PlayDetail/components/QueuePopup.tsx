@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
+import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react'
 import { FlatList, StyleSheet, TouchableOpacity, View, type FlatListProps } from 'react-native'
 
 import Popup, { type PopupType } from '@/components/common/Popup'
@@ -63,7 +63,9 @@ export default forwardRef<QueuePopupType>((_, ref) => {
     popupRef.current?.setVisible(false)
   }
 
-  const renderItem = useMemo<FlatListProps<QueueItem>['renderItem']>(({ item, index }) => {
+  // 必须是 useCallback：useMemo 会在渲染时立即无参调用工厂函数，
+  // 参数解构 { item } 会从 undefined 取值并抛错
+  const renderItem = useCallback<FlatListProps<QueueItem>['renderItem']>(({ item, index }) => {
     const musicInfo = getMusicInfo(item)
     const sourceLabel = getSourceLabel(musicInfo.source)
     const isPlaying = playMusicInfo.musicInfo != null && getPlayMusicInfo(playMusicInfo.musicInfo).id == musicInfo.id
