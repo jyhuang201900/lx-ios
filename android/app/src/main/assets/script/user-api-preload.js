@@ -150,12 +150,14 @@ globalThis.lx_setup = (key, id, name, description, version, author, homepage, ra
     request: null,
   }
   const allSources = ['kw', 'kg', 'tx', 'wy', 'mg', 'local']
+  // 允许自定义音源声明的高音质档位：hires / atmos / atmos_plus / master
+  // 注意这里只做白名单过滤，具体某首歌能否取到由音源脚本自行判断
   const supportQualitys = {
-    kw: ['128k', '320k', 'flac', 'flac24bit'],
-    kg: ['128k', '320k', 'flac', 'flac24bit'],
-    tx: ['128k', '320k', 'flac', 'flac24bit'],
-    wy: ['128k', '320k', 'flac', 'flac24bit'],
-    mg: ['128k', '320k', 'flac', 'flac24bit'],
+    kw: ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'atmos', 'atmos_plus', 'master'],
+    kg: ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'atmos', 'atmos_plus', 'master'],
+    tx: ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'atmos', 'atmos_plus', 'master'],
+    wy: ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'atmos', 'atmos_plus', 'master'],
+    mg: ['128k', '192k', '320k', 'flac', 'flac24bit', 'hires', 'atmos', 'atmos_plus', 'master'],
     local: [],
   }
   const supportActions = {

@@ -1,0 +1,10 @@
+src/components/common/Dialog.tsx
+src/components/player/PlayerBar/index.tsx
+src/screens/Home/Views/LocalMusic/LocalMusicItem.tsx
+src/screens/Home/Views/LocalMusic/index.tsx
+src/screens/Home/Views/Mylist/MyList/List.tsx
+src/screens/Home/Views/Setting/components/Section.tsx
+src/screens/Home/Views/Setting/components/SubTitle.tsx
+src/screens/Home/Views/SongList/components/Songlist/ListItem.tsx
+src/screens/PlayDetail/components/QueuePopup.tsx
+src/theme/layout.ts

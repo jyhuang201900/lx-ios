@@ -254,3 +254,50 @@
 - 修复二:横屏播放页 Header 此前用 python 批量插入 import 时因锚点带尾随空格未匹配,导致 TimeoutExitEditModal、useTimeInfo、PlaybackRateBtn 三个标识符被裸用(JSX 已插入而 import 缺失);已用 Edit 工具补齐 import。
 - 加固:新增两个全仓静态检查脚本并纳入本轮验证——静态 createStyle/StyleSheet.create 块内禁止引用 theme;JSX 使用的自定义组件必须有 import(修正了命名导入解析),全量重扫确认无其他同类问题。
 - 验证:修复文件 esbuild 通过;全仓 theme 作用域扫描与 import 完整性扫描均清零;node_modules 为空无法本地 bundle,真实构建仍由 GitHub Actions 承担。
+
+## Session: 2026-09-24 — queue popup useMemo crash
+- 用户反馈 theme 崩溃修复后出现新的启动崩溃：Fatal TypeError Cannot read property 'item' of undefined。
+- 定位：src/screens/PlayDetail/components/QueuePopup.tsx 的 renderItem 用 useMemo 包裹了带参数解构的工厂函数；useMemo 会在渲染时立即以无参调用工厂，({ item, index }) 从 undefined 解构即抛错。迷你播放条在首页启动时无条件渲染 QueuePopup（ControlBtn 内），因此每次启动必崩。
+- 该问题此前被 ControlBtn 缺少 theme 定义的 ReferenceError 掩盖：那条错误在父组件渲染阶段就中断了整棵子树，QueuePopup 没有机会执行。
+- 修复：改用 useCallback（传入 FlatList 的回调不应被立即调用），并移除不再使用的 useMemo 导入（688fe26）。
+- 加固：新增两类全仓扫描并确认无同类问题——(1) useMemo/useState/useEffect/useLayoutEffect 工厂带参数或以参数解构的误用；(2) 静态 createStyle/StyleSheet.create 块内引用 theme；同时复核 JSX 组件 import 完整性与 styles 变量定义。51 个近期改动文件 esbuild 全部通过，三语 644 键一致。
+
+## Session: 2026-09-24 — type-check gate and crash-class bug sweep
+- 用户要求再优化并确保没有问题。本轮的关键动作是把「真正的类型检查」跑起来：此前本机 node_modules 为空，只能用 esbuild 查语法，导致作用域类崩溃（theme 未定义、useMemo 误用）连续漏网。
+- 已在本机完成 npm ci（909 包），随后运行 tsc --noEmit 与 eslint，并成功打出 iOS JS bundle（与 CI 打包步骤一致，3.37MB + 21 个资源）。
+- tsc 当场抓出两个真崩溃：
+  - src/screens/Home/Views/SongList/components/Songlist/List.tsx：renderItem 的依赖数组引用 rowInfo，但 rowInfo 声明在其后 → 渲染时 TDZ ReferenceError，打开「歌单」页必崩；已把 rowInfo 上移到 renderItem 之前。
+  - src/screens/Home/Views/Search/MusicList.tsx：搜索「播放全部」调用 listRef.current.getList()，而 OnlineList 从未暴露该方法 → 点击必崩；已在 OnlineList 暴露 getList 并返回空数组兜底。
+- 其余类型问题一并清零：默认主题补 c-primary-button-font（此前在主题未就绪时是 undefined，主按钮文字会失去对比度）、player/action.ts 补 InitState 类型导入、本地元数据缓存 Map 允许 null、useCallback 的可选属性泛型统一 NonNullable、DownloadQueue 状态文案键类型收紧、download.ts 保留运行时防御的同时消除类型告警。
+- 顺手清理 lint 中「有意义」的错误：未使用变量/导入、重复导入（3 处）、浮动 Promise、文件末尾换行；剩余 61 条为纯风格规则（缩进、可选链偏好等），属既有代码风格，未做无意义 churn。
+- 加固：给 iOS CI 增加 Type check 步骤（npm run typecheck），并新增同名 npm 脚本，让未定义标识符/缺失导入/先后声明误用这类崩溃问题在构建前就被拦下。
+- 防御性加固：QueuePopup 的来源标签在缺字段时返回空串而不是崩溃；useDrag 在布局宽度未知时不提交进度，避免 NaN。
+
+## Session: 2026-09-24 — layout system and visual rhythm pass
+- 用户要求「优化全部布局，简洁高效，美观科技」。
+- 新增 src/theme/layout.ts 作为唯一度量来源：Radius（control 12 / card 16 / sheet 20 / pill 999）、Spacing（8pt 栅格）、PagePadding 16、createShadow（跨平台阴影）、TabularNums（数字等宽）。
+- 圆角全面收敛：把原本文案的 16 种取值归一为「胶囊 / 卡片 / 控件 / 面板」四级，含两批改动共约 40 处（页头操作条 16、输入框与列表行 12、标签与按钮 999、封面与卡片 16、弹层 20）。剩余仅进度条等 2-4px 微圆角与个别图片圆角保留。
+- iOS 阴影补齐：此前 15 处只写了 elevation（Android 专用），iOS 上完全不显示，界面偏平。现为迷你播放条、菜单、对话框、歌单抽屉补上 iOS shadow*；并修复菜单菜单项裁剪导致阴影被 overflow:hidden 一并裁掉的问题（改为外层投影、内层裁剪两层结构）。
+- 精密感细节：播放时间、列表时长、播放队列序号、歌词定位时间等数字统一等宽（fontVariant: tabular-nums），时间与计数不再跳动。
+- 主题一致性：清除残留的硬编码 rgba 分隔线（在线列表行改用主题 token）。
+- 验证：tsc --noEmit 0 错误；改动文件的 eslint 无 import 重复/未使用变量/Hook 规则问题；iOS JS bundle 打包成功。过程中脚本在一处多行 import 中插错位置，由 tsc 立即发现并修复，说明类型门禁已能兜住此类事故。
+
+## Session: 2026-09-24 — frontend audit against industry standards
+- 用户要求「再次审核以及完善前端，对照大厂标准」。两路并行审计（触控尺寸/排版层级、交互反馈/无障碍/状态完整性）后逐项修复。
+- 对比度（WCAG AA）：实测次要文字 token c-font-label（=c-450）在浅色主题下仅 2.78:1、卡片上 1.89:1，远低于正文 4.5:1 要求。现按主题区分取值：浅色 c-650（白底 5.02:1）、深色 c-400（黑底 6.61:1），默认主题同步；并清除页面里残留的裸灰阶文字（c-250/c-300/c-350/c-450/c-500）改用语义 token。
+- 交互反馈：common/Button 只有 android_ripple，iOS 上完全无按压反馈（覆盖设置按钮、歌单操作栏、热搜词、多选栏等大量高频入口）；现补 pressed 透明度 + accessibilityRole=button + 禁用态语义。列表行「更多」按钮补 activeOpacity 与同行一致。
+- 触控目标（HIG 44pt）：为输入框清除钮(36)、队列删除钮(32)、搜索历史删除钮(20)、搜索播放全部(34)、下载队列操作钮(34)补 hitSlop 至 44pt 命中区。
+- 无障碍：Icon 组件标记 accessible={false}（避免念出字体私有区乱码）；播放页三个 Btn 组件与 12 个图标调用点补 accessibilityLabel（新增 comment/play_mode/collect_song/timeout_exit 三语文案）；列表行补 accessibilityState.selected；Loading 补 progressbar 语义与标注；在线列表 footer 的错误重试改为有按钮语义的 RetryButton、加载态改用带转圈的 Loading。
+- 状态完整性：歌单详情「收藏/播放全部」改为真 disabled + 在途保护（原先用透明度假装禁用、双击会重复发请求）；本地音乐导入/刷新补在途禁用（连点会重复拉起文件选择器）；评论首屏请求失败不再永久卡在「加载中」（补 catch/finally），并新增评论空态。
+- 排版：清除 bold/300 字重混用（统一 600 与 400）。
+- 验证：tsc --noEmit 0 错误；改动文件无 import/未用变量/Hook/未定义类问题；三语 649 键一致；iOS bundle 打包成功。
+
+## Session: 2026-09-24 — aesthetics pass: type scale and alignment
+- 用户要求「继续优化页面展示，符合美学」。本轮聚焦排版体系与可见对齐问题。
+- 新增字阶与字重 token（layout.ts）：page 17 / section 15 / body 15 / sub 12 / caption 10，字重仅保留 400 与 600，杜绝连续 1pt 递增（11/12/13/14/15/16）导致的层级不可辨。
+- 字阶落地：列表歌曲主标题统一 body(15)（此前 14/15/13 混用）、列表副标题统一 sub(12)（此前 11）、页面/顶栏标题统一 page(17)（此前竖屏 18、设置页 16）、区块标题统一 section(15)+600（此前 Settings 16 与 SubTitle 15/400 层级倒置）、网格卡使用独立 13pt 紧凑档位。
+- 可见对齐修复：我的列表歌单横向栏左边缘 12 → 16（与同页页头文字对齐，原先凸出 4pt）；设置页区块标题 paddingLeft 1 → 10（与设置项文字对齐，原先错位 9pt）；弹层标题底部内边距 14 → 12。
+- 空态规格统一：图标 28 且 50% 透明、标题 14、描述 12；本地音乐空态原先图标 32/标题 15 已对齐。
+- 长文本防撑破：文件选择器的文件名、设置页自定义源列表的描述补 numberOfLines 截断（原先会把右侧大小/箭头按钮挤出屏幕）；歌单详情简介补行高 19。
+- 验证：tsc --noEmit 0 错误；改动文件无重复导入/未使用变量/Hook 问题；三语 649 键一致；iOS bundle 打包成功。
+
