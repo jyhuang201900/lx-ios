@@ -61,30 +61,31 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
 
   return (
     <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'] }}>
-      <TouchableOpacity accessibilityRole="button" style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
-        <Text style={styles.sn} size={13} color={theme['c-300']}>{index + 1}</Text>
+      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }} style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
+        <Text style={styles.sn} size={13} color={theme['c-font-label']}>{index + 1}</Text>
         <View style={styles.itemInfo}>
           <Text numberOfLines={1}>{item.name}</Text>
           <View style={styles.listItemSingle}>
             { tagInfo.type ? <Badge type={tagInfo.type}>{tagInfo.text}</Badge> : null }
             { showSource ? <Badge type="tertiary">{item.source}</Badge> : null }
-            <Text style={styles.listItemSingleText} size={11} color={theme['c-500']} numberOfLines={1}>{singer}</Text>
+            <Text style={styles.listItemSingleText} size={11} color={theme['c-font-label']} numberOfLines={1}>{singer}</Text>
           </View>
         </View>
         {
           isShowInterval ? (
-            <Text size={12} color={theme['c-250']} numberOfLines={1}>{item.interval}</Text>
+            <Text size={12} color={theme['c-font-label']} numberOfLines={1}>{item.interval}</Text>
           ) : null
         }
       </TouchableOpacity>
      <TouchableOpacity
        accessibilityRole="button"
        accessibilityLabel={`${item.name} ${global.i18n.t('list_more')}`}
+       activeOpacity={0.65}
        onPress={handleShowMenu}
        ref={moreButtonRef}
        style={styles.moreButton}
      >
-        <Icon name="dots-vertical" style={{ color: theme['c-350'] }} size={12} />
+        <Icon name="dots-vertical" style={{ color: theme['c-font-label'] }} size={12} />
       </TouchableOpacity>
     </View>
   )
@@ -156,7 +157,7 @@ const styles = createStyle({
     // paddingTop: 2,
     flexGrow: 0,
     flexShrink: 1,
-    fontWeight: '300',
+    fontWeight: '400',
   },
   listItemBadge: {
     // fontSize: 10,

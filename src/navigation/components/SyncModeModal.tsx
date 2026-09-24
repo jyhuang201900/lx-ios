@@ -59,7 +59,7 @@ const styles = createStyle({
     paddingBottom: 10,
   },
   tipTitle: {
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   tip: {
     // paddingLeft: 15,

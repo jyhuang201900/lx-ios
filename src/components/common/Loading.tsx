@@ -25,13 +25,18 @@ const LoadingLabel = ({ style, label, ...props }: LoadingProps) => {
 
 export default memo(({ size = 15, label, ...props }: LoadingProps) => {
   const theme = useTheme()
+  const a11y = {
+    accessibilityRole: 'progressbar' as const,
+    accessibilityLabel: label ?? global.i18n.t('loading'),
+  }
 
   return (
-    label ? <LoadingLabel color={theme['c-font-label']} size={setSpText(size)} label={label} {...props} />
+    label ? <LoadingLabel color={theme['c-font-label']} size={setSpText(size)} label={label} {...a11y} {...props} />
       : (
           <ActivityIndicator
             color={theme['c-font-label']}
             size={setSpText(size)}
+            {...a11y}
             {...props}
           />
         )

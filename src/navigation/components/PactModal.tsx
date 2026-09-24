@@ -193,11 +193,11 @@ const styles = createStyle({
   bold: {
     fontSize: 14,
     textAlignVertical: 'bottom',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   tip: {
     textAlignVertical: 'bottom',
-    fontWeight: 'bold',
+    fontWeight: '600',
     paddingLeft: 15,
     paddingRight: 15,
     paddingBottom: 15,

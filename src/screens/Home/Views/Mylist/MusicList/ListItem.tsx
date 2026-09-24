@@ -46,11 +46,11 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
 
   return (
     <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : active ? theme['c-primary-input-background'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'], opacity: isSupported ? 1 : 0.5 }}>
-      <TouchableOpacity accessibilityRole="button" style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
+      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }} style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
         {
           active
             ? <Icon style={styles.sn} name="play-outline" size={13} color={theme['c-font']} />
-            : <Text style={styles.sn} size={13} color={theme['c-300']}>{index + 1}</Text>
+            : <Text style={styles.sn} size={13} color={theme['c-font-label']}>{index + 1}</Text>
         }
         <View style={styles.itemInfo}>
           {/* <View style={styles.listItemTitle}> */}
@@ -73,6 +73,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel={`${item.name} ${global.i18n.t('list_more')}`}
+        activeOpacity={0.65}
         onPress={handleShowMenu}
         ref={moreButtonRef}
         style={styles.moreButton}
@@ -143,7 +144,7 @@ const styles = createStyle({
     // backgroundColor: 'rgba(0,0,0,0.2)',
     flexGrow: 0,
     flexShrink: 1,
-    fontWeight: '300',
+    fontWeight: '400',
     // fontSize: 15,
   },
   // listItemBadge: {

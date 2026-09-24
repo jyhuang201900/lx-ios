@@ -298,23 +298,26 @@ const Footer = ({ label, onLoadMore }: {
 }) => {
   const theme = useTheme()
   const t = useI18n()
-  const handlePress = () => {
-    if (label != 'list_error') return
-    onLoadMore()
+  if (!label) return null
+  if (label == 'list_loading') {
+    return (
+      <View style={styles.footerLoading}>
+        <Loading size={15} label={t('list_loading')} />
+      </View>
+    )
+  }
+  if (label == 'list_error') {
+    return (
+      <View style={styles.footerError}>
+        <Text style={styles.footerErrorText} size={13} color={theme['c-font-label']}>{t('list_error')}</Text>
+        <RetryButton label={t('retry_button_text')} onPress={onLoadMore} />
+      </View>
+    )
   }
   return (
-    label
-      ? (
-          <View style={label == 'list_error' ? styles.footerError : undefined}>
-            <Text
-              onPress={handlePress}
-              style={styles.footer}
-              size={label == 'list_error' ? 13 : 12}
-              color={theme['c-font-label']}
-            >{t(label)}</Text>
-          </View>
-        )
-      : null
+    <View>
+      <Text style={styles.footer} size={12} color={theme['c-font-label']}>{t(label)}</Text>
+    </View>
   )
 }
 
@@ -331,8 +334,19 @@ const styles = createStyle({
     padding: 10,
   },
   footerError: {
-    paddingTop: 4,
-    paddingBottom: 10,
+    paddingTop: 8,
+    paddingBottom: 14,
+    alignItems: 'center',
+    gap: 10,
+  },
+  footerErrorText: {
+    textAlign: 'center',
+  },
+  footerLoading: {
+    paddingTop: 12,
+    paddingBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   empty: {
     flexGrow: 1,

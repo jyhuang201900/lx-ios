@@ -31,6 +31,8 @@ export default () => {
   const [metadataMap, setMetadataMap] = useState(() => new Map<string, MusicMetadataFull | null>())
   const metadataMapRef = useRef(metadataMap)
   const [refreshing, setRefreshing] = useState(false)
+  const [importing, setImporting] = useState(false)
+  const importingRef = useRef(false)
   const hasLoadedRef = useRef(false)
   const lastRefreshRef = useRef(0)
   const completedTaskIdsRef = useRef(new Set<string>())
@@ -74,6 +76,9 @@ export default () => {
   }), [refresh])
 
   const importMusic = useCallback(async() => {
+    if (importingRef.current) return
+    importingRef.current = true
+    setImporting(true)
     try {
       if (!await existsFile(directory)) await mkdir(directory)
       const file = await selectFile({ extTypes: audioExtensions, toPath: directory })
@@ -86,6 +91,9 @@ export default () => {
       toast(global.i18n.t('local_music_import_success'))
     } catch (error: any) {
       if (!String(error?.code ?? '').includes('picker_cancelled')) toast(global.i18n.t('local_music_import_failed'))
+    } finally {
+      importingRef.current = false
+      setImporting(false)
     }
   }, [directory, refresh])
 
@@ -236,16 +244,20 @@ export default () => {
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel={global.i18n.t('local_music_import')}
-        style={{ ...styles.primaryAction, backgroundColor: theme['c-primary-background-active'] }}
+        accessibilityState={{ disabled: importing }}
+        disabled={importing}
+        style={{ ...styles.primaryAction, backgroundColor: theme['c-primary-background-active'], opacity: importing ? 0.5 : 1 }}
         onPress={() => { void importMusic() }}
       >
         <Icon name="add-music" size={15} color={theme['c-primary-font-active']} />
-        <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('local_music_import')}</Text>
+        <Text size={12} color={theme['c-primary-font-active']}>{importing ? global.i18n.t('loading') : global.i18n.t('local_music_import')}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel={global.i18n.t('local_music_refresh')}
-        style={{ ...styles.refreshAction, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}
+        accessibilityState={{ disabled: refreshing }}
+        disabled={refreshing}
+        style={{ ...styles.refreshAction, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'], opacity: refreshing ? 0.5 : 1 }}
         onPress={() => { void refresh() }}
       >
         <Text size={12} color={theme['c-font']}>{refreshing ? global.i18n.t('loading') : global.i18n.t('local_music_refresh')}</Text>

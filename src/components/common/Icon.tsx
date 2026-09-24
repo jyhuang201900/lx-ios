@@ -45,6 +45,10 @@ export const Icon = memo(({ size = 15, rawSize, color, style, ...props }: IconPr
     <IcoMoon
       size={rawSize ?? scaleSizeW(size)}
       color={color ?? theme['c-font']}
+      // 图标是字体私有区字符，读屏器不应逐个念出；语义由外层按钮的 label 提供
+      accessible={false}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
       // @ts-expect-error
       style={newStyle}
       {...props}

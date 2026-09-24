@@ -94,6 +94,7 @@ const List = forwardRef<ListType, ListProps>(({
       removeClippedSubviews={false}
       // initialNumToRender={12}
       renderItem={renderItem}
+      ListEmptyComponent={EmptyView}
       keyExtractor={getkey}
       // onRefresh={onRefresh}
       // refreshing={refreshing}
@@ -103,6 +104,15 @@ const List = forwardRef<ListType, ListProps>(({
     />
   )
 })
+
+const EmptyView = () => {
+  const theme = useTheme()
+  return (
+    <View style={styles.empty}>
+      <Text size={14} color={theme['c-font-label']}>{global.i18n.t('comment_empty')}</Text>
+    </View>
+  )
+}
 
 type FooterLabel = 'list_loading' | 'list_end' | 'list_error' | null
 const Footer = ({ label, onLoadMore }: {
@@ -129,6 +139,11 @@ const Footer = ({ label, onLoadMore }: {
 const styles = createStyle({
   container: {
     flex: 1,
+  },
+  empty: {
+    minHeight: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   list: {
     flexGrow: 1,

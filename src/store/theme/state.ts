@@ -259,7 +259,7 @@ const state: InitState = {
     'c-badge-tertiary': '#e7aa36',
 
     'c-font': theme['c-850'],
-    'c-font-label': theme['c-450'],
+    'c-font-label': theme['c-650'], // 与 themes/index.ts 一致：浅色主题下次要文字满足 WCAG AA
     'c-primary-font': theme['c-primary'],
     'c-primary-font-hover': theme['c-primary-alpha-300'],
     'c-primary-font-active': theme['c-primary-dark-100-alpha-200'],

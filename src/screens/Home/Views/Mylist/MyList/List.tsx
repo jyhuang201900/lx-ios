@@ -57,6 +57,7 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel={`${item.name} ${global.i18n.t('list_more')}`}
+        activeOpacity={0.65}
         ref={moreButtonRef}
         onPress={handleShowMenu}
         style={styles.moreButton}

@@ -76,7 +76,7 @@ export default ({ check, label, children, onChange, helpTitle, helpDesc, disable
       ? (
           <View style={contentStyle}>
             <CheckBox status={check ? 'checked' : 'unchecked'} disabled={true} tintColors={disabledTintColors} size={size} />
-            <View style={labelStyle}>{label ? <Text style={styles.name} color={theme['c-500']} size={15 * size}>{label}</Text> : children}</View>
+            <View style={labelStyle}>{label ? <Text style={styles.name} color={theme['c-font-label']} size={15 * size}>{label}</Text> : children}</View>
             {helpComponent}
           </View>
         )

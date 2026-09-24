@@ -60,12 +60,12 @@ export default memo(() => {
     <View style={{ height: HEADER_HEIGHT + statusBarHeight, paddingTop: statusBarHeight, borderBottomColor: theme['c-border-background'], borderBottomWidth: StyleSheet.hairlineWidth }} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_header}>
       <StatusBar />
       <View style={styles.container}>
-        <Btn icon="chevron-left" onPress={back} />
+        <Btn icon="chevron-left" label={global.i18n.t('back')} onPress={back} />
         <Title />
         <PlaybackRateBtn />
         <TimeoutExitBtn />
-        <Btn icon="slider" color={isSoundEffectActive(setting) ? theme['c-primary-font-active'] : undefined} onPress={showSoundEffect} />
-        <Btn icon="setting" size={16} onPress={showSetting} />
+        <Btn icon="slider" label={global.i18n.t('setting_play_sound_effect')} color={isSoundEffectActive(setting) ? theme['c-primary-font-active'] : undefined} onPress={showSoundEffect} />
+        <Btn icon="setting" size={16} label={global.i18n.t('nav_setting')} onPress={showSetting} />
       </View>
       <SoundEffectPopup ref={soundEffectPopupRef} layoutMode="stacked" />
       <SettingPopup ref={popupRef} direction="vertical" />

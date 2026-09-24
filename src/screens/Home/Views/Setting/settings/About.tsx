@@ -132,7 +132,7 @@ const styles = createStyle({
   },
   boldText: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '600',
     textAlignVertical: 'bottom',
   },
   throughText: {

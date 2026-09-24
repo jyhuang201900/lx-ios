@@ -59,5 +59,5 @@ export default memo(() => {
     return playModeIcon
   }, [togglePlayMethod])
 
-  return <Btn icon={playModeIcon} onPress={toggleNextPlayMode} />
+  return <Btn icon={playModeIcon} label={global.i18n.t('play_mode')} onPress={toggleNextPlayMode} />
 })

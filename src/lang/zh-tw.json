@@ -642,5 +642,10 @@
   "search_history_clear_confirm": "確定要清空全部搜尋歷史嗎？",
   "search_history_cleared": "搜尋歷史已清空",
   "play_list_add_song_tip": "去搜尋添加歌曲",
-  "list_move_to_top": "移到最前"
+  "list_move_to_top": "移到最前",
+  "comment_empty": "還沒有評論，快來搶沙發～",
+  "comment": "評論",
+  "play_mode": "播放模式",
+  "collect_song": "收藏歌曲",
+  "timeout_exit": "定時關閉"
 }

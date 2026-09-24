@@ -51,11 +51,13 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
   useImperativeHandle(ref, () => ({
     playAll() {
       const info = boardState.listDetailInfo
-      if (info.id) {
-        handlePlay(info.id, info.list, 0).catch(() => {
-          toast(global.i18n.t('load_failed'))
-        })
+      if (!info.id) {
+        toast(global.i18n.t('load_failed'))
+        return
       }
+      handlePlay(info.id, info.list, 0).catch(() => {
+        toast(global.i18n.t('load_failed'))
+      })
     },
     async loadList(source, id) {
       const requestId = ++loadRequestIdRef.current

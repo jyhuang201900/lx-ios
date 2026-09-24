@@ -116,6 +116,7 @@ export default forwardRef<InputType, InputProps>(({ onChangeText, onClearText, c
                 accessibilityRole="button"
                 accessibilityLabel={global.i18n.t('input_clear')}
                 style={styles.clearBtn}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                 onPress={clearText}
               >
                 <Icon name="remove" color={theme['c-primary-dark-100-alpha-500']} size={11} />

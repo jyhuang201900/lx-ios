@@ -642,5 +642,10 @@
   "search_history_clear_confirm": "Clear all search history?",
   "search_history_cleared": "Search history cleared",
   "play_list_add_song_tip": "Find songs to add",
-  "list_move_to_top": "Move to top"
+  "list_move_to_top": "Move to top",
+  "comment_empty": "No comments yet",
+  "comment": "Comments",
+  "play_mode": "Play mode",
+  "collect_song": "Favorite",
+  "timeout_exit": "Sleep timer"
 }

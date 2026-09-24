@@ -82,7 +82,7 @@ const ListItem = memo(({ info, onPlay, onOpenDetail }: {
   return (
     <View style={{ ...styles.listItem, height: ITEM_HEIGHT }} onStartShouldSetResponder={() => true}>
       {/* <View style={styles.listItemLabel}>
-        <Text style={styles.sn} size={13} color={theme['c-300']}>{info.index + 1}</Text>
+        <Text style={styles.sn} size={13} color={theme['c-font-label']}>{info.index + 1}</Text>
       </View> */}
       <View style={styles.listItemInfo}>
         <Text color={theme['c-font']} size={14} numberOfLines={1}>{info.name}</Text>
@@ -98,8 +98,8 @@ const ListItem = memo(({ info, onPlay, onOpenDetail }: {
         </View>
       </View>
       <View style={styles.listItemLabel}>
-        {/* <Text style={styles.listItemLabelText} size={13} color={theme['c-300']}>{ info.source }</Text> */}
-        <Text style={styles.listItemLabelText} size={13} color={theme['c-300']}>{info.interval}</Text>
+        {/* <Text style={styles.listItemLabelText} size={13} color={theme['c-font-label']}>{ info.source }</Text> */}
+        <Text style={styles.listItemLabelText} size={13} color={theme['c-font-label']}>{info.interval}</Text>
       </View>
       <View style={styles.listItemBtns}>
         <Button style={styles.listItemBtn} onPress={() => { onOpenDetail(info) }}>

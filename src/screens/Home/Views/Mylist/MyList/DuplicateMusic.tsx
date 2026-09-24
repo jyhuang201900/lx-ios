@@ -52,7 +52,7 @@ const ListItem = memo(({ info, index, onRemove, onPlay, selectedList, onPress }:
   return (
     <View style={{ ...styles.listItem, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)' }} onStartShouldSetResponder={() => true}>
       {/* <View style={styles.listItemLabel}>
-        <Text style={styles.sn} size={13} color={theme['c-300']}>{info.index + 1}</Text>
+        <Text style={styles.sn} size={13} color={theme['c-font-label']}>{info.index + 1}</Text>
       </View> */}
       <TouchableOpacity style={styles.listItemInfo} onPress={() => { onPress(info) }}>
         <Text color={theme['c-font']} size={14} numberOfLines={1}>{info.musicInfo.name}</Text>
@@ -68,8 +68,8 @@ const ListItem = memo(({ info, index, onRemove, onPlay, selectedList, onPress }:
         </View>
       </TouchableOpacity>
       <View style={styles.listItemLabel}>
-        <Text style={styles.listItemLabelText} size={13} color={theme['c-300']}>{ info.musicInfo.source }</Text>
-        <Text style={styles.listItemLabelText} size={13} color={theme['c-300']}>{info.musicInfo.interval}</Text>
+        <Text style={styles.listItemLabelText} size={13} color={theme['c-font-label']}>{ info.musicInfo.source }</Text>
+        <Text style={styles.listItemLabelText} size={13} color={theme['c-font-label']}>{info.musicInfo.interval}</Text>
       </View>
       <View style={styles.listItemBtns}>
         <Button style={styles.listItemBtn} onPress={() => { onPlay(info) }}>

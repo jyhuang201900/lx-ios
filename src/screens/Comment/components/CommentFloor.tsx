@@ -51,8 +51,8 @@ const CommentFloor = memo(({ comment, isLast }: {
     if (comment.likedCount == null) return null
     return (
       <View style={styles.like}>
-        <Icon name="thumbs-up" style={{ color: theme['c-450'] }} size={12} />
-        <Text style={styles.likedCount} size={12} color={ theme['c-450'] }>{comment.likedCount}</Text>
+        <Icon name="thumbs-up" style={{ color: theme['c-font-label'] }} size={12} />
+        <Text style={styles.likedCount} size={12} color={ theme['c-font-label'] }>{comment.likedCount}</Text>
       </View>
     )
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,8 +74,8 @@ const CommentFloor = memo(({ comment, isLast }: {
                 {comment.userName}
               </Text>
               <View style={styles.metaInfo}>
-                <Text numberOfLines={1} size={12} color={theme['c-450']}>{comment.timeStr}</Text>
-                { comment.location ? <Text numberOfLines={1} style={styles.location} size={12} color={theme['c-450']}>{t('location', { location: comment.location })}</Text> : null }
+                <Text numberOfLines={1} size={12} color={theme['c-font-label']}>{comment.timeStr}</Text>
+                { comment.location ? <Text numberOfLines={1} style={styles.location} size={12} color={theme['c-font-label']}>{t('location', { location: comment.location })}</Text> : null }
               </View>
             </View>
             {likedCount}

@@ -75,7 +75,8 @@ export const buildActiveThemeColors = (theme: LX.Theme): LX.ActiveTheme => {
     ...theme.config.themeColors,
     ...theme.config.extInfo,
     'c-font': theme.config.themeColors['c-850'],
-    'c-font-label': theme.config.themeColors['c-450'],
+    // 次要文字需满足 WCAG AA（正文 4.5:1）：浅色主题用 c-650（白底 5.0:1），深色主题用 c-400（黑底 6.6:1）
+    'c-font-label': theme.config.themeColors[theme.isDark ? 'c-400' : 'c-650'],
     'c-primary-font': theme.config.themeColors['c-primary'],
     'c-primary-font-hover': theme.config.themeColors['c-primary-alpha-300'],
     'c-primary-font-active': theme.config.themeColors['c-primary-dark-100-alpha-200'],

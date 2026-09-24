@@ -96,6 +96,7 @@ export default forwardRef<QueuePopupType>((_, ref) => {
           accessibilityRole="button"
           accessibilityLabel={`${global.i18n.t('delete')} ${musicInfo.name}`}
           style={styles.removeButton}
+          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
           onPress={() => handleRemoveItem(index)}
         >
           <Icon name="close" size={11} color={theme['c-font-label']} />

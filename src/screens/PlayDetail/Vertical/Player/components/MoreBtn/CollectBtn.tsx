@@ -38,5 +38,5 @@ export default () => {
     else collectMusic()
   }
 
-  return <Btn icon="love" color={collected ? theme['c-primary-font-active'] : undefined} onPress={handlePress} />
+  return <Btn icon="love" label={global.i18n.t('collect_song')} color={collected ? theme['c-primary-font-active'] : undefined} onPress={handlePress} />
 }

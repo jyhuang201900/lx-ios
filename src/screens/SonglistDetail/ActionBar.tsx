@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useCallback, useRef, useState } from 'react'
 import { View } from 'react-native'
 import Button from '@/components/common/Button'
 
@@ -17,42 +17,71 @@ export default memo(() => {
   const theme = useTheme()
   const t = useI18n()
   const info = useListInfo()
+  const [pending, setPending] = useState<'' | 'play' | 'collect'>('')
+  const pendingRef = useRef(false)
 
   const back = () => {
     void pop(commonState.componentIds.songlistDetail!)
   }
 
   const isReady = !!songlistState.listDetailInfo.info.name
+  const disabled = !isReady || pending !== ''
 
-  const handlePlayAll = () => {
+  const handlePlayAll = useCallback(() => {
     if (!isReady) {
       toast(t('load_failed'))
       return
     }
+    // 详情仍在加载时重复点击会并发发起两次网络请求，这里做在途保护
+    if (pendingRef.current) return
+    pendingRef.current = true
+    setPending('play')
     handlePlay(info.id, info.source, songlistState.listDetailInfo.list).catch(() => {
       toast(t('load_failed'))
+    }).finally(() => {
+      pendingRef.current = false
+      setPending('')
     })
-  }
+  }, [info.id, info.source, isReady, t])
 
-  const handleCollection = () => {
+  const handleCollection = useCallback(() => {
     if (!isReady) {
       toast(t('load_failed'))
       return
     }
+    if (pendingRef.current) return
+    pendingRef.current = true
+    setPending('collect')
     handleCollect(info.id, info.source, songlistState.listDetailInfo.info.name || info.name).catch(() => {
       toast(t('load_failed'))
+    }).finally(() => {
+      pendingRef.current = false
+      setPending('')
     })
-  }
+  }, [info.id, info.name, info.source, isReady, t])
+
+  const playLabel = pending === 'play' ? t('loading') : t('play_all')
+  const collectLabel = pending === 'collect' ? t('loading') : t('collect_songlist')
 
   return (
     <View style={styles.container}>
-      <Button onPress={handleCollection} style={[styles.controlBtn, !isReady && styles.controlBtnDisabled]}>
-        <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'], ...(isReady ? undefined : styles.controlBtnTextDisabled) }}>{t('collect_songlist')}</Text>
+      <Button
+        onPress={handleCollection}
+        disabled={disabled}
+        accessibilityLabel={t('collect_songlist')}
+        style={[styles.controlBtn, disabled && styles.controlBtnDisabled]}
+      >
+        <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'], ...(disabled ? styles.controlBtnTextDisabled : undefined) }}>{collectLabel}</Text>
       </Button>
-      <Button onPress={handlePlayAll} style={[styles.controlBtn, !isReady && styles.controlBtnDisabled]}>
-        <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'], ...(isReady ? undefined : styles.controlBtnTextDisabled) }}>{t('play_all')}</Text>
+      <Button
+        onPress={handlePlayAll}
+        disabled={disabled}
+        accessibilityLabel={t('play_all')}
+        style={[styles.controlBtn, disabled && styles.controlBtnDisabled]}
+      >
+        <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'], ...(disabled ? styles.controlBtnTextDisabled : undefined) }}>{playLabel}</Text>
       </Button>
-      <Button onPress={back} style={styles.controlBtn}>
+      <Button onPress={back} accessibilityLabel={t('back')} style={styles.controlBtn}>
         <Text style={{ ...styles.controlBtnText, color: theme['c-button-font'] }}>{t('back')}</Text>
       </Button>
     </View>
@@ -86,4 +115,3 @@ const styles = createStyle({
     opacity: 0.8,
   },
 })
-

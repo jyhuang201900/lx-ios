@@ -76,6 +76,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
           accessibilityRole="button"
           accessibilityLabel={global.i18n.t('play_all')}
           style={{ ...styles.playAllButton, backgroundColor: theme['c-primary'] }}
+          hitSlop={{ top: 5, bottom: 5, left: 5, right: 5 }}
           onPress={onPlayAll}
         >
           <Icon name="play" size={13} color={theme['c-primary-button-font']} />

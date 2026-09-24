@@ -64,9 +64,9 @@ export default memo(() => {
         <Title />
         <PlaybackRateBtn />
         <CommentBtn />
-        <Btn icon="music_time" color={timeInfo.active ? theme['c-primary-font-active'] : undefined} onPress={showTimeoutExit} />
-        <Btn icon="slider" color={isSoundEffectActive(setting) ? theme['c-primary-font-active'] : undefined} onPress={showSoundEffect} />
-        <Btn icon="setting" size={18} onPress={showSetting} />
+        <Btn icon="music_time" label={global.i18n.t('timeout_exit')} color={timeInfo.active ? theme['c-primary-font-active'] : undefined} onPress={showTimeoutExit} />
+        <Btn icon="slider" label={global.i18n.t('setting_play_sound_effect')} color={isSoundEffectActive(setting) ? theme['c-primary-font-active'] : undefined} onPress={showSoundEffect} />
+        <Btn icon="setting" size={18} label={global.i18n.t('nav_setting')} onPress={showSetting} />
       </View>
       <SoundEffectPopup ref={soundEffectPopupRef} position="bottom" layoutMode="split" />
       <SettingPopup ref={popupRef} position="left" direction="horizontal" />

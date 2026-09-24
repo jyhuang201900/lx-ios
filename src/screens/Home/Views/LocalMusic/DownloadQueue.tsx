@@ -70,6 +70,7 @@ export default () => {
               accessibilityRole="button"
               accessibilityLabel={global.i18n.t('download_queue_retry')}
               style={styles.action}
+              hitSlop={{ top: 5, bottom: 5, left: 5, right: 5 }}
               onPress={() => retryDownloadTask(task.id)}
             >
               <Icon name="download-2" size={14} color={theme['c-font']} />
@@ -80,6 +81,7 @@ export default () => {
               accessibilityRole="button"
               accessibilityLabel={global.i18n.t('download_queue_cancel')}
               style={styles.action}
+              hitSlop={{ top: 5, bottom: 5, left: 5, right: 5 }}
               onPress={() => cancelDownloadTask(task.id)}
             >
               <Icon name="close" size={13} color={theme['c-font-label']} />
@@ -90,6 +92,7 @@ export default () => {
               accessibilityRole="button"
               accessibilityLabel={global.i18n.t('delete')}
               style={styles.action}
+              hitSlop={{ top: 5, bottom: 5, left: 5, right: 5 }}
               onPress={() => removeDownloadTask(task.id)}
             >
               <Icon name="remove" size={13} color={theme['c-font-label']} />

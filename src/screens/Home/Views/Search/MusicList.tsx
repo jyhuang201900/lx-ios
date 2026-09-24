@@ -4,6 +4,7 @@ import { search } from '@/core/search/music'
 import searchMusicState, { type Source } from '@/store/search/music/state'
 import { addTempPlayList } from '@/core/player/tempPlayList'
 import { playNext } from '@/core/player/player'
+import { toast } from '@/utils/tools'
 
 // export type MusicListProps = Pick<OnlineListProps,
 // 'onLoadMore'
@@ -50,7 +51,10 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
     },
     playAll() {
       const list = listRef.current?.getList() ?? []
-      if (!list.length) return
+      if (!list.length) {
+        toast(global.i18n.t('no_item'))
+        return
+      }
       addTempPlayList(list.map(item => ({
         listId: '',
         musicInfo: item,

@@ -14,5 +14,5 @@ export default () => {
     if (target && target.source != 'local') pickerRef.current?.show(target)
     else toast(global.i18n.t('player_download_unavailable'))
   }
-  return <><Btn icon="download-2" onPress={handlePress} /><DownloadQualityPicker ref={pickerRef} /></>
+  return <><Btn icon="download-2" label={global.i18n.t('player_download')} onPress={handlePress} /><DownloadQualityPicker ref={pickerRef} /></>
 }

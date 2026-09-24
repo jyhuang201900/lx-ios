@@ -86,6 +86,11 @@ export default ({ musicInfo, onUpdateTotal }: {
         listRef.current?.setList(filterList(comments))
         setTimeout(updateStatus, 300)
       }, 300)
+    }).catch(() => {
+      // 请求失败（含 3 次自动重试后）必须落回错误态，否则界面会一直停在「加载中」
+      listInfo.current.isLoadError = true
+    }).finally(() => {
+      updateStatus()
     })
   }
 
