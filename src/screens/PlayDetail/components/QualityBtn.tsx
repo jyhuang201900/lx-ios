@@ -9,6 +9,7 @@ import { useI18n } from '@/lang'
 import { useSettingValue } from '@/store/setting/hook'
 import { useTheme } from '@/store/theme/hook'
 import { toast, createStyle } from '@/utils/tools'
+import { getQualityLabel } from '@/utils/quality'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
 import { useAvailableQualities } from './StreamInfo'
 
@@ -21,7 +22,7 @@ export default memo(({ compact = false }: Props) => {
   const t = useI18n()
   const currentQuality = useSettingValue('player.playQuality')
   const qualities = useAvailableQualities()
-  const menus = useMemo(() => qualities.map((quality) => ({ action: quality, label: quality })), [qualities])
+  const menus = useMemo(() => qualities.map((quality) => ({ action: quality, label: getQualityLabel(quality) })), [qualities])
   const selectedQuality = qualities.includes(currentQuality) ? currentQuality : qualities[0]
 
   if (!menus.length) return null

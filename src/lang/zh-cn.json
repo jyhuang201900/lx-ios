@@ -647,5 +647,10 @@
   "comment": "评论",
   "play_mode": "播放模式",
   "collect_song": "收藏歌曲",
-  "timeout_exit": "定时关闭"
+  "timeout_exit": "定时关闭",
+  "quality_master": "母带",
+  "quality_atmos_plus": "臻品全景声",
+  "quality_atmos": "全景声",
+  "quality_hires": "Hi-Res 无损",
+  "quality_master_hint": "仅在当前音源和歌曲实际支持时使用，失败会自动降级"
 }

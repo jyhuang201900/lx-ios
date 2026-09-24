@@ -647,5 +647,10 @@
   "comment": "Comments",
   "play_mode": "Play mode",
   "collect_song": "Favorite",
-  "timeout_exit": "Sleep timer"
+  "timeout_exit": "Sleep timer",
+  "quality_master": "Master",
+  "quality_atmos_plus": "Premium Spatial",
+  "quality_atmos": "Spatial Audio",
+  "quality_hires": "Hi-Res Lossless",
+  "quality_master_hint": "Used only when the source and track support it; falls back automatically on failure."
 }

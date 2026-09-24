@@ -3,8 +3,8 @@ import playerState from '@/store/player/state'
 import settingState from '@/store/setting/state'
 import { downloadFile, existsFile, externalStorageDirectoryPath, mkdir, stopDownload, unlink, writeFile } from '@/utils/fs'
 import { toast } from '@/utils/tools'
-import { sortQualities } from '@/utils/quality'
 import { Platform } from 'react-native'
+import { getTrackQualities } from '@/utils/quality'
 
 export type DownloadTaskStatus = 'queued' | 'downloading' | 'completed' | 'failed' | 'canceled'
 
@@ -38,6 +38,11 @@ const qualityExtensions: Record<LX.Quality, string> = {
   flac24bit: 'flac',
   ape: 'ape',
   wav: 'wav',
+  // 高音质档位（自定义音源）：hi-res/母带通常仍是无损容器，全景声多为 mp4
+  hires: 'flac',
+  atmos: 'mp4',
+  atmos_plus: 'mp4',
+  master: 'flac',
 }
 
 const downloadTasks = new Map<string, DownloadTaskInternal>()
@@ -257,15 +262,9 @@ const enqueueDownload = (musicInfo: LX.Music.MusicInfoOnline, requestedQuality?:
   void processDownloadQueue()
 }
 
-/** Return qualities advertised by the source and supported by this track. */
+/** Return the qualities this track can be downloaded at (custom sources trust the script). */
 export const getDownloadQualities = (musicInfo: LX.Music.MusicInfoOnline): LX.Quality[] => {
-  const sourceQualities = global.lx.qualityList[musicInfo.source] ?? []
-  const trackQualities = Object.keys(musicInfo.meta._qualitys ?? {}).filter((quality): quality is LX.Quality => !!musicInfo.meta._qualitys[quality as LX.Quality])
-  const qualities = [
-    ...sourceQualities.filter(quality => trackQualities.includes(quality)),
-    ...trackQualities.filter(quality => !sourceQualities.includes(quality)),
-  ]
-  return sortQualities(qualities)
+  return getTrackQualities(musicInfo.source, musicInfo.meta._qualitys)
 }
 
 /** Download an online track to Files > On My iPhone > LX Music > Music. */

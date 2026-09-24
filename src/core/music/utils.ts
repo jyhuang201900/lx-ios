@@ -11,6 +11,7 @@ import settingState from '@/store/setting/state'
 import { requestMsg } from '@/utils/message'
 import BackgroundTimer from 'react-native-background-timer'
 import { apis } from '@/utils/musicSdk/api-source'
+import { getTrackQualities } from '@/utils/quality'
 
 
 const getOtherSourcePromises = new Map()
@@ -216,13 +217,13 @@ export const getOnlineOtherSourcePicByLocal = async(musicInfo: LX.Music.MusicInf
 }
 
 export const getPlayQuality = (highQuality: LX.Quality, musicInfo: LX.Music.MusicInfoOnline): LX.Quality => {
-  const available = global.lx.qualityList[musicInfo.source] ?? []
-  const qualityOrder: LX.Quality[] = ['flac24bit', 'flac', 'ape', 'wav', '320k', '192k', '128k']
-  const preferredIndex = qualityOrder.indexOf(highQuality)
-  const candidates = preferredIndex < 0 ? qualityOrder : qualityOrder.slice(preferredIndex)
-  return candidates.find(quality => available.includes(quality) && !!musicInfo.meta._qualitys[quality])
-    ?? available.find(quality => !!musicInfo.meta._qualitys[quality])
-    ?? '128k'
+  // 由高到低排列；自定义音源会包含 hires/atmos/master 等档位，因此可自动选到最高可用音质
+  const available = getTrackQualities(musicInfo.source, musicInfo.meta._qualitys)
+  if (!available.length) return '128k'
+  const preferredIndex = available.indexOf(highQuality)
+  // 用户偏好的档位作为上限：从该档位向下取第一个可用音质；偏好档位不可用时取当前最高可用
+  const candidates = preferredIndex < 0 ? available : available.slice(preferredIndex)
+  return candidates[0] ?? available[0]
 }
 
 export const getOnlineOtherSourceMusicUrl = async({ musicInfos, quality, onToggleSource, isRefresh, retryedSource = [] }: {
@@ -247,7 +248,7 @@ export const getOnlineOtherSourceMusicUrl = async({ musicInfos, quality, onToggl
     retryedSource.push(musicInfo.source)
     if (!assertApiSupport(musicInfo.source)) continue
     itemQuality = quality ?? getPlayQuality(settingState.setting['player.playQuality'], musicInfo)
-    if (!musicInfo.meta._qualitys[itemQuality]) continue
+    if (!getTrackQualities(musicInfo.source, musicInfo.meta._qualitys).includes(itemQuality)) continue
 
     console.log('try toggle to: ', musicInfo.source, musicInfo.name, musicInfo.singer, musicInfo.interval)
     onToggleSource(musicInfo)
