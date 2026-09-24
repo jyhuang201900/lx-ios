@@ -1,8 +1,7 @@
-import { useCallback, useRef, useState, useMemo, forwardRef, useImperativeHandle } from 'react'
-import { FlatList, View, RefreshControl, type FlatListProps } from 'react-native'
+import { useCallback, useRef, useState, useMemo, forwardRef, useImperativeHandle, useEffect } from 'react'
+import { FlatList, View, RefreshControl, type FlatListProps, Platform } from 'react-native'
 
 import ListItem from './ListItem'
-// import { navigations } from '@/navigation'
 import { type ListInfoItem } from '@/store/songlist/state'
 import { useLayout } from '@/utils/hooks'
 import { useTheme } from '@/store/theme/hook'
@@ -36,6 +35,7 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
   const [status, setStatus] = useState<Status>('idle')
   const { onLayout, width } = useLayout()
   const theme = useTheme()
+  const t = useI18n()
   // console.log('render songlist')
 
   useImperativeHandle(ref, () => ({
@@ -51,6 +51,17 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
 
   const handleLoadMore = useCallback(() => {
     if (status != 'idle') return
+    // Haptic feedback on load more trigger
+    if (Platform.OS === 'ios') {
+      try {
+        const { HapticFeedback } = require('react-native')
+        if (HapticFeedback && HapticFeedback.impactAsync) {
+          HapticFeedback.impactAsync('light')
+        }
+      } catch (e) {
+        // Silently ignore if haptic feedback is not available
+      }
+    }
     onLoadMore()
   }, [status, onLoadMore])
 
@@ -84,9 +95,13 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
   const refreshControl = useMemo(() => (
     <RefreshControl
       colors={[theme['c-primary']]}
-      // progressBackgroundColor={theme.primary}
+      progressBackgroundColor={theme['c-primary-input-background']}
       refreshing={status == 'refreshing'}
-      onRefresh={onRefresh} />
+      onRefresh={onRefresh}
+      progressViewOffset={20}
+      tintColor={theme['c-primary']}
+      title={t('pull_to_refresh')}
+      titleColor={theme['c-font-label']} />
   ), [status, onRefresh, theme])
   const footerComponent = useMemo(() => {
     let label: FooterLabel
@@ -169,10 +184,10 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
                 // getItemLayout={getItemLayout}
                 // onRefresh={onRefresh}
                 // refreshing={refreshing}
-                onEndReachedThreshold={0.6}
-                onEndReached={handleLoadMore}
-                refreshControl={refreshControl}
-                ListFooterComponent={footerComponent}
+onEndReachedThreshold={0.75}
+              onEndReached={handleLoadMore}
+              refreshControl={refreshControl}
+              ListFooterComponent={footerComponent}
               />
             )
       }

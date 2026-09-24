@@ -67,6 +67,8 @@
   "list_edit_action_tip_move_success": "移动成功",
   "list_edit_action_tip_remove_success": "移除成功",
   "list_end": "到底啦~",
+  "pull_to_refresh": "下拉刷新",
+  "pull_up_to_load_more": "上拉加载更多",
   "list_error": "加载失败😥，点击尝试重新加载",
   "list_more": "更多",
   "list_export": "导出",

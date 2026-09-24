@@ -94,8 +94,9 @@ export const downloadFile = (url: string, path: string, options: Omit<RNFS.Downl
     // // background?: boolean;     // Continue the download in the background after the app terminates (iOS only)
     // // discretionary?: boolean;  // Allow the OS to control the timing and speed of the download to improve perceived performance  (iOS only)
     // // cacheable?: boolean;      // Whether the download can be stored in the shared NSURLCache (iOS only, defaults to true)
-    // progressInterval: options.progressInterval,
-    // progressDivider: options.progressDivider,
+    progressInterval: options.progressInterval,
+    progressDivider: options.progressDivider,
+    progress: options.progress,
     // begin: (res: DownloadBeginCallbackResult) => void;
     // progress?: (res: DownloadProgressCallbackResult) => void;
     // // resumable?: () => void;    // only supported on iOS yet

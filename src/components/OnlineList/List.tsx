@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useRef, useState, forwardRef, useImperativeHandle } from 'react'
-import { FlatList, type FlatListProps, RefreshControl, View } from 'react-native'
+import { useCallback, useMemo, useRef, useState, forwardRef, useImperativeHandle, useEffect } from 'react'
+import { FlatList, type FlatListProps, RefreshControl, View, Platform } from 'react-native'
 
 // import { useMusicList } from '@/store/list/hook'
 import ListItem, { ITEM_HEIGHT } from './ListItem'
@@ -180,6 +180,18 @@ const List = forwardRef<ListType, ListProps>(({
 
   const handleLoadMore = useCallback(() => {
     if (status != 'idle') return
+    // Haptic feedback on load more trigger (using native bridge if available)
+    if (Platform.OS === 'ios') {
+      try {
+        // Try to use native haptic feedback if available
+        const { HapticFeedback } = require('react-native')
+        if (HapticFeedback && HapticFeedback.impactAsync) {
+          HapticFeedback.impactAsync('light')
+        }
+      } catch (e) {
+        // Silently ignore if haptic feedback is not available
+      }
+    }
     onLoadMore()
   }, [status, onLoadMore])
 
@@ -205,9 +217,13 @@ const List = forwardRef<ListType, ListProps>(({
   const refreshControl = useMemo(() => (
     <RefreshControl
       colors={[theme['c-primary']]}
-      // progressBackgroundColor={theme.primary}
+      progressBackgroundColor={theme['c-primary-input-background']}
       refreshing={status == 'refreshing'}
-      onRefresh={onRefresh} />
+      onRefresh={onRefresh}
+      progressViewOffset={20}
+      tintColor={theme['c-primary']}
+      title={t('pull_to_refresh')}
+      titleColor={theme['c-font-label']} />
   ), [status, onRefresh, theme])
   const footerComponent = useMemo(() => {
     // 空列表时由空状态区负责反馈，避免空列表顶部出现游离的“加载中/到底啦”小字
@@ -280,7 +296,7 @@ const List = forwardRef<ListType, ListProps>(({
       getItemLayout={getItemLayout}
       // onRefresh={onRefresh}
       // refreshing={refreshing}
-      onEndReachedThreshold={0.5}
+      onEndReachedThreshold={0.75}
       onEndReached={handleLoadMore}
       progressViewOffset={progressViewOffset}
       ListHeaderComponent={ListHeaderComponent}
@@ -347,6 +363,21 @@ const styles = createStyle({
     paddingBottom: 16,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  footerLoadingText: {
+    fontSize: 11,
+    color: 'transparent',
+  },
+  footerEnd: {
+    paddingTop: 8,
+    paddingBottom: 14,
+    alignItems: 'center',
+    gap: 10,
+  },
+  footerEndText: {
+    fontSize: 12,
+    textAlign: 'center',
+    opacity: 0.9,
   },
   empty: {
     flexGrow: 1,

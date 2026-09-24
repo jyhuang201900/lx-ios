@@ -67,6 +67,8 @@
   "list_edit_action_tip_move_success": "Successfully moved",
   "list_edit_action_tip_remove_success": "Successfully removed",
   "list_end": "In the end~",
+  "pull_to_refresh": "Pull to refresh",
+  "pull_up_to_load_more": "Pull up to load more",
   "list_error": "Loading failed😥, click to try to reload",
   "list_more": "More",
   "list_export": "Export",
