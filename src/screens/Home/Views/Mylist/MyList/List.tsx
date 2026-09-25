@@ -43,7 +43,8 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   }
 
   return (
-    <View style={{ ...styles.card, ...glassCardShadow, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-glass-surface'], borderColor: active ? theme['c-primary'] : theme['c-border-background'] }}>
+    <View style={{ ...styles.cardShell, ...glassCardShadow }}>
+      <View style={{ ...styles.card, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-glass-surface'], borderColor: active ? theme['c-primary'] : theme['c-border-background'] }}>
       <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} style={styles.cardMain} onPress={() => onPress(item)}>
         <View style={{ ...styles.cardIcon, backgroundColor: active ? theme['c-primary'] : theme['c-primary-background-active'] }}>
           <Icon name={item.id === LIST_IDS.LOVE ? 'love' : item.id === LIST_IDS.DEFAULT ? 'play-outline' : 'album'} size={17} color={active ? theme['c-font'] : theme['c-font-label']} />
@@ -64,6 +65,7 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
       >
         <Icon name="dots-vertical" color={active ? theme['c-font'] : theme['c-font-label']} size={15} />
       </TouchableOpacity>
+      </View>
     </View>
   )
 }, (prevProps, nextProps) => prevProps.item === nextProps.item && prevProps.activeId === nextProps.activeId)
@@ -132,7 +134,9 @@ const styles = createStyle({
   createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   // 与 libraryHeader 的 16 对齐，避免同一页出现两条左边缘
   rail: { paddingHorizontal: 16, gap: 10 },
-  card: { width: scaleSizeW(180), height: scaleSizeH(82), borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, flexDirection: 'row', overflow: 'hidden' },
+  // 外层不裁剪，让 glassCardShadow 在 iOS 上可以显示
+  cardShell: { width: scaleSizeW(180), height: scaleSizeH(82), borderRadius: 16 },
+  card: { flex: 1, borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, flexDirection: 'row', overflow: 'hidden' },
   cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 11 },
   cardIcon: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   cardCopy: { flex: 1, paddingLeft: 9, paddingRight: 4, justifyContent: 'center', gap: 4 },

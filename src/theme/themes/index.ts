@@ -95,12 +95,14 @@ export const buildActiveThemeColors = (theme: LX.Theme): LX.ActiveTheme => {
     'c-content-background': theme.config.themeColors['c-primary-light-1000'],
     // 玻璃质感表面：半透明底色，让 PageContent 已虚化的背景透出，形成色彩渗透
     // 浮层（弹窗/菜单/播放条）比内容表面更实，保证文字可读性
-    'c-glass-surface': theme.isDark
-      ? theme.config.themeColors['c-primary-light-1000-alpha-200']
-      : theme.config.themeColors['c-primary-light-1000-alpha-300'],
+    // 玻璃表面用带主题色调的浅色阶（而非纯白/纯灰）叠加：纯色主题下页面底色与表面色相同
+    // 会导致玻璃完全不可见，用 light-600 可产生约 1.18（浅）/1.74（深）的可辨识色差
+    'c-glass-surface': theme.config.themeColors['c-primary-light-600-alpha-300'],
+    // 浮层覆盖在内容之上且无背景模糊能力，不透明度需足够高以抑制底层文字重影
+    // （实测 0.80 时重影对比 1.32 肉眼可辨，0.93 降至约 1.09）
     'c-glass-overlay': theme.isDark
       ? theme.config.themeColors['c-primary-light-1000-alpha-100']
-      : theme.config.themeColors['c-primary-light-1000-alpha-200'],
+      : theme.config.themeColors['c-primary-light-1000-alpha-100'],
     'c-border-background': theme.config.themeColors['c-primary-light-100-alpha-700'],
     'bg-image': bgImg,
   } as const

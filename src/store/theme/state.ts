@@ -278,8 +278,8 @@ const state: InitState = {
     'c-list-header-border-bottom': theme['c-primary-alpha-900'],
     'c-content-background': theme['c-primary-light-1000'],
     // 玻璃表面（默认主题为浅色，与 themes/index.ts 的取值规则保持一致）
-    'c-glass-surface': theme['c-primary-light-1000-alpha-300'],
-    'c-glass-overlay': theme['c-primary-light-1000-alpha-200'],
+    'c-glass-surface': theme['c-primary-light-600-alpha-300'],
+    'c-glass-overlay': theme['c-primary-light-1000-alpha-100'],
     'c-border-background': theme['c-primary-light-100-alpha-700'],
 
     'bg-image-position': 'center',
