@@ -301,3 +301,11 @@
 - 长文本防撑破：文件选择器的文件名、设置页自定义源列表的描述补 numberOfLines 截断（原先会把右侧大小/箭头按钮挤出屏幕）；歌单详情简介补行高 19。
 - 验证：tsc --noEmit 0 错误；改动文件无重复导入/未使用变量/Hook 问题；三语 649 键一致；iOS bundle 打包成功。
 
+## Session: 2026-09-25 — verify and repair the pull-to-refresh pass
+- 用户要求复核上轮改动。逐项核对后发现上轮有两处声称与实现不符，已修正：
+  1. 触觉反馈：上轮用的是 `require('react-native').HapticFeedback`，但 RN 0.73 并不导出该 API（已核实 index.js 无此导出），代码被 try/catch 静默吞掉，实际是死代码，等于没有触觉反馈。已改用项目自有的 `hapticFeedback`（`@/utils/nativeModules/utils`，对应原生 `RCT_EXPORT_METHOD(hapticFeedback:)`），并去掉随之失效的 Platform 判断与 try/catch。
+  2. LocalMusic 下拉刷新：上轮提交信息称已优化刷新控件，但该文件实际未改动。已补齐 progressBackgroundColor / tintColor / 下拉提示文案，使各列表下拉刷新规格一致。
+- 同时修掉上轮引入的两处 lint 问题：SongList 列表里未使用的 useEffect 导入、refreshControl 的 useMemo 依赖数组缺 t。
+- 复核既有问题（非本轮引入，未改动）：LocalMusic 的 6 处 prefer-nullish-coalescing / no-confusing-void-expression 在上一提交即存在；OnlineList 的 3 处 exhaustive-deps 警告源于既有代码结构。
+- 验证：tsc --noEmit 0 错误；改动文件 eslint 0 error；iOS bundle 打包成功。
+

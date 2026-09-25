@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState, useMemo, forwardRef, useImperativeHandle, useEffect } from 'react'
-import { FlatList, View, RefreshControl, type FlatListProps, Platform } from 'react-native'
+import { useCallback, useRef, useState, useMemo, forwardRef, useImperativeHandle } from 'react'
+import { FlatList, View, RefreshControl, type FlatListProps } from 'react-native'
 
 import ListItem from './ListItem'
 import { type ListInfoItem } from '@/store/songlist/state'
@@ -9,6 +9,7 @@ import { useI18n } from '@/lang'
 import { scaleSizeW } from '@/utils/pixelRatio'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
+import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 type FlatListType = FlatListProps<ListInfoItem>
 
@@ -51,17 +52,7 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
 
   const handleLoadMore = useCallback(() => {
     if (status != 'idle') return
-    // Haptic feedback on load more trigger
-    if (Platform.OS === 'ios') {
-      try {
-        const { HapticFeedback } = require('react-native')
-        if (HapticFeedback && HapticFeedback.impactAsync) {
-          HapticFeedback.impactAsync('light')
-        }
-      } catch (e) {
-        // Silently ignore if haptic feedback is not available
-      }
-    }
+    hapticFeedback('light')
     onLoadMore()
   }, [status, onLoadMore])
 
@@ -102,7 +93,7 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
       tintColor={theme['c-primary']}
       title={t('pull_to_refresh')}
       titleColor={theme['c-font-label']} />
-  ), [status, onRefresh, theme])
+  ), [status, onRefresh, theme, t])
   const footerComponent = useMemo(() => {
     let label: FooterLabel
     switch (status) {

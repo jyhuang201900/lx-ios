@@ -5,7 +5,7 @@ import searchMusicState, { type Source } from '@/store/search/music/state'
 import { addTempPlayList } from '@/core/player/tempPlayList'
 import { playNext } from '@/core/player/player'
 import { toast } from '@/utils/tools'
-import { Platform } from 'react-native'
+import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 // export type MusicListProps = Pick<OnlineListProps,
 // 'onLoadMore'
@@ -96,17 +96,7 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
     listRef.current?.setStatus('loading')
     const info = searchMusicState.listInfos[source]!
     const page = info?.list.length ? info.page + 1 : 1
-    // Haptic feedback on load more trigger
-    if (Platform.OS === 'ios') {
-      try {
-        const { HapticFeedback } = require('react-native')
-        if (HapticFeedback && HapticFeedback.impactAsync) {
-          HapticFeedback.impactAsync('light')
-        }
-      } catch (e) {
-        // Silently ignore if haptic feedback is not available
-      }
-    }
+    hapticFeedback('light')
     search(text, page, source).then((list) => {
       // const result = setListInfo(listDetail, searchMusicState.listDetailInfo.id, page)
       if (isUnmountedRef.current || requestId != requestIdRef.current) return

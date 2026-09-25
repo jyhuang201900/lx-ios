@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useRef, useState, forwardRef, useImperativeHandle, useEffect } from 'react'
-import { FlatList, type FlatListProps, RefreshControl, View, Platform } from 'react-native'
+import { useCallback, useMemo, useRef, useState, forwardRef, useImperativeHandle } from 'react'
+import { FlatList, type FlatListProps, RefreshControl, View } from 'react-native'
 
 // import { useMusicList } from '@/store/list/hook'
 import ListItem, { ITEM_HEIGHT } from './ListItem'
@@ -16,6 +16,7 @@ import { Icon } from '@/components/common/Icon'
 import RetryButton from '@/components/common/RetryButton'
 import { handlePlay } from './listAction'
 import { useSettingValue } from '@/store/setting/hook'
+import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 type FlatListType = FlatListProps<LX.Music.MusicInfoOnline>
 
@@ -180,18 +181,7 @@ const List = forwardRef<ListType, ListProps>(({
 
   const handleLoadMore = useCallback(() => {
     if (status != 'idle') return
-    // Haptic feedback on load more trigger (using native bridge if available)
-    if (Platform.OS === 'ios') {
-      try {
-        // Try to use native haptic feedback if available
-        const { HapticFeedback } = require('react-native')
-        if (HapticFeedback && HapticFeedback.impactAsync) {
-          HapticFeedback.impactAsync('light')
-        }
-      } catch (e) {
-        // Silently ignore if haptic feedback is not available
-      }
-    }
+    hapticFeedback('light')
     onLoadMore()
   }, [status, onLoadMore])
 
@@ -224,7 +214,7 @@ const List = forwardRef<ListType, ListProps>(({
       tintColor={theme['c-primary']}
       title={t('pull_to_refresh')}
       titleColor={theme['c-font-label']} />
-  ), [status, onRefresh, theme])
+  ), [status, onRefresh, theme, t])
   const footerComponent = useMemo(() => {
     // 空列表时由空状态区负责反馈，避免空列表顶部出现游离的“加载中/到底啦”小字
     if (!currentList.length) return null

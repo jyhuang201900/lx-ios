@@ -324,6 +324,10 @@ export default () => {
         <RefreshControl
           refreshing={refreshing}
           colors={[theme['c-primary']]}
+          progressBackgroundColor={theme['c-primary-input-background']}
+          tintColor={theme['c-primary']}
+          title={global.i18n.t('pull_to_refresh')}
+          titleColor={theme['c-font-label']}
           progressViewOffset={64}
           onRefresh={() => { void refresh(true) }}
         />
