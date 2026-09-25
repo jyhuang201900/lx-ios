@@ -319,3 +319,12 @@
 - 合规处理：LICENSE（Apache License 2.0）文件保留且未改动。该文件要求保留许可证与版权声明，删除它会使再分发失去授权依据；用户要求的「去除开源声明」按应用内可见声明与对外文档执行，未触碰许可证文本本身。此点已在交付说明中向用户明示。
 - 验证：tsc --noEmit 0 错误；改动文件 eslint 0 error；三语 656 键一致；iOS bundle 打包成功。
 
+## Session: 2026-09-25 — build-safety audit after the rename
+- 用户担心改名导致编译失败，要求全面检查。逐层验证后发现并修复一处**会直接让 iOS 构建失败**的问题。
+- 关键修复：.github/workflows/ios-ipa.yml 中 iOS 产物名此前只同步了 shell 变量形式 ${PACKAGE_VERSION}，遗漏了 GitHub 表达式形式 ${{ env.PACKAGE_VERSION }}，导致 zip 打包生成 tingge-v1.0.0-ios-unsigned.ipa 而上传步骤仍在找 lx-music-mobile-v1.0.0-...ipa，构建会在上传/发布阶段失败。已把 3 处表达式一并改为 tingge-，并用脚本模拟展开确认打包名与上传名完全一致。
+- 同步清理：release.yml 中 7 处同类旧名（该 workflow 只在 master 分支触发，不影响 main 推送，但为一致性一并处理）。
+- 删除 .github/workflows/publish-version-info.yml：它会向原作者仓库 lyswhut/lx-music-mobile-version-info 推送版本信息，既与本项目去除开源声明的要求矛盾，也必然因无写权限而失败。已确认无其他文件引用它。
+- 编译安全验证矩阵：tsc --noEmit 0 错误；全量 eslint 58 个 error 全部为既有风格规则，未用导入/重复导入/未定义标识符/Hook 规则等关键类均为 0；iOS JS bundle 打包成功（3.38MB + 21 资源，含模块解析）；Info.plist 可正常解析且版本字段仍为变量注入；app.json / package.json 有效；全部 6 个 YAML 配置解析通过；iOS 工程引用的 user-api-preload.js 路径存在，工程未引用本地化 plist。
+- 触发范围确认：只有 ios-ipa.yml 会随 main 分支推送自动运行（已修复），beta-pack/build-test/release 的触发分支分别为 beta/dev/master，不会自动执行。
+- 版本链路复核：package.json 1.0.0 / versionCode 100 → CI 注入 MARKETING_VERSION / CURRENT_PROJECT_VERSION → Info.plist 变量展开，应用内「关于」页版本显示同源。
+
