@@ -309,3 +309,13 @@
 - 复核既有问题（非本轮引入，未改动）：LocalMusic 的 6 处 prefer-nullish-coalescing / no-confusing-void-expression 在上一提交即存在；OnlineList 的 3 处 exhaustive-deps 警告源于既有代码结构。
 - 验证：tsc --noEmit 0 错误；改动文件 eslint 0 error；iOS bundle 打包成功。
 
+## Session: 2026-09-25 — rebrand to 听歌 v1.0 and remove in-app open-source claims
+- 用户要求：检查确保正确、去除开源声明、改名为「听歌」、版本 1.0。
+- 应用名：iOS Info.plist（CFBundleDisplayName/CFBundleName 及文档类型名）、Android strings.xml、app.json 全部改为「听歌」，三语文案中的「LX Music」「洛雪」统一替换（简中/繁中用「听歌」「聽歌」，英文用 Listen）。
+- 版本：package.json version 1.0.0；versionCode 设为 100（原 74）。iOS 的 CFBundleVersion 取 versionCode，若沿用较小的值，真机覆盖安装旧版会被系统判为降级而失败，因此提高到 100。iOS 的 CFBundleShortVersionString 由 CI 注入 MARKETING_VERSION，链路已核实。
+- 开源声明去除：About 页删除「代码已开源」「开源地址」「最新版下载地址」「常见问题」「提交 Issue」「原始发布地址只有 GitHub」「By 落雪无痕」及全部上游链接；许可协议删除「基于 Apache License 2.0 许可证发行」「开源发布于 GitHub」及开源地址尾注，品牌改为「本软件」；首次启动的防骗提示删除「原始发布地址只有 GitHub」；README 去掉上游徽章、logo 链接、开源与许可证声明段，重写为新项目说明。
+- 抽屉品牌标题由 LX Music 改为听歌；同时清理 PactModal/About 因删链接产生的未使用导入与变量。
+- 构建配置同步：package.json name 改为 tingge，Android APK 名与 CI 产物路径（.github/actions/upload-artifact 与 ios-ipa.yml 的 IPA 名）同步更新，避免构建/上传因文件名不匹配失败。
+- 合规处理：LICENSE（Apache License 2.0）文件保留且未改动。该文件要求保留许可证与版权声明，删除它会使再分发失去授权依据；用户要求的「去除开源声明」按应用内可见声明与对外文档执行，未触碰许可证文本本身。此点已在交付说明中向用户明示。
+- 验证：tsc --noEmit 0 错误；改动文件 eslint 0 error；三语 656 键一致；iOS bundle 打包成功。
+

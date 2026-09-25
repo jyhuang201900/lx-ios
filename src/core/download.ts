@@ -267,7 +267,7 @@ export const getDownloadQualities = (musicInfo: LX.Music.MusicInfoOnline): LX.Qu
   return getTrackQualities(musicInfo.source, musicInfo.meta._qualitys)
 }
 
-/** Download an online track to Files > On My iPhone > LX Music > Music. */
+/** Download an online track to the app documents Music directory (visible in Files). */
 export const downloadMusic = async(musicInfo: LX.Music.MusicInfoOnline, requestedQuality?: LX.Quality) => {
   // 调用方理论上只传在线歌曲，这里保留运行时防御
   if ((musicInfo.source as string) == 'local') {

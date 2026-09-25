@@ -110,7 +110,7 @@ jobs:
           cp -R "$APP_PATH" build/Payload/
           (
             cd build
-            zip -qry "lx-music-mobile-v${PACKAGE_VERSION}-ios-unsigned.ipa" Payload
+            zip -qry "tingge-v${PACKAGE_VERSION}-ios-unsigned.ipa" Payload
           )
 
       - name: Upload unsigned IPA artifact
@@ -201,7 +201,7 @@ jobs:
 
           IPA_PATH="$(find build/export -maxdepth 1 -name '*.ipa' -print -quit)"
           test -n "$IPA_PATH"
-          cp "$IPA_PATH" "build/lx-music-mobile-v${PACKAGE_VERSION}-ios-signed.ipa"
+          cp "$IPA_PATH" "build/tingge-v${PACKAGE_VERSION}-ios-signed.ipa"
 
       - name: Upload signed IPA artifact
         if: ${{ env.IOS_P12_BASE64 != '' && env.IOS_P12_PASSWORD != '' && env.IOS_MOBILEPROVISION_BASE64 != '' && env.IOS_TEAM_ID != '' }}

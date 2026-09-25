@@ -1,7 +1,7 @@
 {
-  "name": "lx-music-mobile",
-  "version": "1.8.2",
-  "versionCode": 74,
+  "name": "tingge",
+  "version": "1.0.0",
+  "versionCode": 100,
   "private": true,
   "scripts": {
     "dev": "react-native run-android --active-arch-only",
@@ -103,5 +103,6 @@
     "@typescript-eslint/typescript-estree": {
       "minimatch": "^9"
     }
-  }
+  },
+  "description": "听歌 - 一个简洁的音乐播放器"
 }
