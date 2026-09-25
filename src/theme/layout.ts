@@ -1,4 +1,4 @@
-import { Platform, type TextStyle, type ViewStyle } from 'react-native'
+import { Platform, StyleSheet, type TextStyle, type ViewStyle } from 'react-native'
 
 /**
  * 全局布局度量：所有界面统一使用这里的圆角与间距，避免各处数值漂移。
@@ -79,3 +79,27 @@ export const FontWeight = {
   regular: '400',
   semibold: '600',
 } as const
+
+/**
+ * iOS 玻璃质感（glassmorphism）参数。
+ *
+ * 项目未引入第三方模糊库，因此这里用「半透明表面 + 细描边 + 柔和阴影」在纯 RN 能力内
+ * 营造层次；需要真实背景模糊的地方用 RN Image 的原生 blurRadius（见 GlassSurface）。
+ */
+export const Glass = {
+  /** 主表面透明度：越高越实，越低越透 */
+  surfaceOpacity: { light: 0.72, dark: 0.62 },
+  /** 浮层（弹窗/菜单/播放条）透明度：比主表面更实，保证可读性 */
+  overlayOpacity: { light: 0.86, dark: 0.78 },
+  /** 玻璃描边：浅色用白、深色用白低透明，模拟高光边 */
+  borderWidth: StyleSheet.hairlineWidth,
+  /** 顶/底部高光边的不透明度 */
+  highlightOpacity: { light: 0.9, dark: 0.18 },
+} as const
+
+/** 玻璃表面的柔和阴影，比普通卡片更收敛，避免"脏" */
+export const glassShadow = createShadow({ opacity: 0.1, radius: 20, offsetY: 8, elevation: 4 })
+
+/** 玻璃卡片的轻微阴影：让表面在纯色主题下也能"浮"起来 */
+export const glassCardShadow = createShadow({ opacity: 0.06, radius: 12, offsetY: 4, elevation: 2 })
+

@@ -17,7 +17,7 @@ import { getLocalMetadataCacheKey, readMetadataCached } from '@/utils/localMedia
 import { useTheme } from '@/store/theme/hook'
 import { addTempPlayList } from '@/core/player/tempPlayList'
 import LocalMusicItem from './LocalMusicItem'
-import { FontWeight, Radius, Typography } from '@/theme/layout'
+import { FontWeight, Radius, Typography, glassCardShadow } from '@/theme/layout'
 
 const audioExtensions = ['mp3', 'flac', 'wav', 'ape', 'ogg', 'm4a', 'aac']
 
@@ -231,7 +231,7 @@ export default () => {
   }, [visibleFiles, buildMusicInfoFromFile])
 
   return <View style={styles.container}>
-    <View style={{ ...styles.summary, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.summary, ...glassCardShadow, backgroundColor: theme['c-glass-surface'], borderColor: theme['c-border-background'] }}>
       <View style={{ ...styles.summaryIcon, backgroundColor: theme['c-primary-background-active'] }}>
         <Icon name="music_time" size={20} color={theme['c-primary-font-active']} />
       </View>
@@ -274,7 +274,7 @@ export default () => {
       </TouchableOpacity>
     </View>
     {Platform.OS == 'ios' ? <DownloadQueue /> : null}
-    <View style={{ ...styles.searchCard, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.searchCard, backgroundColor: theme['c-glass-surface'], borderColor: theme['c-border-background'] }}>
       <Icon name="search-2" size={15} color={theme['c-font-label']} />
       <Input
         value={search}

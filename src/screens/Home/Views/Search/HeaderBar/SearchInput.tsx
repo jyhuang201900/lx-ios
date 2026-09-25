@@ -59,7 +59,7 @@ export default forwardRef<SearchInputType, SearchInputProps>(({ onChangeText, on
   }, [onSubmit])
 
   return (
-    <View style={{ ...styles.shell, backgroundColor: theme['c-primary-input-background'] }}>
+    <View style={{ ...styles.shell, backgroundColor: theme['c-glass-surface'] }}>
       <Icon name="search-2" size={16} color={theme['c-font-label']} />
       <Input
         ref={inputRef}

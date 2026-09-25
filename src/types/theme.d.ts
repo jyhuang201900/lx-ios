@@ -280,6 +280,10 @@ declare global {
       'c-list-header-border-bottom': string
       'c-content-background': string
       'c-border-background': string
+      /** 玻璃质感表面（半透明，透出已虚化的背景） */
+      'c-glass-surface': string
+      /** 玻璃质感浮层（弹窗/菜单/播放条，比 surface 更实） */
+      'c-glass-overlay': string
       'bg-image'?: ImageSourcePropType
     }
 

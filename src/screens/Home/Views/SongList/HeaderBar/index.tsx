@@ -49,7 +49,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
 
 
   return (
-    <View style={{ ...styles.searchBar, backgroundColor: theme['c-primary-input-background'], borderBottomColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.searchBar, backgroundColor: theme['c-glass-surface'], borderBottomColor: theme['c-border-background'] }}>
       <SortTab ref={sortTabRef} onSortChange={onSortChange} />
       <Tag ref={tagRef} onTagChange={onTagChange} />
       <OpenList ref={openListRef} />

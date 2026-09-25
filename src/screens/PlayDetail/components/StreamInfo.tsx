@@ -64,7 +64,7 @@ export default () => {
 
   return (
     <View style={styles.container}>
-      {source ? <View style={{ ...styles.pill, backgroundColor: theme['c-primary-input-background'] }}>
+      {source ? <View style={{ ...styles.pill, backgroundColor: theme['c-glass-surface'] }}>
         <Text style={styles.label} size={10} color={theme['c-font-label']}>{t('player_source')}</Text>
         <Text numberOfLines={1} size={11}>{source}</Text>
       </View> : null}

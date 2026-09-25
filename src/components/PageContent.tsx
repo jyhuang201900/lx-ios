@@ -50,6 +50,8 @@ export default ({ children }: Props) => {
         style={{ position: 'absolute', left: 0, top: 0, height: windowSize.height, width: windowSize.width, backgroundColor: theme['c-content-background'] }}
         source={theme['bg-image']}
         resizeMode="cover"
+        // 背景做柔和虚化，为上层玻璃表面提供可透出的色彩底色
+        blurRadius={BLUR_RADIUS}
       />
       <View
         pointerEvents="none"
@@ -57,6 +59,8 @@ export default ({ children }: Props) => {
           StyleSheet.absoluteFill,
           {
             backgroundColor: theme['c-main-background'],
+            // 玻璃质感的关键：遮罩留出可透出的余量，纯不透明会把背景完全压死
+            opacity: theme.isDark ? 0.82 : 0.88,
           },
         ]}
       />
@@ -82,7 +86,7 @@ export default ({ children }: Props) => {
             StyleSheet.absoluteFill,
             {
               backgroundColor: theme['c-content-background'],
-              opacity: 0.76,
+              opacity: 0.62,
             },
           ]}
         />

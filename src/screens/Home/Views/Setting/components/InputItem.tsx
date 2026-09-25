@@ -69,7 +69,7 @@ export default memo(({ value, label, onChanged, ...props }: InputItemProps) => {
         value={text}
         ref={inputRef}
         onChangeText={handleSetSelectMode}
-        style={{ ...styles.input, backgroundColor: theme['c-primary-input-background'] }}
+        style={{ ...styles.input, backgroundColor: theme['c-glass-surface'] }}
         {...props}
         onBlur={saveValue}
        />

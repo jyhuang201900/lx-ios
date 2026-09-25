@@ -328,3 +328,14 @@
 - 触发范围确认：只有 ios-ipa.yml 会随 main 分支推送自动运行（已修复），beta-pack/build-test/release 的触发分支分别为 beta/dev/master，不会自动执行。
 - 版本链路复核：package.json 1.0.0 / versionCode 100 → CI 注入 MARKETING_VERSION / CURRENT_PROJECT_VERSION → Info.plist 变量展开，应用内「关于」页版本显示同源。
 
+## Session: 2026-09-25 — iOS glassmorphism visual pass
+- 用户要求「美化 UI，使用 iOS 玻璃感设计，全面美化」。
+- 前置判断：项目未引入任何毛玻璃/渐变依赖（blur/gradient/skia 均无）。因此采用「RN 原生 blurRadius + 半透明分层 + 细描边 + 顶部高光 + 柔和阴影」在零新依赖前提下实现玻璃质感，避免引入原生库导致的编译风险。
+- 背景层（玻璃质感的前提）：PageContent 两个分支此前用接近不透明的遮罩把背景完全压住，是「没有玻璃感」的根因。现将主题背景分支遮罩改为 0.88/0.82（浅/深），自定义图分支由 0.76 降到 0.62，并为主题背景补上原生 blurRadius，使背景呈现柔和色彩晕染并可从上层玻璃透出。
+- 新增设计 token：theme/layout.ts 增加 Glass（表面/浮层透明度、描边、高光）与 glassShadow、glassCardShadow；主题增加 c-glass-surface（0.70 透明）与 c-glass-overlay（0.80 透明），并在 ActiveTheme 类型与默认主题 state 中同步登记（16 个主题均已具备所需灰阶，已逐一校验）。
+- 应用范围（15 个文件）：浮层类（弹窗 Popup、菜单 Menu、对话框 Dialog、迷你播放条）用 c-glass-overlay；内容类（歌单卡、当前歌单条、设置分组卡、本地摘要卡、三个主页控制条、榜单卡、搜索输入框、本地搜索卡、设置输入项、播放页音源/音质胶囊）用 c-glass-surface。玻璃卡片补玻璃阴影，使其在纯色主题下也能浮起。
+- 新增可复用组件 components/common/GlassSurface.tsx（含透明度分层、描边、顶部高光，供后续统一使用）。
+- 对比度复核（关键，半透明会削弱可读性）：玻璃层叠加后，浅色主题正文 10.05:1、次要 5.02:1；深色主题正文 9.4:1、次要 6.2:1，均超过 WCAG AA 的 4.5:1 要求，文字可读性未因玻璃化下降。
+- 发现并处理：玻璃层与纯色页面底色对比度为 1.000（半透明白叠白仍是白），故不能只靠底色区分层次，已通过描边 + 阴影 + 顶部高光补足立体感。
+- 验证：tsc --noEmit 0 错误；全量 eslint 关键类（未用/重复导入、未定义标识符、Hook 规则）0 问题；iOS bundle 打包成功。
+

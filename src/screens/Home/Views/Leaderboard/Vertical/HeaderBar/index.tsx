@@ -53,7 +53,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 
 
   return (
-    <View style={{ ...styles.currentList, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.currentList, backgroundColor: theme['c-glass-surface'], borderColor: theme['c-border-background'] }}>
       <View style={{ ...styles.segment, borderRightColor: theme['c-border-background'] }}><SourceSelector ref={sourceSelectorRef} style={styles.sourceSelector} onSourceChange={onSourceChange} /></View>
       <DorpDownMenu
         menus={menus}

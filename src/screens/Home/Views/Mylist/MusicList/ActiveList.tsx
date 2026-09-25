@@ -49,7 +49,7 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
   }))
 
   return (
-    <View style={{ ...styles.currentList, opacity: visibleBar ? 1 : 0, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.currentList, opacity: visibleBar ? 1 : 0, backgroundColor: theme['c-glass-surface'], borderColor: theme['c-border-background'] }}>
       <TouchableOpacity accessibilityRole="button" accessibilityHint="长按回到歌曲开头" onPress={onScrollToTop} onLongPress={onScrollToTop} style={styles.currentListMain}>
         <View style={{ ...styles.currentListIcon, backgroundColor: theme['c-primary-background-active'] }}>
           <Icon color={theme['c-font']} name="album" size={15} />

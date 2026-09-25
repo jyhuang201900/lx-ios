@@ -182,7 +182,7 @@ export default forwardRef<PopupType, PopupProps>(({
       animationType={position == 'bottom' ? 'slide' : 'fade'}
     >
       <View style={{ ...styles.centeredView, ...centeredViewStyle, paddingBottom: keyboardShown ? keyboardHeight : 0 }}>
-        <View style={{ ...styles.modalView, ...modalViewStyle, backgroundColor: theme['c-content-background'], shadowColor: '#000', shadowOffset: { width: 0, height: -6 }, shadowOpacity: 0.16, shadowRadius: 18 }} onStartShouldSetResponder={() => true}>
+        <View style={{ ...styles.modalView, ...modalViewStyle, backgroundColor: theme['c-glass-overlay'], shadowColor: '#000', shadowOffset: { width: 0, height: -6 }, shadowOpacity: 0.16, shadowRadius: 18 }} onStartShouldSetResponder={() => true}>
           <View style={styles.header}>
             <Text size={13} style={styles.title} numberOfLines={1}>{title}</Text>
             {closeBtnComponent}
