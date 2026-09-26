@@ -367,3 +367,11 @@
   4) 播放页顶栏与首页顶栏改为悬浮玻璃条（半透明底 + 受光底边），此前顶栏完全透明、没有视觉重量。
 - 验证：tsc --noEmit 0 错误；全量 eslint 关键类 0 问题；iOS bundle 打包成功。
 
+## Session: 2026-09-25 — audit of the tech-feel pass (found 2 rendering defects)
+- 用户要求审阅代码确保无错误。逐项核查后确认无编译类错误，但发现 2 处「代码能跑、效果不显示」的渲染缺陷：
+- 缺陷一（发光宿主透明）：iOS 的 shadow* 由宿主自身的 backgroundColor 投出。歌单卡把 neonGlow 放在外层 cardShell 上，而该层当时没有背景色（底色在内层），导致发光与阴影都投不出来。已给外层补上底色（激活态用 hover 色、常态用玻璃色），内层不再重复设底色只保留描边。
+- 缺陷二（内层描边盖住高光）：Menu 内层 menuClip 自带 hairline 灰色描边，压在外层玻璃边框内侧，会盖掉本轮新加的上沿高光边。已移除内层描边，只保留圆角裁剪。
+- 复核项（均确认无问题）：createGlassStyle 返回新对象但仅用于内联 style、不参与 memo 比较，无性能影响；Popup 中硬编码的 shadow* 是有意覆盖（弹层需要黑色投影），且 createGlassStyle 不含 shadow 属性故无冲突；Section/LocalMusic 的阴影宿主无 overflow，阴影正常；Header.tsx 三处 theme 声明分属独立组件作用域无冲突；16 个内置主题与自定义主题生成器均产出全部所需灰阶，无 undefined 风险。
+- 既有问题（非本轮引入，未改动）：List.tsx 两处 no-confusing-void-expression，已用 git stash 对比确认改动前即存在。
+- 验证：tsc --noEmit 0 错误；全量 eslint 关键类 0 问题；iOS bundle 打包成功。
+

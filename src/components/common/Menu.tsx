@@ -37,11 +37,10 @@ const styles = createStyle({
     shadowOpacity: 0.22,
     shadowRadius: 20,
   },
-  // 圆角裁剪放在内层，否则 iOS 上外层的阴影会被 overflow: hidden 一起裁掉
+  // 圆角裁剪放在内层，否则 iOS 上外层的阴影会被 overflow: hidden 一起裁掉。
+  // 内层不再画描边：否则会盖住外层玻璃的上沿高光边
   menuClip: {
     flex: 1,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(128,128,128,0.34)',
     borderRadius: Radius.card,
     overflow: 'hidden',
   },
