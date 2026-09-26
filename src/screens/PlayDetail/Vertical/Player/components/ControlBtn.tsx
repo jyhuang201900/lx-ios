@@ -10,6 +10,7 @@ import { BTN_WIDTH } from './MoreBtn/Btn'
 import { useMemo } from 'react'
 import { markTimeoutExitInteraction } from '@/core/player/timeoutExit'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
+import { neonGlow } from '@/theme/layout'
 
 const PrevBtn = ({ size }: { size: number }) => {
   const theme = useTheme()
@@ -57,7 +58,7 @@ const TogglePlayBtn = ({ size }: { size: number }) => {
     <TouchableOpacity
       accessibilityRole="button"
       accessibilityLabel={global.i18n.t(isPlay ? 'pause' : 'play')}
-      style={{ ...styles.playBtn, width: size, height: size, backgroundColor: theme['c-button-background-selected'] }}
+      style={{ ...styles.playBtn, width: size, height: size, backgroundColor: theme['c-button-background-selected'], ...neonGlow(theme, { radius: 14, opacity: 0.7 }) }}
       activeOpacity={0.6}
       onPress={() => {
         markTimeoutExitInteraction()

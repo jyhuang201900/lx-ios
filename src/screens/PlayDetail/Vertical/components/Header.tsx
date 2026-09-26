@@ -57,7 +57,14 @@ export default memo(() => {
   }
 
   return (
-    <View style={{ height: HEADER_HEIGHT + statusBarHeight, paddingTop: statusBarHeight, borderBottomColor: theme['c-border-background'], borderBottomWidth: StyleSheet.hairlineWidth }} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_header}>
+    <View style={{
+      height: HEADER_HEIGHT + statusBarHeight,
+      paddingTop: statusBarHeight,
+      // 悬浮玻璃条：半透明底让下方内容透出，底边用亮色描边形成"受光边缘"
+      backgroundColor: theme['c-glass-surface'],
+      borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.75)',
+      borderBottomWidth: 1,
+    }} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_header}>
       <StatusBar />
       <View style={styles.container}>
         <Btn icon="chevron-left" label={global.i18n.t('back')} onPress={back} />

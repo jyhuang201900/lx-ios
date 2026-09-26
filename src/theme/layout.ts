@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, type TextStyle, type ViewStyle } from 'react-native'
+import { Platform, type TextStyle, type ViewStyle } from 'react-native'
 
 /**
  * 全局布局度量：所有界面统一使用这里的圆角与间距，避免各处数值漂移。
@@ -90,8 +90,29 @@ export const createGlassStyle = (
 ): ViewStyle => ({
   backgroundColor: theme[level === 'overlay' ? 'c-glass-overlay' : 'c-glass-surface'],
   borderRadius: radius,
-  borderWidth: StyleSheet.hairlineWidth,
+  // 玻璃边用 1.5px：发丝边(0.33px)在手机上完全看不见，1px 仍偏弱，撑不起玻璃轮廓
+  borderWidth: 1.5,
   borderColor: theme['c-border-background'],
-  // 上沿高光：浅色主题用高亮白，深色主题用低透明度白，避免深色主题下过亮刺眼
-  borderTopColor: theme.isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.85)',
+  // 上沿高光：提亮上边形成光线反射；左右用递减亮度过渡，读起来更像玻璃受光面
+  borderTopColor: theme.isDark ? 'rgba(255, 255, 255, 0.42)' : 'rgba(255, 255, 255, 1)',
+  borderLeftColor: theme.isDark ? 'rgba(255, 255, 255, 0.20)' : 'rgba(255, 255, 255, 0.70)',
+  borderRightColor: theme.isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.35)',
 })
+
+/**
+ * 霓虹光晕：把 iOS 阴影色设为主题色，阴影即变成"发光"而非"投影"。
+ * 这是零依赖下最强的科技感手段——激活项、播放按钮、进度指示点都靠它获得"通电"感。
+ */
+export const neonGlow = (
+  theme: LX.ActiveTheme,
+  { radius = 10, opacity = 0.55 }: { radius?: number, opacity?: number } = {},
+): ViewStyle => Platform.select({
+  ios: {
+    shadowColor: theme['c-primary'],
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: opacity,
+    shadowRadius: radius,
+  },
+  android: { elevation: 0 },
+  default: {},
+}) as ViewStyle

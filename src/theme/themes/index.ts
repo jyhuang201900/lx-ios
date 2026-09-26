@@ -76,7 +76,9 @@ export const buildActiveThemeColors = (theme: LX.Theme): LX.ActiveTheme => {
     ...theme.config.extInfo,
     'c-font': theme.config.themeColors['c-850'],
     // 次要文字需满足 WCAG AA（正文 4.5:1）：浅色主题用 c-650（白底 5.0:1），深色主题用 c-400（黑底 6.6:1）
-    'c-font-label': theme.config.themeColors[theme.isDark ? 'c-400' : 'c-650'],
+    // 次要文字需在玻璃表面（比页面底色更实）上仍满足 AA 4.5:1：
+    // 玻璃层加实后 c-650 掉到 4.15、深色 c-400 掉到 2.52，故改用 c-700（浅 4.88 / 深 4.52）
+    'c-font-label': theme.config.themeColors['c-700'],
     'c-primary-font': theme.config.themeColors['c-primary'],
     'c-primary-font-hover': theme.config.themeColors['c-primary-alpha-300'],
     'c-primary-font-active': theme.config.themeColors['c-primary-dark-100-alpha-200'],
@@ -97,7 +99,11 @@ export const buildActiveThemeColors = (theme: LX.Theme): LX.ActiveTheme => {
     // 浮层（弹窗/菜单/播放条）比内容表面更实，保证文字可读性
     // 玻璃表面用带主题色调的浅色阶（而非纯白/纯灰）叠加：纯色主题下页面底色与表面色相同
     // 会导致玻璃完全不可见，用 light-600 可产生约 1.18（浅）/1.74（深）的可辨识色差
-    'c-glass-surface': theme.config.themeColors['c-primary-light-600-alpha-300'],
+    // 浅/深主题取值不同：深色主题若把玻璃提得太亮，次要文字对比度会跌破 AA
+    // （600-alpha-200 时次要仅 3.55；改用 800-alpha-300 后为 4.65，色差仍达 1.47 可见）
+    'c-glass-surface': theme.isDark
+      ? theme.config.themeColors['c-primary-light-800-alpha-300']
+      : theme.config.themeColors['c-primary-light-600-alpha-200'],
     // 浮层覆盖在内容之上且无背景模糊能力，不透明度需足够高以抑制底层文字重影
     // （实测 0.80 时重影对比 1.32 肉眼可辨，0.93 降至约 1.09）
     'c-glass-overlay': theme.isDark

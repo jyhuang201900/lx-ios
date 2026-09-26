@@ -13,7 +13,7 @@ import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 import Loading from '@/components/common/Loading'
 import listState from '@/store/list/state'
 import { LIST_IDS } from '@/config/constant'
-import { Radius, Typography, createGlassStyle, glassCardShadow } from '@/theme/layout'
+import { Radius, Typography, createGlassStyle, glassCardShadow, neonGlow } from '@/theme/layout'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
 const getListKind = (id: string) => {
@@ -43,8 +43,8 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   }
 
   return (
-    <View style={{ ...styles.cardShell, ...glassCardShadow }}>
-      <View style={{ ...styles.card, ...createGlassStyle(theme, { radius: Radius.card }), ...(active ? { backgroundColor: theme['c-primary-background-hover'], borderColor: theme['c-primary'] } : null) }}>
+    <View style={{ ...styles.cardShell, ...(active ? neonGlow(theme, { radius: 14, opacity: 0.75 }) : glassCardShadow) }}>
+      <View style={{ ...styles.card, ...createGlassStyle(theme, { radius: Radius.card }), ...(active ? { backgroundColor: theme['c-primary-background-hover'], borderColor: theme['c-primary'], borderTopColor: theme['c-primary'] } : null) }}>
       <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} style={styles.cardMain} onPress={() => onPress(item)}>
         <View style={{ ...styles.cardIcon, backgroundColor: active ? theme['c-primary'] : theme['c-primary-background-active'] }}>
           <Icon name={item.id === LIST_IDS.LOVE ? 'love' : item.id === LIST_IDS.DEFAULT ? 'play-outline' : 'album'} size={17} color={active ? theme['c-font'] : theme['c-font-label']} />

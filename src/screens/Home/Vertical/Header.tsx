@@ -41,6 +41,7 @@ const NavButtons = () => {
 const LeftHeader = () => {
   const id = useNavActiveId()
   const t = useI18n()
+  const theme = useTheme()
   const statusBarHeight = useStatusbarHeight()
 
   return (
@@ -48,6 +49,10 @@ const LeftHeader = () => {
       ...styles.container,
       height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
       paddingTop: statusBarHeight,
+      // 悬浮玻璃顶栏：半透明底 + 受光底边，内容滚动时透出，形成层次
+      backgroundColor: theme['c-glass-surface'],
+      borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
+      borderBottomWidth: 1,
     }}>
       <View style={styles.left}>
         <NavButtons />
@@ -72,6 +77,7 @@ const LeftHeader = () => {
 const RightHeader = () => {
   const t = useI18n()
   const id = useNavActiveId()
+  const theme = useTheme()
   const statusBarHeight = useStatusbarHeight()
 
   return (
@@ -79,6 +85,10 @@ const RightHeader = () => {
       ...styles.container,
       height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
       paddingTop: statusBarHeight,
+      // 悬浮玻璃顶栏：半透明底 + 受光底边，内容滚动时透出，形成层次
+      backgroundColor: theme['c-glass-surface'],
+      borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
+      borderBottomWidth: 1,
     }}>
       <View style={styles.left}>
         <View style={styles.titleBtn}>

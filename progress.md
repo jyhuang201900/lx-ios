@@ -356,3 +356,14 @@
 - 死代码清理：新增的 accentHairline 无调用方，连同上一轮遗留的 Spacing、PagePadding 一并删除（二者实际从未被使用，此前 grep 命中的只是 letterSpacing）。当前 layout.ts 的 7 个导出全部有真实调用：Radius 119 处、createGlassStyle 18、TabularNums 14、createShadow 8、glassCardShadow 8、Typography 33、FontWeight 7。
 - 验证：tsc --noEmit 0 错误；全量 eslint 关键类 0 问题；iOS bundle 打包成功。
 
+## Session: 2026-09-25 — strengthening the tech feel (user: 不太明显，不够科技)
+- 用户反馈力度不足，要求更明显的科技感。本轮显著加强，并在此过程中发现 2 个真实缺陷。
+- 缺陷一（发光被裁）：上一轮把 neonGlow 加在了歌单卡内层 View 上，而该层带 overflow: hidden，iOS 上发光被完全裁掉——这正是"不明显"的原因之一。已移到不裁剪的外层 cardShell。
+- 缺陷二（对比度跌破 AA）：玻璃层加实后，次要文字对比度不达标——浅色 c-650 由 5.02 掉到 4.15、深色 c-400 掉到 2.52。经计算后统一改用 c-700（浅 4.89 / 深 4.65），并同步默认主题 state。
+- 加强项：
+  1) 玻璃色偏按主题分别调优——浅色用 light-600-alpha-200（色差 1.210），深色用 light-800-alpha-300（色差 1.473）。深色若沿用浅色取值会把玻璃提得过亮，导致次要文字仅 3.55。
+  2) 玻璃边由 hairline(0.33px) 提到 1.5px，高光由 0.28 提到 0.42（深色）/ 0.95 提到 1.0（浅色），并给左右边加递减亮度，形成受光面而非单一描边。
+  3) 新增 neonGlow：把 iOS 阴影色设为主题色，阴影即变为发光。已用于歌单卡激活态与横竖屏播放按钮，形成"通电"感。
+  4) 播放页顶栏与首页顶栏改为悬浮玻璃条（半透明底 + 受光底边），此前顶栏完全透明、没有视觉重量。
+- 验证：tsc --noEmit 0 错误；全量 eslint 关键类 0 问题；iOS bundle 打包成功。
+
