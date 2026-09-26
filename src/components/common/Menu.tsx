@@ -8,7 +8,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
-import { Radius } from '@/theme/layout'
+import { Radius, createGlassStyle } from '@/theme/layout'
 
 const menuItemHeight = scaleSizeH(44)
 const menuItemWidth = scaleSizeW(100)
@@ -142,7 +142,7 @@ const Menu = ({
   // console.log(menuStyle)
   // console.log(menuItemStyle)
   return (
-    <View style={{ ...styles.menu, ...menuStyle, backgroundColor: theme['c-glass-overlay'] }} onStartShouldSetResponder={() => true}>
+    <View style={{ ...styles.menu, ...menuStyle, ...createGlassStyle(theme, { level: 'overlay', radius: Radius.card }) }} onStartShouldSetResponder={() => true}>
       <View style={styles.menuClip}>
         <Animated.ScrollView keyboardShouldPersistTaps={'always'}>
           {

@@ -82,8 +82,11 @@ const Progress = ({ progress, duration, buffered }: {
       position: 'absolute',
       right: -progressDotSize / 2,
       top: -(progressDotSize - progressHeightSize) / 2,
+      // 发光：图标字体在 iOS 上支持 textShadow，零成本形成"指示灯"光晕，强化科技感
+      textShadowColor: theme['c-primary-light-100-alpha-600'],
+      textShadowRadius: 6,
     } as const
-  }, [])
+  }, [theme])
 
   const durationRef = useRef(duration)
   useEffect(() => {

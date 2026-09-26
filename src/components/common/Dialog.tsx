@@ -8,7 +8,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
 import { scaleSizeH } from '@/utils/pixelRatio'
-import { Radius, createShadow } from '@/theme/layout'
+import { createGlassStyle, createShadow, Radius } from '@/theme/layout'
 
 const HEADER_HEIGHT = 48
 const styles = createStyle({
@@ -96,7 +96,7 @@ export default forwardRef<DialogType, DialogProps>(({
   return (
     <Modal onHide={onHide} keyHide={keyHide} bgHide={bgHide} bgColor="rgba(50,50,50,.3)" ref={modalRef}>
       <View style={{ ...styles.centeredView, paddingBottom: keyboardShown ? keyboardHeight : 0 }}>
-        <View style={{ ...styles.modalView, height, backgroundColor: theme['c-glass-overlay'] }} onStartShouldSetResponder={() => true}>
+        <View style={{ ...styles.modalView, height, ...createGlassStyle(theme, { level: 'overlay', radius: Radius.sheet }) }} onStartShouldSetResponder={() => true}>
           <View style={{ ...styles.header, backgroundColor: theme['c-primary-light-100-alpha-100'] }}>
             <Text style={styles.title} size={13} color={theme['c-primary-light-1000']} numberOfLines={1}>{title}</Text>
             {closeBtnComponent}

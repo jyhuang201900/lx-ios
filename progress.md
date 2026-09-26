@@ -348,3 +348,11 @@
 - 兼容性核实：自定义主题的颜色板由 createThemeColors 统一生成，确认同样包含 light-600-alpha-300 与 light-1000-alpha-100，因此新 token 对内置 16 个主题与用户自定义主题全部可用，不会出现取到 undefined 而渲染成透明的情况。
 - 验证：tsc --noEmit 0 错误；全量 eslint 关键类 0 问题；iOS bundle 打包成功。
 
+## Session: 2026-09-25 — tech-feel pass and dead-code cleanup
+- 用户要求继续审阅并强化「科技感」。审阅中发现上一轮删除 GlassSurface 时，连带删掉了其中的「上沿高光边」逻辑，导致全项目不再有任何高光边实现——而高光边正是玻璃/科技质感最具识别度的特征。本轮以此为优化切入点。
+- 新增 createGlassStyle(theme, { level, radius }) helper：统一输出玻璃底色 + 发丝描边 + 上沿高光（borderTopColor 单独提亮，模拟光线在玻璃上沿的反射）。深色主题用 14% 白避免刺眼，浅色用 85% 白。已接入 9 处（设置分组卡、本地摘要卡、歌单卡、迷你播放条、搜索输入框、本地搜索卡、弹层、菜单、对话框），替换原先手写重复样式，同时消除样式漂移。
+- 高光边可见度已量化：相对玻璃底色，浅色主题对比 1.152、深色 1.432，两种主题下均可辨识。
+- 进度指示点加发光（textShadow 对图标字体在 iOS 生效），零成本形成「指示灯」光晕，强化仪表感。
+- 死代码清理：新增的 accentHairline 无调用方，连同上一轮遗留的 Spacing、PagePadding 一并删除（二者实际从未被使用，此前 grep 命中的只是 letterSpacing）。当前 layout.ts 的 7 个导出全部有真实调用：Radius 119 处、createGlassStyle 18、TabularNums 14、createShadow 8、glassCardShadow 8、Typography 33、FontWeight 7。
+- 验证：tsc --noEmit 0 错误；全量 eslint 关键类 0 问题；iOS bundle 打包成功。
+

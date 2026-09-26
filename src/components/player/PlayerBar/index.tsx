@@ -11,7 +11,7 @@ import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useSettingValue } from '@/store/setting/hook'
 import { BorderWidths } from '@/theme'
-import { Radius, createShadow } from '@/theme/layout'
+import { Radius, createGlassStyle, createShadow } from '@/theme/layout'
 
 
 export default memo(({ isHome = false }: { isHome?: boolean }) => {
@@ -21,7 +21,7 @@ export default memo(({ isHome = false }: { isHome?: boolean }) => {
   const autoHidePlayBar = useSettingValue('common.autoHidePlayBar')
 
   const playerComponent = useMemo(() => (
-    <View style={{ ...styles.container, backgroundColor: theme['c-glass-overlay'], borderTopColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.container, ...createGlassStyle(theme, { level: 'overlay', radius: Radius.card }) }}>
       <Pic isHome={isHome} />
       <View style={styles.center}>
         <Title isHome={isHome} />

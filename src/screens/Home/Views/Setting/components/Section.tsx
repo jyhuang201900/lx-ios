@@ -3,7 +3,7 @@ import { View } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
-import { FontWeight, Typography, glassCardShadow } from '@/theme/layout'
+import { FontWeight, Radius, Typography, createGlassStyle, glassCardShadow } from '@/theme/layout'
 
 
 interface Props {
@@ -15,7 +15,7 @@ export default ({ title, children }: Props) => {
   const theme = useTheme()
 
   return (
-    <View style={{ ...styles.container, ...glassCardShadow, backgroundColor: theme['c-glass-surface'], borderColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.container, ...createGlassStyle(theme, { radius: Radius.card }), ...glassCardShadow }}>
       <Text style={{ ...styles.title, color: theme['c-font'] }} size={Typography.section} >{title}</Text>
       <View>
         {children}

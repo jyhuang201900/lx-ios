@@ -5,7 +5,7 @@ import { useI18n } from '@/lang'
 import { Icon } from '@/components/common/Icon'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
-import { Radius } from '@/theme/layout'
+import { Radius, createGlassStyle } from '@/theme/layout'
 
 export interface SearchInputProps {
   onChangeText: (text: string) => void
@@ -59,7 +59,7 @@ export default forwardRef<SearchInputType, SearchInputProps>(({ onChangeText, on
   }, [onSubmit])
 
   return (
-    <View style={{ ...styles.shell, backgroundColor: theme['c-glass-surface'] }}>
+    <View style={{ ...styles.shell, ...createGlassStyle(theme, { radius: Radius.control }) }}>
       <Icon name="search-2" size={16} color={theme['c-font-label']} />
       <Input
         ref={inputRef}

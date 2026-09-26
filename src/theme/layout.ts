@@ -1,4 +1,4 @@
-import { Platform, type TextStyle, type ViewStyle } from 'react-native'
+import { Platform, StyleSheet, type TextStyle, type ViewStyle } from 'react-native'
 
 /**
  * 全局布局度量：所有界面统一使用这里的圆角与间距，避免各处数值漂移。
@@ -15,18 +15,6 @@ export const Radius = {
   sheet: 20,
   pill: 999,
 } as const
-
-/** 8pt 栅格间距 */
-export const Spacing = {
-  xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
-} as const
-
-/** 内容区统一水平边距 */
-export const PagePadding = 16
 
 /**
  * 跨平台阴影：iOS 用 shadow*，Android 用 elevation。
@@ -83,3 +71,27 @@ export const FontWeight = {
 /** 玻璃卡片的轻微阴影：让表面在纯色主题下也能"浮"起来 */
 export const glassCardShadow = createShadow({ opacity: 0.06, radius: 12, offsetY: 4, elevation: 2 })
 
+
+/**
+ * 玻璃表面样式（科技感核心）。
+ *
+ * 关键在 borderTopColor：四边同为发丝描边时，单独把上边提亮，
+ * 读起来就是"光线从上方打在玻璃上沿"的反射高光——这是玻璃质感
+ * 最具识别度的特征，且只需一行样式、不额外增加视图层级。
+ *
+ * 注意：宿主 View 不可带 overflow: 'hidden'，否则 iOS 上阴影会被裁掉。
+ */
+export const createGlassStyle = (
+  theme: LX.ActiveTheme,
+  { level = 'surface', radius = Radius.card }: {
+    level?: 'surface' | 'overlay'
+    radius?: number
+  } = {},
+): ViewStyle => ({
+  backgroundColor: theme[level === 'overlay' ? 'c-glass-overlay' : 'c-glass-surface'],
+  borderRadius: radius,
+  borderWidth: StyleSheet.hairlineWidth,
+  borderColor: theme['c-border-background'],
+  // 上沿高光：浅色主题用高亮白，深色主题用低透明度白，避免深色主题下过亮刺眼
+  borderTopColor: theme.isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.85)',
+})
