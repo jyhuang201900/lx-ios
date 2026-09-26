@@ -8,7 +8,7 @@ import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { useBufferProgress } from '@/plugins/player'
-import { TabularNums } from '@/theme/layout'
+import { Gap, TabularNums } from '@/theme/layout'
 
 // const FONT_SIZE = 13
 
@@ -46,8 +46,8 @@ export default () => {
 
 const styles = createStyle({
   container: {
-    paddingTop: 10,
-    paddingBottom: 2,
+    paddingTop: Gap.block,
+    paddingBottom: Gap.tight,
   },
   progress: {
     flexGrow: 1,
@@ -59,7 +59,7 @@ const styles = createStyle({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 5,
+    paddingTop: Gap.tight,
   },
   status: {
     flexGrow: 1,

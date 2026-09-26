@@ -43,6 +43,28 @@ export const createShadow = ({
   default: {},
 }) as ViewStyle
 
+/**
+ * 间距体系：按"信息层级"分层，而非按数值大小随意取值。
+ *
+ * 关键在拉开层级差距——相邻层级若只差 2~4pt，视觉上无法区分主次，
+ * 页面会显得拥挤且没有重点。这里让层级之间保持约 1.6~2 倍的落差：
+ *  - inline：同一行内的元素间隔（图标与文字）
+ *  - tight：紧邻的关联内容（歌名与歌手）
+ *  - block：区块内的元素间隔（控件之间）
+ *  - section：区块之间的分隔（给关键内容留出呼吸空间）
+ *  - page：页面级留白（顶部/底部的整体呼吸）
+ */
+export const Gap = {
+  inline: 4,
+  tight: 8,
+  block: 14,
+  section: 22,
+  page: 30,
+} as const
+
+/** 关键内容的水平边距：比普通内容更宽，让主要内容不贴边 */
+export const KeyPadding = 22
+
 /** 数字等宽，避免时间/计数跳动，提升精密感 */
 export const TabularNums: TextStyle = { fontVariant: ['tabular-nums'] }
 

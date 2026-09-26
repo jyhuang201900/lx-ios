@@ -9,7 +9,7 @@ import { useTheme } from '@/store/theme/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { LIST_ITEM_HEIGHT } from '@/config/constant'
 import { createStyle, type RowInfo } from '@/utils/tools'
-import { Radius, Typography } from '@/theme/layout'
+import { Gap, Radius, Typography } from '@/theme/layout'
 
 export const ITEM_HEIGHT = scaleSizeH(LIST_ITEM_HEIGHT)
 
@@ -103,9 +103,9 @@ const styles = createStyle({
     // width: '100%',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    // paddingLeft: 10,
-    paddingRight: 6,
-    marginHorizontal: 10,
+    // 水平内缩由列表容器的 contentContainerStyle 负责：
+    // 行宽是百分比(100%/50%)，再叠 margin 会溢出并把右侧按钮挤出屏幕
+    paddingRight: 8,
     borderRadius: Radius.control,
     alignItems: 'center',
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -120,17 +120,16 @@ const styles = createStyle({
     alignItems: 'center',
   },
   sn: {
-    width: 40,
-    // fontSize: 12,
+    // 收窄序号列，把横向空间让给歌曲名这一关键内容
+    width: 34,
     textAlign: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.2)',
-    paddingLeft: 3,
-    paddingRight: 3,
+    paddingLeft: 2,
+    paddingRight: 2,
   },
   itemInfo: {
     flexGrow: 1,
     flexShrink: 1,
-    paddingRight: 6,
+    paddingRight: 10,
     // paddingTop: 10,
     // paddingBottom: 10,
   },
@@ -141,9 +140,11 @@ const styles = createStyle({
   //   // fontSize: 15,
   // },
   listItemSingle: {
-    paddingTop: 2,
+    paddingTop: Gap.inline,
     flexDirection: 'row',
     alignItems: 'center',
+    // 徽章与歌手名之间的统一间隔，避免贴在一起
+    gap: Gap.inline,
     // alignItems: 'flex-end',
     // backgroundColor: 'rgba(0,0,0,0.2)',
   },

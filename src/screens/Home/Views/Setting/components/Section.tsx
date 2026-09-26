@@ -3,7 +3,7 @@ import { View } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
-import { FontWeight, Radius, Typography, createGlassStyle, glassCardShadow } from '@/theme/layout'
+import { FontWeight, Gap, Radius, Typography, createGlassStyle, glassCardShadow } from '@/theme/layout'
 
 
 interface Props {
@@ -27,8 +27,9 @@ export default ({ title, children }: Props) => {
 
 const styles = createStyle({
   container: {
-    padding: 16,
-    marginBottom: 14,
+    // 区块卡：内边距与块间距都加大，让设置项不显拥挤
+    padding: Gap.block,
+    marginBottom: Gap.block,
     borderWidth: 1,
     borderRadius: 16,
   },

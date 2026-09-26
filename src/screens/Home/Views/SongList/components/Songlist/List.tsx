@@ -218,6 +218,7 @@ const styles = createStyle({
     flex: 1,
     paddingLeft: 10,
     paddingRight: 10,
+    paddingBottom: 16,
   },
   footer: {
     textAlign: 'center',

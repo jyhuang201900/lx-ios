@@ -347,11 +347,11 @@ export default () => {
 
 const styles = createStyle({
   container: { flex: 1, paddingTop: 14 },
-  summary: { minHeight: 76, marginHorizontal: 16, borderRadius: Radius.card, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center' },
+  summary: { minHeight: 82, marginHorizontal: 16, borderRadius: Radius.card, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center' },
   summaryIcon: { width: 46, height: 46, borderRadius: Radius.control, alignItems: 'center', justifyContent: 'center' },
   summaryCopy: { flex: 1, paddingLeft: 12, gap: 5, justifyContent: 'center' },
   summaryTitle: { fontWeight: FontWeight.semibold },
-  actions: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 12, paddingBottom: 14, gap: 9 },
+  actions: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 14, paddingBottom: 18, gap: 10 },
   primaryAction: { flex: 1, minHeight: 44, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 },
   refreshAction: { minWidth: 82, minHeight: 44, borderRadius: Radius.pill, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
   playAllAction: { minWidth: 88, minHeight: 44, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 },
@@ -360,7 +360,7 @@ const styles = createStyle({
   sectionHeader: { minHeight: 32, paddingHorizontal: 16, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   sortBar: { height: 34, flexGrow: 0, flexShrink: 1, flexDirection: 'row', alignItems: 'center', padding: 3, borderRadius: Radius.pill, gap: 2 },
   sortButton: { height: '100%', flexGrow: 1, paddingHorizontal: 7, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
-  list: { paddingHorizontal: 16, paddingBottom: 24 },
+  list: { paddingHorizontal: 16, paddingBottom: 32 },
   emptyList: { flexGrow: 1 },
   empty: { alignItems: 'center', paddingHorizontal: 42, paddingTop: 58 },
   emptyIcon: { opacity: 0.5 },

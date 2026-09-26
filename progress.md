@@ -375,3 +375,10 @@
 - 既有问题（非本轮引入，未改动）：List.tsx 两处 no-confusing-void-expression，已用 git stash 对比确认改动前即存在。
 - 验证：tsc --noEmit 0 错误；全量 eslint 关键类 0 问题；iOS bundle 打包成功。
 
+## Session: 2026-09-25 — visual structure: give key content more room
+- 用户要求「优化视觉结构，尽量给关键位置更多的空间」。盘点的核心问题是各处间距零散硬编码（18/10/8/6/5/3…），缺乏层级区分，导致关键内容与次要元素间距接近、看不出主次。
+- 修复一处真实缺陷（同时正是"空间不够"的一个来源）：OnlineList 的列表行同时设了 width:100% 与 marginHorizontal:10，而 Yoga 的百分比宽度不含外边距，导致每行溢出 20px，把右侧的更多按钮与时长挤到屏幕外。已把水平内缩从行移到列表容器的 contentContainerStyle，行宽用满 100% 不再溢出，等于每侧回收 10px 给内容。
+- 新增有层级的间距体系 Gap（inline 4 / tight 8 / block 14 / section 22 / page 30）与 KeyPadding（22）：层级之间保持约 1.6~2 倍落差，才能分辨主次。六个 token 全部有真实调用，无死代码。
+- 应用范围：播放页主容器改用 KeyPadding + Gap.section（关键内容水平边距更宽、底部留白更大）；PlayInfo 歌名区用 Gap.block/Gap.tight 拉开与进度条的层级；列表行收窄序号列 40→34 把横向空间让给歌曲名，歌曲信息右侧留白 6→10，歌名与歌手间隔加大并统一徽章间隔；列表底部增加 Gap.page 留白避免最后一行被迷你播放条压住；设置分组卡内边距与块间距加大；本地音乐摘要卡与按钮区间距加大、列表底部留白 24→32；歌单列表底部留白。
+- 验证：tsc --noEmit 0 错误；全量 eslint 关键类 0 问题；iOS bundle 打包成功。
+
