@@ -16,6 +16,13 @@ export const Radius = {
   pill: 999,
 } as const
 
+/** 列表内容统一规格：缩略图、行高和圆角在各内容页保持一致。 */
+export const ListMetrics = {
+  rowHeight: 64,
+  thumbSize: 40,
+  thumbRadius: Radius.control,
+} as const
+
 /**
  * 跨平台阴影：iOS 用 shadow*，Android 用 elevation。
  * iOS 只写了 elevation 是无效的，这里统一补齐。
@@ -88,6 +95,7 @@ export const Typography = {
   page: 17,
   section: 15,
   body: 15,
+  compact: 13,
   sub: 12,
   caption: 10,
 } as const

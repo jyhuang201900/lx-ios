@@ -9,7 +9,7 @@ import { readMetadataCached } from '@/utils/localMediaMetadataCache'
 import { type MusicMetadataFull } from '@/utils/localMediaMetadata'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
-import { Radius, TabularNums, Typography } from '@/theme/layout'
+import { ListMetrics, Radius, TabularNums, Typography } from '@/theme/layout'
 
 const formatSize = (size: number) => {
   if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`
@@ -45,7 +45,7 @@ export default memo(({ file, onPlay, onDelete, onMetadata }: {
     return () => {
       isActive = false
     }
-  }, [file.path, file.lastModified, file.size, onMetadata])
+  }, [file, onMetadata])
 
   const title = getFileTitle(file, metadata)
   const artist = metadata?.singer ?? ''
@@ -60,7 +60,7 @@ export default memo(({ file, onPlay, onDelete, onMetadata }: {
         accessibilityRole="button"
         accessibilityLabel={[title, artist].filter(Boolean).join(' ')}
         style={styles.rowMain}
-        onPress={() => onPlay(file, metadata)}
+        onPress={() => { onPlay(file, metadata) }}
       >
         <View style={{ ...styles.fileIcon, backgroundColor: theme['c-primary-background-active'] }}>
           <Icon name="play-outline" size={15} color={theme['c-primary-font-active']} />
@@ -78,7 +78,7 @@ export default memo(({ file, onPlay, onDelete, onMetadata }: {
         accessibilityRole="button"
         accessibilityLabel={`${global.i18n.t('delete')} ${title}`}
         style={styles.deleteButton}
-        onPress={() => onDelete(file)}
+        onPress={() => { onDelete(file) }}
       >
         <Icon name="remove" size={14} color={theme['c-font-label']} />
       </TouchableOpacity>
@@ -93,7 +93,7 @@ export default memo(({ file, onPlay, onDelete, onMetadata }: {
 
 const styles = createStyle({
   row: {
-    minHeight: 72,
+    minHeight: ListMetrics.rowHeight,
     marginBottom: 6,
     paddingHorizontal: 8,
     flexDirection: 'row',
@@ -103,15 +103,15 @@ const styles = createStyle({
   },
   rowMain: {
     flex: 1,
-    minHeight: 72,
+    minHeight: ListMetrics.rowHeight,
     paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
   },
   fileIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: Radius.control,
+    width: ListMetrics.thumbSize,
+    height: ListMetrics.thumbSize,
+    borderRadius: ListMetrics.thumbRadius,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -122,11 +122,11 @@ const styles = createStyle({
     justifyContent: 'center',
   },
   fileMeta: {
-    fontSize: 10,
+    fontSize: Typography.caption,
   },
   interval: {
     marginLeft: 6,
-    fontSize: 11,
+    fontSize: Typography.sub,
     textAlign: 'right',
   },
   deleteButton: {

@@ -407,3 +407,4 @@
 - 全局 UI 栅格统一：新增 PageMetrics（gutter 16 / toolbar 52 / control 40），首页标题、Search/SongList/Leaderboard 工具栏、设置页头部、底部 Tab、迷你播放器、本地音乐和我的列表统一使用；排行榜和设置页去掉独立卡片壳，和搜索/歌单页保持同一节奏。
 - 修正主导航位置：移除底部 Tab Bar，首页顶部改为与设置页一致的导航行，点击当前页名称即可展开页面列表；迷你播放器恢复为内容区底部悬浮。
 - 按最终反馈调整：页面内容直接置顶，删除顶部页面标题组件；主导航恢复为底部六项 Tab（含设置），迷你播放器继续悬停在 Tab Bar 上方。
+- 内容区视觉统一：新增 ListMetrics（rowHeight/thumbSize/thumbRadius）和 Typography.compact，歌单网格、我的列表横向卡、本地音乐行统一缩略图尺寸、圆角、字级与元信息层级；清理本地音乐行的 Hook/Lint 遗留问题。

@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react'
-import { View, Platform, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import { type ListInfoItem } from '@/store/songlist/state'
 import Text from '@/components/common/Text'
@@ -8,7 +8,7 @@ import { NAV_SHEAR_NATIVE_IDS } from '@/config/constant'
 import { useTheme } from '@/store/theme/hook'
 import Image from '@/components/common/Image'
 import { useI18n } from '@/lang'
-import { Typography } from '@/theme/layout'
+import { Radius, Typography, createShadow } from '@/theme/layout'
 
 const gap = scaleSizeW(15)
 export default memo(({ item, index, width, showSource, onPress }: {
@@ -69,25 +69,12 @@ const styles = createStyle({
   },
   listItemImg: {
     // backgroundColor: '#eee',
-    borderRadius: 16,
+    borderRadius: Radius.card,
     marginBottom: 5,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 1,
-        },
-        shadowOpacity: 0.20,
-        shadowRadius: 1.41,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
+    ...createShadow({ opacity: 0.12, radius: 8, offsetY: 3, elevation: 2 }),
   },
   listItemImgClip: {
-    borderRadius: 16,
+    borderRadius: Radius.card,
     overflow: 'hidden',
   },
   sourceLabel: {
@@ -97,17 +84,16 @@ const styles = createStyle({
     position: 'absolute',
     top: 0,
     right: 0,
-    borderBottomLeftRadius: 10,
+    borderBottomLeftRadius: Radius.pill,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   listItemTitle: {
-    // 网格卡比列表更紧凑，使用 13pt 独立档位
-    fontSize: 13,
+    fontSize: Typography.compact,
     // overflow: 'hidden',
     marginBottom: 5,
   },
   listItemMeta: {
-    fontSize: 11,
-    lineHeight: 16,
+    fontSize: Typography.sub,
+    lineHeight: 17,
   },
 })

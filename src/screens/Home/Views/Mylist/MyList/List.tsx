@@ -13,7 +13,7 @@ import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 import Loading from '@/components/common/Loading'
 import listState from '@/store/list/state'
 import { LIST_IDS } from '@/config/constant'
-import { PageMetrics, Radius, Typography, createGlassStyle, glassCardShadow, neonGlow } from '@/theme/layout'
+import { ListMetrics, PageMetrics, Radius, Typography, createGlassStyle, glassCardShadow, neonGlow } from '@/theme/layout'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
 const getListKind = (id: string) => {
@@ -135,10 +135,10 @@ const styles = createStyle({
   // 与 libraryHeader 的 16 对齐，避免同一页出现两条左边缘
   rail: { paddingHorizontal: PageMetrics.gutter, gap: 10 },
   // 外层不裁剪，让 glassCardShadow 在 iOS 上可以显示
-  cardShell: { width: scaleSizeW(180), height: scaleSizeH(82), borderRadius: 16 },
-  card: { flex: 1, borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, flexDirection: 'row', overflow: 'hidden' },
-  cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 11 },
-  cardIcon: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  cardCopy: { flex: 1, paddingLeft: 9, paddingRight: 4, justifyContent: 'center', gap: 4 },
+  cardShell: { width: scaleSizeW(180), height: scaleSizeH(82), borderRadius: Radius.card },
+  card: { flex: 1, borderWidth: StyleSheet.hairlineWidth, borderRadius: Radius.card, flexDirection: 'row', overflow: 'hidden' },
+  cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: ListMetrics.thumbSize / 4 },
+  cardIcon: { width: ListMetrics.thumbSize - 4, height: ListMetrics.thumbSize - 4, borderRadius: ListMetrics.thumbRadius, alignItems: 'center', justifyContent: 'center' },
+  cardCopy: { flex: 1, paddingLeft: 8, paddingRight: 4, justifyContent: 'center', gap: 4 },
   moreButton: { width: 44, height: '100%', alignItems: 'center', justifyContent: 'center' },
 })
