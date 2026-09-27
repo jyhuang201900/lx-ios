@@ -1,6 +1,9 @@
+import { View } from 'react-native'
 import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
+import { Icon } from '@/components/common/Icon'
 import { useI18n } from '@/lang'
+import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
@@ -15,6 +18,7 @@ export interface CurrentTagBtnType {
 
 export default forwardRef<CurrentTagBtnType, CurrentTagBtnProps>(({ onShowList }, ref) => {
   const t = useI18n()
+  const theme = useTheme()
   const [name, setName] = useState('')
 
   useImperativeHandle(ref, () => ({
@@ -25,8 +29,11 @@ export default forwardRef<CurrentTagBtnType, CurrentTagBtnProps>(({ onShowList }
   }))
 
   return (
-    <Button style={styles.btn} onPress={onShowList}>
-      <Text style={styles.sourceMenu} numberOfLines={1}>{name}</Text>
+    <Button style={[styles.btn, { backgroundColor: theme['c-primary-input-background'] }]} onPress={onShowList}>
+      <View style={styles.content}>
+        <Text style={styles.sourceMenu} numberOfLines={1} color={theme['c-font']}>{name}</Text>
+        <Icon name="chevron-right" size={11} color={theme['c-font-label']} />
+      </View>
     </Button>
   )
 })
@@ -37,17 +44,18 @@ const styles = createStyle({
     minHeight: 40,
     paddingLeft: 10,
     paddingRight: 10,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
+  content: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   sourceMenu: {
-    // height: 38,
-    // lineHeight: 38,
-    textAlign: 'center',
+    maxWidth: 64,
+    textAlign: 'left',
     textAlignVertical: 'center',
-    maxWidth: 72,
-    // minWidth: 70,
-    // paddingTop: 10,
-    // paddingBottom: 10,
+    paddingRight: 3,
   },
 })

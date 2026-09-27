@@ -5,7 +5,7 @@ import { useI18n } from '@/lang'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
-import { BorderWidths } from '@/theme'
+import { Radius } from '@/theme/layout'
 
 export interface SortTabProps {
   onSortChange: (id: string) => void
@@ -43,13 +43,20 @@ export default forwardRef<SortTabType, SortTabProps>(({ onSortChange }, ref) => 
   }
 
   return (
-    <ScrollView ref={scrollViewRef} style={styles.container} keyboardShouldPersistTaps={'always'} horizontal>
+    <ScrollView ref={scrollViewRef} style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps={'always'} horizontal>
       {
-        sorts.map(s => (
-          <TouchableOpacity style={styles.button} onPress={() => { handleSortChange(s.id) }} key={s.id}>
-            <Text style={{ ...styles.buttonText, borderBottomColor: activeId == s.id ? theme['c-primary-background-active'] : 'transparent' }} color={activeId == s.id ? theme['c-primary-font-active'] : theme['c-font']}>{s.label}</Text>
-          </TouchableOpacity>
-        ))
+        sorts.map(s => {
+          const active = activeId == s.id
+          return (
+            <TouchableOpacity
+              key={s.id}
+              style={{ ...styles.button, backgroundColor: active ? theme['c-primary-background-active'] : 'transparent' }}
+              onPress={() => { handleSortChange(s.id) }}
+            >
+              <Text style={styles.buttonText} color={active ? theme['c-primary-font-active'] : theme['c-font-label']}>{s.label}</Text>
+            </TouchableOpacity>
+          )
+        })
       }
     </ScrollView>
   )
@@ -62,23 +69,20 @@ const styles = createStyle({
     flexShrink: 1,
     minWidth: 0,
   },
+  content: {
+    flexGrow: 1,
+    justifyContent: 'flex-start',
+  },
   button: {
-    // height: 38,
-    // lineHeight: 38,
+    height: 40,
+    minWidth: 48,
     justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 40,
-    paddingHorizontal: 8,
-    // width: 80,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
+    alignItems: 'flex-start',
+    paddingHorizontal: 10,
+    borderRadius: Radius.control,
   },
   buttonText: {
-    // height: 38,
-    // lineHeight: 38,
-    textAlign: 'center',
+    textAlign: 'left',
     textAlignVertical: 'center',
-    paddingHorizontal: 3,
-    paddingVertical: 6,
-    borderBottomWidth: BorderWidths.normal3,
   },
 })

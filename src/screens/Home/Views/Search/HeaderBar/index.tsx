@@ -77,6 +77,8 @@ const styles = createStyle({
   selector: {
     height: PageMetrics.controlHeight,
     minWidth: 64,
+    flexGrow: 0,
+    flexShrink: 0,
     marginRight: 8,
     borderRadius: 12,
     borderWidth: BorderWidths.normal,

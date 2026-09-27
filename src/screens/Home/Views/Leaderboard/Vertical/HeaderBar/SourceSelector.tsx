@@ -33,13 +33,14 @@ export default forwardRef<SourceSelectorType, SourceSelectorProps>(({ style, onS
 
   return (
     <View style={StyleSheet.compose<ViewStyle, ViewStyle, ViewStyle>(styles.selector, style)}>
-      <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} center />
+      <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
     </View>
   )
 })
 
 const styles = createStyle({
   selector: {
-    // width: 86,
+    flexGrow: 0,
+    flexShrink: 0,
   },
 })

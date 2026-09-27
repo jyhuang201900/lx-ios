@@ -11,8 +11,9 @@ import SourceSelector, {
 import { type Source } from '@/store/songlist/state'
 import Tag, { type TagType, type TagProps } from './Tag'
 import OpenList, { type OpenListType } from './OpenList'
-import { PageMetrics } from '@/theme/layout'
+import { PageMetrics, Radius } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
+import { useTheme } from '@/store/theme/hook'
 
 export interface HeaderBarProps {
   onSortChange: SortTabProps['onSortChange']
@@ -30,6 +31,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
   const tagRef = useRef<TagType>(null)
   const openListRef = useRef<OpenListType>(null)
   const sourceSelectorRef = useRef<SourceSelectorType>(null)
+  const theme = useTheme()
 
   useImperativeHandle(ref, () => ({
     setSource(source, sortId, tagName, tagId) {
@@ -43,7 +45,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
 
   return (
     <PageToolbar>
-      <View style={styles.source}>
+      <View style={{ ...styles.source, backgroundColor: theme['c-primary-input-background'] }}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
       </View>
       <SortTab ref={sortTabRef} onSortChange={onSortChange} />
@@ -57,5 +59,6 @@ const styles = createStyle({
   source: {
     height: PageMetrics.controlHeight,
     flexShrink: 0,
+    borderRadius: Radius.control,
   },
 })

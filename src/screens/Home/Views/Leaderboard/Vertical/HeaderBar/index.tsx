@@ -52,15 +52,15 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 
   return (
     <PageToolbar>
-      <View style={styles.source}>
-        <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
+      <View style={{ ...styles.source, backgroundColor: theme['c-primary-input-background'] }}>
+        <SourceSelector ref={sourceSelectorRef} style={styles.source} onSourceChange={onSourceChange} />
       </View>
       <DorpDownMenu
         menus={menus}
         onPress={handleBoardChange}
         activeId={activeId}
         height={PageMetrics.controlHeight}
-        btnStyle={styles.boardSelector}
+        btnStyle={{ ...styles.boardSelector, backgroundColor: theme['c-primary-input-background'] }}
       >
         <View style={styles.boardSelectorContent}>
           <Text style={styles.boardSelectorText} numberOfLines={1} color={theme['c-font']}>
@@ -78,9 +78,9 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 })
 
 const styles = createStyle({
-  source: { height: PageMetrics.controlHeight, flexShrink: 0 },
-  boardSelector: { width: 110, flexShrink: 1, height: PageMetrics.controlHeight, borderRadius: Radius.control },
-  boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 },
+  source: { height: PageMetrics.controlHeight, flexGrow: 0, flexShrink: 0, borderRadius: Radius.control },
+  boardSelector: { width: 116, flexShrink: 1, height: PageMetrics.controlHeight, borderRadius: Radius.control, justifyContent: 'flex-start' },
+  boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', paddingHorizontal: 10 },
   boardSelectorText: { flex: 1, textAlign: 'left', textAlignVertical: 'center', paddingRight: 6 },
-  playAllButton: { minHeight: PageMetrics.controlHeight, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center' },
+  playAllButton: { minHeight: PageMetrics.controlHeight, paddingHorizontal: 10, borderRadius: Radius.pill, flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'flex-start' },
 })

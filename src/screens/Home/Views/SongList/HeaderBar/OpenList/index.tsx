@@ -10,6 +10,8 @@ import { useI18n } from '@/lang'
 import { navigations } from '@/navigation'
 import commonState from '@/store/common/state'
 import { Radius } from '@/theme/layout'
+import { useTheme } from '@/store/theme/hook'
+import { Icon } from '@/components/common/Icon'
 
 // export interface OpenListProps {
 //   onTagChange: (name: string, id: string) => void
@@ -21,6 +23,7 @@ export interface OpenListType {
 
 export default forwardRef<OpenListType, {}>((props, ref) => {
   const t = useI18n()
+  const theme = useTheme()
   const modalRef = useRef<ModalType>(null)
   const songlistInfoRef = useRef<{ source: Source }>({ source: 'kw' })
 
@@ -50,8 +53,12 @@ export default forwardRef<OpenListType, {}>((props, ref) => {
 
   return (
     <>
-      <Button style={styles.button} onPress={() => modalRef.current?.show(songlistInfoRef.current.source)}>
-        <Text>{t('songlist_open')}</Text>
+      <Button
+        style={[styles.button, { backgroundColor: theme['c-primary'] }]}
+        onPress={() => modalRef.current?.show(songlistInfoRef.current.source)}
+      >
+        <Icon name="album" size={14} color={theme['c-primary-button-font']} />
+        <Text size={12} color={theme['c-primary-button-font']}>{t('songlist_open')}</Text>
       </Button>
       <Modal ref={modalRef} onOpenId={handleOpenSonglist} />
     </>
@@ -60,12 +67,13 @@ export default forwardRef<OpenListType, {}>((props, ref) => {
 
 const styles = createStyle({
   button: {
-    // backgroundColor: '#ccc',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     paddingLeft: 10,
     paddingRight: 10,
     minHeight: 40,
     borderRadius: Radius.pill,
+    flexDirection: 'row',
+    gap: 5,
   },
 })
