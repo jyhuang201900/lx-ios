@@ -47,10 +47,10 @@ export default forwardRef<MusicListType, MusicListProps>(({ componentId }, ref) 
           name: (info.name || listDetailInfo.info.name) ?? '',
           // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           desc: listDetailInfo.info.desc || info.desc || '',
-            playCount: (info.play_count ?? listDetailInfo.info.play_count) ?? '',
-            imgUrl: info.img ?? listDetailInfo.info.img,
-            songCount: songlistState.listDetailInfo.total,
-          })
+          playCount: (info.play_count ?? listDetailInfo.info.play_count) ?? '',
+          imgUrl: info.img ?? listDetailInfo.info.img,
+          songCount: songlistState.listDetailInfo.total,
+        })
         return getListDetail(id, source, page).then((listDetail) => {
           const result = setListDetail(listDetail, id, page)
           if (isUnmountedRef.current || requestId != requestIdRef.current) return

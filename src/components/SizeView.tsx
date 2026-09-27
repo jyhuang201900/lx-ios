@@ -20,7 +20,7 @@ export default memo(() => {
   const dimensionsChangedRef = useRef(true)
   const handleLayout = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent | { nativeEvent: { layout: { width: number, height: number } } }) => {
     // console.log('handleLayout')
-    if (!layout || layout.width == null || layout.height == null) return
+    if (layout?.width == null || layout.height == null) return
     if (!dimensionsChangedRef.current) return
     void getWindowSize().then(size => {
       dimensionsChangedRef.current = false

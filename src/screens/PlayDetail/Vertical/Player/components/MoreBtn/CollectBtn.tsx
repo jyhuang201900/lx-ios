@@ -15,7 +15,7 @@ export default () => {
   useEffect(() => {
     const checkCollected = () => {
       const musicInfo = playerState.playMusicInfo.musicInfo
-      if (!musicInfo) return setCollected(false)
+      if (!musicInfo) { setCollected(false); return }
       void getListMusics(LIST_IDS.LOVE).then((list) => {
         if (playerState.playMusicInfo.musicInfo?.id == musicInfo.id) setCollected(list.some(item => item.id == musicInfo.id))
       })

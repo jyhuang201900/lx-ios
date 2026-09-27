@@ -173,7 +173,7 @@ export const getWindowSize = async(): Promise<{ width: number, height: number }>
 
   if (typeof UtilsModule?.getWindowSize != 'function') return fallbackSize
 
-  const size = await UtilsModule.getWindowSize()
+  const size = await UtilsModule.getWindowSize() as { width?: number, height?: number } | null
   return size?.width && size?.height
     ? {
         width: Math.round(size.width),

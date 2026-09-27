@@ -24,7 +24,7 @@ const getPlayMusicInfo = (musicInfo: LX.Player.PlayMusic) => 'progress' in music
 const getSourceLabel = (source?: string | null) => {
   // 队列条目理论上都带来源，但缺字段时不应让整个弹层崩掉
   if (!source) return ''
-  const key = `source_real_${source}` as any
+  const key = `source_real_${source}` as Parameters<typeof global.i18n.t>[0]
   const label = global.i18n.t(key)
   return label === key ? source.toUpperCase() : label
 }
@@ -77,7 +77,7 @@ export default forwardRef<QueuePopupType>((_, ref) => {
         accessibilityRole="button"
         accessibilityLabel={`${musicInfo.name} ${musicInfo.singer}`}
         style={{ ...styles.item, backgroundColor: isPlaying ? theme['c-primary-light-200-alpha-100'] : theme['c-primary-input-background'] }}
-        onPress={() => handlePlayItem(index)}
+        onPress={() => { handlePlayItem(index) }}
       >
         <Text style={styles.order} size={11} color={isPlaying ? theme['c-primary-dark-100'] : theme['c-300']}>{String(index + 1).padStart(2, '0')}</Text>
         <View style={styles.itemCopy}>
@@ -97,7 +97,7 @@ export default forwardRef<QueuePopupType>((_, ref) => {
           accessibilityLabel={`${global.i18n.t('delete')} ${musicInfo.name}`}
           style={styles.removeButton}
           hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-          onPress={() => handleRemoveItem(index)}
+          onPress={() => { handleRemoveItem(index) }}
         >
           <Icon name="close" size={11} color={theme['c-font-label']} />
         </TouchableOpacity>

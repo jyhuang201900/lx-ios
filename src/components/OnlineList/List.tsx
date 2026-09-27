@@ -119,12 +119,12 @@ const List = forwardRef<ListType, ListProps>(({
   }))
 
 
-  const handleUpdateSelectedList = (newList: LX.Music.MusicInfoOnline[]) => {
+  const handleUpdateSelectedList = useCallback((newList: LX.Music.MusicInfoOnline[]) => {
     if (selectedListRef.current.length && newList.length == currentList.length) onSelectAll(true)
     else if (selectedListRef.current.length == currentList.length) onSelectAll(false)
     selectedListRef.current = newList
     setSelectedList(newList)
-  }
+  }, [currentList, onSelectAll])
   const handleSelect = useCallback((item: LX.Music.MusicInfoOnline, pressIndex: number) => {
     let newList: LX.Music.MusicInfoOnline[]
     if (selectModeRef.current == 'single') {
@@ -155,7 +155,7 @@ const List = forwardRef<ListType, ListProps>(({
     }
 
     handleUpdateSelectedList(newList)
-  }, [currentList, onSelectAll])
+  }, [currentList, handleUpdateSelectedList])
 
   const handlePress = useCallback((item: LX.Music.MusicInfoOnline, index: number) => {
     requestAnimationFrame(() => {
@@ -178,7 +178,7 @@ const List = forwardRef<ListType, ListProps>(({
     prevSelectIndexRef.current = index
     handleUpdateSelectedList([item])
     onMuiltSelectMode()
-  }, [currentList, onMuiltSelectMode, handleSelect])
+  }, [handleUpdateSelectedList, onMuiltSelectMode])
 
   const handleLoadMore = useCallback(() => {
     if (status != 'idle') return
@@ -200,7 +200,7 @@ const List = forwardRef<ListType, ListProps>(({
       isShowAlbumName={isShowAlbumName}
       isShowInterval={isShowInterval}
     />
-  ), [showSource, handlePress, handleLongPress, onShowMenu, selectedList, isShowAlbumName, isShowInterval])
+  ), [showSource, handlePress, handleLongPress, onShowMenu, selectedIds, isShowAlbumName, isShowInterval])
   const getkey = useCallback<NonNullable<FlatListType['keyExtractor']>>(item => item.id, [])
   const getItemLayout = useCallback<NonNullable<FlatListType['getItemLayout']>>((data, index) => {
     return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }

@@ -51,7 +51,7 @@ export default forwardRef<DownloadQualityPickerType>((_, ref) => {
             accessibilityRole="button"
             accessibilityLabel={`${global.i18n.t('player_download')} ${quality}`}
             style={{ ...styles.qualityButton, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}
-            onPress={() => handleSelect(quality)}
+            onPress={() => { handleSelect(quality) }}
           >
             <Text size={14}>{quality.toUpperCase()}</Text>
             <Icon name="chevron-right" size={11} color={theme['c-font-label']} />

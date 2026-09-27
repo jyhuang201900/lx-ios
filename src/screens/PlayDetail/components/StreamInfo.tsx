@@ -52,7 +52,7 @@ export const useStreamLabels = () => {
       ? `${customApi.name} · ${customSourceName || sourceLabel}`
       : sourceLabel,
     quality: quality ?? '',
-  }), [customApi, customSourceName, quality, source, sourceLabel])
+  }), [customApi, customSourceName, quality, sourceLabel])
 }
 
 export default () => {

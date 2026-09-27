@@ -409,3 +409,6 @@
 - 按最终反馈调整：页面内容直接置顶，删除顶部页面标题组件；主导航恢复为底部六项 Tab（含设置），迷你播放器继续悬停在 Tab Bar 上方。
 - 内容区视觉统一：新增 ListMetrics（rowHeight/thumbSize/thumbRadius）和 Typography.compact，歌单网格、我的列表横向卡、本地音乐行统一缩略图尺寸、圆角、字级与元信息层级；清理本地音乐行的 Hook/Lint 遗留问题。
 - 页面控件统一靠左：我的列表的播放全部/新建、本地音乐的排序分段、排行榜的榜单选择/播放全部均改为 flex-start 顺序排列，移除会被 flex 推到右边的占位布局；底部导航仍保持等分布局。
+- 全页面审计：全项目 47 条 ESLint error 清零，并继续清理 10 条 Hook 依赖 warning，最终 661 个 JS/TS 文件达到 0 error / 0 warning。重点修复在线列表/我的列表选择闭包、搜索列表 ref 状态、播放来源 Memo 依赖、歌词解析空值、下载队列回调、歌曲详情布局与歌单收藏回退。
+- 用户音源沙箱边界加固：脚本请求/原生响应改为显式 unknown 类型守卫，错误对象统一安全提取 message；保留隔离沙箱内 `new Function` 这一必要能力并添加带原因的规则豁免。
+- 验收矩阵全部通过：TypeScript、3 语言 657 键一致、iOS/Android 生产 bundle 各 21 资源、6 个导航项与 PagerView 映射完整、6 个图标均存在、Sound Effect DSP 校验通过。

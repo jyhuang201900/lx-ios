@@ -39,7 +39,7 @@ export default forwardRef<ListType, ListProps>(({ onSearch }, ref) => {
     playAll() {
       if (listType == 'music') listRef.current?.playAll()
     },
-  }), [])
+  }), [listType])
 
   return (
     showBlankView

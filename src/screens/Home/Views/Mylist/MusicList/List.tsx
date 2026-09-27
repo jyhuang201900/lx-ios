@@ -190,12 +190,12 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
     void playList(listState.activeListId, index)
   }
 
-  const handleUpdateSelectedList = (newList: LX.List.ListMusics) => {
+  const handleUpdateSelectedList = useCallback((newList: LX.List.ListMusics) => {
     if (selectedListRef.current.length && newList.length == currentList.length) onSelectAll(true)
     else if (selectedListRef.current.length == currentList.length) onSelectAll(false)
     selectedListRef.current = newList
     setSelectedList(newList)
-  }
+  }, [currentList, onSelectAll])
   const handleSelect = useCallback((item: LX.Music.MusicInfo, pressIndex: number) => {
     let newList: LX.List.ListMusics
     if (selectModeRef.current == 'single') {
@@ -226,7 +226,7 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
     }
 
     handleUpdateSelectedList(newList)
-  }, [currentList, onSelectAll])
+  }, [currentList, handleUpdateSelectedList])
 
   const handlePress = useCallback((item: LX.Music.MusicInfo, index: number) => {
     // console.log(global.lx.homePagerIdle)
@@ -239,14 +239,14 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
         handlePlay(index)
       }
     })
-  }, [currentList, handleSelect])
+  }, [handleSelect])
 
   const handleLongPress = useCallback((item: LX.Music.MusicInfo, index: number) => {
     if (isMultiSelectModeRef.current) return
     prevSelectIndexRef.current = index
     handleUpdateSelectedList([item])
     onMuiltSelectMode()
-  }, [currentList, onMuiltSelectMode, handleSelect])
+  }, [handleUpdateSelectedList, onMuiltSelectMode])
 
   const handleScroll = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (listFirstScrollRef.current) {
@@ -270,7 +270,7 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
       isShowAlbumName={isShowAlbumName}
       isShowInterval={isShowInterval}
     />
-  ), [activeIndex, handlePress, handleLongPress, onShowMenu, selectedList, isShowAlbumName, isShowInterval])
+  ), [activeIndex, handlePress, handleLongPress, onShowMenu, selectedIds, isShowAlbumName, isShowInterval])
   const getkey = useCallback<NonNullable<FlatListType['keyExtractor']>>(item => item.id, [])
   const getItemLayout = useCallback<NonNullable<FlatListType['getItemLayout']>>((data, index) => {
     return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }

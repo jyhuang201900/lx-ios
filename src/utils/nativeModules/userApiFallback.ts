@@ -23,6 +23,27 @@ export interface ScriptInfo {
 type ScriptRequestHandler = (event: { source: LX.Source, action: string, info: any }) => any
 type Listener = (event: FallbackScriptEvent) => void
 
+interface ScriptRequestEventData {
+  requestKey: string
+  data: {
+    source: LX.Source
+    action: string
+    info: unknown
+  }
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value == 'object' && value != null
+}
+
+const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error) return error.message
+  if (isRecord(error) && typeof error.message == 'string') return error.message
+  if (typeof error == 'string') return error
+  if (typeof error == 'number' || typeof error == 'boolean') return String(error)
+  return 'failed'
+}
+
 const listeners = new Set<Listener>()
 
 const KEY_PREFIX = {
@@ -156,14 +177,14 @@ class UserApiFallbackRuntime {
       this.emitLog(type, text)
     }
     return {
-      log: (...args: any[]) => send('log', args),
-      info: (...args: any[]) => send('info', args),
-      warn: (...args: any[]) => send('warn', args),
-      error: (...args: any[]) => send('error', args),
+      log: (...args: any[]) => { send('log', args) },
+      info: (...args: any[]) => { send('info', args) },
+      warn: (...args: any[]) => { send('warn', args) },
+      error: (...args: any[]) => { send('error', args) },
     }
   }
 
-  private setTimer = (callback: (...args: any[]) => void, timeout = 0, ...args: any[]) => {
+  private readonly setTimer = (callback: (...args: unknown[]) => void, timeout = 0, ...args: unknown[]) => {
     const id = this.timeoutId++
     const handle = setTimeout(() => {
       this.timeoutHandles.delete(id)
@@ -173,7 +194,7 @@ class UserApiFallbackRuntime {
     return id
   }
 
-  private clearTimer = (id: number) => {
+  private readonly clearTimer = (id: number) => {
     const handle = this.timeoutHandles.get(id)
     if (!handle) return
     clearTimeout(handle)
@@ -234,15 +255,16 @@ class UserApiFallbackRuntime {
   }
 
   private normalizeRequestSuccess(data: any) {
+    const response = data.response as unknown
     switch (data.action) {
       case 'musicUrl':
-        if (typeof data.response != 'string' || data.response.length > 2048 || !/^https?:/.test(data.response)) throw new Error('failed')
+        if (typeof response != 'string' || response.length > 2048 || !/^https?:/.test(response)) throw new Error('failed')
         return {
           source: data.source,
           action: data.action,
           data: {
             type: data.info.type,
-            url: data.response,
+            url: response,
           },
         }
       case 'lyric':
@@ -252,18 +274,18 @@ class UserApiFallbackRuntime {
           data: verifyLyricInfo(data.response),
         }
       case 'pic':
-        if (typeof data.response != 'string' || data.response.length > 2048 || !/^https?:/.test(data.response)) throw new Error('failed')
+        if (typeof response != 'string' || response.length > 2048 || !/^https?:/.test(response)) throw new Error('failed')
         return {
           source: data.source,
           action: data.action,
-          data: data.response,
+          data: response,
         }
       default:
         throw new Error('Unknown request action')
     }
   }
 
-  private handleScriptRequest = async(eventData: { requestKey: string, data: any }) => {
+  private readonly handleScriptRequest = async(eventData: ScriptRequestEventData) => {
     if (!this.requestHandler) {
       emit({
         action: 'response',
@@ -304,26 +326,35 @@ class UserApiFallbackRuntime {
     }
   }
 
-  private handleNativeResponse(data: any) {
-    const target = this.pendingNativeRequests.get(data.requestKey)
+  private isScriptRequestEventData(data: unknown): data is ScriptRequestEventData {
+    if (!isRecord(data) || typeof data.requestKey != 'string' || !isRecord(data.data)) return false
+    return typeof data.data.source == 'string' && typeof data.data.action == 'string'
+  }
+
+  private handleNativeResponse(data: unknown) {
+    if (!isRecord(data) || typeof data.requestKey != 'string') return
+    const requestKey = data.requestKey
+    const target = this.pendingNativeRequests.get(requestKey)
     if (!target) return
-    this.pendingNativeRequests.delete(data.requestKey)
+    this.pendingNativeRequests.delete(requestKey)
+    const response = isRecord(data.response) ? data.response : null
     if (data.error == null) {
       target.callback(null, {
-        statusCode: data.response?.statusCode,
-        statusMessage: data.response?.statusMessage,
-        headers: data.response?.headers,
-        body: data.response?.body,
-      }, data.response?.body)
+        statusCode: response?.statusCode,
+        statusMessage: response?.statusMessage,
+        headers: response?.headers,
+        body: response?.body,
+      }, response?.body)
     } else {
-      target.callback(new Error(data.error), null, null)
+      target.callback(new Error(getErrorMessage(data.error)), null, null)
     }
   }
 
-  sendAction(action: 'request' | 'response', data: any) {
+  sendAction(action: 'request' | 'response', data: unknown) {
     if (this.destroyed) return false
     switch (action) {
       case 'request':
+        if (!this.isScriptRequestEventData(data)) return false
         void this.handleScriptRequest(data)
         return true
       case 'response':
@@ -377,22 +408,22 @@ class UserApiFallbackRuntime {
           })
         }
       },
-      send: (eventName: string, data: any) => {
+      send: async(eventName: string, data: any) => {
         return new Promise<void>((resolve, reject) => {
           switch (eventName) {
             case EVENT_NAMES.inited:
-              if (this.isInited) return reject(new Error('Script is inited'))
+              if (this.isInited) { reject(new Error('Script is inited')); return }
               this.isInited = true
               try {
                 this.emitInit(true, this.buildSourceInfo(data))
                 resolve()
-              } catch (error: any) {
-                this.emitInit(false, null, error?.message ?? 'Init failed')
+              } catch (error: unknown) {
+                this.emitInit(false, null, getErrorMessage(error))
                 reject(error)
               }
               break
             case EVENT_NAMES.updateAlert:
-              if (this.isShowedUpdateAlert) return reject(new Error('The update alert can only be called once.'))
+              if (this.isShowedUpdateAlert) { reject(new Error('The update alert can only be called once.')); return }
               this.isShowedUpdateAlert = true
               emit({
                 action: 'showUpdateAlert',
@@ -409,7 +440,7 @@ class UserApiFallbackRuntime {
           }
         })
       },
-      on: (eventName: string, handler: ScriptRequestHandler) => {
+      on: async(eventName: string, handler: ScriptRequestHandler) => {
         if (eventName != EVENT_NAMES.request) return Promise.reject(new Error(`The event is not supported: ${eventName}`))
         this.requestHandler = handler
         return Promise.resolve()
@@ -447,6 +478,8 @@ class UserApiFallbackRuntime {
     sandboxGlobal.eval = blockedEval
 
     try {
+      // 用户音源脚本必须在隔离沙箱中编译并执行，这是音源功能本身。
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
       const runner = new Function(
         'globalThis',
         'window',
@@ -475,8 +508,8 @@ class UserApiFallbackRuntime {
         blockedFunction,
         blockedEval,
       )
-    } catch (error: any) {
-      this.emitInit(false, null, error?.message ?? 'Load script failed')
+    } catch (error: unknown) {
+      this.emitInit(false, null, getErrorMessage(error))
     }
   }
 

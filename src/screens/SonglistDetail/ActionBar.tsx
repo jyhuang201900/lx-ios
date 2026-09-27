@@ -52,6 +52,8 @@ export default memo(() => {
     if (pendingRef.current) return
     pendingRef.current = true
     setPending('collect')
+    // 歌单详情名称可能先返回空串，需要回退到列表项名称。
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     handleCollect(info.id, info.source, songlistState.listDetailInfo.info.name || info.name).catch(() => {
       toast(t('load_failed'))
     }).finally(() => {
