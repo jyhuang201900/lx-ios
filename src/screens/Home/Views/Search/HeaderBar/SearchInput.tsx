@@ -1,6 +1,7 @@
 import { useCallback, useRef, forwardRef, useImperativeHandle, useState } from 'react'
 import { View } from 'react-native'
 import Input, { type InputType, type InputProps } from '@/components/common/Input'
+import GlassSheen from '@/components/common/GlassSheen'
 import { useI18n } from '@/lang'
 import { Icon } from '@/components/common/Icon'
 import { useTheme } from '@/store/theme/hook'
@@ -60,6 +61,8 @@ export default forwardRef<SearchInputType, SearchInputProps>(({ onChangeText, on
 
   return (
     <View style={{ ...styles.shell, ...createGlassStyle(theme, { radius: Radius.control }) }}>
+      {/* 放在最前，扫光从玻璃底层掠过，不干扰输入文字的可读性 */}
+      <GlassSheen radius={Radius.control} width={64} opacity={0.2} delay={400} />
       <Icon name="search-2" size={16} color={theme['c-font-label']} />
       <Input
         ref={inputRef}

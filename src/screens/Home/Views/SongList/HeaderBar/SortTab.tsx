@@ -5,7 +5,7 @@ import { useI18n } from '@/lang'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
-import { Radius } from '@/theme/layout'
+import { Radius, createGlassStyle } from '@/theme/layout'
 
 export interface SortTabProps {
   onSortChange: (id: string) => void
@@ -50,7 +50,12 @@ export default forwardRef<SortTabType, SortTabProps>(({ onSortChange }, ref) => 
           return (
             <TouchableOpacity
               key={s.id}
-              style={{ ...styles.button, backgroundColor: active ? theme['c-primary-background-active'] : 'transparent' }}
+              style={{
+                ...styles.button,
+                ...(active
+                  ? { backgroundColor: theme['c-primary-background-active'] }
+                  : createGlassStyle(theme, { radius: Radius.control })),
+              }}
               onPress={() => { handleSortChange(s.id) }}
             >
               <Text style={styles.buttonText} color={active ? theme['c-primary-font-active'] : theme['c-font-label']}>{s.label}</Text>

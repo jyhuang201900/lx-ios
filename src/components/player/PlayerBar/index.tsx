@@ -7,6 +7,7 @@ import Title from './components/Title'
 import Status from './components/Status'
 import ControlBtn from './components/ControlBtn'
 import MiniProgress from './components/MiniProgress'
+import GlassSheen from '@/components/common/GlassSheen'
 import { createStyle } from '@/utils/tools'
 // import { useSettingValue } from '@/store/setting/hook'
 import { useTheme } from '@/store/theme/hook'
@@ -31,6 +32,7 @@ export default memo(({ isHome = false }: { isHome?: boolean }) => {
   const playerComponent = useMemo(() => (
     <View style={isIos ? styles.iosHost : undefined}>
       <View style={{ ...styles.container, ...createGlassStyle(theme, { level: 'overlay', radius: isIos ? Radius.sheet : Radius.card }), ...(isIos ? null : { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }) }}>
+        <GlassSheen radius={isIos ? Radius.sheet : Radius.card} width={120} opacity={0.12} delay={2100} duration={3000} />
         <Pic isHome={isHome} />
         <View style={styles.center}>
           <Title isHome={isHome} />

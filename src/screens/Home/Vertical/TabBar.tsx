@@ -1,12 +1,13 @@
 import { TouchableOpacity, View } from 'react-native'
 import { Icon } from '@/components/common/Icon'
+import GlassSheen from '@/components/common/GlassSheen'
 import Text from '@/components/common/Text'
 import { NAV_MENUS } from '@/config/constant'
 import { setNavActiveId } from '@/core/common'
 import { useI18n } from '@/lang'
 import { useNavActiveId } from '@/store/common/hook'
 import { useTheme } from '@/store/theme/hook'
-import { createGlassStyle, createShadow, PageMetrics, Radius } from '@/theme/layout'
+import { createGlassStyle, createShadow, neonGlow, PageMetrics, Radius } from '@/theme/layout'
 import { createStyle } from '@/utils/tools'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
 
@@ -18,6 +19,7 @@ export default () => {
   return (
     <View style={styles.host}>
       <View style={{ ...styles.bar, ...createGlassStyle(theme, { level: 'overlay', radius: Radius.card }), ...createShadow({ opacity: 0.1, radius: 14, offsetY: -3, elevation: 5 }) }}>
+        <GlassSheen radius={Radius.card} width={110} opacity={0.13} delay={900} duration={2800} />
         {NAV_MENUS.map(menu => {
           const active = activeId == menu.id
           return (
@@ -30,6 +32,8 @@ export default () => {
               style={{
                 ...styles.tab,
                 backgroundColor: active ? theme['c-primary-background-active'] : 'transparent',
+                // 当前页获得"通电"感；未选中项保持完全静止，避免整条栏都在发光
+                ...(active ? neonGlow(theme, { radius: 9, opacity: 0.34 }) : null),
               }}
               onPress={() => {
                 if (active) return

@@ -9,6 +9,7 @@
     "start": "react-native start",
     "sc": "react-native start --reset-cache",
     "postinstall": "node dependencies-patch.js",
+    "gen:glass": "node scripts/gen-glass-assets.js",
     "lint:sound-effect-dsp": "node scripts/check-sound-effect-dsp.js",
     "check:i18n": "node scripts/check-i18n-keys.js",
     "typecheck": "tsc --noEmit",

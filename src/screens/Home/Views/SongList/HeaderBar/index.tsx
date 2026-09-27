@@ -11,7 +11,7 @@ import SourceSelector, {
 import { type Source } from '@/store/songlist/state'
 import Tag, { type TagType, type TagProps } from './Tag'
 import OpenList, { type OpenListType } from './OpenList'
-import { PageMetrics, Radius } from '@/theme/layout'
+import { PageMetrics, Radius, createGlassStyle } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
 import { useTheme } from '@/store/theme/hook'
 
@@ -45,7 +45,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
 
   return (
     <PageToolbar>
-      <View style={{ ...styles.source, backgroundColor: theme['c-primary-input-background'] }}>
+      <View style={{ ...styles.source, ...createGlassStyle(theme, { radius: Radius.control }) }}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
       </View>
       <SortTab ref={sortTabRef} onSortChange={onSortChange} />
@@ -59,6 +59,6 @@ const styles = createStyle({
   source: {
     height: PageMetrics.controlHeight,
     flexShrink: 0,
-    borderRadius: Radius.control,
+    // 圆角与描边由 createGlassStyle 统一给出
   },
 })

@@ -11,6 +11,7 @@ import { useTheme } from '@/store/theme/hook'
 import { toast, createStyle } from '@/utils/tools'
 import { getQualityLabel } from '@/utils/quality'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
+import { Radius, createGlassStyle } from '@/theme/layout'
 import { useAvailableQualities } from './StreamInfo'
 
 interface Props {
@@ -46,7 +47,7 @@ export default memo(({ compact = false }: Props) => {
     >
       <View style={{
         ...styles.button,
-        backgroundColor: theme['c-primary-input-background'],
+        ...createGlassStyle(theme, { radius: Radius.control }),
         paddingHorizontal: compact ? 7 : 10,
       }}>
         <Text style={styles.caption} size={10} color={theme['c-font-label']}>{t('player_quality')}</Text>

@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useMemo, useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
 
 import { Icon } from '@/components/common/Icon'
-import { BorderWidths } from '@/theme'
+import GlassSheen from '@/components/common/GlassSheen'
 import { useTheme } from '@/store/theme/hook'
 import { useActiveListId, useListFetching, useMusicList } from '@/store/list/hook'
 import listState from '@/store/list/state'
@@ -11,7 +11,7 @@ import Text from '@/components/common/Text'
 import { LIST_IDS } from '@/config/constant'
 import Loading from '@/components/common/Loading'
 import { useSettingValue } from '@/store/setting/hook'
-import { Radius } from '@/theme/layout'
+import { Radius, createGlassStyle } from '@/theme/layout'
 
 export interface ActiveListProps {
   onShowSearchBar: () => void
@@ -49,7 +49,8 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
   }))
 
   return (
-    <View style={{ ...styles.currentList, opacity: visibleBar ? 1 : 0, backgroundColor: theme['c-glass-surface'], borderColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.currentList, opacity: visibleBar ? 1 : 0, ...createGlassStyle(theme, { radius: Radius.card }) }}>
+      <GlassSheen radius={Radius.card} width={84} opacity={0.14} delay={1500} />
       <TouchableOpacity accessibilityRole="button" accessibilityHint="长按回到歌曲开头" onPress={onScrollToTop} onLongPress={onScrollToTop} style={styles.currentListMain}>
         <View style={{ ...styles.currentListIcon, backgroundColor: theme['c-primary-background-active'] }}>
           <Icon color={theme['c-font']} name="album" size={15} />
@@ -60,7 +61,7 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
         </View>
         { fetching ? <Loading color={theme['c-primary']} style={styles.loading} /> : null }
       </TouchableOpacity>
-      <TouchableOpacity accessibilityRole="button" accessibilityLabel={global.i18n.t('nav_search')} style={{ ...styles.currentListBtns, backgroundColor: theme['c-primary-background-active'] }} onPress={onShowSearchBar}>
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel={global.i18n.t('nav_search')} style={{ ...styles.currentListBtns, ...createGlassStyle(theme, { radius: Radius.pill }) }} onPress={onShowSearchBar}>
         <Icon color={theme['c-font']} name="search-2" size={16} />
       </TouchableOpacity>
     </View>
@@ -77,9 +78,7 @@ const styles = createStyle({
     marginTop: 12,
     marginBottom: 9,
     alignItems: 'center',
-    borderWidth: BorderWidths.normal,
-    borderRadius: Radius.card,
-    // backgroundColor: 'rgba(0,0,0,0.2)',
+    // 圆角与描边由 createGlassStyle 统一给出
   },
   currentListIcon: {
     width: 36,

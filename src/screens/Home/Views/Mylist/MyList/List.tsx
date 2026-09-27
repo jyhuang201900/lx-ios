@@ -107,7 +107,7 @@ export default ({ onShowMenu, onCreate }: {
             accessibilityRole="button"
             accessibilityLabel={global.i18n.t('list_create')}
             onPress={onCreate}
-            style={{ ...styles.createButton, backgroundColor: theme['c-primary-background-active'] }}
+            style={{ ...styles.createButton, ...createGlassStyle(theme, { radius: Radius.pill }) }}
           >
             <Icon name="add-music" color={theme['c-primary-font-active']} size={15} />
             <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('list_create')}</Text>

@@ -5,7 +5,7 @@ import { type TagInfoItem } from '@/store/songlist/state'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
-import { Radius } from '@/theme/layout'
+import { Radius, createGlassStyle } from '@/theme/layout'
 
 export interface TagGroupProps {
   name: string
@@ -33,7 +33,7 @@ export default ({ name, list, onTagChange, activeId }: TagGroupProps) => {
               )
             : (
                 <Button
-                  style={{ ...styles.tagButton, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}
+                  style={{ ...styles.tagButton, ...createGlassStyle(theme, { radius: Radius.pill }) }}
                   key={item.id}
                   onPress={() => { onTagChange(item.name, item.id) }}
                 >

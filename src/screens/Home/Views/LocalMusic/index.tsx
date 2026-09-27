@@ -243,7 +243,7 @@ export default () => {
           accessibilityLabel={global.i18n.t('local_music_import')}
           accessibilityState={{ disabled: importing }}
           disabled={importing}
-          style={{ ...styles.toolbarButton, backgroundColor: theme['c-primary-background-active'], opacity: importing ? 0.5 : 1 }}
+          style={{ ...styles.toolbarButton, ...createGlassStyle(theme, { radius: Radius.pill }), opacity: importing ? 0.5 : 1 }}
           onPress={() => { void importMusic() }}
         >
           <Icon name="add-music" size={16} color={theme['c-primary-font-active']} />
@@ -253,7 +253,7 @@ export default () => {
           accessibilityLabel={global.i18n.t('local_music_refresh')}
           accessibilityState={{ disabled: refreshing }}
           disabled={refreshing}
-          style={{ ...styles.toolbarButton, backgroundColor: theme['c-primary-input-background'], opacity: refreshing ? 0.5 : 1 }}
+          style={{ ...styles.toolbarButton, ...createGlassStyle(theme, { radius: Radius.pill }), opacity: refreshing ? 0.5 : 1 }}
           onPress={() => { void refresh() }}
         >
           <Icon name="available_updates" size={16} color={theme['c-font-label']} />
@@ -288,7 +288,7 @@ export default () => {
     </View>
     <View style={styles.sectionHeader}>
       <Text size={12} color={theme['c-font-label']}>{global.i18n.t('local_music_storage')}</Text>
-      <View style={{ ...styles.sortBar, backgroundColor: theme['c-primary-input-background'] }}>
+      <View style={{ ...styles.sortBar, ...createGlassStyle(theme, { radius: Radius.pill }) }}>
         {
           (
             [

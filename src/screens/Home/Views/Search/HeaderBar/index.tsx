@@ -2,7 +2,6 @@ import { useRef, forwardRef, useImperativeHandle } from 'react'
 import { View } from 'react-native'
 
 // import music from '@/utils/musicSdk'
-import { BorderWidths } from '@/theme'
 // import InsetShadow from 'react-native-inset-shadow'
 import SourceSelector, {
   type SourceSelectorType as _SourceSelectorType,
@@ -14,7 +13,7 @@ import { useTheme } from '@/store/theme/hook'
 import { type Source as MusicSource } from '@/store/search/music/state'
 import { type Source as SonglistSource } from '@/store/search/songlist/state'
 import SearchTypeSelector from '../SearchTypeSelector'
-import { PageMetrics } from '@/theme/layout'
+import { PageMetrics, Radius, createGlassStyle } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
 
 type Sources = Readonly<Array<MusicSource | SonglistSource>>
@@ -56,7 +55,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
 
   return (
     <PageToolbar>
-      <View style={{ ...styles.selector, backgroundColor: theme['c-button-background'], borderColor: theme['c-border-background'] }}>
+      <View style={{ ...styles.selector, ...createGlassStyle(theme, { radius: Radius.control }) }}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
       </View>
       <SearchInput
@@ -80,8 +79,7 @@ const styles = createStyle({
     flexGrow: 0,
     flexShrink: 0,
     marginRight: 8,
-    borderRadius: 12,
-    borderWidth: BorderWidths.normal,
+    // 圆角与描边由 createGlassStyle 统一给出
     overflow: 'hidden',
   },
   typeSelector: {

@@ -3,7 +3,7 @@ import { StyleSheet, View, Animated, Platform } from 'react-native'
 // import PropTypes from 'prop-types'
 // import { AppColors } from '@/theme'
 import { useTheme } from '@/store/theme/hook'
-import { BorderRadius, BorderWidths } from '@/theme'
+import { Radius, createGlassStyle } from '@/theme/layout'
 import { useReduceMotion } from '@/utils/hooks'
 import List, { type ItemT, type ListProps, type ListType } from './List'
 // import InsetShadow from 'react-native-inset-shadow'
@@ -138,9 +138,9 @@ const Component = <T extends ItemT<T>>({ onPressBg = noop, hideWhenEmpty = true,
       <View style={styles.content}>
         <View style={{
           ...styles.containerShadow,
-          backgroundColor: theme['c-content-background'],
+          ...createGlassStyle(theme, { level: 'overlay', radius: Radius.card }),
         }}>
-          <View style={{ ...styles.containerClip, borderColor: theme['c-border-background'] }}>
+          <View style={styles.containerClip}>
             <List ref={listRef} {...props} />
           </View>
         </View>
@@ -175,7 +175,6 @@ const styles = StyleSheet.create({
   },
   containerShadow: {
     flex: 0,
-    borderRadius: BorderRadius.normal * 2,
     maxHeight: '80%',
     ...Platform.select({
       ios: {
@@ -192,11 +191,11 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  // 只负责把圆角裁剪掉，描边交给外层玻璃，避免盖住上沿高光
   containerClip: {
     flexShrink: 1,
     maxHeight: '100%',
-    borderWidth: BorderWidths.normal2,
-    borderRadius: BorderRadius.normal * 2,
+    borderRadius: Radius.card,
     overflow: 'hidden',
   },
 })

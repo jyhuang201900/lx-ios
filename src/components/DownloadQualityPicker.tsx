@@ -7,7 +7,7 @@ import { Icon } from '@/components/common/Icon'
 import { downloadMusic, getDownloadQualities } from '@/core/download'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
-import { Radius } from '@/theme/layout'
+import { Radius, createGlassStyle } from '@/theme/layout'
 
 export interface DownloadQualityPickerType {
   show: (musicInfo: LX.Music.MusicInfoOnline) => void
@@ -35,7 +35,7 @@ export default forwardRef<DownloadQualityPickerType>((_, ref) => {
   return (
     <Popup ref={popupRef} title={global.i18n.t('download_quality_title')}>
       <View style={styles.content}>
-        {musicInfo ? <View style={{ ...styles.track, backgroundColor: theme['c-primary-input-background'] }}>
+        {musicInfo ? <View style={{ ...styles.track, ...createGlassStyle(theme, { radius: Radius.card }) }}>
           <View style={{ ...styles.trackIcon, backgroundColor: theme['c-primary-background-active'] }}>
             <Icon name="download-2" size={17} color={theme['c-primary-font-active']} />
           </View>
@@ -50,7 +50,7 @@ export default forwardRef<DownloadQualityPickerType>((_, ref) => {
             key={quality}
             accessibilityRole="button"
             accessibilityLabel={`${global.i18n.t('player_download')} ${quality}`}
-            style={{ ...styles.qualityButton, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'] }}
+            style={{ ...styles.qualityButton, ...createGlassStyle(theme, { radius: Radius.control }) }}
             onPress={() => { handleSelect(quality) }}
           >
             <Text size={14}>{quality.toUpperCase()}</Text>

@@ -13,7 +13,7 @@ import DorpDownMenu from '@/components/common/DorpDownMenu'
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { type BoardItem } from '@/store/leaderboard/state'
-import { PageMetrics, Radius } from '@/theme/layout'
+import { PageMetrics, Radius, createGlassStyle } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
 
 export interface HeaderBarProps {
@@ -52,7 +52,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 
   return (
     <PageToolbar>
-      <View style={{ ...styles.source, backgroundColor: theme['c-primary-input-background'] }}>
+      <View style={{ ...styles.source, ...createGlassStyle(theme, { radius: Radius.control }) }}>
         <SourceSelector ref={sourceSelectorRef} style={styles.source} onSourceChange={onSourceChange} />
       </View>
       <DorpDownMenu
@@ -60,7 +60,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
         onPress={handleBoardChange}
         activeId={activeId}
         height={PageMetrics.controlHeight}
-        btnStyle={{ ...styles.boardSelector, backgroundColor: theme['c-primary-input-background'] }}
+        btnStyle={{ ...styles.boardSelector, ...createGlassStyle(theme, { radius: Radius.control }) }}
       >
         <View style={styles.boardSelectorContent}>
           <Text style={styles.boardSelectorText} numberOfLines={1} color={theme['c-font']}>

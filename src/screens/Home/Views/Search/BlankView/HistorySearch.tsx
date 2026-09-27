@@ -8,7 +8,7 @@ import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import { clearHistoryList, getSearchHistory, removeHistoryWord } from '@/core/search/search'
 import { Icon } from '@/components/common/Icon'
-import { Radius } from '@/theme/layout'
+import { Radius, createGlassStyle } from '@/theme/layout'
 
 
 export type List = NonNullable<InitState['sourceList'][keyof InitState['sourceList']]>
@@ -21,7 +21,7 @@ const ListItem = ({ keyword, onSearch, onRemove }: {
   const theme = useTheme()
   return (
     <Button
-      style={{ ...styles.button, backgroundColor: theme['c-primary-input-background'] }}
+      style={{ ...styles.button, ...createGlassStyle(theme, { radius: Radius.pill }) }}
       onPress={() => { onSearch(keyword) }}
       onLongPress={() => { onRemove(keyword) }}
     >

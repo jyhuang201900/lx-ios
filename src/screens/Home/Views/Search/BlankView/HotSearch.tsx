@@ -8,7 +8,7 @@ import Loading from '@/components/common/Loading'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
-import { Radius } from '@/theme/layout'
+import { Radius, createGlassStyle } from '@/theme/layout'
 
 
 interface ListProps {
@@ -27,7 +27,7 @@ const ListItem = ({ keyword, onSearch }: {
 }) => {
   const theme = useTheme()
   return (
-    <Button style={{ ...styles.button, backgroundColor: theme['c-primary-input-background'] }} onPress={() => { onSearch(keyword) }}>
+    <Button style={{ ...styles.button, ...createGlassStyle(theme, { radius: Radius.pill }) }} onPress={() => { onSearch(keyword) }}>
       <Text style={styles.buttonText} color={theme['c-button-font']} size={13}>{keyword}</Text>
     </Button>
   )

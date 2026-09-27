@@ -125,8 +125,9 @@ export default memo(() => {
   }
 
 
+  // 抽屉用玻璃浮层底色：透出主界面的模糊轮廓，与全应用的玻璃语言保持一致
   return (
-    <View style={{ ...styles.container, backgroundColor: theme['c-content-background'] }}>
+    <View style={{ ...styles.container, backgroundColor: theme['c-glass-overlay'] }}>
       <Header />
       <ScrollView style={styles.menus}>
         <View style={styles.list}>
