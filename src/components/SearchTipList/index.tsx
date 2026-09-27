@@ -4,6 +4,7 @@ import { StyleSheet, View, Animated, Platform } from 'react-native'
 // import { AppColors } from '@/theme'
 import { useTheme } from '@/store/theme/hook'
 import { BorderRadius, BorderWidths } from '@/theme'
+import { useReduceMotion } from '@/utils/hooks'
 import List, { type ItemT, type ListProps, type ListType } from './List'
 // import InsetShadow from 'react-native-inset-shadow'
 
@@ -21,6 +22,7 @@ const noop = () => {}
 
 const Component = <T extends ItemT<T>>({ onPressBg = noop, hideWhenEmpty = true, ...props }: SearchTipListProps<T>, ref: Ref<SearchTipListType<T>>) => {
   const theme = useTheme()
+  const reduceMotion = useReduceMotion()
   const translateY = useRef(new Animated.Value(0)).current
   const scaleY = useRef(new Animated.Value(0)).current
   const [visible, setVisible] = useState(false)
@@ -57,6 +59,12 @@ const Component = <T extends ItemT<T>>({ onPressBg = noop, hideWhenEmpty = true,
     if (!heightRef.current) return
     setVisible(true)
     setAnimatPlayed(false)
+    if (reduceMotion) {
+      translateY.setValue(0)
+      scaleY.setValue(1)
+      setAnimatPlayed(true)
+      return
+    }
     requestAnimationFrame(() => {
       translateY.setValue(-heightRef.current / 2)
       scaleY.setValue(0)
@@ -81,10 +89,15 @@ const Component = <T extends ItemT<T>>({ onPressBg = noop, hideWhenEmpty = true,
         setAnimatPlayed(true)
       })
     })
-  }, [translateY, scaleY])
+  }, [reduceMotion, translateY, scaleY])
 
   const handleHide = useCallback(() => {
     setAnimatPlayed(false)
+    if (reduceMotion) {
+      setVisible(false)
+      setAnimatPlayed(true)
+      return
+    }
     Animated.parallel([
       // Animated.timing(fade, {
       //   toValue: 0,
@@ -107,7 +120,7 @@ const Component = <T extends ItemT<T>>({ onPressBg = noop, hideWhenEmpty = true,
       setVisible(false)
       setAnimatPlayed(true)
     })
-  }, [translateY, scaleY])
+  }, [reduceMotion, translateY, scaleY])
 
 
   const component = useMemo(() => (
@@ -124,11 +137,12 @@ const Component = <T extends ItemT<T>>({ onPressBg = noop, hideWhenEmpty = true,
         onTouchStart={onPressBg}></View>
       <View style={styles.content}>
         <View style={{
-          ...styles.container,
+          ...styles.containerShadow,
           backgroundColor: theme['c-content-background'],
-          borderColor: theme['c-border-background'],
         }}>
-          <List ref={listRef} {...props} />
+          <View style={{ ...styles.containerClip, borderColor: theme['c-border-background'] }}>
+            <List ref={listRef} {...props} />
+          </View>
         </View>
       </View>
     </Animated.View>
@@ -159,11 +173,9 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
   },
-  container: {
+  containerShadow: {
     flex: 0,
-    borderWidth: BorderWidths.normal2,
     borderRadius: BorderRadius.normal * 2,
-    overflow: 'hidden',
     maxHeight: '80%',
     ...Platform.select({
       ios: {
@@ -179,5 +191,12 @@ const styles = StyleSheet.create({
         elevation: 6,
       },
     }),
+  },
+  containerClip: {
+    flexShrink: 1,
+    maxHeight: '100%',
+    borderWidth: BorderWidths.normal2,
+    borderRadius: BorderRadius.normal * 2,
+    overflow: 'hidden',
   },
 })

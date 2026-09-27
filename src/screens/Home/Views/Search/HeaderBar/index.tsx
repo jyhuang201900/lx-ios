@@ -1,6 +1,5 @@
 import { useRef, forwardRef, useImperativeHandle } from 'react'
-import { View, TouchableOpacity } from 'react-native'
-import { Icon } from '@/components/common/Icon'
+import { View } from 'react-native'
 
 // import music from '@/utils/musicSdk'
 import { BorderWidths } from '@/theme'
@@ -15,7 +14,7 @@ import { useTheme } from '@/store/theme/hook'
 import { type Source as MusicSource } from '@/store/search/music/state'
 import { type Source as SonglistSource } from '@/store/search/songlist/state'
 import SearchTypeSelector from '../SearchTypeSelector'
-import { Radius } from '@/theme/layout'
+import { PageMetrics } from '@/theme/layout'
 
 type Sources = Readonly<Array<MusicSource | SonglistSource>>
 type SourceSelectorProps = _SourceSelectorProps<Sources>
@@ -27,8 +26,6 @@ export interface HeaderBarProps {
   onSearch: SearchInputProps['onSubmit']
   onHideTipList: SearchInputProps['onBlur']
   onShowTipList: SearchInputProps['onTouchStart']
-  showPlayAll?: boolean
-  onPlayAll?: () => void
 }
 
 export interface HeaderBarType {
@@ -38,7 +35,7 @@ export interface HeaderBarType {
 }
 
 
-export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTipSearch, onSearch, onHideTipList, onShowTipList, showPlayAll = false, onPlayAll }, ref) => {
+export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTipSearch, onSearch, onHideTipList, onShowTipList }, ref) => {
   const sourceSelectorRef = useRef<SourceSelectorType>(null)
   const searchInputRef = useRef<SearchInputType>(null)
   const theme = useTheme()
@@ -57,7 +54,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
 
 
   return (
-    <View style={{ ...styles.searchBar, backgroundColor: theme['c-glass-surface'], borderColor: theme['c-border-background'] }}>
+    <View style={styles.searchBar}>
       <View style={{ ...styles.selector, backgroundColor: theme['c-button-background'], borderColor: theme['c-border-background'] }}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} center />
       </View>
@@ -71,17 +68,6 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
       <View style={styles.typeSelector}>
         <SearchTypeSelector />
       </View>
-      {showPlayAll && onPlayAll ? (
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel={global.i18n.t('play_all')}
-          style={{ ...styles.playAllButton, backgroundColor: theme['c-primary'] }}
-          hitSlop={{ top: 5, bottom: 5, left: 5, right: 5 }}
-          onPress={onPlayAll}
-        >
-          <Icon name="play" size={13} color={theme['c-primary-button-font']} />
-        </TouchableOpacity>
-      ) : null}
     </View>
   )
 })
@@ -89,34 +75,24 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
 const styles = createStyle({
   searchBar: {
     flexDirection: 'row',
-    height: 52,
+    height: PageMetrics.toolbarHeight,
     zIndex: 2,
     alignItems: 'center',
-    paddingHorizontal: 12,
-    marginHorizontal: 16,
-    marginTop: 12,
-    marginBottom: 9,
-    borderWidth: BorderWidths.normal,
-    borderRadius: Radius.card,
+    paddingHorizontal: PageMetrics.gutter,
+    marginTop: PageMetrics.toolbarMargin,
+    marginBottom: PageMetrics.toolbarMargin,
   },
   selector: {
-    height: 40,
-    marginRight: 9,
+    height: PageMetrics.controlHeight,
+    minWidth: 64,
+    marginRight: 8,
     borderRadius: 12,
     borderWidth: BorderWidths.normal,
     overflow: 'hidden',
   },
   typeSelector: {
-    marginLeft: 9,
+    marginLeft: 8,
     flexGrow: 0,
     flexShrink: 0,
-  },
-  playAllButton: {
-    marginLeft: 9,
-    width: 34,
-    height: 34,
-    borderRadius: Radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 })

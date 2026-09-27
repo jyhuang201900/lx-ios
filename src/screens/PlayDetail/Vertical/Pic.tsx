@@ -10,11 +10,13 @@ import { HEADER_HEIGHT } from './components/Header'
 import Image from '@/components/common/Image'
 import { useStatusbarHeight } from '@/store/common/hook'
 import commonState from '@/store/common/state'
-import { Radius } from '@/theme/layout'
+import { useTheme } from '@/store/theme/hook'
+import { Radius, neonGlow } from '@/theme/layout'
 
 
 export default ({ componentId }: { componentId: string }) => {
   const musicInfo = usePlayerMusicInfo()
+  const theme = useTheme()
   const { width: winWidth, height: winHeight } = useWindowSize()
   const statusBarHeight = useStatusbarHeight()
 
@@ -40,8 +42,21 @@ export default ({ componentId }: { componentId: string }) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ ...styles.content, elevation: animated ? 5 : 0 }}>
-        <Image url={pic} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_pic} style={style} />
+      <View style={{ ...styles.glowFrame, ...style, backgroundColor: theme['c-primary'], ...(animated ? neonGlow(theme, { radius: 22, opacity: 0.16 }) : null) }}>
+        <View style={{ ...styles.content, ...style, elevation: animated ? 5 : 0, backgroundColor: theme['c-glass-overlay'] }}>
+          <View style={styles.imageClip}>
+            <Image url={pic} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_pic} style={styles.image} />
+            <View
+              pointerEvents="none"
+              style={{
+                ...styles.specularEdge,
+                borderTopColor: theme.isDark ? 'rgba(255,255,255,0.46)' : 'rgba(255,255,255,0.82)',
+                borderLeftColor: theme.isDark ? 'rgba(255,255,255,0.20)' : 'rgba(255,255,255,0.48)',
+                borderRightColor: theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.24)',
+              }}
+            />
+          </View>
+        </View>
       </View>
     </View>
   )
@@ -55,13 +70,34 @@ const styles = createStyle({
     alignItems: 'center',
     paddingHorizontal: 28,
   },
+  glowFrame: {
+    borderRadius: Radius.card,
+  },
   content: {
-    backgroundColor: 'rgba(0,0,0,0)',
     borderRadius: Radius.card,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.22,
     shadowRadius: 14,
+  },
+  imageClip: {
+    flex: 1,
+    borderRadius: Radius.card,
     overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: Radius.card,
+  },
+  specularEdge: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    borderRadius: Radius.card,
+    borderWidth: 1.2,
+    borderColor: 'transparent',
   },
 })

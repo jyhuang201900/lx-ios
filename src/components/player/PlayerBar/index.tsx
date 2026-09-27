@@ -1,40 +1,48 @@
-import { memo, useMemo } from 'react'
-import { View } from 'react-native'
+import { memo, useCallback, useMemo, useState } from 'react'
+import { Platform, View } from 'react-native'
 import { useKeyboard } from '@/utils/hooks'
 
 import Pic from './components/Pic'
 import Title from './components/Title'
-import PlayInfo from './components/PlayInfo'
+import Status from './components/Status'
 import ControlBtn from './components/ControlBtn'
+import MiniProgress from './components/MiniProgress'
 import { createStyle } from '@/utils/tools'
 // import { useSettingValue } from '@/store/setting/hook'
 import { useTheme } from '@/store/theme/hook'
 import { useSettingValue } from '@/store/setting/hook'
-import { BorderWidths } from '@/theme'
-import { Radius, createGlassStyle, createShadow } from '@/theme/layout'
+import { PageMetrics, Radius, createGlassStyle, createShadow } from '@/theme/layout'
+import { usePageVisible } from '@/store/common/hook'
+import { COMPONENT_IDS } from '@/config/constant'
 
+const isIos = Platform.OS == 'ios'
 
 export default memo(({ isHome = false }: { isHome?: boolean }) => {
   // const { onLayout, ...layout } = useLayout()
   const { keyboardShown } = useKeyboard()
   const theme = useTheme()
   const autoHidePlayBar = useSettingValue('common.autoHidePlayBar')
+  const [autoUpdate, setAutoUpdate] = useState(true)
+
+  usePageVisible([COMPONENT_IDS.home], useCallback((visible) => {
+    if (isHome) setAutoUpdate(visible)
+  }, [isHome]))
 
   const playerComponent = useMemo(() => (
-    <View style={{ ...styles.container, ...createGlassStyle(theme, { level: 'overlay', radius: Radius.card }) }}>
-      <Pic isHome={isHome} />
-      <View style={styles.center}>
-        <Title isHome={isHome} />
-        {/* <View style={{ ...styles.row, justifyContent: 'space-between' }}>
-          <PlayTime />
-        </View> */}
-        <PlayInfo isHome={isHome} />
-      </View>
-      <View style={styles.right}>
-        <ControlBtn />
+    <View style={isIos ? styles.iosHost : undefined}>
+      <View style={{ ...styles.container, ...createGlassStyle(theme, { level: 'overlay', radius: isIos ? Radius.sheet : Radius.card }), ...(isIos ? null : { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }) }}>
+        <Pic isHome={isHome} />
+        <View style={styles.center}>
+          <Title isHome={isHome} />
+          <Status autoUpdate={autoUpdate} />
+        </View>
+        <View style={styles.right}>
+          <ControlBtn />
+        </View>
+        <MiniProgress autoUpdate={autoUpdate} />
       </View>
     </View>
-  ), [theme, isHome])
+  ), [autoUpdate, isHome, theme])
 
   // console.log('render pb')
 
@@ -43,23 +51,24 @@ export default memo(({ isHome = false }: { isHome?: boolean }) => {
 
 
 const styles = createStyle({
+  iosHost: {
+    paddingHorizontal: PageMetrics.gutter,
+    paddingBottom: 5,
+  },
   container: {
-    width: '100%',
+    alignSelf: 'stretch',
     // height: 100,
     // paddingTop: progressContentPadding,
     // marginTop: -progressContentPadding,
     // backgroundColor: 'rgba(0, 0, 0, .1)',
-    // borderTopWidth: BorderWidths.normal2,
-    paddingVertical: 7,
+    paddingVertical: 6,
     paddingLeft: 8,
     // backgroundColor: AppColors.primary,
     // backgroundColor: 'red',
-    borderTopLeftRadius: Radius.card,
-    borderTopRightRadius: Radius.card,
-    borderTopWidth: BorderWidths.normal,
     flexDirection: 'row',
     alignItems: 'center',
-    ...createShadow({ opacity: 0.14, radius: 16, offsetY: -4, elevation: 10 }),
+    position: 'relative',
+    ...createShadow({ opacity: 0.12, radius: 16, offsetY: -4, elevation: 8 }),
   },
   left: {
     // borderRadius: 3,
@@ -70,7 +79,7 @@ const styles = createStyle({
     flexDirection: 'column',
     flexGrow: 1,
     flexShrink: 1,
-    paddingLeft: 8,
+    paddingLeft: 10,
     height: '100%',
     // justifyContent: 'space-evenly',
     // height: 48,
@@ -81,8 +90,8 @@ const styles = createStyle({
     alignItems: 'center',
     flexGrow: 0,
     flexShrink: 0,
-    paddingLeft: 8,
-    paddingRight: 8,
+    paddingLeft: 6,
+    paddingRight: 4,
   },
   // row: {
   //   flexDirection: 'row',

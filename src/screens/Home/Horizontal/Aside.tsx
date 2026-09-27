@@ -10,6 +10,7 @@ import type { InitState } from '@/store/common/state'
 import { exitApp, setNavActiveId } from '@/core/common'
 import { BorderWidths } from '@/theme'
 import { useSettingValue } from '@/store/setting/hook'
+import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 const NAV_WIDTH = 68
 
@@ -125,6 +126,7 @@ export default memo(() => {
     }
 
     global.app_event.changeMenuVisible(false)
+    hapticFeedback('light')
     setNavActiveId(id)
   }
 
@@ -145,4 +147,3 @@ export default memo(() => {
     </View>
   )
 })
-

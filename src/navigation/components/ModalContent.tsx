@@ -1,6 +1,7 @@
 import { View } from 'react-native'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
+import { createShadow } from '@/theme/layout'
 // import { useWindowSize } from '@/utils/hooks'
 const HEADER_HEIGHT = 20
 
@@ -35,14 +36,7 @@ const styles = createStyle({
     maxHeight: '78%',
     // backgroundColor: 'white',
     borderRadius: 4,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 4,
-    elevation: 3,
+    ...createShadow({ opacity: 0.22, radius: 18, offsetY: 8, elevation: 3 }),
   },
   header: {
     flexGrow: 0,

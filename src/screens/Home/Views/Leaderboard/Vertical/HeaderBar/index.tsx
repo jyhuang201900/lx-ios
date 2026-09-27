@@ -5,18 +5,15 @@ import { View, TouchableOpacity } from 'react-native'
 // import Tag from './Tag'
 // import OpenList from './OpenList'
 import { createStyle } from '@/utils/tools'
-// import { BorderWidths } from '@/theme'
 import SourceSelector, {
   type SourceSelectorType,
 } from './SourceSelector'
 import { useTheme } from '@/store/theme/hook'
-// import { BorderWidths } from '@/theme'
-import { BorderWidths } from '@/theme'
 import DorpDownMenu from '@/components/common/DorpDownMenu'
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { type BoardItem } from '@/store/leaderboard/state'
-import { Radius } from '@/theme/layout'
+import { PageMetrics, Radius } from '@/theme/layout'
 
 export interface HeaderBarProps {
   onSourceChange: (source: LX.OnlineSource) => void
@@ -53,14 +50,15 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 
 
   return (
-    <View style={{ ...styles.currentList, backgroundColor: theme['c-glass-surface'], borderColor: theme['c-border-background'] }}>
-      <View style={{ ...styles.segment, borderRightColor: theme['c-border-background'] }}><SourceSelector ref={sourceSelectorRef} style={styles.sourceSelector} onSourceChange={onSourceChange} /></View>
+    <View style={styles.bar}>
+      <View style={styles.source}>
+        <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
+      </View>
       <DorpDownMenu
         menus={menus}
         onPress={handleBoardChange}
         activeId={activeId}
-        center
-        height={48}
+        height={PageMetrics.controlHeight}
         btnStyle={styles.boardSelector}
       >
         <View style={styles.boardSelectorContent}>
@@ -79,20 +77,19 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 })
 
 const styles = createStyle({
-  currentList: {
+  bar: {
     flexDirection: 'row',
-    height: 52,
+    height: PageMetrics.toolbarHeight,
     zIndex: 2,
-    marginHorizontal: 16,
-    marginTop: 12,
-    marginBottom: 9,
-    borderWidth: BorderWidths.normal,
-    borderRadius: Radius.card,
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: PageMetrics.gutter,
+    marginTop: PageMetrics.toolbarMargin,
+    marginBottom: PageMetrics.toolbarMargin,
   },
-  segment: { flex: 1, minWidth: 0, borderRightWidth: BorderWidths.normal },
-  sourceSelector: { flex: 1 },
-  boardSelector: { flex: 1, height: '100%', marginHorizontal: 4, borderRadius: Radius.pill },
-  boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 13 },
+  source: { height: PageMetrics.controlHeight, flexShrink: 0 },
+  boardSelector: { flex: 1, height: PageMetrics.controlHeight, borderRadius: Radius.control },
+  boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 },
   boardSelectorText: { flex: 1, textAlign: 'center', textAlignVertical: 'center', paddingRight: 6 },
-  playAllButton: { flex: 1, minWidth: 0, margin: 4, borderRadius: Radius.pill, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center' },
+  playAllButton: { minHeight: PageMetrics.controlHeight, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center' },
 })

@@ -14,6 +14,12 @@ interface SonglistInfo {
   tagId: string
 }
 
+const resolveSortId = (source: SonglistInfo['source'], sortId: string) => {
+  const sorts = songlistState.sortList[source] ?? []
+  if (sorts.some(item => item.id == sortId && item.tid != 'hot')) return sortId
+  return sorts.find(item => item.tid != 'hot')?.id ?? sorts[0]?.id ?? sortId
+}
+
 export default () => {
   const headerBarRef = useRef<HeaderBarType>(null)
   const listRef = useRef<ListType>(null)
@@ -21,11 +27,12 @@ export default () => {
 
   useEffect(() => {
     void getSongListSetting().then(info => {
+      const sortId = resolveSortId(info.source, info.sortId)
       songlistInfo.current.source = info.source
-      songlistInfo.current.sortId = info.sortId
+      songlistInfo.current.sortId = sortId
       songlistInfo.current.tagId = info.tagId
-      headerBarRef.current?.setSource(info.source, info.sortId, info.tagName, info.tagId)
-      listRef.current?.loadList(info.source, info.sortId, info.tagId)
+      headerBarRef.current?.setSource(info.source, sortId, info.tagName, info.tagId)
+      listRef.current?.loadList(info.source, sortId, info.tagId)
     })
   }, [])
 
@@ -42,9 +49,10 @@ export default () => {
   }
 
   const handleSourceChange: HeaderBarProps['onSourceChange'] = (source) => {
+    const sortId = resolveSortId(source, songlistState.sortList[source]![0].id)
     songlistInfo.current.source = source
     songlistInfo.current.tagId = ''
-    songlistInfo.current.sortId = songlistState.sortList[source]![0].id
+    songlistInfo.current.sortId = sortId
     void saveSongListSetting({ sortId: songlistInfo.current.sortId, source, tagId: '', tagName: '' })
     headerBarRef.current?.setSource(source, songlistInfo.current.sortId, '', songlistInfo.current.tagId)
     listRef.current?.loadList(source, songlistInfo.current.sortId, songlistInfo.current.tagId)
@@ -71,4 +79,3 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 })
-

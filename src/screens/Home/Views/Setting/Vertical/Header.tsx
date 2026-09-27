@@ -2,13 +2,12 @@ import { forwardRef, useImperativeHandle, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 
 import { Icon } from '@/components/common/Icon'
-import { BorderWidths } from '@/theme'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { useI18n } from '@/lang'
 import { type SettingScreenIds } from '../Main'
-import { Typography } from '@/theme/layout'
+import { PageMetrics, Radius, Typography } from '@/theme/layout'
 
 export interface HeaderProps {
   onShowNavBar: () => void
@@ -29,7 +28,7 @@ export default forwardRef<HeaderType, HeaderProps>(({ onShowNavBar }, ref) => {
   }))
 
   return (
-    <TouchableOpacity accessibilityRole="button" onPress={onShowNavBar} style={{ ...styles.currentList, backgroundColor: theme['c-primary-input-background'], borderBottomColor: theme['c-border-background'] }}>
+    <TouchableOpacity accessibilityRole="button" onPress={onShowNavBar} style={{ ...styles.currentList, backgroundColor: theme['c-primary-input-background'] }}>
       <Icon style={styles.currentListIcon} color={theme['c-button-font']} name="chevron-right" size={12} />
       <Text numberOfLines={1} size={Typography.page} style={styles.currentListText} color={theme['c-button-font']}>{t(`setting_${activeId}`)}</Text>
     </TouchableOpacity>
@@ -40,29 +39,20 @@ export default forwardRef<HeaderType, HeaderProps>(({ onShowNavBar }, ref) => {
 const styles = createStyle({
   currentList: {
     flexDirection: 'row',
-    paddingRight: 2,
-    minHeight: 42,
+    height: PageMetrics.controlHeight,
     alignItems: 'center',
-    borderBottomWidth: BorderWidths.normal,
-    borderRadius: 16,
-    marginHorizontal: 10,
-    marginTop: 6,
-    // backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: Radius.control,
+    marginHorizontal: PageMetrics.gutter,
+    marginTop: 4,
+    paddingHorizontal: 10,
   },
   currentListIcon: {
-    paddingLeft: 15,
-    paddingRight: 10,
-    // paddingTop: 10,
-    // paddingBottom: 0,
+    marginRight: 8,
   },
   currentListText: {
     flex: 1,
-    // minWidth: 70,
-    // paddingLeft: 10,
-    paddingRight: 10,
-    textAlign: 'center',
+    paddingRight: 8,
+    textAlign: 'left',
     textAlignVertical: 'center',
-    // paddingTop: 10,
-    // paddingBottom: 10,
   },
 })

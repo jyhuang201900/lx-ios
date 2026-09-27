@@ -42,7 +42,7 @@ export default ({ isHome }: { isHome: boolean }) => {
   // console.log(playMusicInfo)
   return (
     <TouchableOpacity style={styles.container} onLongPress={handleLongPress} onPress={handlePress} activeOpacity={0.7} >
-      <Text color={theme['c-font-label']} numberOfLines={1}>{title}</Text>
+      <Text color={theme['c-font']} size={14} numberOfLines={1}>{title}</Text>
     </TouchableOpacity>
   )
 }

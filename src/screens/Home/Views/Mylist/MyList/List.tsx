@@ -13,7 +13,7 @@ import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 import Loading from '@/components/common/Loading'
 import listState from '@/store/list/state'
 import { LIST_IDS } from '@/config/constant'
-import { Radius, Typography, createGlassStyle, glassCardShadow, neonGlow } from '@/theme/layout'
+import { PageMetrics, Radius, Typography, createGlassStyle, glassCardShadow, neonGlow } from '@/theme/layout'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
 const getListKind = (id: string) => {
@@ -43,9 +43,9 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   }
 
   return (
-    <View style={{ ...styles.cardShell, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-glass-surface'], ...(active ? neonGlow(theme, { radius: 14, opacity: 0.75 }) : glassCardShadow) }}>
+    <View style={{ ...styles.cardShell, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-glass-surface'], ...(active ? neonGlow(theme, { radius: 12, opacity: 0.32 }) : glassCardShadow) }}>
       <View style={{ ...styles.card, ...createGlassStyle(theme, { radius: Radius.card }), ...(active ? { borderColor: theme['c-primary'], borderTopColor: theme['c-primary'] } : null) }}>
-      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} style={styles.cardMain} onPress={() => onPress(item)}>
+      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} style={styles.cardMain} onPress={() => { onPress(item) }}>
         <View style={{ ...styles.cardIcon, backgroundColor: active ? theme['c-primary'] : theme['c-primary-background-active'] }}>
           <Icon name={item.id === LIST_IDS.LOVE ? 'love' : item.id === LIST_IDS.DEFAULT ? 'play-outline' : 'album'} size={17} color={active ? theme['c-font'] : theme['c-font-label']} />
         </View>
@@ -84,7 +84,7 @@ export default ({ onShowMenu, onCreate }: {
       index={index}
       activeId={activeListId}
       onPress={selected => { if (selected.id !== activeListId) setActiveList(selected.id) }}
-      onShowMenu={(info, itemIndex, position) => onShowMenu({ listInfo: info, index: itemIndex }, position)}
+      onShowMenu={(info, itemIndex, position) => { onShowMenu({ listInfo: info, index: itemIndex }, position) }}
     />
   )
 
@@ -128,12 +128,12 @@ export default ({ onShowMenu, onCreate }: {
 
 const styles = createStyle({
   library: { flexGrow: 0, flexShrink: 0, paddingTop: 12, paddingBottom: 10, borderBottomWidth: StyleSheet.hairlineWidth },
-  libraryHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 10 },
+  libraryHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: PageMetrics.gutter, marginBottom: 10 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   // 与 libraryHeader 的 16 对齐，避免同一页出现两条左边缘
-  rail: { paddingHorizontal: 16, gap: 10 },
+  rail: { paddingHorizontal: PageMetrics.gutter, gap: 10 },
   // 外层不裁剪，让 glassCardShadow 在 iOS 上可以显示
   cardShell: { width: scaleSizeW(180), height: scaleSizeH(82), borderRadius: 16 },
   card: { flex: 1, borderWidth: StyleSheet.hairlineWidth, borderRadius: 16, flexDirection: 'row', overflow: 'hidden' },

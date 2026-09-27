@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useGetter } from '@/store'
 import { Navigation } from 'react-native-navigation'
+import { createShadow } from '@/theme/layout'
 
 
 const Toast = ({ componentId }) => {
@@ -27,13 +28,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column-reverse',
   },
   toast: {
-    elevation: 2,
     flexDirection: 'row',
     height: 40,
     margin: 16,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
+    ...createShadow({ opacity: 0.16, radius: 12, offsetY: 4, elevation: 2 }),
   },
   text: {
     color: 'white',
@@ -60,4 +61,3 @@ Toast.options = {
 }
 
 export default Toast
-

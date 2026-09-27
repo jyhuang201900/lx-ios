@@ -4,6 +4,7 @@ import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
 import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
+import { createShadow } from '@/theme/layout'
 
 export default memo(({ onConfirm, onHide, dirOnly }: {
   onConfirm: () => void
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     flexDirection: 'row',
     // borderTopWidth: BorderWidths.normal,
-    elevation: 8,
+    ...createShadow({ opacity: 0.14, radius: 16, offsetY: -5, elevation: 8 }),
   },
   footerBtn: {
     width: '50%',

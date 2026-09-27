@@ -1,8 +1,4 @@
-import { View, TouchableOpacity } from 'react-native'
-// import Button from '@/components/common/Button'
-// import { navigations } from '@/navigation'
-// import { BorderWidths } from '@/theme'
-import { useTheme } from '@/store/theme/hook'
+import { TouchableOpacity, View } from 'react-native'
 import { useNavActiveId, useStatusbarHeight } from '@/store/common/hook'
 import { useI18n } from '@/lang'
 import { createStyle } from '@/utils/tools'
@@ -10,167 +6,88 @@ import { Icon } from '@/components/common/Icon'
 import Text from '@/components/common/Text'
 import StatusBar from '@/components/common/StatusBar'
 import { scaleSizeH } from '@/utils/pixelRatio'
-import { HEADER_HEIGHT, NAV_MENUS } from '@/config/constant'
 import { setNavActiveId } from '@/core/common'
-import { useSettingValue } from '@/store/setting/hook'
-import { Radius, Typography } from '@/theme/layout'
+import commonState from '@/store/common/state'
+import { useTheme } from '@/store/theme/hook'
+import { FontWeight, PageMetrics, Radius, Typography } from '@/theme/layout'
+import { hapticFeedback } from '@/utils/nativeModules/utils'
 
-const NavButtons = () => {
+const HEADER_HEIGHT = scaleSizeH(48)
+
+export default () => {
   const theme = useTheme()
   const activeId = useNavActiveId()
-  return <View style={styles.navButtons}>
-    {NAV_MENUS.map(menu => <TouchableOpacity
-      key={menu.id}
-      accessibilityRole="button"
-      accessibilityLabel={global.i18n.t(menu.id)}
-      style={{ ...styles.navButton, backgroundColor: activeId == menu.id ? theme['c-primary-background-active'] : 'transparent', borderColor: activeId == menu.id ? theme['c-primary-background-active'] : 'transparent' }}
-      onPress={() => { if (activeId != menu.id) setNavActiveId(menu.id) }}
-    >
-      <Icon color={activeId == menu.id ? theme['c-primary-font-active'] : theme['c-font-label']} name={menu.icon} size={18} />
-    </TouchableOpacity>)}
-  </View>
-}
-
-
-// const LeftTitle = () => {
-//   const id = useNavActiveId()
-//   const t = useI18n()
-
-//   return <Text style={styles.leftTitle} size={Typography.page}>{t(id)}</Text>
-// }
-const LeftHeader = () => {
-  const id = useNavActiveId()
-  const t = useI18n()
-  const theme = useTheme()
   const statusBarHeight = useStatusbarHeight()
-
-  return (
-    <View style={{
-      ...styles.container,
-      height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
-      paddingTop: statusBarHeight,
-      // 悬浮玻璃顶栏：半透明底 + 受光底边，内容滚动时透出，形成层次
-      backgroundColor: theme['c-glass-surface'],
-      borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
-      borderBottomWidth: 1,
-    }}>
-      <View style={styles.left}>
-        <NavButtons />
-        <View style={styles.titleBtn}>
-          <Text style={styles.leftTitle} size={Typography.page}>{t(id)}</Text>
-        </View>
-      </View>
-      {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
-        <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />
-      </TouchableOpacity> */}
-    </View>
-  )
-}
-
-
-// const RightTitle = () => {
-//   const id = useNavActiveId()
-//   const t = useI18n()
-
-//   return <Text style={styles.rightTitle} size={Typography.page}>{t(id)}</Text>
-// }
-const RightHeader = () => {
   const t = useI18n()
-  const id = useNavActiveId()
-  const theme = useTheme()
-  const statusBarHeight = useStatusbarHeight()
+  const isSetting = activeId == 'nav_setting'
 
-  return (
-    <View style={{
-      ...styles.container,
-      height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
-      paddingTop: statusBarHeight,
-      // 悬浮玻璃顶栏：半透明底 + 受光底边，内容滚动时透出，形成层次
-      backgroundColor: theme['c-glass-surface'],
-      borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
-      borderBottomWidth: 1,
-    }}>
-      <View style={styles.left}>
-        <View style={styles.titleBtn}>
-          <Text style={styles.rightTitle} size={Typography.page}>{t(id)}</Text>
-        </View>
-      </View>
-      <NavButtons />
-      {/* <TouchableOpacity style={styles.btn} onPress={openSetting}>
-        <Icon style={{ ...styles.btnText, color: theme['c-font'] }} name="setting" size={styles.btnText.fontSize} />
-      </TouchableOpacity> */}
-    </View>
-  )
-}
+  const openSettings = () => {
+    if (isSetting) return
+    hapticFeedback('light')
+    setNavActiveId('nav_setting')
+  }
 
-const Header = () => {
-  const drawerLayoutPosition = useSettingValue('common.drawerLayoutPosition')
+  const goBack = () => {
+    hapticFeedback('light')
+    setNavActiveId(commonState.lastNavActiveId)
+  }
+
   return (
     <>
       <StatusBar />
-      {drawerLayoutPosition == 'left' ? <LeftHeader /> : <RightHeader />}
-
+      <View
+        style={{
+          height: HEADER_HEIGHT + statusBarHeight,
+          paddingTop: statusBarHeight,
+          backgroundColor: 'transparent',
+        }}
+      >
+        <View style={styles.row}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={isSetting ? global.i18n.t('back') : global.i18n.t('nav_setting')}
+            activeOpacity={0.6}
+            style={styles.action}
+            onPress={isSetting ? goBack : openSettings}
+          >
+            <Icon
+              name={isSetting ? 'chevron-left' : 'setting'}
+              size={isSetting ? 21 : 19}
+              color={theme['c-primary-font']}
+            />
+          </TouchableOpacity>
+          <Text
+            numberOfLines={1}
+            size={Typography.page}
+            color={theme['c-font']}
+            style={styles.title}
+          >
+            {t(activeId)}
+          </Text>
+        </View>
+      </View>
     </>
   )
 }
 
-
 const styles = createStyle({
-  container: {
-    // width: '100%',
-    paddingRight: 5,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.1)',
-    zIndex: 10,
-    position: 'relative',
-  },
-  left: {
+  row: {
     flex: 1,
     flexDirection: 'row',
-    paddingLeft: 7,
     alignItems: 'center',
-    height: '100%',
+    paddingHorizontal: PageMetrics.gutter,
   },
-  btn: {
-    // flex: 1,
-    width: HEADER_HEIGHT,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-  },
-  navButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexShrink: 0,
-    height: '100%',
-    marginRight: 4,
-  },
-  navButton: {
+  action: {
     width: 44,
-    height: 40,
-    borderRadius: Radius.control,
-    borderWidth: 1,
+    height: 44,
+    borderRadius: Radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 3,
   },
-  titleBtn: {
+  title: {
     flex: 1,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
-    height: '100%',
-    justifyContent: 'center',
-  },
-  leftTitle: {
-    paddingLeft: 14,
-    paddingRight: 16,
-  },
-  rightTitle: {
-    paddingLeft: 16,
-    paddingRight: 16,
+    paddingHorizontal: 4,
+    textAlign: 'right',
+    fontWeight: FontWeight.semibold,
   },
 })
-
-export default Header

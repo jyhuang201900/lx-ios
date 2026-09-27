@@ -26,7 +26,7 @@ export default forwardRef<CurrentTagBtnType, CurrentTagBtnProps>(({ onShowList }
 
   return (
     <Button style={styles.btn} onPress={onShowList}>
-      <Text style={styles.sourceMenu}>{name}</Text>
+      <Text style={styles.sourceMenu} numberOfLines={1}>{name}</Text>
     </Button>
   )
 })
@@ -35,8 +35,8 @@ export default forwardRef<CurrentTagBtnType, CurrentTagBtnProps>(({ onShowList }
 const styles = createStyle({
   btn: {
     minHeight: 40,
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingLeft: 10,
+    paddingRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -45,6 +45,7 @@ const styles = createStyle({
     // lineHeight: 38,
     textAlign: 'center',
     textAlignVertical: 'center',
+    maxWidth: 72,
     // minWidth: 70,
     // paddingTop: 10,
     // paddingBottom: 10,

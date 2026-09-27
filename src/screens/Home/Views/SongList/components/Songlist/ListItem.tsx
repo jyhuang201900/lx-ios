@@ -21,6 +21,7 @@ export default memo(({ item, index, width, showSource, onPress }: {
   const theme = useTheme()
   const t = useI18n()
   const itemWidth = width - gap
+  const hasMeta = [item.author, item.play_count, item.total].some(Boolean)
   const handlePress = useCallback(() => {
     onPress(item, index)
   }, [index, item, onPress])
@@ -29,15 +30,17 @@ export default memo(({ item, index, width, showSource, onPress }: {
       ? (
           <View style={{ ...styles.listItem, width: itemWidth }}>
             <View style={{ ...styles.listItemImg, backgroundColor: theme['c-content-background'] }}>
-              <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
-                <Image url={item.img} nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_from_${item.id}`} style={{ width: itemWidth, height: itemWidth, borderRadius: 16 }} />
-                { showSource ? <Text style={styles.sourceLabel} size={Typography.caption} color="#fff" >{item.source}</Text> : null }
-              </TouchableOpacity>
+              <View style={styles.listItemImgClip}>
+                <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
+                  <Image url={item.img} nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_from_${item.id}`} style={{ width: itemWidth, height: itemWidth, borderRadius: 16 }} />
+                  { showSource ? <Text style={styles.sourceLabel} size={Typography.caption} color="#fff" >{item.source}</Text> : null }
+                </TouchableOpacity>
+              </View>
             </View>
             <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
               <Text style={styles.listItemTitle} numberOfLines={ 2 }>{item.name}</Text>
             </TouchableOpacity>
-            {(item.author || item.play_count || item.total) ? (
+            {hasMeta ? (
               <Text style={styles.listItemMeta} color={theme['c-font-label']} numberOfLines={1}>
                 {[
                   item.author,
@@ -68,7 +71,6 @@ const styles = createStyle({
     // backgroundColor: '#eee',
     borderRadius: 16,
     marginBottom: 5,
-    overflow: 'hidden',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -83,6 +85,10 @@ const styles = createStyle({
         elevation: 2,
       },
     }),
+  },
+  listItemImgClip: {
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   sourceLabel: {
     paddingLeft: 4,

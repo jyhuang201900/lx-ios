@@ -17,7 +17,7 @@ import { getLocalMetadataCacheKey, readMetadataCached } from '@/utils/localMedia
 import { useTheme } from '@/store/theme/hook'
 import { addTempPlayList } from '@/core/player/tempPlayList'
 import LocalMusicItem from './LocalMusicItem'
-import { FontWeight, Radius, Typography, createGlassStyle, glassCardShadow } from '@/theme/layout'
+import { FontWeight, PageMetrics, Radius, Typography, createGlassStyle, glassCardShadow } from '@/theme/layout'
 
 const audioExtensions = ['mp3', 'flac', 'wav', 'ape', 'ogg', 'm4a', 'aac']
 
@@ -166,9 +166,9 @@ export default () => {
       const metadataB = metadataMap.get(getLocalMetadataCacheKey(b))
       switch (sortMode) {
         case 'name':
-          return (metadataA?.name || a.name).localeCompare(metadataB?.name || b.name, undefined, { numeric: true, sensitivity: 'base' })
+          return (metadataA?.name ?? a.name).localeCompare(metadataB?.name ?? b.name, undefined, { numeric: true, sensitivity: 'base' })
         case 'artist':
-          return (metadataA?.singer || '').localeCompare(metadataB?.singer || '', undefined, { numeric: true, sensitivity: 'base' })
+          return (metadataA?.singer ?? '').localeCompare(metadataB?.singer ?? '', undefined, { numeric: true, sensitivity: 'base' })
         case 'duration':
           return (metadataB?.interval ?? 0) - (metadataA?.interval ?? 0)
         case 'latest':
@@ -279,7 +279,7 @@ export default () => {
       <Input
         value={search}
         onChangeText={setSearch}
-        onClearText={() => setSearch('')}
+        onClearText={() => { setSearch('') }}
         clearBtn
         placeholder={global.i18n.t('local_music_search')}
         returnKeyType="search"
@@ -308,7 +308,7 @@ export default () => {
               accessibilityLabel={global.i18n.t(labelKey)}
               accessibilityState={{ selected: sortMode == mode }}
               style={{ ...styles.sortButton, backgroundColor: sortMode == mode ? theme['c-button-background-selected'] : 'transparent' }}
-              onPress={() => setSortMode(mode)}
+              onPress={() => { setSortMode(mode) }}
             >
               <Text size={12} color={sortMode == mode ? theme['c-button-font-selected'] : theme['c-font-label']}>{global.i18n.t(labelKey)}</Text>
             </TouchableOpacity>
@@ -346,21 +346,21 @@ export default () => {
 }
 
 const styles = createStyle({
-  container: { flex: 1, paddingTop: 14 },
-  summary: { minHeight: 82, marginHorizontal: 16, borderRadius: Radius.card, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center' },
+  container: { flex: 1, paddingTop: 8 },
+  summary: { minHeight: 82, marginHorizontal: PageMetrics.gutter, borderRadius: Radius.card, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: PageMetrics.gutter, flexDirection: 'row', alignItems: 'center' },
   summaryIcon: { width: 46, height: 46, borderRadius: Radius.control, alignItems: 'center', justifyContent: 'center' },
   summaryCopy: { flex: 1, paddingLeft: 12, gap: 5, justifyContent: 'center' },
   summaryTitle: { fontWeight: FontWeight.semibold },
-  actions: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 14, paddingBottom: 18, gap: 10 },
+  actions: { flexDirection: 'row', paddingHorizontal: PageMetrics.gutter, paddingTop: 14, paddingBottom: 18, gap: 10 },
   primaryAction: { flex: 1, minHeight: 44, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 },
   refreshAction: { minWidth: 82, minHeight: 44, borderRadius: Radius.pill, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
   playAllAction: { minWidth: 88, minHeight: 44, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 },
-  searchCard: { marginHorizontal: 16, marginBottom: 10, minHeight: 42, borderRadius: Radius.control, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 11, flexDirection: 'row', alignItems: 'center' },
+  searchCard: { marginHorizontal: PageMetrics.gutter, marginBottom: 10, minHeight: 42, borderRadius: Radius.control, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 11, flexDirection: 'row', alignItems: 'center' },
   searchInput: { height: 38, paddingLeft: 8, fontSize: 13 },
-  sectionHeader: { minHeight: 32, paddingHorizontal: 16, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sectionHeader: { minHeight: 32, paddingHorizontal: PageMetrics.gutter, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   sortBar: { height: 34, flexGrow: 0, flexShrink: 1, flexDirection: 'row', alignItems: 'center', padding: 3, borderRadius: Radius.pill, gap: 2 },
   sortButton: { height: '100%', flexGrow: 1, paddingHorizontal: 7, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
-  list: { paddingHorizontal: 16, paddingBottom: 32 },
+  list: { paddingHorizontal: PageMetrics.gutter, paddingBottom: 32 },
   emptyList: { flexGrow: 1 },
   empty: { alignItems: 'center', paddingHorizontal: 42, paddingTop: 58 },
   emptyIcon: { opacity: 0.5 },

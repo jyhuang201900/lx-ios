@@ -7,6 +7,7 @@ import { getExternalStoragePaths, stat } from '@/utils/fs'
 import { useTheme } from '@/store/theme/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { useStatusbarHeight } from '@/store/common/hook'
+import { createShadow } from '@/theme/layout'
 import NewFolderModal, { type NewFolderType } from './NewFolderModal'
 import OpenStorageModal, { type OpenDirModalType } from './OpenStorageModal'
 import type { PathItem } from './ListItem'
@@ -95,8 +96,8 @@ const styles = createStyle({
     paddingLeft: 15,
     paddingRight: 15,
     alignItems: 'center',
-    elevation: 2,
     zIndex: 2,
+    ...createShadow({ opacity: 0.1, radius: 12, offsetY: 4, elevation: 2 }),
     // borderBottomWidth: BorderWidths.normal,
   },
   titleContent: {
@@ -139,4 +140,3 @@ const styles = createStyle({
     paddingBottom: 2,
   },
 })
-

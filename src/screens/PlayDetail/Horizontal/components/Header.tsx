@@ -56,7 +56,15 @@ export default memo(() => {
   }
 
   return (
-    <View style={{ height: HEADER_HEIGHT }} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_header}>
+    <View
+      style={{
+        height: HEADER_HEIGHT,
+        backgroundColor: theme['c-glass-surface'],
+        borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
+        borderBottomWidth: 1,
+      }}
+      nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_header}
+    >
       <View style={styles.container}>
         <TouchableOpacity onPress={back} style={{ ...styles.button, width: HEADER_HEIGHT }}>
           <Icon name="chevron-left" size={18} />

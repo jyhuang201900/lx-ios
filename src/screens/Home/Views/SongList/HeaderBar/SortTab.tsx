@@ -32,7 +32,9 @@ export default forwardRef<SortTabType, SortTabProps>(({ onSortChange }, ref) => 
   }))
 
   const sorts = useMemo(() => {
-    return sortList.map(s => ({ label: t(`songlist_${s.tid}`), id: s.id }))
+    return sortList
+      .filter(s => s.tid != 'hot')
+      .map(s => ({ label: t(`songlist_${s.tid}`), id: s.id }))
   }, [sortList, t])
 
   const handleSortChange = (id: string) => {
@@ -56,10 +58,9 @@ export default forwardRef<SortTabType, SortTabProps>(({ onSortChange }, ref) => 
 
 const styles = createStyle({
   container: {
-    flexGrow: 1,
+    flexGrow: 0,
     flexShrink: 1,
-    // paddingLeft: 5,
-    // paddingRight: 5,
+    minWidth: 0,
   },
   button: {
     // height: 38,
@@ -67,7 +68,7 @@ const styles = createStyle({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 40,
-    paddingHorizontal: 13,
+    paddingHorizontal: 8,
     // width: 80,
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },

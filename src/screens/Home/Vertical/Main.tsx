@@ -11,6 +11,7 @@ import { createStyle } from '@/utils/tools'
 import PagerView, { type PageScrollStateChangedNativeEvent, type PagerViewOnPageSelectedEvent } from 'react-native-pager-view'
 import { setNavActiveId } from '@/core/common'
 import settingState from '@/store/setting/state'
+import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 const hideKeys = [
   'list.isShowAlbumName',
@@ -246,6 +247,7 @@ const Main = () => {
     // console.log(nativeEvent)
     activeIndexRef.current = nativeEvent.position
     if (activeIndexRef.current != viewMap[commonState.navActiveId]) {
+      hapticFeedback('light')
       setNavActiveId(indexMap[activeIndexRef.current])
     }
   }, [])

@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { View, TouchableOpacity } from 'react-native'
 
 import { createStyle } from '@/utils/tools'
 import { type SearchType } from '@/store/search/state'
 import { useI18n } from '@/lang'
-import Text from '@/components/common/Text'
+import { Icon } from '@/components/common/Icon'
 import { useTheme } from '@/store/theme/hook'
 import { getSearchSetting } from '@/utils/data'
 import { Radius } from '@/theme/layout'
+import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 const SEARCH_TYPE_LIST = [
-  'music',
-  'songlist',
+  { id: 'music', icon: 'play-outline', label: 'search_type_music' },
+  { id: 'songlist', icon: 'album', label: 'search_type_songlist' },
 ] as const
 
 export default () => {
@@ -25,27 +26,31 @@ export default () => {
     })
   }, [])
 
-  const list = useMemo(() => {
-    return SEARCH_TYPE_LIST.map(type => ({ label: t(`search_type_${type}`), id: type }))
-  }, [t])
-
-  const handleTypeChange = (type: SearchType) => {
-    setType(type)
-    global.app_event.searchTypeChanged(type)
+  const handleTypeChange = (nextType: SearchType) => {
+    if (nextType == type) return
+    hapticFeedback('light')
+    setType(nextType)
+    global.app_event.searchTypeChanged(nextType)
   }
 
   return (
     <View style={{ ...styles.container, backgroundColor: theme['c-primary-input-background'] }}>
       {
-        list.map(t => (
+        SEARCH_TYPE_LIST.map(item => (
           <TouchableOpacity
-            style={{ ...styles.button, backgroundColor: type == t.id ? theme['c-button-background-selected'] : 'transparent' }}
-            onPress={() => { handleTypeChange(t.id) }}
-            key={t.id}
+            style={{ ...styles.button, backgroundColor: type == item.id ? theme['c-button-background-selected'] : 'transparent' }}
+            onPress={() => { handleTypeChange(item.id) }}
+            key={item.id}
             accessibilityRole="tab"
-            accessibilityState={{ selected: type == t.id }}
+            accessibilityLabel={t(item.label)}
+            accessibilityState={{ selected: type == item.id }}
+            hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
           >
-            <Text style={styles.buttonText} color={type == t.id ? theme['c-button-font-selected'] : theme['c-font-label']}>{t.label}</Text>
+            <Icon
+              name={item.icon}
+              size={17}
+              color={type == item.id ? theme['c-button-font-selected'] : theme['c-font-label']}
+            />
           </TouchableOpacity>
         ))
       }
@@ -55,25 +60,19 @@ export default () => {
 
 const styles = createStyle({
   container: {
-    height: 34,
+    height: 38,
     flexGrow: 0,
-    flexShrink: 1,
+    flexShrink: 0,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 3,
     borderRadius: Radius.pill,
   },
   button: {
-    height: '100%',
-    minWidth: 52,
+    width: 36,
+    height: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 9,
     borderRadius: Radius.pill,
-  },
-  buttonText: {
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    paddingHorizontal: 2,
   },
 })

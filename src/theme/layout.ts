@@ -65,6 +65,14 @@ export const Gap = {
 /** 关键内容的水平边距：比普通内容更宽，让主要内容不贴边 */
 export const KeyPadding = 22
 
+/** 页面级统一栅格：所有主页面和悬浮控件共用同一套边距与高度。 */
+export const PageMetrics = {
+  gutter: 16,
+  toolbarHeight: 52,
+  toolbarMargin: 8,
+  controlHeight: 40,
+} as const
+
 /** 数字等宽，避免时间/计数跳动，提升精密感 */
 export const TabularNums: TextStyle = { fontVariant: ['tabular-nums'] }
 
@@ -112,13 +120,12 @@ export const createGlassStyle = (
 ): ViewStyle => ({
   backgroundColor: theme[level === 'overlay' ? 'c-glass-overlay' : 'c-glass-surface'],
   borderRadius: radius,
-  // 玻璃边用 1.5px：发丝边(0.33px)在手机上完全看不见，1px 仍偏弱，撑不起玻璃轮廓
-  borderWidth: 1.5,
+  borderWidth: 1,
   borderColor: theme['c-border-background'],
-  // 上沿高光：提亮上边形成光线反射；左右用递减亮度过渡，读起来更像玻璃受光面
-  borderTopColor: theme.isDark ? 'rgba(255, 255, 255, 0.42)' : 'rgba(255, 255, 255, 1)',
-  borderLeftColor: theme.isDark ? 'rgba(255, 255, 255, 0.20)' : 'rgba(255, 255, 255, 0.70)',
-  borderRightColor: theme.isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.35)',
+  // 上沿轻高光保留受光感，但降低对比，避免卡片像彩色边框
+  borderTopColor: theme.isDark ? 'rgba(255, 255, 255, 0.28)' : 'rgba(255, 255, 255, 0.84)',
+  borderLeftColor: theme.isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.54)',
+  borderRightColor: theme.isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.28)',
 })
 
 /**

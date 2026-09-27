@@ -3,22 +3,15 @@ import { View } from 'react-native'
 
 // import { useGetter, useDispatch } from '@/store'
 import SortTab, { type SortTabProps, type SortTabType } from './SortTab'
-// import Tag from './Tag'
-// import OpenList from './OpenList'
 import { createStyle } from '@/utils/tools'
-import { useTheme } from '@/store/theme/hook'
-import { BorderWidths } from '@/theme'
-// import { BorderWidths } from '@/theme'
 import SourceSelector, {
   type SourceSelectorType,
   type SourceSelectorProps,
 } from './SourceSelector'
 import { type Source } from '@/store/songlist/state'
-// import { useTheme } from '@/store/theme/hook'
 import Tag, { type TagType, type TagProps } from './Tag'
 import OpenList, { type OpenListType } from './OpenList'
-import { Radius } from '@/theme/layout'
-// import { BorderWidths } from '@/theme'
+import { PageMetrics } from '@/theme/layout'
 
 export interface HeaderBarProps {
   onSortChange: SortTabProps['onSortChange']
@@ -36,7 +29,6 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
   const tagRef = useRef<TagType>(null)
   const openListRef = useRef<OpenListType>(null)
   const sourceSelectorRef = useRef<SourceSelectorType>(null)
-  const theme = useTheme()
 
   useImperativeHandle(ref, () => ({
     setSource(source, sortId, tagName, tagId) {
@@ -49,11 +41,13 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
 
 
   return (
-    <View style={{ ...styles.searchBar, backgroundColor: theme['c-glass-surface'], borderBottomColor: theme['c-border-background'] }}>
+    <View style={styles.searchBar}>
+      <View style={styles.source}>
+        <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
+      </View>
       <SortTab ref={sortTabRef} onSortChange={onSortChange} />
       <Tag ref={tagRef} onTagChange={onTagChange} />
       <OpenList ref={openListRef} />
-      <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
     </View>
   )
 })
@@ -61,16 +55,16 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
 const styles = createStyle({
   searchBar: {
     flexDirection: 'row',
-    height: 52,
+    height: PageMetrics.toolbarHeight,
     zIndex: 2,
-    marginHorizontal: 16,
-    marginTop: 12,
-    marginBottom: 9,
-    borderWidth: BorderWidths.normal,
-    borderRadius: Radius.card,
-    paddingLeft: 8,
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: PageMetrics.gutter,
+    marginTop: PageMetrics.toolbarMargin,
+    marginBottom: PageMetrics.toolbarMargin,
   },
-  selector: {
-    width: 86,
+  source: {
+    height: PageMetrics.controlHeight,
+    flexShrink: 0,
   },
 })

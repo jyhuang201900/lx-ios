@@ -4,6 +4,7 @@ import { View } from 'react-native'
 // import { BorderWidths } from '@/theme'
 import { useNavActiveId, useStatusbarHeight } from '@/store/common/hook'
 import { useI18n } from '@/lang'
+import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import StatusBar from '@/components/common/StatusBar'
@@ -24,6 +25,7 @@ const HEADER_HEIGHT = _HEADER_HEIGHT * 0.8
 const LeftHeader = () => {
   const id = useNavActiveId()
   const t = useI18n()
+  const theme = useTheme()
   const statusBarHeight = useStatusbarHeight()
 
   return (
@@ -31,6 +33,9 @@ const LeftHeader = () => {
       ...styles.container,
       height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
       paddingTop: statusBarHeight,
+      backgroundColor: theme['c-glass-surface'],
+      borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
+      borderBottomWidth: 1,
     }}>
       <View style={styles.left}>
         <Text style={styles.leftTitle} size={Typography.page}>{t(id)}</Text>
@@ -52,6 +57,7 @@ const LeftHeader = () => {
 const RightHeader = () => {
   const t = useI18n()
   const id = useNavActiveId()
+  const theme = useTheme()
   const statusBarHeight = useStatusbarHeight()
 
   return (
@@ -59,6 +65,9 @@ const RightHeader = () => {
       ...styles.container,
       height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
       paddingTop: statusBarHeight,
+      backgroundColor: theme['c-glass-surface'],
+      borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
+      borderBottomWidth: 1,
     }}>
       <View style={styles.left}>
         <Text style={styles.rightTitle} size={Typography.page}>{t(id)}</Text>

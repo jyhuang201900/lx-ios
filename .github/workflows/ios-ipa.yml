@@ -52,6 +52,9 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
+      - name: Check i18n keys
+        run: npm run check:i18n
+
       - name: Install CocoaPods dependencies
         shell: bash
         run: |
