@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 // import { getWindowSise, onDimensionChange } from '@/utils/tools'
 import DrawerNav from './DrawerNav'
-import Header from './Header'
 import Main from './Main'
+import StatusBar from '@/components/common/StatusBar'
 import { useSettingValue } from '@/store/setting/hook'
 import { COMPONENT_IDS } from '@/config/constant'
 import DrawerLayoutFixed, { type DrawerLayoutFixedType } from '@/components/common/DrawerLayoutFixed'
@@ -43,7 +43,7 @@ const Content = () => {
       drawerPosition={drawerLayoutPosition}
       renderNavigationView={navigationView}
     >
-      <Header />
+      <StatusBar />
       <Main />
       {/* <View style={styles.container}>
       </View> */}
