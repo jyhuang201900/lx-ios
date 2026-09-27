@@ -14,6 +14,7 @@ import Loading from '@/components/common/Loading'
 import listState from '@/store/list/state'
 import { LIST_IDS } from '@/config/constant'
 import { ListMetrics, PageMetrics, Radius, Typography, createGlassStyle, glassCardShadow, neonGlow } from '@/theme/layout'
+import PageToolbar from '@/components/common/PageToolbar'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
 const getListKind = (id: string) => {
@@ -89,8 +90,8 @@ export default ({ onShowMenu, onCreate }: {
   )
 
   return (
-    <View style={{ ...styles.library, borderBottomColor: theme['c-border-background'] }}>
-      <View style={styles.libraryHeader}>
+    <View style={styles.library}>
+      <PageToolbar>
         <Text size={11} color={theme['c-font-label']}>{global.i18n.t('list_total', { num: allList.length })}</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
@@ -112,7 +113,7 @@ export default ({ onShowMenu, onCreate }: {
             <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('list_create')}</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </PageToolbar>
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -127,8 +128,7 @@ export default ({ onShowMenu, onCreate }: {
 }
 
 const styles = createStyle({
-  library: { flexGrow: 0, flexShrink: 0, paddingTop: 12, paddingBottom: 10, borderBottomWidth: StyleSheet.hairlineWidth },
-  libraryHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 10, paddingHorizontal: PageMetrics.gutter, marginBottom: 10 },
+  library: { flexGrow: 0, flexShrink: 0 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },

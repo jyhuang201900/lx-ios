@@ -17,7 +17,7 @@ import RetryButton from '@/components/common/RetryButton'
 import { handlePlay } from './listAction'
 import { useSettingValue } from '@/store/setting/hook'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
-import { Gap } from '@/theme/layout'
+import { Gap, PageMetrics } from '@/theme/layout'
 
 type FlatListType = FlatListProps<LX.Music.MusicInfoOnline>
 
@@ -339,7 +339,7 @@ const styles = createStyle({
   },
   // 行内容的水平内缩放在这里，行本身才能用满 100% 宽度而不溢出
   content: {
-    paddingHorizontal: 10,
+    paddingHorizontal: PageMetrics.gutter,
     // 底部留白，避免最后一行被迷你播放条压住
     paddingBottom: Gap.page,
   },

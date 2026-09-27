@@ -15,6 +15,7 @@ import { type Source as MusicSource } from '@/store/search/music/state'
 import { type Source as SonglistSource } from '@/store/search/songlist/state'
 import SearchTypeSelector from '../SearchTypeSelector'
 import { PageMetrics } from '@/theme/layout'
+import PageToolbar from '@/components/common/PageToolbar'
 
 type Sources = Readonly<Array<MusicSource | SonglistSource>>
 type SourceSelectorProps = _SourceSelectorProps<Sources>
@@ -54,7 +55,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
 
 
   return (
-    <View style={styles.searchBar}>
+    <PageToolbar>
       <View style={{ ...styles.selector, backgroundColor: theme['c-button-background'], borderColor: theme['c-border-background'] }}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} center />
       </View>
@@ -68,20 +69,11 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onTi
       <View style={styles.typeSelector}>
         <SearchTypeSelector />
       </View>
-    </View>
+    </PageToolbar>
   )
 })
 
 const styles = createStyle({
-  searchBar: {
-    flexDirection: 'row',
-    height: PageMetrics.toolbarHeight,
-    zIndex: 2,
-    alignItems: 'center',
-    paddingHorizontal: PageMetrics.gutter,
-    marginTop: PageMetrics.toolbarMargin,
-    marginBottom: PageMetrics.toolbarMargin,
-  },
   selector: {
     height: PageMetrics.controlHeight,
     minWidth: 64,

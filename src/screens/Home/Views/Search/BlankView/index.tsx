@@ -7,6 +7,7 @@ import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { ScrollView, View } from 'react-native'
 import HistorySearch, { type HistorySearchType } from './HistorySearch'
 import HotSearch, { type HotSearchType } from './HotSearch'
+import { PageMetrics } from '@/theme/layout'
 
 interface BlankViewProps {
   onSearch: (keyword: string) => void
@@ -70,7 +71,7 @@ const styles = createStyle({
   content: {
     paddingTop: 8,
     paddingBottom: 28,
-    paddingHorizontal: 16,
+    paddingHorizontal: PageMetrics.gutter,
   },
   scrollContent: {
     flexGrow: 1,

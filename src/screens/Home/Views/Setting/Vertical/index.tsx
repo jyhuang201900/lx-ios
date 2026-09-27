@@ -1,28 +1,25 @@
-export { default } from './Main'
-// // import { View } from 'react-native'
-// import Main from './Main'
-// import { createStyle } from '@/utils/tools'
+import { useCallback, useRef } from 'react'
+import { View } from 'react-native'
+import PageToolbar from '@/components/common/PageToolbar'
+import NavList from './NavList'
+import Main, { type MainType, type SettingScreenIds } from '../Main'
 
+export type { SettingScreenIds } from '../Main'
 
-// const Content = () => {
-//   return (
-//     <View style={styles.container}>
-//       <Main />
-//     </View>
-//   )
-// }
+export default () => {
+  const mainRef = useRef<MainType>(null)
+  const handleChangeId = useCallback((id: SettingScreenIds) => {
+    mainRef.current?.setActiveId(id)
+  }, [])
 
-// const styles = createStyle({
-//   container: {
-//     flex: 1,
-//     flexDirection: 'column',
-//   },
-//   // main: {
-//   //   paddingLeft: 15,
-//   //   paddingRight: 15,
-//   //   paddingTop: 15,
-//   //   paddingBottom: 15,
-//   // },
-// })
-
-// export default Content
+  return (
+    <View style={{ flex: 1 }}>
+      <PageToolbar>
+        <NavList onChangeId={handleChangeId} />
+      </PageToolbar>
+      <View style={{ flex: 1 }}>
+        <Main ref={mainRef} />
+      </View>
+    </View>
+  )
+}

@@ -41,10 +41,9 @@ const ListItem = memo(({ id, activeId, onPress }: {
     </View>
   )
 }, (prevProps, nextProps) => {
-  return !!(prevProps.id === nextProps.id &&
-    prevProps.activeId != nextProps.id &&
-    nextProps.activeId != nextProps.id
-  )
+  return prevProps.id == nextProps.id &&
+    prevProps.activeId == nextProps.activeId &&
+    prevProps.onPress == nextProps.onPress
 })
 
 
@@ -127,4 +126,3 @@ const styles = createStyle({
     // backgroundColor: 'rgba(0,0,0,0.1)',
   },
 })
-

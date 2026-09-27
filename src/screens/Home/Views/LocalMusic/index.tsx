@@ -17,7 +17,8 @@ import { getLocalMetadataCacheKey, readMetadataCached } from '@/utils/localMedia
 import { useTheme } from '@/store/theme/hook'
 import { addTempPlayList } from '@/core/player/tempPlayList'
 import LocalMusicItem from './LocalMusicItem'
-import { FontWeight, PageMetrics, Radius, Typography, createGlassStyle, glassCardShadow } from '@/theme/layout'
+import { FontWeight, PageMetrics, Radius, Typography, createGlassStyle } from '@/theme/layout'
+import PageToolbar from '@/components/common/PageToolbar'
 
 const audioExtensions = ['mp3', 'flac', 'wav', 'ape', 'ogg', 'm4a', 'aac']
 
@@ -231,48 +232,43 @@ export default () => {
   }, [visibleFiles, buildMusicInfoFromFile])
 
   return <View style={styles.container}>
-    <View style={{ ...styles.summary, ...createGlassStyle(theme, { radius: Radius.card }), ...glassCardShadow }}>
-      <View style={{ ...styles.summaryIcon, backgroundColor: theme['c-primary-background-active'] }}>
-        <Icon name="music_time" size={20} color={theme['c-primary-font-active']} />
+    <PageToolbar>
+      <View style={styles.toolbarCopy}>
+        <Text size={Typography.section} color={theme['c-font']} style={styles.toolbarTitle}>{global.i18n.t('local_music_title')}</Text>
+        <Text size={Typography.caption} color={theme['c-font-label']}>{global.i18n.t('local_music_summary', { num: search ? visibleFiles.length : files.length })}</Text>
       </View>
-      <View style={styles.summaryCopy}>
-        <Text size={16} style={styles.summaryTitle}>{global.i18n.t('local_music_title')}</Text>
-        <Text size={11} color={theme['c-font-label']}>{global.i18n.t('local_music_summary', { num: search ? visibleFiles.length : files.length })}</Text>
+      <View style={styles.toolbarActions}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('local_music_import')}
+          accessibilityState={{ disabled: importing }}
+          disabled={importing}
+          style={{ ...styles.toolbarButton, backgroundColor: theme['c-primary-background-active'], opacity: importing ? 0.5 : 1 }}
+          onPress={() => { void importMusic() }}
+        >
+          <Icon name="add-music" size={16} color={theme['c-primary-font-active']} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('local_music_refresh')}
+          accessibilityState={{ disabled: refreshing }}
+          disabled={refreshing}
+          style={{ ...styles.toolbarButton, backgroundColor: theme['c-primary-input-background'], opacity: refreshing ? 0.5 : 1 }}
+          onPress={() => { void refresh() }}
+        >
+          <Icon name="available_updates" size={16} color={theme['c-font-label']} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('play_all')}
+          disabled={!visibleFiles.length}
+          style={{ ...styles.toolbarButton, backgroundColor: theme['c-primary'], opacity: visibleFiles.length ? 1 : 0.4 }}
+          onPress={() => { void playAllVisible() }}
+        >
+          <Icon name="play" size={16} color={theme['c-primary-button-font']} />
+        </TouchableOpacity>
       </View>
-    </View>
-    <View style={styles.actions}>
-      <TouchableOpacity
-        accessibilityRole="button"
-        accessibilityLabel={global.i18n.t('local_music_import')}
-        accessibilityState={{ disabled: importing }}
-        disabled={importing}
-        style={{ ...styles.primaryAction, backgroundColor: theme['c-primary-background-active'], opacity: importing ? 0.5 : 1 }}
-        onPress={() => { void importMusic() }}
-      >
-        <Icon name="add-music" size={15} color={theme['c-primary-font-active']} />
-        <Text size={12} color={theme['c-primary-font-active']}>{importing ? global.i18n.t('loading') : global.i18n.t('local_music_import')}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        accessibilityRole="button"
-        accessibilityLabel={global.i18n.t('local_music_refresh')}
-        accessibilityState={{ disabled: refreshing }}
-        disabled={refreshing}
-        style={{ ...styles.refreshAction, backgroundColor: theme['c-primary-input-background'], borderColor: theme['c-border-background'], opacity: refreshing ? 0.5 : 1 }}
-        onPress={() => { void refresh() }}
-      >
-        <Text size={12} color={theme['c-font']}>{refreshing ? global.i18n.t('loading') : global.i18n.t('local_music_refresh')}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        accessibilityRole="button"
-        accessibilityLabel={global.i18n.t('play_all')}
-        disabled={!visibleFiles.length}
-        style={{ ...styles.playAllAction, backgroundColor: theme['c-primary'], opacity: visibleFiles.length ? 1 : 0.4 }}
-        onPress={() => { void playAllVisible() }}
-      >
-        <Icon name="play" size={15} color={theme['c-primary-button-font']} />
-        <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('play_all')}</Text>
-      </TouchableOpacity>
-    </View>
+    </PageToolbar>
     {Platform.OS == 'ios' ? <DownloadQueue /> : null}
     <View style={{ ...styles.searchCard, ...createGlassStyle(theme, { radius: Radius.control }) }}>
       <Icon name="search-2" size={15} color={theme['c-font-label']} />
@@ -346,15 +342,11 @@ export default () => {
 }
 
 const styles = createStyle({
-  container: { flex: 1, paddingTop: 8 },
-  summary: { minHeight: 82, marginHorizontal: PageMetrics.gutter, borderRadius: Radius.card, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: PageMetrics.gutter, flexDirection: 'row', alignItems: 'center' },
-  summaryIcon: { width: 46, height: 46, borderRadius: Radius.control, alignItems: 'center', justifyContent: 'center' },
-  summaryCopy: { flex: 1, paddingLeft: 12, gap: 5, justifyContent: 'center' },
-  summaryTitle: { fontWeight: FontWeight.semibold },
-  actions: { flexDirection: 'row', paddingHorizontal: PageMetrics.gutter, paddingTop: 14, paddingBottom: 18, gap: 10 },
-  primaryAction: { flex: 1, minHeight: 44, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 },
-  refreshAction: { minWidth: 82, minHeight: 44, borderRadius: Radius.pill, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
-  playAllAction: { minWidth: 88, minHeight: 44, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 },
+  container: { flex: 1 },
+  toolbarCopy: { flex: 1, gap: 2 },
+  toolbarTitle: { fontWeight: FontWeight.semibold },
+  toolbarActions: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  toolbarButton: { width: 36, height: 36, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
   searchCard: { marginHorizontal: PageMetrics.gutter, marginBottom: 10, minHeight: 42, borderRadius: Radius.control, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 11, flexDirection: 'row', alignItems: 'center' },
   searchInput: { height: 38, paddingLeft: 8, fontSize: 13 },
   sectionHeader: { minHeight: 32, paddingHorizontal: PageMetrics.gutter, paddingBottom: 7, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 8 },

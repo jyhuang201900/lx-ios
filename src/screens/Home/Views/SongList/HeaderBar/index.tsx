@@ -12,6 +12,7 @@ import { type Source } from '@/store/songlist/state'
 import Tag, { type TagType, type TagProps } from './Tag'
 import OpenList, { type OpenListType } from './OpenList'
 import { PageMetrics } from '@/theme/layout'
+import PageToolbar from '@/components/common/PageToolbar'
 
 export interface HeaderBarProps {
   onSortChange: SortTabProps['onSortChange']
@@ -41,28 +42,18 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
 
 
   return (
-    <View style={styles.searchBar}>
+    <PageToolbar>
       <View style={styles.source}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
       </View>
       <SortTab ref={sortTabRef} onSortChange={onSortChange} />
       <Tag ref={tagRef} onTagChange={onTagChange} />
       <OpenList ref={openListRef} />
-    </View>
+    </PageToolbar>
   )
 })
 
 const styles = createStyle({
-  searchBar: {
-    flexDirection: 'row',
-    height: PageMetrics.toolbarHeight,
-    zIndex: 2,
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: PageMetrics.gutter,
-    marginTop: PageMetrics.toolbarMargin,
-    marginBottom: PageMetrics.toolbarMargin,
-  },
   source: {
     height: PageMetrics.controlHeight,
     flexShrink: 0,

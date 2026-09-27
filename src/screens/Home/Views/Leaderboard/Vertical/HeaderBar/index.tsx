@@ -14,6 +14,7 @@ import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { type BoardItem } from '@/store/leaderboard/state'
 import { PageMetrics, Radius } from '@/theme/layout'
+import PageToolbar from '@/components/common/PageToolbar'
 
 export interface HeaderBarProps {
   onSourceChange: (source: LX.OnlineSource) => void
@@ -50,7 +51,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 
 
   return (
-    <View style={styles.bar}>
+    <PageToolbar>
       <View style={styles.source}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
       </View>
@@ -72,21 +73,11 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
         <Icon name="play" size={15} color={theme['c-primary-button-font']} />
         <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('play_all')}</Text>
       </TouchableOpacity>
-    </View>
+    </PageToolbar>
   )
 })
 
 const styles = createStyle({
-  bar: {
-    flexDirection: 'row',
-    height: PageMetrics.toolbarHeight,
-    zIndex: 2,
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: PageMetrics.gutter,
-    marginTop: PageMetrics.toolbarMargin,
-    marginBottom: PageMetrics.toolbarMargin,
-  },
   source: { height: PageMetrics.controlHeight, flexShrink: 0 },
   boardSelector: { width: 110, flexShrink: 1, height: PageMetrics.controlHeight, borderRadius: Radius.control },
   boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 },

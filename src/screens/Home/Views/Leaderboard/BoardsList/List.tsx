@@ -5,6 +5,7 @@ import { createStyle } from '@/utils/tools'
 import { type Position } from './ListMenu'
 import ListItem, { type ListItemProps } from './ListItem'
 import { type BoardItem } from '@/store/leaderboard/state'
+import { PageMetrics } from '@/theme/layout'
 
 export interface ListProps {
   onBoundChange: (listId: string) => void
@@ -70,5 +71,5 @@ export default forwardRef<ListType, ListProps>(({ onBoundChange, onShowMenu }, r
 
 const styles = createStyle({
   container: { flexGrow: 0, flexShrink: 0 },
-  content: { paddingHorizontal: 12, paddingBottom: 10 },
+  content: { paddingHorizontal: PageMetrics.gutter, paddingBottom: 10 },
 })

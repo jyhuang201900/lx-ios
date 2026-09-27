@@ -6,7 +6,7 @@ import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { SETTING_SCREENS, type SettingScreenIds } from '../Main'
 import { useI18n } from '@/lang'
-import { BorderRadius, BorderWidths } from '@/theme'
+import { Radius } from '@/theme/layout'
 
 
 const ListItem = memo(({ id, activeId, onPress }: {
@@ -31,10 +31,9 @@ const ListItem = memo(({ id, activeId, onPress }: {
     </View>
   )
 }, (prevProps, nextProps) => {
-  return !!(prevProps.id === nextProps.id &&
-    prevProps.activeId != nextProps.id &&
-    nextProps.activeId != nextProps.id
-  )
+  return prevProps.id == nextProps.id &&
+    prevProps.activeId == nextProps.activeId &&
+    prevProps.onPress == nextProps.onPress
 })
 
 
@@ -42,17 +41,15 @@ export default ({ onChangeId }: {
   onChangeId: (id: SettingScreenIds) => void
 }) => {
   const [activeId, setActiveId] = useState(global.lx.settingActiveId)
-  const theme = useTheme()
 
   const handleChangeId = useCallback((id: SettingScreenIds) => {
     onChangeId(id)
     setActiveId(id)
     global.lx.settingActiveId = id
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [onChangeId])
 
   return (
-    <ScrollView horizontal style={{ ...styles.container, borderBottomColor: theme['c-border-background'] }} contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps={'always'}>
+    <ScrollView horizontal style={styles.container} contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps={'always'}>
       {
         SETTING_SCREENS.map(id => <ListItem key={id} id={id} activeId={activeId} onPress={handleChangeId} />)
       }
@@ -63,38 +60,24 @@ export default ({ onChangeId }: {
 
 const styles = createStyle({
   container: {
-    height: 60,
+    flex: 1,
+    height: '100%',
     flexGrow: 0,
     flexShrink: 0,
-    borderBottomWidth: BorderWidths.normal,
-    opacity: 1,
   },
   contentContainer: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    paddingHorizontal: 12,
-    paddingVertical: 9,
-    // backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
-  // listContainer: {
-  //   // borderBottomWidth: BorderWidths.normal2,
-  // },
-
   listItem: {
-    // width: '33.33%',
-    height: 40,
-    paddingHorizontal: 14,
-    // paddingVertical: 10,
-    borderRadius: BorderRadius.normal + 6,
-    marginBottom: 5,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
+    height: '100%',
+    paddingHorizontal: 10,
+    borderRadius: Radius.control,
   },
   listName: {
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flex: 1,
-    // paddingLeft: 5,
-    // backgroundColor: 'rgba(0,0,0,0.1)',
   },
-  listNameText: { width: '100%', textAlign: 'center', textAlignVertical: 'center' },
+  listNameText: { width: '100%', textAlign: 'left', textAlignVertical: 'center' },
 })
