@@ -130,8 +130,8 @@ export default ({ onShowMenu, onCreate }: {
 const styles = createStyle({
   library: { flexGrow: 0, flexShrink: 0 },
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
-  createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 6 },
+  createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 6 },
   // 与 libraryHeader 的 16 对齐，避免同一页出现两条左边缘
   rail: { paddingHorizontal: PageMetrics.gutter, gap: 10 },
   // 外层不裁剪，让 glassCardShadow 在 iOS 上可以显示
