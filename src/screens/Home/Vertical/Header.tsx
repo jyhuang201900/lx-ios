@@ -6,8 +6,6 @@ import { Icon } from '@/components/common/Icon'
 import Text from '@/components/common/Text'
 import StatusBar from '@/components/common/StatusBar'
 import { scaleSizeH } from '@/utils/pixelRatio'
-import { setNavActiveId } from '@/core/common'
-import commonState from '@/store/common/state'
 import { useTheme } from '@/store/theme/hook'
 import { FontWeight, PageMetrics, Radius, Typography } from '@/theme/layout'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
@@ -19,17 +17,10 @@ export default () => {
   const activeId = useNavActiveId()
   const statusBarHeight = useStatusbarHeight()
   const t = useI18n()
-  const isSetting = activeId == 'nav_setting'
 
-  const openSettings = () => {
-    if (isSetting) return
+  const openNavigation = () => {
     hapticFeedback('light')
-    setNavActiveId('nav_setting')
-  }
-
-  const goBack = () => {
-    hapticFeedback('light')
-    setNavActiveId(commonState.lastNavActiveId)
+    global.app_event.changeMenuVisible(true)
   }
 
   return (
@@ -42,52 +33,44 @@ export default () => {
           backgroundColor: 'transparent',
         }}
       >
-        <View style={styles.row}>
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel={isSetting ? global.i18n.t('back') : global.i18n.t('nav_setting')}
-            activeOpacity={0.6}
-            style={styles.action}
-            onPress={isSetting ? goBack : openSettings}
-          >
-            <Icon
-              name={isSetting ? 'chevron-left' : 'setting'}
-              size={isSetting ? 21 : 19}
-              color={theme['c-primary-font']}
-            />
-          </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={t(activeId)}
+          activeOpacity={0.68}
+          style={{ ...styles.navRow, backgroundColor: theme['c-primary-input-background'] }}
+          onPress={openNavigation}
+        >
+          <Icon name="chevron-right" size={12} color={theme['c-button-font']} style={styles.icon} />
           <Text
             numberOfLines={1}
             size={Typography.page}
-            color={theme['c-font']}
+            color={theme['c-button-font']}
             style={styles.title}
           >
             {t(activeId)}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </>
   )
 }
 
 const styles = createStyle({
-  row: {
-    flex: 1,
+  navRow: {
+    height: PageMetrics.controlHeight,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: PageMetrics.gutter,
+    marginHorizontal: PageMetrics.gutter,
+    marginTop: 4,
+    paddingHorizontal: 10,
+    borderRadius: Radius.control,
   },
-  action: {
-    width: 44,
-    height: 44,
-    borderRadius: Radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
+  icon: {
+    marginRight: 8,
   },
   title: {
     flex: 1,
-    paddingHorizontal: 4,
-    textAlign: 'right',
+    paddingRight: 8,
     fontWeight: FontWeight.semibold,
   },
 })
