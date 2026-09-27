@@ -88,8 +88,8 @@ const styles = createStyle({
     marginBottom: PageMetrics.toolbarMargin,
   },
   source: { height: PageMetrics.controlHeight, flexShrink: 0 },
-  boardSelector: { flex: 1, height: PageMetrics.controlHeight, borderRadius: Radius.control },
+  boardSelector: { width: 110, flexShrink: 1, height: PageMetrics.controlHeight, borderRadius: Radius.control },
   boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 },
-  boardSelectorText: { flex: 1, textAlign: 'center', textAlignVertical: 'center', paddingRight: 6 },
+  boardSelectorText: { flex: 1, textAlign: 'left', textAlignVertical: 'center', paddingRight: 6 },
   playAllButton: { minHeight: PageMetrics.controlHeight, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', gap: 6, alignItems: 'center', justifyContent: 'center' },
 })

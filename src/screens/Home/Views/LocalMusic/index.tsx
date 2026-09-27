@@ -357,7 +357,7 @@ const styles = createStyle({
   playAllAction: { minWidth: 88, minHeight: 44, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 },
   searchCard: { marginHorizontal: PageMetrics.gutter, marginBottom: 10, minHeight: 42, borderRadius: Radius.control, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 11, flexDirection: 'row', alignItems: 'center' },
   searchInput: { height: 38, paddingLeft: 8, fontSize: 13 },
-  sectionHeader: { minHeight: 32, paddingHorizontal: PageMetrics.gutter, paddingBottom: 7, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sectionHeader: { minHeight: 32, paddingHorizontal: PageMetrics.gutter, paddingBottom: 7, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 8 },
   sortBar: { height: 34, flexGrow: 0, flexShrink: 1, flexDirection: 'row', alignItems: 'center', padding: 3, borderRadius: Radius.pill, gap: 2 },
   sortButton: { height: '100%', flexGrow: 1, paddingHorizontal: 7, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
   list: { paddingHorizontal: PageMetrics.gutter, paddingBottom: 32 },
