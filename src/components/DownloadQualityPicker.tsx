@@ -7,7 +7,7 @@ import { Icon } from '@/components/common/Icon'
 import { downloadMusic, getDownloadQualities } from '@/core/download'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
-import { Radius, createGlassStyle } from '@/theme/layout'
+import { IconSize, Radius, createGlassStyle } from '@/theme/layout'
 
 export interface DownloadQualityPickerType {
   show: (musicInfo: LX.Music.MusicInfoOnline) => void
@@ -35,6 +35,8 @@ export default forwardRef<DownloadQualityPickerType>((_, ref) => {
   return (
     <Popup ref={popupRef} title={global.i18n.t('download_quality_title')}>
       <View style={styles.content}>
+        {/* 玻璃浮层：这些是底部弹层里的内容，浮在页面之上。此前底色取的是
+            内容层那档浅色玻璃，次要文字实算仅 3.99:1（china_ink），低于 AA 4.5:1。 */}
         {musicInfo ? <View style={{ ...styles.track, ...createGlassStyle(theme, { radius: Radius.card }) }}>
           <View style={{ ...styles.trackIcon, backgroundColor: theme['c-primary-background-active'] }}>
             <Icon name="download-2" size={17} color={theme['c-primary-font-active']} />
@@ -50,11 +52,11 @@ export default forwardRef<DownloadQualityPickerType>((_, ref) => {
             key={quality}
             accessibilityRole="button"
             accessibilityLabel={`${global.i18n.t('player_download')} ${quality}`}
-            style={{ ...styles.qualityButton, ...createGlassStyle(theme, { radius: Radius.control }) }}
+      style={{ ...styles.qualityButton, ...createGlassStyle(theme, { radius: Radius.control }) }}
             onPress={() => { handleSelect(quality) }}
           >
             <Text size={14}>{quality.toUpperCase()}</Text>
-            <Icon name="chevron-right" size={11} color={theme['c-font-label']} />
+            <Icon name="chevron-right" size={IconSize.disclosure} color={theme['c-font-label']} />
           </TouchableOpacity>)}
         </View>
         {!qualities.length ? <Text style={styles.empty} size={12} color={theme['c-font-label']}>{global.i18n.t('download_quality_unavailable')}</Text> : null}

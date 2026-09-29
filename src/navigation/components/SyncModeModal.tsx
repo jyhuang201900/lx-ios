@@ -120,15 +120,15 @@ const ListModeModal = () => {
         </ScrollView>
       </View>
       <View style={styles.tips}>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={theme['c-font-label']}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_merge_tip')}</Text>
           {t('sync__list_mode_merge_tip_desc')}
         </Text>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={theme['c-font-label']}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_overwrite_tip')}</Text>
           {t('sync__list_mode_overwrite_tip_desc')}
         </Text>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={theme['c-font-label']}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_other_tip')}</Text>
           {t('sync__list_mode_other_tip_desc')}
         </Text>
@@ -183,15 +183,15 @@ const DislikeModeModal = () => {
         </ScrollView>
       </View>
       <View style={styles.tips}>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={theme['c-font-label']}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_merge_tip')}</Text>
           {t('sync__dislike_mode_merge_tip_desc')}
         </Text>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={theme['c-font-label']}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_overwrite_tip')}</Text>
           {t('sync__dislike_mode_overwrite_tip_desc')}
         </Text>
-        <Text style={styles.tip} size={12} color={theme['c-600']}>
+        <Text style={styles.tip} size={12} color={theme['c-font-label']}>
           <Text style={styles.tipTitle} size={12}>{t('sync__mode_other_tip')}</Text>
           {t('sync__dislike_mode_other_tip_desc')}
         </Text>

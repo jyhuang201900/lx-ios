@@ -102,7 +102,7 @@ export default forwardRef<ModalType, ModalProps>(({ onOpenId }, ref) => {
               {/* <SourceSelector style={{ ...styles.selector, backgroundColor: theme['c-primary-input-background'] }} ref={sourceSelectorRef} onSourceChange={onSourceChange} /> */}
               <IdInput ref={inputRef} />
             </View>
-            <Text style={styles.inputTipText} size={13} color={theme['c-600']}>{t('songlist_open_input_tip')}</Text>
+            <Text style={styles.inputTipText} size={13} color={theme['c-font-label']}>{t('songlist_open_input_tip')}</Text>
           </View>
         </ConfirmAlert>
       : null

@@ -259,11 +259,15 @@ const state: InitState = {
     'c-badge-tertiary': '#e7aa36',
 
     'c-font': theme['c-850'],
-    'c-font-label': theme['c-700'], // 与 themes/index.ts 一致：次要文字需在玻璃表面上仍满足 WCAG AA 4.5:1
-    'c-primary-font': theme['c-primary'],
+    'c-font-label': theme['c-700'], // 与 themes/index.ts 一致：次要文字需满足 WCAG AA 4.5:1
+    // 品牌色作前景色时压深，与 themes/index.ts 的取值规则保持一致（dark-500 / dark-700）
+    'c-primary-font': theme['c-primary-dark-500'],
     'c-primary-font-hover': theme['c-primary-alpha-300'],
-    'c-primary-font-active': theme['c-primary-dark-100-alpha-200'],
+    'c-primary-font-active': theme['c-primary-dark-700'],
     'c-primary-background': theme['c-primary-light-400-alpha-700'],
+    // 实心品牌按钮底色；c-primary 本身明度居中，撑不住文字（见 themes/index.ts 注释）
+    'c-primary-solid': theme['c-primary-dark-500'],
+    'c-on-solid': theme['c-000'],
     'c-primary-background-hover': theme['c-primary-light-300-alpha-800'],
     'c-primary-background-active': theme['c-primary-light-100-alpha-800'],
     'c-primary-input-background': theme['c-primary-light-400-alpha-700'],
@@ -277,9 +281,12 @@ const state: InitState = {
     'c-button-background-active': theme['c-primary-light-100-alpha-600'],
     'c-list-header-border-bottom': theme['c-primary-alpha-900'],
     'c-content-background': theme['c-primary-light-1000'],
-    // 玻璃表面（默认主题为浅色，与 themes/index.ts 的取值规则保持一致）
-    'c-glass-surface': theme['c-primary-light-600-alpha-200'],
+    // 内容层控件用不透明表面（HIG materials.md：内容层不使用 Liquid Glass）
+    'c-control-surface': theme['c-primary-light-1000'],
+    // 玻璃只保留浮层一档，与 themes/index.ts 的取值规则保持一致
     'c-glass-overlay': theme['c-primary-light-1000-alpha-100'],
+    // 图表参考线，与 themes/index.ts 的取值规则保持一致
+    'c-chart-baseline': theme['c-500'],
     'c-border-background': theme['c-primary-light-100-alpha-700'],
 
     'bg-image-position': 'center',

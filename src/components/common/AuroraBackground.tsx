@@ -21,33 +21,39 @@ interface Orb {
 }
 
 /**
- * 光晕布局：四团大柔光交错分布，覆盖四个象限，避免整屏出现"只有一角有色"。
+ * 光晕布局：三团大柔光交错分布，覆盖三个象限，避免整屏出现"只有一角有色"。
  * 位置刻意错开，使漂移过程中不会同时聚到同一点。
+ *
+ * 从四团减到三团：静态版是每一屏的底色，四团会互相叠出脏色；
+ * 减到三团后单团面积更大，色相更干净。
  */
 const ORBS: Orb[] = [
   { color: 'c-primary', size: 1.05, left: -0.3, top: -0.16, opacity: 0.62, drift: 34, duration: 9000, delay: 0 },
-  { color: 'c-badge-secondary', size: 0.9, left: 0.5, top: -0.02, opacity: 0.5, drift: -30, duration: 11500, delay: 800 },
-  { color: 'c-badge-tertiary', size: 0.78, left: -0.16, top: 0.44, opacity: 0.46, drift: 26, duration: 13000, delay: 1600 },
-  { color: 'c-primary', size: 0.88, left: 0.46, top: 0.62, opacity: 0.56, drift: -22, duration: 14500, delay: 2400 },
+  { color: 'c-badge-secondary', size: 0.9, left: 0.46, top: 0.5, opacity: 0.42, drift: -26, duration: 13000, delay: 1600 },
+  { color: 'c-primary', size: 0.88, left: 0.46, top: 0.62, opacity: 0.5, drift: -22, duration: 14500, delay: 2400 },
 ]
 
 /** 深色主题下同样的饱和度会压低次要文字对比度，整体减一档亮度 */
 const DARK_OPACITY_SCALE = 0.6
 
-const OrbView = memo(({ orb, color, base, width, height, opacityScale }: {
+const OrbView = memo(({ orb, color, base, width, height, opacityScale, animated }: {
   orb: Orb
   color: string
   base: number
   width: number
   height: number
   opacityScale: number
+  animated: boolean
 }) => {
   const reduceMotion = useReduceMotion()
   const progress = useRef(new Animated.Value(0)).current
   const size = orb.size * base
 
   useEffect(() => {
-    if (reduceMotion) return
+    // 静态版直接不启动循环。四个 Animated.loop 常驻 9~14.5s，
+    // 在列表滚动时同样持续跑，属于 HIG motion.md 说的
+    // "avoid adding motion to UI interactions that occur frequently"
+    if (reduceMotion || !animated) return
     const animation = Animated.loop(Animated.sequence([
       Animated.delay(orb.delay),
       Animated.timing(progress, {
@@ -65,7 +71,7 @@ const OrbView = memo(({ orb, color, base, width, height, opacityScale }: {
     ]))
     animation.start()
     return () => { animation.stop() }
-  }, [orb.delay, orb.duration, progress, reduceMotion])
+  }, [animated, orb.delay, orb.duration, progress, reduceMotion])
 
   const translateY = progress.interpolate({
     inputRange: [0, 1],
@@ -101,8 +107,15 @@ const OrbView = memo(({ orb, color, base, width, height, opacityScale }: {
  * 由遮罩承担对比度兜底（正文与次要文字仍满足 WCAG AA），
  * 同时上层玻璃面板能透出被遮罩调和过的色彩，得到"色彩从毛玻璃里渗出来"的观感。
  * 若直接压在最上层，饱和色会大面积落在列表文字背后，次要文字对比度会跌破 AA。
+ *
+ * animated：只有播放详情页传 true。那里是整个产品唯一的"此刻"，
+ * 动态光晕为它服务；其余页面用静态版，让签名元素只出现一次。
  */
-export default memo(({ width, height }: { width: number, height: number }) => {
+export default memo(({ width, height, animated = false }: {
+  width: number
+  height: number
+  animated?: boolean
+}) => {
   const theme = useTheme()
   // 用实际布局尺寸校正：iOS 的 SafeAreaView 会让容器比窗口矮，直接用窗口高度会把下方光晕推出可视区
   const [size, setSize] = useState({ width, height })
@@ -126,6 +139,7 @@ export default memo(({ width, height }: { width: number, height: number }) => {
           width={size.width}
           height={size.height}
           opacityScale={opacityScale}
+          animated={animated}
         />
       ))}
     </View>

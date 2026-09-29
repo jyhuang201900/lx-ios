@@ -54,11 +54,11 @@ export default forwardRef<OpenListType, {}>((props, ref) => {
   return (
     <>
       <Button
-        style={[styles.button, { backgroundColor: theme['c-primary'] }]}
+        style={[styles.button, { backgroundColor: theme['c-primary-solid'] }]}
         onPress={() => modalRef.current?.show(songlistInfoRef.current.source)}
       >
-        <Icon name="album" size={14} color={theme['c-primary-button-font']} />
-        <Text size={12} color={theme['c-primary-button-font']}>{t('songlist_open')}</Text>
+        <Icon name="album" size={14} color={theme['c-on-solid']} />
+        <Text size={12} color={theme['c-on-solid']}>{t('songlist_open')}</Text>
       </Button>
       <Modal ref={modalRef} onOpenId={handleOpenSonglist} />
     </>

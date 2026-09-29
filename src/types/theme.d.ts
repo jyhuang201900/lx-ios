@@ -280,9 +280,33 @@ declare global {
       'c-list-header-border-bottom': string
       'c-content-background': string
       'c-border-background': string
-      /** 玻璃质感表面（半透明，透出已虚化的背景） */
-      'c-glass-surface': string
-      /** 玻璃质感浮层（弹窗/菜单/播放条，比 surface 更实） */
+      /**
+       * 内容层控件表面（搜索框、来源选择、排序标签等）。
+       * 按 HIG materials.md，内容层不使用 Liquid Glass，改用不透明的标准材质。
+       */
+      'c-control-surface': string
+      /**
+       * 图表参考线（均衡器曲线的 0dB 基线等）。
+       * 与 c-border-background 分开：后者是装饰性描边，在浮层上可能低到 1.17:1，
+       * 而参考线必须能被看见。
+       */
+      'c-chart-baseline': string
+      /**
+       * 实心品牌按钮的底色。与 c-primary-background 分工：
+       * 那个是浅 tint 配深品牌字（次要按钮），这个是实心深底配 c-000（主动作）。
+       * c-primary 本身明度居中，白字与近黑字都不达标，不能直接当按钮底。
+       */
+      'c-primary-solid': string
+      /**
+       * 压在实心品牌底（c-primary-solid）上的文字与图标色。
+       * 随外观翻转：浅色主题下是白，深色主题下是近黑。
+       * 用它而不是 c-000，是为了让调用点表达意图而不是色阶档位。
+       */
+      'c-on-solid': string
+      /**
+       * 玻璃质感浮层。仅供浮动的功能层使用——标签栏、迷你播放条、顶栏、
+       * sheet / menu / dialog、播放页胶囊。内容层请用 c-control-surface。
+       */
       'c-glass-overlay': string
       'bg-image'?: ImageSourcePropType
     }

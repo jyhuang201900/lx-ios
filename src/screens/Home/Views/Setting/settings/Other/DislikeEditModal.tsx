@@ -106,7 +106,7 @@ export default forwardRef<DislikeEditModalType, DislikeEditModalProps>(({ onSave
           <Dialog height='80%' ref={dialogRef} bgHide={false}>
             <View style={styles.content}>
               <RuleInput ref={inputRef} />
-              <Text style={styles.inputTipText} size={13} color={theme['c-600']}>{t('setting_dislike_list_tips')}</Text>
+              <Text style={styles.inputTipText} size={13} color={theme['c-font-label']}>{t('setting_dislike_list_tips')}</Text>
             </View>
             <View style={styles.btns}>
               <Button style={{ ...styles.btn, backgroundColor: theme['c-button-background'] }} onPress={handleCancel}>

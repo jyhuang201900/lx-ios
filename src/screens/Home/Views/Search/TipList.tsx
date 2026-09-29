@@ -115,9 +115,6 @@ export default forwardRef<TipListType, TipListProps>(({ onSearch }, ref) => {
     )
   }
   const getkey: SearchTipListProps['keyExtractor'] = (item, index) => String(index)
-  const getItemLayout: SearchTipListProps['getItemLayout'] = (data, index) => {
-    return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
-  }
 
   return (
     visible
@@ -126,7 +123,6 @@ export default forwardRef<TipListType, TipListProps>(({ onSearch }, ref) => {
           renderItem={renderItem}
           onPressBg={() => searchTipListRef.current?.setList([])}
           keyExtractor={getkey}
-          getItemLayout={getItemLayout}
         />
       : null
   )
@@ -135,7 +131,7 @@ export default forwardRef<TipListType, TipListProps>(({ onSearch }, ref) => {
 
 const styles = createStyle({
   item: {
-    height: ITEM_HEIGHT,
+    minHeight: ITEM_HEIGHT,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,

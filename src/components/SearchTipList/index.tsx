@@ -133,12 +133,12 @@ const Component = <T extends ItemT<T>>({ onPressBg = noop, hideWhenEmpty = true,
         ],
       }}>
       <View
-        style={styles.mask}
+      style={{ ...styles.mask, backgroundColor: theme.isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }}
         onTouchStart={onPressBg}></View>
       <View style={styles.content}>
         <View style={{
           ...styles.containerShadow,
-          ...createGlassStyle(theme, { level: 'overlay', radius: Radius.card }),
+          ...createGlassStyle(theme, { radius: Radius.card }),
         }}>
           <View style={styles.containerClip}>
             <List ref={listRef} {...props} />
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   mask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    // 底色由调用处按主题给出：深色下 5% 黑几乎不可见，反向用白才有等效压暗感
   },
   containerShadow: {
     flex: 0,

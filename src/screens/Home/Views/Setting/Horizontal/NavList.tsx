@@ -29,7 +29,7 @@ const ListItem = memo(({ id, activeId, onPress }: {
   }
 
   return (
-    <View style={{ ...styles.listItem, height: ITEM_HEIGHT }}>
+      <View style={{ ...styles.listItem, minHeight: ITEM_HEIGHT }}>
       {
         active
           ? <Icon style={styles.listActiveIcon} name="chevron-right" size={12} color={theme['c-primary-font']} />
@@ -68,9 +68,6 @@ export default ({ onChangeId }: {
     />
   )
   const getkey: FlatListType['keyExtractor'] = item => item
-  const getItemLayout: FlatListType['getItemLayout'] = (data, index) => {
-    return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
-  }
 
   return (
     <FlatList
@@ -85,7 +82,6 @@ export default ({ onChangeId }: {
       renderItem={renderItem}
       keyExtractor={getkey}
       // extraData={activeIndex}
-      getItemLayout={getItemLayout}
     />
   )
 }

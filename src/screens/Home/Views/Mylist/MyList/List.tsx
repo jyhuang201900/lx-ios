@@ -13,7 +13,7 @@ import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 import Loading from '@/components/common/Loading'
 import listState from '@/store/list/state'
 import { LIST_IDS } from '@/config/constant'
-import { ListMetrics, PageMetrics, Radius, Typography, createGlassStyle, glassCardShadow, neonGlow } from '@/theme/layout'
+import { ListMetrics, PageMetrics, Radius, Typography, createContentSurface, glassCardShadow, neonGlow } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
@@ -44,11 +44,14 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   }
 
   return (
-    <View style={{ ...styles.cardShell, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-glass-surface'], ...(active ? neonGlow(theme, { radius: 12, opacity: 0.32 }) : glassCardShadow) }}>
-      <View style={{ ...styles.card, ...createGlassStyle(theme, { radius: Radius.card }), ...(active ? { borderColor: theme['c-primary'], borderTopColor: theme['c-primary'] } : null) }}>
+      <View style={{ ...styles.cardShell, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-control-surface'], ...(active ? neonGlow(theme, { radius: 12, opacity: 0.32 }) : glassCardShadow) }}>
+      <View style={{ ...styles.card, ...createContentSurface(theme, { radius: Radius.card }), ...(active ? { borderColor: theme['c-primary'], borderTopColor: theme['c-primary'] } : null) }}>
       <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} style={styles.cardMain} onPress={() => { onPress(item) }}>
-        <View style={{ ...styles.cardIcon, backgroundColor: active ? theme['c-primary'] : theme['c-primary-background-active'] }}>
-          <Icon name={item.id === LIST_IDS.LOVE ? 'love' : item.id === LIST_IDS.DEFAULT ? 'play-outline' : 'album'} size={17} color={active ? theme['c-font'] : theme['c-font-label']} />
+        <View style={{ ...styles.cardIcon, backgroundColor: active ? theme['c-primary-dark-500'] : theme['c-primary-background-active'] }}>
+            {/* 选中态的图标底是 c-primary-dark-500，图标必须用配合深底的 c-000；
+                同一文件里另外三处 `active ? c-font : c-font-label` 都在卡片表面上，
+                不要一起改——那里的 c-font 是对的。 */}
+            <Icon name={item.id === LIST_IDS.LOVE ? 'love' : item.id === LIST_IDS.DEFAULT ? 'play-outline' : 'album'} size={17} color={active ? theme['c-on-solid'] : theme['c-font-label']} />
         </View>
         <View style={styles.cardCopy}>
           <Text numberOfLines={2} ellipsizeMode="tail" size={Typography.body} color={theme['c-font']}>{item.name}</Text>
@@ -98,16 +101,16 @@ export default ({ onShowMenu, onCreate }: {
             accessibilityRole="button"
             accessibilityLabel={global.i18n.t('play_all')}
             onPress={() => { void playList(activeListId, 0) }}
-            style={{ ...styles.playAllButton, backgroundColor: theme['c-primary'] }}
+            style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-solid'] }}
           >
-            <Icon name="play" color={theme['c-primary-button-font']} size={15} />
-            <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('play_all')}</Text>
+            <Icon name="play" color={theme['c-on-solid']} size={15} />
+            <Text size={12} color={theme['c-on-solid']}>{global.i18n.t('play_all')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             accessibilityRole="button"
             accessibilityLabel={global.i18n.t('list_create')}
             onPress={onCreate}
-            style={{ ...styles.createButton, ...createGlassStyle(theme, { radius: Radius.pill }) }}
+            style={{ ...styles.createButton, ...createContentSurface(theme, { radius: Radius.pill }) }}
           >
             <Icon name="add-music" color={theme['c-primary-font-active']} size={15} />
             <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('list_create')}</Text>

@@ -138,7 +138,7 @@ export default memo(({ componentId }: { componentId: string }) => {
           accessibilityActions={[{ name: 'decrement' }, { name: 'increment' }]}
           accessibilityValue={{ min: 1, max: 2, now: pageIndex + 1 }}
           onAccessibilityAction={onPageAccessibilityAction}
-          style={{ ...styles.pageIndicator, ...createGlassStyle(theme, { level: 'overlay', radius: Radius.pill }) }}
+          style={{ ...styles.pageIndicator, ...createGlassStyle(theme, { radius: Radius.pill }) }}
         >
           <Animated.View
             style={{

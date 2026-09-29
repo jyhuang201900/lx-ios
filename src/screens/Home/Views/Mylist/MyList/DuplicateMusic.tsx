@@ -50,7 +50,7 @@ const ListItem = memo(({ info, index, onRemove, onPlay, selectedList, onPress }:
   const isSelected = selectedList.includes(info)
 
   return (
-    <View style={{ ...styles.listItem, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)' }} onStartShouldSetResponder={() => true}>
+      <View style={{ ...styles.listItem, minHeight: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)' }} onStartShouldSetResponder={() => true}>
       {/* <View style={styles.listItemLabel}>
         <Text style={styles.sn} size={13} color={theme['c-font-label']}>{info.index + 1}</Text>
       </View> */}

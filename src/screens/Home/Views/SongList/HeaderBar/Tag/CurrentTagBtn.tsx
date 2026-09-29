@@ -5,7 +5,7 @@ import { Icon } from '@/components/common/Icon'
 import { useI18n } from '@/lang'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
-import { Radius, createGlassStyle } from '@/theme/layout'
+import { IconSize, Radius, createContentSurface } from '@/theme/layout'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
 
@@ -30,10 +30,10 @@ export default forwardRef<CurrentTagBtnType, CurrentTagBtnProps>(({ onShowList }
   }))
 
   return (
-    <Button style={[styles.btn, createGlassStyle(theme, { radius: Radius.control })]} onPress={onShowList}>
+    <Button style={[styles.btn, createContentSurface(theme, { radius: Radius.control })]} onPress={onShowList}>
       <View style={styles.content}>
         <Text style={styles.sourceMenu} numberOfLines={1} color={theme['c-font']}>{name}</Text>
-        <Icon name="chevron-right" size={11} color={theme['c-font-label']} />
+        <Icon name="chevron-right" size={IconSize.disclosure} color={theme['c-font-label']} />
       </View>
     </Button>
   )

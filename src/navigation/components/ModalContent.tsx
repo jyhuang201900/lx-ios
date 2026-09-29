@@ -15,7 +15,7 @@ export default ({ children }: Props) => {
 
   return (
     <View style={{ ...styles.centeredView, backgroundColor: 'rgba(50,50,50,.3)' }}>
-      <View style={{ ...styles.modalView, ...createGlassStyle(theme, { level: 'overlay', radius: Radius.card }) }}>
+      <View style={{ ...styles.modalView, ...createGlassStyle(theme, { radius: Radius.card }) }}>
         <View style={{ ...styles.header, backgroundColor: theme['c-primary-light-100-alpha-100'] }}></View>
         {children}
       </View>

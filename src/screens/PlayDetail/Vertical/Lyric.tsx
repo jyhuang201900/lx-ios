@@ -82,13 +82,20 @@ const LrcLine = memo(({ line, lineNum, activeLine, activeWordIndex, activeWordPr
   const colors = useMemo(() => {
     const active = activeLine == lineNum
     return active ? [
-      theme['c-primary-dark-200'],
-      theme['c-450'],
+      // 已播放字：品牌色。c-primary-font 在第九轮改成了「自我纠正」档位——
+      // 它会向下找到第一个在页面底色上满足 AA 的色阶，因此对任意主色都达标
+      // （原先写死的 c-primary-dark-200 在 orange 上只有 2.93:1）。
+      theme['c-primary-font'],
+      // 当前行未播放：c-font-label，比非当前行明显更强
+      theme['c-font-label'],
       1,
     ] as const : [
-      theme['c-450'],
-      theme['c-450'],
-      0.6,
+      // 非当前行：c-650 最低 5.02:1（封面底图最坏 4.77:1）。
+      // 原来用 c-450 再乘 0.6 不透明度 → 实际只有 2.01:1，
+      // 16 个主题里 15 个不达标，而这是全应用最大的表面。
+      theme['c-650'],
+      theme['c-650'],
+      1,
     ] as const
   }, [activeLine, lineNum, theme])
 
@@ -101,31 +108,36 @@ const LrcLine = memo(({ line, lineNum, activeLine, activeWordIndex, activeWordPr
   // https://stackoverflow.com/a/72822360
   return (
     <TouchableOpacity
-      style={{ ...styles.line, opacity: activeLine == lineNum ? 1 : 0.72 }}
+      // 不再用不透明度做降级：那会把已经偏浅的灰再压下去（原来 0.72 × c-450
+      // 只剩 2.01:1）。当前行改由**字重**标记——零对比度代价，
+      // 而且 HIG accessibility.md 要求信息不能只靠颜色传达，字重正好是第二通道。
+      style={styles.line}
       onLayout={handleLayout}
       onPress={handlePress}
       accessibilityRole="button"
       accessibilityLabel={line.text}
     >
       {
-        lineNum == activeLine && line.words?.length
-          ? (
-              <Text style={{
-                ...styles.lineText,
-                textAlign,
-                lineHeight,
-                opacity: colors[2],
-              }} size={size}>
+      lineNum == activeLine && line.words?.length
+        ? (
+        <Text style={{
+          ...styles.lineText,
+          ...(activeLine == lineNum ? styles.lineTextActive : null),
+          textAlign,
+          lineHeight,
+          opacity: colors[2],
+        }} size={size}>
                 <KaraokeLine words={line.words} activeWordIndex={activeWordIndex} activeWordProgress={activeWordProgress} size={size} playedColor={colors[0]} inactiveColor={colors[1]} />
               </Text>
-            )
-          : (
-              <AnimatedColorText style={{
-                ...styles.lineText,
-                textAlign,
-                lineHeight,
-              }} textBreakStrategy="simple" color={colors[0]} opacity={colors[2]} size={size}>{line.text}</AnimatedColorText>
-            )
+          )
+        : (
+      <AnimatedColorText style={{
+        ...styles.lineText,
+        ...(activeLine == lineNum ? styles.lineTextActive : null),
+        textAlign,
+        lineHeight,
+      }} textBreakStrategy="simple" color={colors[0]} opacity={colors[2]} size={size}>{line.text}</AnimatedColorText>
+          )
       }
       {
         line.extendedLyrics.map((lrc, index) => {
@@ -133,6 +145,7 @@ const LrcLine = memo(({ line, lineNum, activeLine, activeWordIndex, activeWordPr
           if (!text) return null
           return (<AnimatedColorText style={{
             ...styles.lineTranslationText,
+            ...(activeLine == lineNum ? styles.lineTextActive : null),
             textAlign,
             lineHeight: lineHeight * 0.8,
           }} textBreakStrategy="simple" key={index} color={colors[1]} opacity={colors[2]} size={size * 0.8}>{text}</AnimatedColorText>)
@@ -399,6 +412,11 @@ const styles = createStyle({
     // paddingTop: 5,
     // paddingBottom: 5,
     // opacity: 0,
+  },
+  // 当前行用字重标记。它是免费的——不消耗任何对比度，
+  // 而原来的不透明度方案把非当前行压到了 2.01:1。
+  lineTextActive: {
+    fontWeight: '600',
   },
   lineTranslationText: {
     textAlign: 'center',

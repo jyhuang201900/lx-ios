@@ -68,7 +68,9 @@ const TogglePlayBtn = ({ size }: { size: number }) => {
         togglePlay()
       }}
     >
-      <Icon name={isPlay ? 'pause' : 'play'} color={theme['c-button-font']} rawSize={size * 0.7} />
+      {/* 与竖屏播放键一致：实心底上的图标要用选中态字色，
+          c-button-font 在这个底色上只有 3.89:1（orange）不过 AA */}
+      <Icon name={isPlay ? 'pause' : 'play'} color={theme['c-button-font-selected']} rawSize={size * 0.7} />
     </TouchableOpacity>
   )
 }

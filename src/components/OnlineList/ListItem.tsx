@@ -60,7 +60,7 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
   const singer = `${item.singer}${isShowAlbumName && item.meta.albumName ? ` · ${item.meta.albumName}` : ''}`
 
   return (
-    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'] }}>
+    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, minHeight: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'] }}>
       <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }} style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
         <Text style={styles.sn} size={13} color={theme['c-font-label']}>{index + 1}</Text>
         <View style={styles.itemInfo}>

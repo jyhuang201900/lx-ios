@@ -7,7 +7,7 @@ import playerState from '@/store/player/state'
 import { LIST_IDS, NAV_SHEAR_NATIVE_IDS } from '@/config/constant'
 import Image from '@/components/common/Image'
 import { useTheme } from '@/store/theme/hook'
-import { Radius, createShadow } from '@/theme/layout'
+import { Radius, createShadow, createSpecularEdge } from '@/theme/layout'
 import { useCallback } from 'react'
 import { setLoadErrorPicUrl, setMusicInfo } from '@/core/player/playInfo'
 
@@ -28,16 +28,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: Radius.control,
-  },
-  specularEdge: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    borderRadius: Radius.control,
-    borderWidth: 1,
-    borderColor: 'transparent',
   },
   imageShadow: createShadow({ opacity: 0.12, radius: 6, offsetY: 3, elevation: 2 }),
 })
@@ -75,12 +65,7 @@ export default ({ isHome }: { isHome: boolean }) => {
           <Image url={musicInfo.pic} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_pic} style={styles.image} onError={handleError} />
           <View
             pointerEvents="none"
-            style={{
-              ...styles.specularEdge,
-              borderTopColor: theme.isDark ? 'rgba(255,255,255,0.42)' : 'rgba(255,255,255,0.78)',
-              borderLeftColor: theme.isDark ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.42)',
-              borderRightColor: theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.20)',
-            }}
+            style={createSpecularEdge(theme, { radius: Radius.control, width: 1, intensity: 0.86 })}
           />
         </View>
       </View>

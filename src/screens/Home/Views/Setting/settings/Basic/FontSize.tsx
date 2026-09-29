@@ -51,7 +51,7 @@ const SizeText = () => {
   const t = useI18n()
   const theme = useTheme()
 
-  return <Text style={{ fontSize: size }} color={theme['c-primary']}>{t('setting_basic_font_size_preview')}</Text>
+  return <Text style={{ fontSize: size }} color={theme['c-primary-font']}>{t('setting_basic_font_size_preview')}</Text>
 }
 
 const Item = ({ size, label }: {

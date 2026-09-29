@@ -11,7 +11,7 @@ import Image from '@/components/common/Image'
 import { useStatusbarHeight } from '@/store/common/hook'
 import commonState from '@/store/common/state'
 import { useTheme } from '@/store/theme/hook'
-import { Radius, neonGlow } from '@/theme/layout'
+import { Radius, neonGlow, createSpecularEdge } from '@/theme/layout'
 
 
 export default ({ componentId }: { componentId: string }) => {
@@ -48,12 +48,7 @@ export default ({ componentId }: { componentId: string }) => {
             <Image url={pic} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_pic} style={styles.image} />
             <View
               pointerEvents="none"
-              style={{
-                ...styles.specularEdge,
-                borderTopColor: theme.isDark ? 'rgba(255,255,255,0.46)' : 'rgba(255,255,255,0.82)',
-                borderLeftColor: theme.isDark ? 'rgba(255,255,255,0.20)' : 'rgba(255,255,255,0.48)',
-                borderRightColor: theme.isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.24)',
-              }}
+              style={createSpecularEdge(theme, { radius: Radius.card, width: 1.2 })}
             />
           </View>
         </View>
@@ -89,15 +84,5 @@ const styles = createStyle({
     width: '100%',
     height: '100%',
     borderRadius: Radius.card,
-  },
-  specularEdge: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    borderRadius: Radius.card,
-    borderWidth: 1.2,
-    borderColor: 'transparent',
   },
 })

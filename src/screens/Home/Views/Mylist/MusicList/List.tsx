@@ -7,7 +7,7 @@ import playerState from '@/store/player/state'
 import { getListPosition, getListPrevSelectId, saveListPosition } from '@/utils/data'
 // import { useMusicList } from '@/store/list/hook'
 import { getListMusics, setActiveList } from '@/core/list'
-import ListItem, { ITEM_HEIGHT } from './ListItem'
+import ListItem from './ListItem'
 import { createStyle, getRowInfo } from '@/utils/tools'
 import { usePlayInfo, usePlayMusicInfo } from '@/store/player/hook'
 import type { Position } from './ListMenu'
@@ -272,8 +272,20 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
     />
   ), [activeIndex, handlePress, handleLongPress, onShowMenu, selectedIds, isShowAlbumName, isShowInterval])
   const getkey = useCallback<NonNullable<FlatListType['keyExtractor']>>(item => item.id, [])
-  const getItemLayout = useCallback<NonNullable<FlatListType['getItemLayout']>>((data, index) => {
-    return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
+
+  /**
+   * 行高改为自适应后不能再提供 getItemLayout（那要求每行等高），
+   * 于是 scrollToIndex 对尚未测量的远端行会失败。用 averageItemLength 先粗跳，
+   * 下一帧目标附近已被测量后再精跳——这是 RN 对可变行高的标准处理。
+   */
+  const handleScrollToIndexFailed = useCallback<NonNullable<FlatListType['onScrollToIndexFailed']>>((info) => {
+    flatListRef.current?.scrollToOffset({
+      offset: info.averageItemLength * info.index,
+      animated: true,
+    })
+    setTimeout(() => {
+      flatListRef.current?.scrollToIndex({ index: info.index, viewPosition: 0.3, animated: false })
+    }, 60)
   }, [])
 
   const handleGoSearch = useCallback(() => {
@@ -307,7 +319,7 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
       renderItem={renderItem}
       keyExtractor={getkey}
       extraData={activeIndex}
-      getItemLayout={getItemLayout}
+      onScrollToIndexFailed={handleScrollToIndexFailed}
       contentContainerStyle={styles.content}
       ListEmptyComponent={emptyComponent}
     />

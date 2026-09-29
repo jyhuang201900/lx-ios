@@ -13,10 +13,36 @@ import { useBgPic } from '@/store/common/hook'
 
 interface Props {
   children: React.ReactNode
+  /**
+   * 极光是否播放动态。
+   * 默认 false（静态）：HIG motion.md 指出应用应避免给高频界面加常驻动效，
+   * 静态版仍是每屏的品牌底色。只有播放详情页传 true。
+   */
+  aurora?: 'static' | 'animated'
+  /**
+   * 用当前歌曲封面作为整页底图。
+   *
+   * 只有播放详情页会用。依据 HIG materials.md：
+   * "The clear variant is highly translucent, which is ideal for prioritizing the
+   *    visibility of the underlying content… Use this variant for components that
+   *    float above media backgrounds — such as photos and videos"
+   * 封面就是媒体，而播放详情页的控件正是浮在它上面的功能层。
+   *
+   * 与主题底图分支的差别有三点，都是被对比度逼出来的：
+   * 1. 模糊更强——封面要读成一块色彩场，不是图像；
+   * 2. 遮罩更实，且用主题自己的底色而非固定黑白。固定黑遮罩会把最坏情况
+   *    推向"纯黑封面"，浅色主题下次要文字的余量最薄；用主题底色则把封面
+   *    往主题基调推，对比度波动收窄，色相仍然保留；
+   * 3. 不叠极光——封面本身就是色彩来源，两个色彩来源会互相打架。
+   */
+  cover?: string | null
 }
 
 // 模糊越强，上层玻璃透出的背景越均匀，"毛玻璃"感越明显（RN 只能在 Image 上用 blurRadius）
 const BLUR_RADIUS = Math.max(scaleSizeAbsHR(26), 14)
+
+/** 封面底图的模糊强度：比主题底图更重，让封面读成色彩场而不是图像 */
+const COVER_BLUR_RADIUS = Math.max(scaleSizeAbsHR(54), 30)
 
 const ContentContainer = ({ children }: Props) => {
   if (Platform.OS == 'ios') return <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
@@ -42,7 +68,7 @@ const FrostFilm = memo(({ isDark }: { isDark: boolean }) => (
   </View>
 ))
 
-export default ({ children }: Props) => {
+export default ({ children, aurora = 'static', cover = null }: Props) => {
   const theme = useTheme()
   const windowSize = useWindowSize()
   const pic = useBgPic()
@@ -76,7 +102,7 @@ export default ({ children }: Props) => {
         blurRadius={BLUR_RADIUS}
       />
       {/* 极光层压在遮罩之下：色彩由遮罩统一调和，既保证对比度又让上层玻璃有颜色可透 */}
-      <AuroraBackground width={windowSize.width} height={windowSize.height} />
+      <AuroraBackground width={windowSize.width} height={windowSize.height} animated={aurora === 'animated'} />
       <View
         pointerEvents="none"
         style={[
@@ -95,7 +121,7 @@ export default ({ children }: Props) => {
         </View>
       </ContentContainer>
     </View>
-  ), [children, theme, windowSize.height, windowSize.width])
+  ), [aurora, children, theme, windowSize.height, windowSize.width])
   const picComponent = useMemo(() => {
     return (
       <View style={{ flex: 1, overflow: 'hidden' }}>
@@ -126,10 +152,42 @@ export default ({ children }: Props) => {
     )
   }, [children, pic, theme, windowSize.height, windowSize.width])
 
+  // 封面底图：见 Props.cover 的说明。
+  // 遮罩取 c-main-background（主题自己的底色）而不是黑/白，是为了让对比度
+  // 可预测——RN 没有 backdrop-filter，玻璃是不透明的，底图只能通过玻璃那点
+  // 不透明度渗色。底色越贴近主题，文字对比度的波动就越小。
+  const coverComponent = useMemo(() => (
+    <View style={{ flex: 1, overflow: 'hidden' }}>
+      <ImageBackground
+        style={{ position: 'absolute', left: 0, top: 0, height: windowSize.height, width: windowSize.width, backgroundColor: theme['c-content-background'] }}
+        source={{ uri: cover!, headers: defaultHeaders }}
+        resizeMode="cover"
+        // 比主题底图更糊：封面要读成色彩场而不是图像，细节只会变成噪点
+        blurRadius={COVER_BLUR_RADIUS}
+      />
+      <View
+        pointerEvents="none"
+        style={[
+          StyleSheet.absoluteFill,
+          {
+            backgroundColor: theme['c-main-background'],
+            opacity: theme.isDark ? 0.72 : 0.76,
+          },
+        ]}
+      />
+      <FrostFilm isDark={theme.isDark} />
+      <ContentContainer>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
+          {children}
+        </View>
+      </ContentContainer>
+    </View>
+  ), [children, cover, theme, windowSize.height, windowSize.width])
+
   return (
     <>
       <SizeView />
-      {pic ? picComponent : themeComponent}
+      {cover ? coverComponent : pic ? picComponent : themeComponent}
     </>
   )
 }

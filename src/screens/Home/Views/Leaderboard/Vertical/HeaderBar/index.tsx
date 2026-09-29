@@ -13,7 +13,7 @@ import DorpDownMenu from '@/components/common/DorpDownMenu'
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { type BoardItem } from '@/store/leaderboard/state'
-import { PageMetrics, Radius, createGlassStyle } from '@/theme/layout'
+import { PageMetrics, Radius, createContentSurface } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
 
 export interface HeaderBarProps {
@@ -52,7 +52,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 
   return (
     <PageToolbar>
-      <View style={{ ...styles.source, ...createGlassStyle(theme, { radius: Radius.control }) }}>
+      <View style={{ ...styles.source, ...createContentSurface(theme, { radius: Radius.control }) }}>
         <SourceSelector ref={sourceSelectorRef} style={styles.source} onSourceChange={onSourceChange} />
       </View>
       <DorpDownMenu
@@ -60,7 +60,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
         onPress={handleBoardChange}
         activeId={activeId}
         height={PageMetrics.controlHeight}
-        btnStyle={{ ...styles.boardSelector, ...createGlassStyle(theme, { radius: Radius.control }) }}
+        btnStyle={{ ...styles.boardSelector, ...createContentSurface(theme, { radius: Radius.control }) }}
       >
         <View style={styles.boardSelectorContent}>
           <Text style={styles.boardSelectorText} numberOfLines={1} color={theme['c-font']}>
@@ -69,9 +69,9 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
           <Icon name="chevron-right" size={12} color={theme['c-font-label']} />
         </View>
       </DorpDownMenu>
-      <TouchableOpacity accessibilityRole="button" onPress={onPlayAll} style={{ ...styles.playAllButton, backgroundColor: theme['c-primary'] }}>
-        <Icon name="play" size={15} color={theme['c-primary-button-font']} />
-        <Text size={12} color={theme['c-primary-button-font']}>{global.i18n.t('play_all')}</Text>
+      <TouchableOpacity accessibilityRole="button" onPress={onPlayAll} style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-dark-500'] }}>
+        <Icon name="play" size={15} color={theme['c-on-solid']} />
+        <Text size={12} color={theme['c-on-solid']}>{global.i18n.t('play_all')}</Text>
       </TouchableOpacity>
     </PageToolbar>
   )

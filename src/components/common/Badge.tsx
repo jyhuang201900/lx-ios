@@ -1,23 +1,21 @@
 import { memo, useMemo } from 'react'
+import { View } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
-// const menuItemHeight = 42
-// const menuItemWidth = 100
+import { Radius, Typography } from '@/theme/layout'
 
 const styles = createStyle({
+  chip: {
+    borderRadius: Radius.pill,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+  },
   text: {
-    // paddingLeft: 4,
-    // paddingRight: 4,
-    // borderRadius: 2,
-    // lineHeight: 12,
-    // marginTop: 2,
-    marginRight: 5,
+    marginRight: 6,
     fontWeight: '400',
-    // marginRight: 5,
-    // marginBottom: 2,
-    // alignSelf: 'flex-start',
     alignSelf: 'center',
+    textAlign: 'center',
   },
 })
 
@@ -28,26 +26,26 @@ export default memo(({ type = 'normal', children }: {
   children: string
 }) => {
   const theme = useTheme()
-  // console.log(visible)
-  const colors = useMemo(() => {
-    const colors = { textColor: '' }
+  /**
+   * 这里原来是无底色的 9pt 纯文字，颜色取 c-badge-primary/secondary/tertiary——
+   * 那三个都是无对比度保证的品牌/徽章色，实测最低只有 1.75:1（orange），
+   * 而 9pt 连 iOS 的 11pt 最小字号都不到。这是全应用重复次数最多的元素里
+   * 最不可读的一块文字。
+   *
+   * 改成真正的 chip：tint 底 + c-primary-font 字，字号提到 11pt。
+   * 三个 tint 深浅不同，用来区分音质档位，实测 4.82 / 4.93 / 4.98:1 全部达标。
+   */
+  const background = useMemo(() => {
     switch (type) {
-      case 'normal':
-        // colors.bgColor = theme.primary
-        colors.textColor = theme['c-badge-primary']
-        break
-      case 'secondary':
-        // colors.bgColor = theme.primary
-        colors.textColor = theme['c-badge-secondary']
-        break
-      case 'tertiary':
-        // colors.bgColor = theme.primary
-        colors.textColor = theme['c-badge-tertiary']
-        break
+      case 'secondary': return theme['c-primary-light-600-alpha-800']
+      case 'tertiary': return theme['c-primary-light-800-alpha-800']
+      default: return theme['c-primary-light-400-alpha-800']
     }
-    return colors
   }, [type, theme])
 
-  return <Text style={styles.text} size={9} color={colors.textColor}>{children}</Text>
+  return (
+    <View style={[styles.chip, { backgroundColor: background }]}>
+      <Text style={styles.text} size={Typography.caption} color={theme['c-primary-font']}>{children}</Text>
+    </View>
+  )
 })
-

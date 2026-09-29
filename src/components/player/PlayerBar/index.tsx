@@ -7,12 +7,11 @@ import Title from './components/Title'
 import Status from './components/Status'
 import ControlBtn from './components/ControlBtn'
 import MiniProgress from './components/MiniProgress'
-import GlassSheen from '@/components/common/GlassSheen'
 import { createStyle } from '@/utils/tools'
 // import { useSettingValue } from '@/store/setting/hook'
 import { useTheme } from '@/store/theme/hook'
 import { useSettingValue } from '@/store/setting/hook'
-import { PageMetrics, Radius, createGlassStyle, createShadow } from '@/theme/layout'
+import { Radius, createGlassStyle, createShadow } from '@/theme/layout'
 import { usePageVisible } from '@/store/common/hook'
 import { COMPONENT_IDS } from '@/config/constant'
 
@@ -31,8 +30,7 @@ export default memo(({ isHome = false }: { isHome?: boolean }) => {
 
   const playerComponent = useMemo(() => (
     <View style={isIos ? styles.iosHost : undefined}>
-      <View style={{ ...styles.container, ...createGlassStyle(theme, { level: 'overlay', radius: isIos ? Radius.sheet : Radius.card }), ...(isIos ? null : { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }) }}>
-        <GlassSheen radius={isIos ? Radius.sheet : Radius.card} width={120} opacity={0.12} delay={2100} duration={3000} />
+      <View style={{ ...styles.container, ...createGlassStyle(theme, { radius: isIos ? 0 : Radius.card }), ...(isIos ? null : { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }) }}>
         <Pic isHome={isHome} />
         <View style={styles.center}>
           <Title isHome={isHome} />
@@ -54,7 +52,8 @@ export default memo(({ isHome = false }: { isHome?: boolean }) => {
 
 const styles = createStyle({
   iosHost: {
-    paddingHorizontal: PageMetrics.gutter,
+    // 不内缩：与通栏标签栏连成一个底部单元，对应 iOS 26 把 MiniPlayer
+    // 与标签栏合并为一个浮动组件的做法
     paddingBottom: 5,
   },
   container: {

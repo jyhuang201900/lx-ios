@@ -80,7 +80,7 @@ const ListItem = memo(({ info, onPlay, onOpenDetail }: {
   const theme = useTheme()
 
   return (
-    <View style={{ ...styles.listItem, height: ITEM_HEIGHT }} onStartShouldSetResponder={() => true}>
+      <View style={{ ...styles.listItem, minHeight: ITEM_HEIGHT }} onStartShouldSetResponder={() => true}>
       {/* <View style={styles.listItemLabel}>
         <Text style={styles.sn} size={13} color={theme['c-font-label']}>{info.index + 1}</Text>
       </View> */}
@@ -141,9 +141,6 @@ const List = ({ source, lists, onPlay }: {
     return <ListItem info={item} onPlay={onPlay} onOpenDetail={openDetail} />
   }, [onPlay, openDetail])
   const getkey = useCallback<NonNullable<FlatListProps['keyExtractor']>>(item => item.id, [])
-  const getItemLayout = useCallback<NonNullable<FlatListProps['getItemLayout']>>((data, index) => {
-    return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
-  }, [])
 
   return (
     <FlatList
@@ -155,7 +152,6 @@ const List = ({ source, lists, onPlay }: {
       data={list}
       renderItem={renderItem}
       keyExtractor={getkey}
-      getItemLayout={getItemLayout}
     />
   )
 }
@@ -173,8 +169,8 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
           <Text style={styles.detailInfoNameText} color={theme['c-font']} size={13} numberOfLines={2}>
             {info.name}
           </Text>
-          <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{info.source}</Text>
-          <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{info.interval}</Text>
+          <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary-font']}>{info.source}</Text>
+          <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary-font']}>{info.interval}</Text>
         </View>
         <View style={styles.listItemAlbum}>
           <Text color={theme['c-font']} size={12} numberOfLines={1}>
@@ -196,8 +192,8 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
                 <Text style={styles.detailInfoNameText} color={theme['c-font']} size={13} numberOfLines={2}>
                   {toggleSource.name}
                 </Text>
-                <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{toggleSource.source}</Text>
-                <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{toggleSource.interval}</Text>
+                <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary-font']}>{toggleSource.source}</Text>
+                <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary-font']}>{toggleSource.interval}</Text>
               </View>
               <View style={styles.listItemAlbum}>
                 <Text color={theme['c-font']} size={12} numberOfLines={1}>
@@ -232,8 +228,8 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
             <Text style={styles.detailInfoNameText} color={theme['c-font']} size={14} numberOfLines={2}>
               {info.name}
             </Text>
-            <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{info.source}</Text>
-            <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{info.interval}</Text>
+            <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary-font']}>{info.source}</Text>
+            <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary-font']}>{info.interval}</Text>
           </View>
           <View style={styles.listItemAlbum}>
             <Text color={theme['c-font']} size={12} numberOfLines={1}>
@@ -255,8 +251,8 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
                   <Text style={styles.detailInfoNameText} color={theme['c-font']} size={14} numberOfLines={2}>
                     {toggleSource.name}
                   </Text>
-                  <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{toggleSource.source}</Text>
-                  <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary']}>{toggleSource.interval}</Text>
+                  <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary-font']}>{toggleSource.source}</Text>
+                  <Text style={styles.detailInfoLabelText} size={12} color={theme['c-primary-font']}>{toggleSource.interval}</Text>
                 </View>
                 <View style={styles.listItemAlbum}>
                   <Text color={theme['c-font']} size={12} numberOfLines={1}>

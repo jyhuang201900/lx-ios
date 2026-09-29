@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState, forwardRef, useImperativeHandle
 import { FlatList, type FlatListProps, RefreshControl, View } from 'react-native'
 
 // import { useMusicList } from '@/store/list/hook'
-import ListItem, { ITEM_HEIGHT } from './ListItem'
+import ListItem from './ListItem'
 import { createStyle, getRowInfo, type RowInfoType } from '@/utils/tools'
 import type { Position } from './ListMenu'
 import type { SelectMode } from './MultipleModeBar'
@@ -202,9 +202,6 @@ const List = forwardRef<ListType, ListProps>(({
     />
   ), [showSource, handlePress, handleLongPress, onShowMenu, selectedIds, isShowAlbumName, isShowInterval])
   const getkey = useCallback<NonNullable<FlatListType['keyExtractor']>>(item => item.id, [])
-  const getItemLayout = useCallback<NonNullable<FlatListType['getItemLayout']>>((data, index) => {
-    return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
-  }, [])
   const refreshControl = useMemo(() => (
     <RefreshControl
       colors={[theme['c-primary']]}
@@ -284,7 +281,6 @@ const List = forwardRef<ListType, ListProps>(({
       initialNumToRender={12}
       renderItem={renderItem}
       keyExtractor={getkey}
-      getItemLayout={getItemLayout}
       // onRefresh={onRefresh}
       // refreshing={refreshing}
       onEndReachedThreshold={0.75}

@@ -5,7 +5,7 @@ import { useI18n } from '@/lang'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
-import { Radius, createGlassStyle } from '@/theme/layout'
+import { Radius, createContentSurface } from '@/theme/layout'
 
 export interface SortTabProps {
   onSortChange: (id: string) => void
@@ -54,7 +54,7 @@ export default forwardRef<SortTabType, SortTabProps>(({ onSortChange }, ref) => 
                 ...styles.button,
                 ...(active
                   ? { backgroundColor: theme['c-primary-background-active'] }
-                  : createGlassStyle(theme, { radius: Radius.control })),
+                  : createContentSurface(theme, { radius: Radius.control })),
               }}
               onPress={() => { handleSortChange(s.id) }}
             >

@@ -15,12 +15,12 @@ import { Gap, TabularNums } from '@/theme/layout'
 const PlayTimeCurrent = ({ timeStr }: { timeStr: string }) => {
   const theme = useTheme()
   // console.log(timeStr)
-  return <Text color={theme['c-500']} style={TabularNums}>{timeStr}</Text>
+  return <Text color={theme['c-font-label']} style={TabularNums}>{timeStr}</Text>
 }
 
 const PlayTimeMax = memo(({ timeStr }: { timeStr: string }) => {
   const theme = useTheme()
-  return <Text color={theme['c-500']} style={TabularNums}>{timeStr}</Text>
+  return <Text color={theme['c-font-label']} style={TabularNums}>{timeStr}</Text>
 })
 
 export default () => {

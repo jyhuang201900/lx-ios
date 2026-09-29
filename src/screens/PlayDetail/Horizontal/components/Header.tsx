@@ -16,7 +16,7 @@ import PlaybackRateBtn from '../../components/PlaybackRateBtn'
 import SettingPopup, { type SettingPopupType } from '../../components/SettingPopup'
 import SoundEffectPopup, { type SoundEffectPopupType } from '../../components/SoundEffectPopup'
 import { useSetting } from '@/store/setting/hook'
-import { isSoundEffectActive } from '@/plugins/player/soundEffect'
+import { isSoundEffectActive, soundEffectController } from '@/plugins/player/soundEffect'
 import TimeoutExitEditModal, { type TimeoutExitEditModalType, useTimeInfo } from '@/components/TimeoutExitEditModal'
 
 export const HEADER_HEIGHT = scaleSizeH(_HEADER_HEIGHT)
@@ -37,6 +37,7 @@ const Title = () => {
 export default memo(() => {
   const popupRef = useRef<SettingPopupType>(null)
   const soundEffectPopupRef = useRef<SoundEffectPopupType>(null)
+  const soundEffectSupported = soundEffectController.isSupported
   const timeoutModalRef = useRef<TimeoutExitEditModalType>(null)
   const timeInfo = useTimeInfo()
   const theme = useTheme()
@@ -59,7 +60,9 @@ export default memo(() => {
     <View
       style={{
         height: HEADER_HEIGHT,
-        backgroundColor: theme['c-glass-surface'],
+        // 玻璃浮层：顶栏压在内容上，底色必须足够实——次要文字若落在更浅的底色上，
+        // 部分主题会跌破 AA 4.5:1（china_ink 3.99:1）。
+        backgroundColor: theme['c-glass-overlay'],
         borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
         borderBottomWidth: 1,
       }}
@@ -73,7 +76,13 @@ export default memo(() => {
         <PlaybackRateBtn />
         <CommentBtn />
         <Btn icon="music_time" label={global.i18n.t('timeout_exit')} color={timeInfo.active ? theme['c-primary-font-active'] : undefined} onPress={showTimeoutExit} />
-        <Btn icon="slider" label={global.i18n.t('setting_play_sound_effect')} color={isSoundEffectActive(setting) ? theme['c-primary-font-active'] : undefined} onPress={showSoundEffect} />
+      {/* 平台不支持音效处理时整个按钮不出现：给一个点了没反应的控件，
+          比没有这个控件更糟——它会让人以为应用坏了。 */}
+      {soundEffectSupported
+        ? (
+            <Btn icon="slider" label={global.i18n.t('setting_play_sound_effect')} color={isSoundEffectActive(setting) ? theme['c-primary-font-active'] : undefined} onPress={showSoundEffect} />
+          )
+        : null}
         <Btn icon="setting" size={18} label={global.i18n.t('nav_setting')} onPress={showSetting} />
       </View>
       <SoundEffectPopup ref={soundEffectPopupRef} position="bottom" layoutMode="split" />

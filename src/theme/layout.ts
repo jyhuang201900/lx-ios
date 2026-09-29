@@ -1,4 +1,5 @@
 import { Platform, type TextStyle, type ViewStyle } from 'react-native'
+import { getDisplaySettings } from './accessibility'
 
 /**
  * 全局布局度量：所有界面统一使用这里的圆角与间距，避免各处数值漂移。
@@ -80,6 +81,48 @@ export const PageMetrics = {
   controlHeight: 40,
 } as const
 
+/**
+ * 图标尺寸标尺。
+ *
+ * HIG icons.md 的要求不是某个具体数值，而是一致性：
+ * "all interface icons in your app need to use a consistent size, level of detail,
+ *  stroke thickness (or weight)"。
+ *
+ * 本项目原本的图标尺寸散在 10~28 之间，其中关闭/移除这类控件落在 10~12pt——
+ * 配 44pt 命中区时字形小到几乎看不见。实测分布：10~13 共 27 处，是最密的一档，
+ * 也正是最不可读的一档。
+ *
+ * 这里只给"控件型图标"定标尺，不动 20~28 的大图标（封面占位、空状态插图一类，
+ * 它们是内容而非控件）。行内 chevron 一律 14pt，与 13pt 的行内文字视觉重量相当。
+ */
+export const IconSize = {
+  /** 关闭 / 移除等控件图标，配 44pt 命中区 */
+  affordance: 18,
+  /** 行内展开箭头 */
+  disclosure: 14,
+} as const
+
+/**
+ * 标签栏度量。
+ *
+ * 独立于 PageMetrics，因为它的约束来自另一条规则：
+ * HIG accessibility.md 规定 iOS 控件默认 44x44pt、最小 28x28pt。
+ * 标签是频繁点击的导航目标，必须给足 44pt，且标签字号抬到 11pt 后
+ * 图标 20pt + 标签 11pt + 两行间距共约 34pt，需要比 PageToolbar 更高的容器。
+ *
+ * 另：HIG tab-bars.md 指出 iOS 标签栏「floats above content at the bottom」，
+ * 形态是通栏贴边，不做水平内缩——内缩胶囊是 Material 分段控件的语言。
+ */
+export const TabBarMetrics = {
+  /** 容器高度：44pt 命中区 + 上下各 3pt 呼吸 */
+  height: 50,
+  /** 单个标签的命中区高度，不低于 HIG 的 44pt 默认值 */
+  itemHeight: 44,
+  iconSize: 20,
+  /** HIG accessibility.md：iOS 最小字号 11pt */
+  labelSize: 11,
+} as const
+
 /** 数字等宽，避免时间/计数跳动，提升精密感 */
 export const TabularNums: TextStyle = { fontVariant: ['tabular-nums'] }
 
@@ -90,6 +133,11 @@ export const TabularNums: TextStyle = { fontVariant: ['tabular-nums'] }
  *  - body：列表主标题、正文
  *  - sub：次要信息（歌手、专辑、计数）
  *  - caption：标签、徽章、极小注解
+ *
+ * 下限说明：caption 原本是 10，低于 HIG accessibility.md 规定的 iOS 最小字号 11pt
+ * （"| iOS, iPadOS | 17 pt | 11 pt |"）。已提到 11；sub 12 同理在限内。
+ * compact 13 / body 15 对应 iOS 的 caption1..callout 区间，作为列表密度是合理取舍，
+ * 但名字不要骗人：iOS 的 body 是 17，15 实为 callout，故正文级别的长文本请显式取 17。
  */
 export const Typography = {
   page: 17,
@@ -97,7 +145,7 @@ export const Typography = {
   body: 15,
   compact: 13,
   sub: 12,
-  caption: 10,
+  caption: 11,
 } as const
 
 /** 常用字重：仅保留常规与半粗，避免 bold/600/300 混用 */
@@ -111,30 +159,105 @@ export const glassCardShadow = createShadow({ opacity: 0.06, radius: 12, offsetY
 
 
 /**
- * 玻璃表面样式（科技感核心）。
+ * 玻璃浮层样式（科技感核心）。
  *
  * 关键在 borderTopColor：四边同为发丝描边时，单独把上边提亮，
  * 读起来就是"光线从上方打在玻璃上沿"的反射高光——这是玻璃质感
  * 最具识别度的特征，且只需一行样式、不额外增加视图层级。
  *
  * 注意：宿主 View 不可带 overflow: 'hidden'，否则 iOS 上阴影会被裁掉。
+ *
+ * 降级：系统开启「降低透明度」时改用不透明底。
+ * 依据 HIG materials.md——Liquid Glass 的表现本应随 reduce transparency 变化，
+ * 但 RN 没有 backdrop-filter，玻璃是半透明色块模拟的，系统不会替我们处理，
+ * 所以必须由应用自己降级，否则开了这个开关的人得不到任何可读性收益。
+ *
+ * 只有一档：这里原本有 surface / overlay 两档，surface 专供内容层使用。
+ * 依 materials.md「Don't use Liquid Glass in the content layer」，内容层已全部改用
+ * createContentSurface，surface 随之无任何调用方。删掉这一档而不只是留空，
+ * 是为了让它无法被重新引入——那 14 处内容层玻璃正是同一个错误。
  */
 export const createGlassStyle = (
   theme: LX.ActiveTheme,
-  { level = 'surface', radius = Radius.card }: {
-    level?: 'surface' | 'overlay'
-    radius?: number
-  } = {},
+  { radius = Radius.card }: { radius?: number } = {},
+): ViewStyle => {
+  const { reduceTransparency } = getDisplaySettings()
+
+  return {
+    backgroundColor: reduceTransparency
+      ? theme['c-content-background']
+      : theme['c-glass-overlay'],
+    borderRadius: radius,
+    borderWidth: 1,
+    borderColor: theme['c-border-background'],
+    // 上沿轻高光保留受光感，但降低对比，避免卡片像彩色边框。
+    // 降低透明度时一并去掉——这个高光本质是半透明材质的受光表现。
+    ...(reduceTransparency
+      ? null
+      : {
+          borderTopColor: theme.isDark ? 'rgba(255, 255, 255, 0.28)' : 'rgba(255, 255, 255, 0.84)',
+          borderLeftColor: theme.isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.54)',
+          borderRightColor: theme.isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.28)',
+        }),
+  }
+}
+
+/**
+ * 内容层表面：不透明 + 描边，用来替代内容层里原本的玻璃。
+ *
+ * 依据 HIG materials.md「Don't use Liquid Glass in the content layer」：
+ * 玻璃只属于浮动的功能层（标签栏、迷你播放条、sheet / menu / dialog），
+ * 内容层用标准材质。分组靠描边和间距表达，而不是靠一层抬起的半透明块——
+ * 实算也印证了这点：c-primary-light-1000 与页面底色的可区分度是 1.00:1，
+ * 也就是说这个表面本来就「看不见」，它的唯一实际作用是压低文字对比度。
+ */
+export const createContentSurface = (
+  theme: LX.ActiveTheme,
+  { radius = Radius.card }: { radius?: number } = {},
 ): ViewStyle => ({
-  backgroundColor: theme[level === 'overlay' ? 'c-glass-overlay' : 'c-glass-surface'],
+  backgroundColor: theme['c-control-surface'],
   borderRadius: radius,
   borderWidth: 1,
   borderColor: theme['c-border-background'],
-  // 上沿轻高光保留受光感，但降低对比，避免卡片像彩色边框
-  borderTopColor: theme.isDark ? 'rgba(255, 255, 255, 0.28)' : 'rgba(255, 255, 255, 0.84)',
-  borderLeftColor: theme.isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.54)',
-  borderRightColor: theme.isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.28)',
 })
+
+/**
+ * 镜面高光边：贴在封面卡内侧的一圈不等宽白色描边，读起来像光从左上方打下来。
+ *
+ * 之前这份数值在三个 Pic 组件里各写一遍，而且两套还不一致
+ * （mini player 用 0.78/0.42/0.20，播放详情用 0.82/0.48/0.24）。
+ * 同一个视觉元素出现多套数值，跨屏就一定会漂，所以收在这里。
+ *
+ * intensity：整体强度。封面越大高光越强，所以播放详情取 1（默认），
+ * mini player 的 40pt 小图取 0.86 收一档——这是有意的尺寸差异，不是两套设计。
+ *
+ * 深浅两套不是等比关系（暗色下侧边衰减更快：顶 0.56、左侧 0.42、右侧 0.33），
+ * 所以逐边写死而不是乘一个系数，否则复现不出原值。
+ */
+export const createSpecularEdge = (
+  theme: LX.ActiveTheme,
+  { radius = Radius.card, width = 1.2, intensity = 1 }: {
+    radius?: number
+    width?: number
+    intensity?: number
+  } = {},
+): ViewStyle => {
+  const at = (base: number) => Math.round(base * intensity * 100) / 100
+  const [top, left, right] = theme.isDark ? [0.46, 0.20, 0.08] : [0.82, 0.48, 0.24]
+  return {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: radius,
+    borderWidth: width,
+    borderColor: 'transparent',
+    borderTopColor: `rgba(255, 255, 255, ${at(top)})`,
+    borderLeftColor: `rgba(255, 255, 255, ${at(left)})`,
+    borderRightColor: `rgba(255, 255, 255, ${at(right)})`,
+  }
+}
 
 /**
  * 霓虹光晕：把 iOS 阴影色设为主题色，阴影即变成"发光"而非"投影"。

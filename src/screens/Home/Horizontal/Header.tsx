@@ -33,7 +33,9 @@ const LeftHeader = () => {
       ...styles.container,
       height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
       paddingTop: statusBarHeight,
-      backgroundColor: theme['c-glass-surface'],
+      // 玻璃浮层：顶栏压在内容上，底色必须足够实——次要文字若落在更浅的底色上，
+      // 部分主题会跌破 AA 4.5:1（china_ink 3.99:1）。
+      backgroundColor: theme['c-glass-overlay'],
       borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
       borderBottomWidth: 1,
     }}>
@@ -65,7 +67,9 @@ const RightHeader = () => {
       ...styles.container,
       height: scaleSizeH(HEADER_HEIGHT) + statusBarHeight,
       paddingTop: statusBarHeight,
-      backgroundColor: theme['c-glass-surface'],
+      // 玻璃浮层：顶栏压在内容上，底色必须足够实——次要文字若落在更浅的底色上，
+      // 部分主题会跌破 AA 4.5:1（china_ink 3.99:1）。
+      backgroundColor: theme['c-glass-overlay'],
       borderBottomColor: theme.isDark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.70)',
       borderBottomWidth: 1,
     }}>

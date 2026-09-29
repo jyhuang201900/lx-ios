@@ -123,9 +123,6 @@ export default forwardRef<ListMusicSearchType, ListMusicSearchProps>(({ onScroll
     )
   }
   const getkey: SearchTipListProps['keyExtractor'] = item => item.id
-  const getItemLayout: SearchTipListProps['getItemLayout'] = (data, index) => {
-    return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
-  }
 
   return (
     visible
@@ -136,7 +133,6 @@ export default forwardRef<ListMusicSearchType, ListMusicSearchProps>(({ onScroll
           hideWhenEmpty={false}
           ListEmptyComponent={<View style={styles.empty}><Text color={theme['c-font-label']}>{t('no_item')}</Text></View>}
           keyExtractor={getkey}
-          getItemLayout={getItemLayout}
         />
       : null
   )
@@ -145,7 +141,7 @@ export default forwardRef<ListMusicSearchType, ListMusicSearchProps>(({ onScroll
 
 const styles = createStyle({
   item: {
-    height: ITEM_HEIGHT,
+    minHeight: ITEM_HEIGHT,
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 15,

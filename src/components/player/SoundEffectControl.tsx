@@ -32,7 +32,11 @@ import {
   saveUserConvolutionPreset,
   saveUserEQPreset,
 } from '@/store/soundEffect'
-import { Radius } from '@/theme/layout'
+import { Radius, Typography } from '@/theme/layout'
+import EqCurve from './EqCurve'
+import ReverbDecay from './ReverbDecay'
+import RoomDecayRow from './RoomDecayRow'
+import { REVERB_PROFILES } from '@/plugins/player/soundEffect/reverbProfile'
 
 const minGain = -15
 const maxGain = 15
@@ -160,6 +164,7 @@ const PresetAddButton = memo(({
 
 const EqualizerSection = memo(({
   presetId,
+  transitionId,
   previewGains,
   userPresetList,
   activeUserPresetId,
@@ -174,6 +179,8 @@ const EqualizerSection = memo(({
   layoutMode,
 }: {
   presetId: LX.SoundEffectPresetId
+  /** 预设切换计数，只在整条曲线被替换时变化；拖动滑块不会改它 */
+  transitionId: number
   previewGains: PreviewGains
   userPresetList: LX.SoundEffect.EQPreset[]
   activeUserPresetId: string | null
@@ -208,6 +215,20 @@ const EqualizerSection = memo(({
             <Text size={12} color={theme['c-button-font']}>{t('setting_play_sound_effect_reset')}</Text>
           </TouchableOpacity>
         </View>
+      </View>
+
+      {/* 曲线放在滑块之前：先看形状，再调数值。
+          previewGains 在拖动过程中实时更新，所以曲线是跟着手指走的，
+          不需要额外动画——HIG motion.md 要的是 brief and precision，
+          而这里直接跟手反而最准。 */}
+      <View style={styles.eqCurveWrap}>
+        <EqCurve
+          gains={previewGains}
+          frequencies={equalizerFrequencies}
+          min={minGain}
+          max={maxGain}
+          transitionId={transitionId}
+        />
       </View>
 
       {layoutMode == 'split'
@@ -340,6 +361,8 @@ const EnvironmentSection = memo(({
   const t = useI18n()
   const theme = useTheme()
   const disabledConvolution = !selectedSource
+  // option.source 就是 IR 的文件名，所以能直接查实测画像表
+  const selectedProfile = selectedSource ? REVERB_PROFILES[selectedSource] : undefined
 
   return (
     <View style={styles.section}>
@@ -347,15 +370,66 @@ const EnvironmentSection = memo(({
         <Text style={styles.sectionTitle}>{t('setting_play_sound_effect_environment')}</Text>
       </View>
       <View style={styles.envList}>
-        {soundEffectConvolutionOptions.map(item => (
-          <PlaceholderCheckbox
-            key={item.id}
-            checked={selectedSource == item.source}
-            label={t(item.labelKey)}
-            onPress={() => { onToggleConvolution(item.source) }}
-          />
-        ))}
+        {soundEffectConvolutionOptions.map(item => {
+          const profile = REVERB_PROFILES[item.source]
+          return (
+            <RoomDecayRow
+              key={item.id}
+              label={t(item.labelKey)}
+              envelope={profile?.envelope ?? []}
+              rt60={profile?.rt60 ?? null}
+              duration={profile?.duration ?? 0}
+              selected={selectedSource == item.source}
+              onPress={() => { onToggleConvolution(item.source) }}
+            />
+          )
+        })}
       </View>
+
+      {/* 房间声学画像：选中某个脉冲响应后，显示它**实测**的衰减曲线与 RT60。
+          数据由 scripts/analyze-reverb.mjs 从 .wav 离线解析
+          （ISO 3382-1 Schroeder 反向积分），不是示意曲线。
+          RT60 是定义一个空间混响特征的核心指标——0.5s 是卧室，
+          3s 以上是大厅，差别不需要试听就看得出来。 */}
+      {selectedProfile
+        ? (
+            <View style={styles.roomProfile}>
+              <View style={styles.roomProfileHeader}>
+                <Text style={styles.roomProfileTitle}>{t('setting_play_sound_effect_room_profile')}</Text>
+                <View style={styles.roomReadouts}>
+                  <Text style={styles.roomReadoutValue} color={theme['c-primary-font']}>
+                    {selectedProfile.rt60 == null
+                      ? '—'
+                      : `RT60 ${selectedProfile.rt60 > selectedProfile.duration ? '≥' : ''}${selectedProfile.rt60.toFixed(2)} s`}
+                  </Text>
+                </View>
+              </View>
+              <ReverbDecay envelope={selectedProfile.envelope} duration={selectedProfile.duration} />
+              <View style={styles.roomSpecs}>
+                <Text size={Typography.caption} color={theme['c-font-label']}>
+                  {(selectedProfile.sampleRate / 1000).toFixed(1)} kHz
+                </Text>
+                <Text size={Typography.caption} color={theme['c-font-label']}>
+                  {selectedProfile.channels} ch
+                </Text>
+                <Text size={Typography.caption} color={theme['c-font-label']}>
+                  {Math.round(selectedProfile.duration * 1000)} ms
+                </Text>
+              </View>
+              {/* 必须写清楚这些数字的适用范围。
+                  AppDelegate.mm 里 `refreshConvolutionEngineLockedWithAssetUri`
+                  在采样率未就绪 / 资源解析失败 / IR 解析失败时会返回 NO，
+                  随后 `loadFactoryPreset:` 用一个**苹果出厂预设**顶替——
+                  bright-hall 会变成 .largeHall，s2_r4_bd 变成 .cathedral。
+                  那是另一个房间，声学性质不同，而这里显示的仍是原 IR 的实测值。
+                  原生那侧改不动（此处无 Xcode，.mm 改完无法编译验证），
+                  所以至少不让 JS 侧的表述越界。 */}
+              <Text style={styles.roomProfileNote} size={Typography.caption} color={theme['c-font-label']}>
+                {t('setting_play_sound_effect_room_profile_note')}
+              </Text>
+            </View>
+          )
+        : null}
 
       <View style={{ ...styles.placeholderGroup, opacity: disabledConvolution ? 0.45 : 1 }}>
         <PlaceholderSliderRow
@@ -515,6 +589,7 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
   const setting = useSetting()
   const savePresetModalRef = useRef<SoundEffectPresetSaveModalType>(null)
   const [previewGains, setPreviewGains] = useState<PreviewGains>(() => getEqualizerGains(setting))
+  const [eqTransitionId, setEqTransitionId] = useState(0)
   const [userEqPresetList, setUserEqPresetList] = useState<LX.SoundEffect.EQPreset[]>([])
   const [userConvolutionPresetList, setUserConvolutionPresetList] = useState<LX.SoundEffect.ConvolutionPreset[]>([])
   const presetId = normalizeEqualizerPresetId(setting['player.soundEffect.preset'])
@@ -542,6 +617,18 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
   useEffect(() => {
     setPreviewGains(getEqualizerGains(setting))
   }, [setting])
+
+  // 预设切换计数，供 EqCurve 判断要不要补间。
+  //
+  // 监听「预设身份」而不是在各个处理函数里手动 +1，原因有两个：
+  // 1. 拖动滑块会持续改 previewGains，若直接以它为触发源就会一直补间，
+  //    曲线会滞后于手指。预设身份只在整条曲线被替换时才变。
+  // 2. 「重置」只调用 updateSetting、不直接 setPreviewGains，靠设置回流才生效。
+  //    在处理函数里加计数会早于 gain 更新，动画就会补间到旧值；
+  //    监听身份变化则天然发生在渲染之后，顺序是对的。
+  useEffect(() => {
+    setEqTransitionId(id => id + 1)
+  }, [activeEqUserPresetId, presetId])
 
   useEffect(() => {
     let cancelled = false
@@ -741,9 +828,10 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
           />
         </View>
         <View style={{ ...styles.sectionBlock, ...styles.sectionCard, ...styles.sectionBlockWithDivider, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'], borderTopColor: dividerColor }}>
-          <EqualizerSection
-            presetId={presetId}
-            previewGains={previewGains}
+    <EqualizerSection
+    presetId={presetId}
+    transitionId={eqTransitionId}
+    previewGains={previewGains}
             userPresetList={userEqPresetList}
             activeUserPresetId={activeEqUserPresetId}
             onReset={handleReset}
@@ -781,6 +869,30 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
           </View>
         ) : null}
         <SoundEffectPresetSaveModal ref={savePresetModalRef} />
+      </View>
+    )
+  }
+
+  /**
+   * 不支持时必须直说，不能照常渲染。
+   *
+   * 依据：`isSoundEffectSupported = Platform.OS == 'ios' && 原生模块存在`，
+   * 不满足时 `updateNativeSoundEffectConfig` 会**静默 return**。
+   * 也就是说在 Android 上，这个面板原本会完整画出 EQ 曲线、13 条房间衰减曲线、
+   * RT60 读数和全部滑块——而它们一个都不作用于声音。
+   *
+   * 那正是「装饰冒充信息」：界面看上去在报告真实的频响与房间声学，
+   * 实际只是回显一组没生效的设置。仪器要么接在信号链上，要么就不该出现。
+   *
+   * 放在所有 Hook 之后，早返回会违反 Hook 规则。
+   */
+  if (!soundEffectController.isSupported) {
+    return (
+      <View style={styles.unsupported}>
+        <Icon name="info" size={20} color={theme['c-font-label']} />
+        <Text style={styles.unsupportedText} size={13} color={theme['c-font-label']}>
+          {t('sound_effect_unsupported')}
+        </Text>
       </View>
     )
   }
@@ -837,6 +949,7 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
           <View style={{ ...styles.sectionBlock, ...styles.sectionCard, backgroundColor: theme['c-content-background'], borderColor: theme['c-border-background'] }}>
             <EqualizerSection
               presetId={presetId}
+              transitionId={eqTransitionId}
               previewGains={previewGains}
               userPresetList={userEqPresetList}
               activeUserPresetId={activeEqUserPresetId}
@@ -859,6 +972,19 @@ export default memo(({ showTip = true, layoutMode = 'split' }: {
 })
 
 const styles = createStyle({
+  // 不支持时的诚实说明：不用"禁用"灰掉整块面板，
+  // 而是直接讲清楚为什么没有这些控件
+  unsupported: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 4,
+  },
+  unsupportedText: {
+    flex: 1,
+    lineHeight: 19,
+  },
   container: {
     paddingTop: 12,
     paddingHorizontal: 16,
@@ -934,9 +1060,42 @@ const styles = createStyle({
     justifyContent: 'center',
   },
   envList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    // 纵向列表：每一行要放得下「名字 + 衰减曲线 + RT60」，
+    // 横向换行排不下
+    flexDirection: 'column',
+    gap: 2,
     marginBottom: 8,
+  },
+  // 房间画像与上方选项列表、下方增益滑块之间的间距走 Gap.section，
+  // 与 layout.ts 的间距体系保持一致
+  roomProfile: {
+    marginBottom: 16,
+  },
+  roomProfileHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  roomProfileTitle: {
+    fontWeight: '600',
+  },
+  roomReadouts: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  roomReadoutValue: {
+    // 型号读数用等宽数字，切换房间时数值不左右跳动
+    fontVariant: ['tabular-nums'],
+  },
+  roomSpecs: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 2,
+    marginLeft: 26,
+  },
+  roomProfileNote: {
+    marginTop: 6,
+    lineHeight: 16,
   },
   placeholderCheckbox: {
     flexDirection: 'row',
@@ -969,6 +1128,10 @@ const styles = createStyle({
   },
   equalizerGrid: {
     marginBottom: 10,
+  },
+  // 曲线与下方滑块之间用 section 级的间距，和 layout.ts 的 Gap 体系一致
+  eqCurveWrap: {
+    marginBottom: 14,
   },
   equalizerRow: {
     flexDirection: 'row',

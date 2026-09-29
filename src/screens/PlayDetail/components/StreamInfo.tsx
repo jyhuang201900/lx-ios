@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { View } from 'react-native'
+import { memo, useMemo } from 'react'
+import { View, type StyleProp, type ViewStyle } from 'react-native'
 
 import Text from '@/components/common/Text'
 import { useI18n } from '@/lang'
@@ -8,8 +8,8 @@ import { useSettingValue } from '@/store/setting/hook'
 import { useTheme } from '@/store/theme/hook'
 import { useUserApiList } from '@/store/userApi'
 import { createStyle } from '@/utils/tools'
-import { Radius } from '@/theme/layout'
-import { getTrackQualities } from '@/utils/quality'
+import { getQualitySpecName, getTrackQualities } from '@/utils/quality'
+import { Radius, TabularNums, Typography, createGlassStyle } from '@/theme/layout'
 
 const getMusicInfo = (musicInfo: LX.Player.PlayMusic | null) => musicInfo && 'progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo
 
@@ -26,78 +26,140 @@ export const useAvailableQualities = () => {
   }, [apiSource, playMusicInfo])
 }
 
-export const useStreamLabels = () => {
+/**
+ * 当前流的三个读数：来自哪个音源、什么规格、多大。
+ *
+ * 这些数字以前就存在，但被塞在两个 11pt 的小药丸里，扫一眼读不出来。
+ * 这里是整个产品唯一的「此刻」，把它们排成仪表读数是内容层放得下的信息，
+ * 不是装饰——三个标签各自说了一件真事（design-principles.md：
+ * "Numbering, eyebrows, dividers, and labels should say something true about the content"）。
+ */
+const useStreamReadout = () => {
   const t = useI18n()
   const sourceNameType = useSettingValue('common.sourceNameType')
   const apiSource = useSettingValue('common.apiSource')
-  const userApiList = useUserApiList()
   const preferredQuality = useSettingValue('player.playQuality')
+  const userApiList = useUserApiList()
   const streamInfo = useStreamInfo()
   const playMusicInfo = usePlayMusicInfo()
-  const currentMusicInfo = getMusicInfo(playMusicInfo.musicInfo)
-  const source = streamInfo.source ?? currentMusicInfo?.source ?? null
-  const quality = streamInfo.quality ?? (currentMusicInfo?.source == 'local' ? null : preferredQuality)
+
   const customApi = apiSource.startsWith('user_api')
     ? userApiList.find(api => api.id == apiSource)
     : undefined
-  const sourceLabel = source == 'local'
-    ? t('player_local_source')
-    : source
-      ? t(`source_${sourceNameType}_${source}` as Parameters<typeof t>[0])
-      : ''
-  const customSourceName = source ? customApi?.sources?.[source]?.name : undefined
 
-  return useMemo(() => ({
-    source: customApi && customSourceName
-      ? `${customApi.name} · ${customSourceName || sourceLabel}`
-      : sourceLabel,
-    quality: quality ?? '',
-  }), [customApi, customSourceName, quality, sourceLabel])
+  return useMemo(() => {
+    const musicInfo = getMusicInfo(playMusicInfo.musicInfo)
+    const source = streamInfo.source ?? musicInfo?.source ?? null
+    const quality = streamInfo.quality ?? (musicInfo?.source == 'local' ? null : preferredQuality)
+    const isLocal = source == 'local'
+
+    const sourceLabel = isLocal
+      ? t('player_local_source')
+      : source
+        ? t(`source_${sourceNameType}_${source}` as Parameters<typeof t>[0])
+        : ''
+    const customSourceName = source ? customApi?.sources?.[source]?.name : undefined
+
+    // 体积取歌曲元数据里该音质档位的实际文件大小（如 "42.8M"）。
+    // 本地文件与未知档位没有这个值，此时不显示该列——留一个「—」
+    // 会让人以为这里本该有数据。
+    const size = !isLocal && quality
+      ? (musicInfo?.source != 'local' ? musicInfo?.meta._qualitys?.[quality]?.size : null)
+      : null
+
+    return {
+      source: customApi && customSourceName
+        ? `${customApi.name} · ${customSourceName || sourceLabel}`
+        : sourceLabel,
+      format: getQualitySpecName(quality),
+      size: size ?? '',
+    }
+  }, [customApi, playMusicInfo, preferredQuality, sourceNameType, streamInfo, t])
 }
 
-export default () => {
+const Readout = memo(({ label, value, valueColor, align = 'left', grow = false }: {
+  label: string
+  value: string
+  valueColor?: string
+  align?: 'left' | 'right'
+  grow?: boolean
+}) => {
+  const theme = useTheme()
+  return (
+    <View style={[styles.readout, grow ? styles.readoutGrow : null, align == 'right' ? styles.readoutRight : null]}>
+      <Text size={Typography.caption} color={theme['c-font-label']} numberOfLines={1}>{label}</Text>
+      <Text
+        style={[TabularNums, align == 'right' ? styles.readoutRight : null]}
+        size={Typography.compact}
+        color={valueColor ?? theme['c-font']}
+        numberOfLines={1}
+      >{value}</Text>
+    </View>
+  )
+})
+
+const Divider = () => {
+  const theme = useTheme()
+  return <View style={[styles.divider, { backgroundColor: theme['c-border-background'] }]} />
+}
+
+export default ({ style }: { style?: StyleProp<ViewStyle> }) => {
   const theme = useTheme()
   const t = useI18n()
-  const { source, quality } = useStreamLabels()
+  const { source, format, size } = useStreamReadout()
 
-  if (!source && !quality) return null
+  if (!source && !format) return null
+
+  // 列数随实际可得的读数变化：体积未知时就不占位列，
+  // 免得留一个空格子破坏仪表的节奏。
+  const columns = [
+    <Readout key="source" label={t('player_source')} value={source} grow />,
+    format ? <Divider key="d1" /> : null,
+    format ? <Readout key="format" label={t('player_format')} value={format} valueColor={theme['c-primary-font']} /> : null,
+    size ? <Divider key="d2" /> : null,
+    size ? <Readout key="size" label={t('player_size')} value={size} align="right" /> : null,
+  ].filter(Boolean)
 
   return (
-    <View style={styles.container}>
-      {source ? <View style={{ ...styles.pill, backgroundColor: theme['c-glass-surface'] }}>
-        <Text style={styles.label} size={10} color={theme['c-font-label']}>{t('player_source')}</Text>
-        <Text numberOfLines={1} size={11}>{source}</Text>
-      </View> : null}
-      {quality ? <View style={{ ...styles.pill, backgroundColor: theme['c-button-background-selected'] }}>
-        <Text style={styles.label} size={10} color={theme['c-primary-font-active']}>{t('player_quality')}</Text>
-        <Text numberOfLines={1} size={11} color={theme['c-primary-font-active']}>{quality}</Text>
-      </View> : null}
+    <View style={[styles.container, style]}>
+      <View style={{ ...styles.panel, ...createGlassStyle(theme, { radius: Radius.card }) }}>
+        <View style={styles.readouts}>{columns}</View>
+      </View>
     </View>
   )
 }
 
 const styles = createStyle({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 7,
-    minHeight: 28,
-    paddingBottom: 4,
+    flex: 0,
+    paddingBottom: 6,
   },
-  pill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    maxWidth: '48%',
-    borderRadius: Radius.pill,
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    gap: 4,
-    justifyContent: 'center',
+  panel: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
   },
-  label: {
-    opacity: 0.8,
-    textAlign: 'center',
-    textAlignVertical: 'center',
+  readouts: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  readout: {
+    flexShrink: 0,
+    // 标签与读数贴得比常规行距更紧——仪表盘要的是"同一组读数"的感觉，
+    // 而不是两行独立文本
+    gap: 1,
+  },
+  readoutGrow: {
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
+  },
+  readoutRight: {
+    alignItems: 'flex-end',
+    textAlign: 'right',
+  },
+  divider: {
+    width: 1,
+    marginHorizontal: 10,
+    opacity: 0.5,
   },
 })

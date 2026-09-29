@@ -52,8 +52,14 @@ export default memo(({ componentId }: { componentId: string }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // 注意：父级 PlayDetail 已经包了一层 PageContent，这里是第二层。
+  // 这是改动前就有的结构，所以内层**刻意不传 cover**——否则会出现
+  // 双层封面底图（模糊半径叠加、遮罩叠加），横屏会明显比竖屏暗。
+  // 结果是横屏看不到封面底色，属于已知限制而非设计选择。
+  // 要修得先确认内层的 SafeAreaView / StatusBar 职责能否上提，
+  // 那是结构改动，本机无法验证横屏布局，暂不动。
   return (
-    <PageContent>
+      <PageContent aurora="animated">
       <StatusBar />
       <View style={{ ...styles.container, paddingTop: statusBarHeight }}>
         <View style={styles.left}>
@@ -62,7 +68,7 @@ export default memo(({ componentId }: { componentId: string }) => {
             <MoreBtn />
             <Pic componentId={componentId} />
           </View>
-          <StreamInfo />
+          <StreamInfo style={styles.streamInfo} />
           <Player />
           {/* <View style={styles.controlBtn} nativeID="pageIndicator">
             <MoreBtn />
@@ -95,6 +101,10 @@ const styles = createStyle({
     // flexDirection: 'row',
     // backgroundColor: 'rgba(0,0,0,0.1)',
     // alignItems: 'center',
+  },
+  streamInfo: {
+    // 读数条与左侧列对齐（竖屏由宿主的 KeyPadding 负责，组件本身不带外边距）
+    marginLeft: marginLeftRaw,
   },
   right: {
     width: '55%',

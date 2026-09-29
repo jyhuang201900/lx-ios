@@ -7,7 +7,7 @@ import { useI18n } from '@/lang'
 import { Icon } from '@/components/common/Icon'
 import { useTheme } from '@/store/theme/hook'
 import { getSearchSetting } from '@/utils/data'
-import { Radius, createGlassStyle } from '@/theme/layout'
+import { Radius, createContentSurface } from '@/theme/layout'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 const SEARCH_TYPE_LIST = [
@@ -34,7 +34,7 @@ export default () => {
   }
 
   return (
-    <View style={{ ...styles.container, ...createGlassStyle(theme, { radius: Radius.pill }) }}>
+    <View style={{ ...styles.container, ...createContentSurface(theme, { radius: Radius.pill }) }}>
       {
         SEARCH_TYPE_LIST.map(item => (
           <TouchableOpacity

@@ -55,7 +55,7 @@ export default memo(({ item, onPress, rowInfo }: {
             </View>
             {
               item.isDir
-                ? <Icon name="chevron-right" color={theme['c-primary-light-100-alpha-600']} size={18} />
+                ? <Icon name="chevron-right" color={theme['c-font-label']} size={18} />
                 : <Text style={styles.size} size={12} color={theme['c-font-label']}>{item.sizeText}</Text>
             }
           </TouchableOpacity>

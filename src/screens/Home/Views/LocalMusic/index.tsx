@@ -17,7 +17,7 @@ import { getLocalMetadataCacheKey, readMetadataCached } from '@/utils/localMedia
 import { useTheme } from '@/store/theme/hook'
 import { addTempPlayList } from '@/core/player/tempPlayList'
 import LocalMusicItem from './LocalMusicItem'
-import { FontWeight, PageMetrics, Radius, Typography, createGlassStyle } from '@/theme/layout'
+import { FontWeight, PageMetrics, Radius, Typography, createContentSurface } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
 
 const audioExtensions = ['mp3', 'flac', 'wav', 'ape', 'ogg', 'm4a', 'aac']
@@ -243,7 +243,7 @@ export default () => {
           accessibilityLabel={global.i18n.t('local_music_import')}
           accessibilityState={{ disabled: importing }}
           disabled={importing}
-          style={{ ...styles.toolbarButton, ...createGlassStyle(theme, { radius: Radius.pill }), opacity: importing ? 0.5 : 1 }}
+          style={{ ...styles.toolbarButton, ...createContentSurface(theme, { radius: Radius.pill }), opacity: importing ? 0.5 : 1 }}
           onPress={() => { void importMusic() }}
         >
           <Icon name="add-music" size={16} color={theme['c-primary-font-active']} />
@@ -253,7 +253,7 @@ export default () => {
           accessibilityLabel={global.i18n.t('local_music_refresh')}
           accessibilityState={{ disabled: refreshing }}
           disabled={refreshing}
-          style={{ ...styles.toolbarButton, ...createGlassStyle(theme, { radius: Radius.pill }), opacity: refreshing ? 0.5 : 1 }}
+          style={{ ...styles.toolbarButton, ...createContentSurface(theme, { radius: Radius.pill }), opacity: refreshing ? 0.5 : 1 }}
           onPress={() => { void refresh() }}
         >
           <Icon name="available_updates" size={16} color={theme['c-font-label']} />
@@ -262,15 +262,15 @@ export default () => {
           accessibilityRole="button"
           accessibilityLabel={global.i18n.t('play_all')}
           disabled={!visibleFiles.length}
-          style={{ ...styles.toolbarButton, backgroundColor: theme['c-primary'], opacity: visibleFiles.length ? 1 : 0.4 }}
+          style={{ ...styles.toolbarButton, backgroundColor: theme['c-primary-solid'], opacity: visibleFiles.length ? 1 : 0.4 }}
           onPress={() => { void playAllVisible() }}
         >
-          <Icon name="play" size={16} color={theme['c-primary-button-font']} />
+          <Icon name="play" size={16} color={theme['c-on-solid']} />
         </TouchableOpacity>
       </View>
     </PageToolbar>
     {Platform.OS == 'ios' ? <DownloadQueue /> : null}
-    <View style={{ ...styles.searchCard, ...createGlassStyle(theme, { radius: Radius.control }) }}>
+    <View style={{ ...styles.searchCard, ...createContentSurface(theme, { radius: Radius.control }) }}>
       <Icon name="search-2" size={15} color={theme['c-font-label']} />
       <Input
         value={search}
@@ -288,7 +288,7 @@ export default () => {
     </View>
     <View style={styles.sectionHeader}>
       <Text size={12} color={theme['c-font-label']}>{global.i18n.t('local_music_storage')}</Text>
-      <View style={{ ...styles.sortBar, ...createGlassStyle(theme, { radius: Radius.pill }) }}>
+      <View style={{ ...styles.sortBar, ...createContentSurface(theme, { radius: Radius.pill }) }}>
         {
           (
             [

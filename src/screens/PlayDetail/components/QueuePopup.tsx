@@ -9,7 +9,7 @@ import { clearTempPlayeList, removeTempPlayList } from '@/core/player/tempPlayLi
 import { playTempPlayListItem } from '@/core/player/player'
 import { confirmDialog, createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
-import { Radius, Typography } from '@/theme/layout'
+import { IconSize, Radius, Typography } from '@/theme/layout'
 
 type QueueItem = LX.Player.PlayMusicInfo
 
@@ -79,17 +79,17 @@ export default forwardRef<QueuePopupType>((_, ref) => {
         style={{ ...styles.item, backgroundColor: isPlaying ? theme['c-primary-light-200-alpha-100'] : theme['c-primary-input-background'] }}
         onPress={() => { handlePlayItem(index) }}
       >
-        <Text style={styles.order} size={11} color={isPlaying ? theme['c-primary-dark-100'] : theme['c-300']}>{String(index + 1).padStart(2, '0')}</Text>
+        <Text style={styles.order} size={11} color={isPlaying ? theme['c-primary-font'] : theme['c-font-label']}>{String(index + 1).padStart(2, '0')}</Text>
         <View style={styles.itemCopy}>
-          <Text size={Typography.body} numberOfLines={1} color={isPlaying ? theme['c-primary-dark-100'] : undefined}>{musicInfo.name}</Text>
+          <Text size={Typography.body} numberOfLines={1} color={isPlaying ? theme['c-primary-font'] : undefined}>{musicInfo.name}</Text>
           <View style={styles.itemMeta}>
             <Text size={Typography.sub} color={theme['c-font-label']} numberOfLines={1}>{musicInfo.singer}</Text>
-            <Text style={styles.sourceBadge} size={10} color={theme['c-font-label']} numberOfLines={1}>{sourceLabel}</Text>
+      <Text style={styles.sourceBadge} size={Typography.caption} color={theme['c-font-label']} numberOfLines={1}>{sourceLabel}</Text>
           </View>
         </View>
         {
           isPlaying
-            ? <Icon name="play" size={13} color={theme['c-primary-dark-100']} />
+            ? <Icon name="play" size={13} color={theme['c-primary-font']} />
             : <Icon name="play-outline" size={13} color={theme['c-font-label']} />
         }
         <TouchableOpacity
@@ -99,7 +99,7 @@ export default forwardRef<QueuePopupType>((_, ref) => {
           hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
           onPress={() => { handleRemoveItem(index) }}
         >
-          <Icon name="close" size={11} color={theme['c-font-label']} />
+      <Icon name="close" size={IconSize.affordance} color={theme['c-font-label']} />
         </TouchableOpacity>
       </TouchableOpacity>
     )
@@ -117,15 +117,15 @@ export default forwardRef<QueuePopupType>((_, ref) => {
       position="bottom"
     >
       {nowPlaying ? (
-        <View style={{ ...styles.nowPlaying, backgroundColor: theme['c-primary-light-100-alpha-200'] }}>
-          <Text style={styles.nowPlayingLabel} size={10} color={theme['c-primary-dark-100']}>{global.i18n.t('play_queue_now_playing')}</Text>
+        <View style={{ ...styles.nowPlaying, backgroundColor: theme['c-primary-light-300-alpha-800'] }}>
+      <Text style={styles.nowPlayingLabel} size={Typography.caption} color={theme['c-primary-font']}>{global.i18n.t('play_queue_now_playing')}</Text>
           <View style={styles.nowPlayingInfo}>
             <Text size={Typography.body} numberOfLines={1}>{nowPlaying.name}</Text>
             <Text size={11} color={theme['c-font-label']} numberOfLines={1}>
               {nowPlaying.singer}{nowPlayingSource ? ` · ${getSourceLabel(nowPlayingSource)}` : ''}
             </Text>
           </View>
-          <Icon name="volume-medium" size={13} color={theme['c-primary-dark-100']} />
+          <Icon name="volume-medium" size={13} color={theme['c-primary-font']} />
         </View>
       ) : null}
       {queue.length ? (

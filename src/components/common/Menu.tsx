@@ -141,7 +141,7 @@ const Menu = ({
   // console.log(menuStyle)
   // console.log(menuItemStyle)
   return (
-    <View style={{ ...styles.menu, ...menuStyle, ...createGlassStyle(theme, { level: 'overlay', radius: Radius.card }) }} onStartShouldSetResponder={() => true}>
+    <View style={{ ...styles.menu, ...menuStyle, ...createGlassStyle(theme, { radius: Radius.card }) }} onStartShouldSetResponder={() => true}>
       <View style={styles.menuClip}>
         <Animated.ScrollView keyboardShouldPersistTaps={'always'}>
           {
@@ -161,7 +161,20 @@ const Menu = ({
                         key={menu.action}
                         style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height, backgroundColor: theme['c-primary-background-active'] }}
                       >
-                        <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} color={theme['c-primary-font-active']} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                        {/* 选中态由底色 + 字重表达，不用品牌色染文字。
+
+                            这块底色上文字色的可选范围很窄，实算：
+                              c-font               6.71:1  ✓
+                              c-primary-font       3.30:1  ✗
+                              c-primary-font-active 4.05:1 ✗
+                              c-font-label         4.40:1  ✗
+                            品牌色压在自己的浅色底上必然掉到 3~4:1，正是
+                            tab-bars.md 说的"标签色与内容层底色相近"那类问题。
+                            而把底色加实只会更糟：china_ink 下 c-font-label
+                            从 4.40 掉到 3.72。所以选中态只能靠底色 + 字重。
+
+                            改动这里前请跑 python scripts/check-contrast.py。 */}
+                        <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center', fontWeight: '600' }} color={theme['c-font']} size={fontSize} numberOfLines={1}>{menu.label}</Text>
                       </View>
                     )
                   : (

@@ -4,7 +4,7 @@ import { Icon } from '@/components/common/Icon'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import { setSpText } from '@/utils/pixelRatio'
-import { Radius } from '@/theme/layout'
+import { IconSize, Radius } from '@/theme/layout'
 
 const styles = createStyle({
   content: {
@@ -119,7 +119,7 @@ export default forwardRef<InputType, InputProps>(({ onChangeText, onClearText, c
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                 onPress={clearText}
               >
-                <Icon name="remove" color={theme['c-primary-dark-100-alpha-500']} size={11} />
+                <Icon name="remove" color={theme['c-font-label']} size={IconSize.affordance} />
               </TouchableOpacity>
             </View>
           : null

@@ -63,3 +63,32 @@ export const getQualityLabel = (quality: LX.Quality): string => {
   const label = global.i18n.t(key as Parameters<typeof global.i18n.t>[0])
   return label === key ? quality : label
 }
+
+/**
+ * 音质的「规格名」——即这个档位在音频工程里实际叫什么。
+ *
+ * 与 getQualityLabel 的区别：那个是给人读的友好名（无损 / 臻品全景声），
+ * 这个是给仪表读数用的技术名（FLAC / ATMOS+ / HI-RES）。
+ *
+ * 为什么不走 i18n：这些是格式与标准的专有名称，中英文写法一致
+ * （FLAC 就是 FLAC，Master 就是 Master），翻译它们反而会造出
+ * 一个不存在的东西。真正的界面文案才需要本地化。
+ */
+const qualitySpecNames: Record<LX.Quality, string> = {
+  master: 'MASTER',
+  atmos_plus: 'ATMOS+',
+  atmos: 'ATMOS',
+  hires: 'HI-RES',
+  flac24bit: 'FLAC 24BIT',
+  wav: 'WAV',
+  flac: 'FLAC',
+  ape: 'APE',
+  '320k': '320K',
+  '192k': '192K',
+  '128k': '128K',
+}
+
+export const getQualitySpecName = (quality: LX.Quality | null | undefined): string => {
+  if (!quality) return ''
+  return qualitySpecNames[quality] ?? quality.toUpperCase()
+}

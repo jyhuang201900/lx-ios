@@ -11,7 +11,7 @@ import { useTheme } from '@/store/theme/hook'
 import { toast, createStyle } from '@/utils/tools'
 import { getQualityLabel } from '@/utils/quality'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
-import { Radius, createGlassStyle } from '@/theme/layout'
+import { Radius, Typography, createGlassStyle } from '@/theme/layout'
 import { useAvailableQualities } from './StreamInfo'
 
 interface Props {
@@ -47,10 +47,12 @@ export default memo(({ compact = false }: Props) => {
     >
       <View style={{
         ...styles.button,
+        // 玻璃浮层：它压在播放详情页内容上。此前底色取的是内容层那档浅色玻璃，
+        // 次要标签实算仅 3.99:1（china_ink），低于 AA 4.5:1。
         ...createGlassStyle(theme, { radius: Radius.control }),
         paddingHorizontal: compact ? 7 : 10,
       }}>
-        <Text style={styles.caption} size={10} color={theme['c-font-label']}>{t('player_quality')}</Text>
+        <Text style={styles.caption} size={Typography.caption} color={theme['c-font-label']}>{t('player_quality')}</Text>
         <Text style={styles.value} size={compact ? 11 : 12} color={theme['c-primary-font-active']} numberOfLines={1}>{selectedQuality}</Text>
       </View>
     </DorpDownMenu>

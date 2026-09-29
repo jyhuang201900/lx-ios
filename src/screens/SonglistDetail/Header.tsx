@@ -13,20 +13,27 @@ import { useI18n } from '@/lang'
 import { useListInfo } from './state'
 import { useAnimateOnecNumber } from '@/utils/hooks/useAnimateNumber'
 import { useStatusbarHeight } from '@/store/common/hook'
+import { Typography } from '@/theme/layout'
 
 const IMAGE_WIDTH = scaleSizeW(70)
 
 const CountText = memo(({ count }: { count: string }) => {
+  const theme = useTheme()
   const [animFade] = useAnimateOnecNumber(0, 1, 250, false)
   const [animTranslateY] = useAnimateOnecNumber(10, 0, 250, false)
   return (
     <AnimatedText style={{
       ...styles.playCount,
+      // 播放量压在歌单封面上，而封面是用户内容、颜色不可控。
+      // 原来用 50% 黑衬 + 硬编码白字：实算白色封面上只有 3.95:1，低于 12pt 所需的 4.5:1。
+      // 改为不透明胶囊底 + 跟随主题的文字色，与歌单卡片的来源标签同一套做法。
+      backgroundColor: theme['c-content-background'],
+      color: theme['c-font'],
       opacity: animFade,
       transform: [
         { translateY: animTranslateY },
       ],
-    }} numberOfLines={ 1 }>{count}</AnimatedText>
+    }} size={Typography.sub} numberOfLines={ 1 }>{count}</AnimatedText>
   )
 }, (prevProps, nextProps) => {
   return true
@@ -155,11 +162,8 @@ const styles = createStyle({
     bottom: 0,
     left: 0,
     width: '100%',
-    fontSize: 12,
     paddingLeft: 3,
     paddingRight: 3,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    color: '#fff',
     borderBottomLeftRadius: 4,
     borderBottomRightRadius: 4,
   },

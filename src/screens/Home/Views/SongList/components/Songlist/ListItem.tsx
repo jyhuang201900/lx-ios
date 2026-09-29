@@ -33,7 +33,20 @@ export default memo(({ item, index, width, showSource, onPress }: {
               <View style={styles.listItemImgClip}>
                 <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
                   <Image url={item.img} nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_from_${item.id}`} style={{ width: itemWidth, height: itemWidth, borderRadius: 16 }} />
-                  { showSource ? <Text style={styles.sourceLabel} size={Typography.caption} color="#fff" >{item.source}</Text> : null }
+                  { showSource ? (
+                    <Text
+                      style={{
+                        ...styles.sourceLabel,
+                        // 原来用 30% 黑衬 + 硬编码白字。实算该衬底在白色封面上只有
+                        // 2.12:1、浅灰封面 3.36:1，均低于 4.5:1——遮罩浓度被假设成了
+                        // "封面总是深色"。改为不透明胶囊底 + 跟随主题的文字色，
+                        // 对任意封面都稳定。
+                        backgroundColor: theme['c-content-background'],
+                      }}
+                      size={Typography.caption}
+                      color={theme['c-font']}
+                    >{item.source}</Text>
+                  ) : null }
                 </TouchableOpacity>
               </View>
             </View>
@@ -85,7 +98,6 @@ const styles = createStyle({
     top: 0,
     right: 0,
     borderBottomLeftRadius: Radius.pill,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   listItemTitle: {
     fontSize: Typography.compact,

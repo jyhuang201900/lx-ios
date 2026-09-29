@@ -49,8 +49,12 @@ const EmptyPic = memo(({ style, nativeID }: { style: ImageProps['style'], native
 
   return (
     <View style={StyleSheet.compose({ ...styles.emptyPic, backgroundColor: theme['c-primary-light-900-alpha-200'], gap: size * 0.1 }, style)} onLayout={onLayout} nativeID={nativeID}>
-      <Text size={size} color={theme['c-primary-light-400-alpha-200']}>L</Text>
-      <Text size={size} color={theme['c-primary-light-400-alpha-200']} style={styles.text}>X</Text>
+      {/* 占位字母原来用 c-primary-light-400-alpha-200，压在同样浅的占位底上
+          实测只有 1.17:1（orange）——比空白还糟，看起来像渲染故障。
+          改用 c-primary-font：它对任意主色都自我纠正到 ≥4.5:1，
+          在这个占位底上实测最低 4.74:1，既看得见又保住了品牌色。 */}
+      <Text size={size} color={theme['c-primary-font']}>L</Text>
+      <Text size={size} color={theme['c-primary-font']} style={styles.text}>X</Text>
     </View>
   )
 })

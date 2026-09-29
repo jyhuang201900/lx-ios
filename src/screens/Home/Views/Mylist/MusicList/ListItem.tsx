@@ -9,7 +9,7 @@ import { useAssertApiSupport } from '@/store/common/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import Text from '@/components/common/Text'
 import Badge from '@/components/common/Badge'
-import { Radius, TabularNums, Typography } from '@/theme/layout'
+import { IconSize, Radius, TabularNums, Typography } from '@/theme/layout'
 
 export const ITEM_HEIGHT = scaleSizeH(LIST_ITEM_HEIGHT)
 
@@ -45,7 +45,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
   const singer = `${item.singer}${isShowAlbumName && item.meta.albumName ? ` · ${item.meta.albumName}` : ''}`
 
   return (
-    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, height: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : active ? theme['c-primary-input-background'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'], opacity: isSupported ? 1 : 0.5 }}>
+    <View style={{ ...styles.listItem, width: rowInfo.rowWidth, minHeight: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : active ? theme['c-primary-input-background'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'] }}>
       <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }} style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
         {
           active
@@ -57,7 +57,18 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
           <Text color={theme['c-font']} numberOfLines={1}>{item.name}</Text>
           {/* </View> */}
           <View style={styles.listItemSingle}>
-            <Badge>{item.source.toUpperCase()}</Badge>
+            {isSupported
+              ? <Badge>{item.source.toUpperCase()}</Badge>
+              : (
+                  /**
+                   * 音源不支持时原来是把整行 opacity 降到 0.5。
+                   * 那一行仍然完全可点，所以它不是「禁用」而是「警告」——
+                   * 而警告不该靠变淡来表达：既读不清（歌名 2.61:1、歌手行 2.12:1），
+                   * 含义也含糊（在加载？被禁用？还是灰掉了？）。
+                   * 改成显式标注，文字保持满对比度。
+                   */
+                  <Badge>{global.i18n.t('list_source_unavailable')}</Badge>
+                )}
             <Text style={styles.listItemSingleText} size={Typography.sub} color={theme['c-font-label']} numberOfLines={1}>
               {singer}
             </Text>
@@ -65,7 +76,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
         </View>
         {
           isShowInterval ? (
-            <Text size={12} color={active ? theme['c-primary-alpha-400'] : theme['c-font-label']} style={TabularNums} numberOfLines={1}>{item.interval}</Text>
+            <Text size={12} color={active ? theme['c-primary-font'] : theme['c-font-label']} style={TabularNums} numberOfLines={1}>{item.interval}</Text>
           ) : null
         }
       </TouchableOpacity>
@@ -78,7 +89,8 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
         ref={moreButtonRef}
         style={styles.moreButton}
       >
-        <Icon name="dots-vertical" style={{ color: theme['c-font-label'] }} size={12} />
+        {/* 12pt 字形配 44pt 命中区几乎看不见；与全应用其它控件图标统一到 18pt */}
+        <Icon name="dots-vertical" style={{ color: theme['c-font-label'] }} size={IconSize.affordance} />
       </TouchableOpacity>
       {/* </View> */}
     </View>

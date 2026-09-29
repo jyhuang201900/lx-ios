@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from 'react-native'
+import { Animated, TouchableOpacity, View } from 'react-native'
 import { Icon } from '@/components/common/Icon'
 import { useTheme } from '@/store/theme/hook'
 // import { useIsPlay } from '@/store/player/hook'
@@ -11,6 +11,7 @@ import { useMemo } from 'react'
 import { markTimeoutExitInteraction } from '@/core/player/timeoutExit'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
 import { neonGlow } from '@/theme/layout'
+import { usePressEmphasis } from '@/theme/press'
 
 const PrevBtn = ({ size }: { size: number }) => {
   const theme = useTheme()
@@ -54,19 +55,35 @@ const NextBtn = ({ size }: { size: number }) => {
 const TogglePlayBtn = ({ size }: { size: number }) => {
   const theme = useTheme()
   const isPlay = useIsPlay()
+  const press = usePressEmphasis({ scale: 0.92, glowBoost: 0.3 })
   return (
     <TouchableOpacity
       accessibilityRole="button"
       accessibilityLabel={global.i18n.t(isPlay ? 'pause' : 'play')}
-      style={{ ...styles.playBtn, width: size, height: size, backgroundColor: theme['c-button-background-selected'], ...neonGlow(theme, { radius: 14, opacity: 0.7 }) }}
+      style={{ ...styles.playBtn, width: size, height: size }}
       activeOpacity={0.6}
+      {...press.handlers}
       onPress={() => {
         markTimeoutExitInteraction()
         hapticFeedback('medium')
         togglePlay()
       }}
     >
-      <Icon name={isPlay ? 'pause' : 'play'} color={theme['c-button-font']} rawSize={size * 0.7} />
+      {/* 签名元素：按下时收缩并让辉光加强。真实 Liquid Glass 就是
+          「被触摸时更强调」，而不是自己在循环——见 usePressEmphasis 的说明。
+          触感由上面的 hapticFeedback('medium') 承担，HIG motion.md 要求
+          动效不能是传达信息的唯一途径。 */}
+      <Animated.View
+        style={[
+          styles.playBtnFace,
+          { width: size, height: size, backgroundColor: theme['c-button-background-selected'] },
+          neonGlow(theme, { radius: 14, opacity: 0.7 }),
+          { shadowOpacity: Animated.add(press.glowOpacity, 0.7) },
+          press.transformStyle,
+        ]}
+      >
+        <Icon name={isPlay ? 'pause' : 'play'} color={theme['c-button-font-selected']} rawSize={size * 0.7} />
+      </Animated.View>
     </TouchableOpacity>
   )
 }
@@ -113,6 +130,13 @@ const styles = createStyle({
     // backgroundColor: '#ccc',
   },
   playBtn: {
+    borderRadius: 999,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // 视觉面与命中区分离：命中区保持固定尺寸，缩放与辉光只作用在视觉面上，
+  // 这样按压缩放不会连带改变可点区域。
+  playBtnFace: {
     borderRadius: 999,
     justifyContent: 'center',
     alignItems: 'center',

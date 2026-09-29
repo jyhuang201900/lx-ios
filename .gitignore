@@ -66,3 +66,6 @@ buck-out/
 
 # testing
 /coverage
+
+# python 核验脚本的字节码缓存
+__pycache__/
