@@ -58,6 +58,14 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSortChange, onTagC
 const styles = createStyle({
   source: {
     height: PageMetrics.controlHeight,
+    /**
+     * 这里原本只有 height + flexShrink: 0，没有任何宽度下限。
+     * 内层 DorpDownMenu 的按钮是 flex: 1（flexBasis 0%），在无宽度约束的
+     * 父容器里会塌缩到 0 宽，文字也就跟着没有宽度——真机上表现为
+     * 顶栏最左侧渲染成一个空白色块，而不是音源名。
+     * 搜索页 / 排行榜的同一控件都带 minWidth，这里补齐到同一档。
+     */
+    minWidth: 64,
     flexShrink: 0,
     // 圆角与描边由 createContentSurface 统一给出
   },

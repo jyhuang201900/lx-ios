@@ -98,6 +98,14 @@ export const PageMetrics = {
 export const IconSize = {
   /** 关闭 / 移除等控件图标，配 44pt 命中区 */
   affordance: 18,
+  /**
+   * 文字 chip 内部的删除标记。
+   *
+   * 与 affordance 分开是因为角色不同：affordance 是独立的图标按钮，
+   * 18pt 才够它在 44pt 命中区里被看见；chip 里的叉号和 13pt 关键词并排，
+   * 给 18pt 会比它所标注的文字还大。15pt 略大于正文，命中区由 hitSlop 补足。
+   */
+  inline: 15,
   /** 行内展开箭头 */
   disclosure: 14,
 } as const

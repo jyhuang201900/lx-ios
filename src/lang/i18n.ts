@@ -81,7 +81,22 @@ const createI18n = (_locale: Langs = locale): I18n => {
       return message
     },
     getMessage(key: keyof Message, val?: TranslateValues): string {
-      let targetMessage = this.message[key] ?? this.messages[this.fallbackLocale][key] ?? ''
+      let targetMessage = this.message[key] ?? this.messages[this.fallbackLocale][key]
+      /**
+       * 缺失的 key 原本静默返回空串——界面上就是一个空白控件，
+       * 而且没有任何迹象说明它本该有文字。真机上表现为歌单页顶栏
+       * 的音源选择器渲染成一个空白色块（持久化的 source 拼出的 key
+       * 在语言包里不存在时就会这样）。
+       *
+       * 改为回显 key 本身：它对开发是明确的定位信息，对用户也
+       * 至少不是一个来路不明的空白控件。同时 check-i18n-keys 只能校验
+       * 各语言 key 的一致性，校验不了「代码引用了但从没定义」的 key，
+       * 回显让这类漏网之鱼自己暴露出来。
+       */
+      if (targetMessage == null) {
+        if (__DEV__) console.warn(`[i18n] 缺失的翻译 key: ${String(key)}`)
+        return String(key)
+      }
       return val ? this.fillMessage(targetMessage, val) : targetMessage
     },
     t(key: keyof Message, val?: TranslateValues): string {

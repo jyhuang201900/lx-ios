@@ -354,7 +354,14 @@ const styles = createStyle({
   sortButton: { height: '100%', flexGrow: 1, paddingHorizontal: 7, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
   list: { paddingHorizontal: PageMetrics.gutter, paddingBottom: 32 },
   emptyList: { flexGrow: 1 },
-  empty: { alignItems: 'center', paddingHorizontal: 42, paddingTop: 58 },
+  /**
+   * 空状态原来只有 alignItems: 'center'（水平居中）加一个写死的 paddingTop: 58，
+   * 于是整块吊在顶部，下面留下一大片只有模糊封面的空白。
+   *
+   * emptyList 已经是 flexGrow: 1，让空状态自己撑满并垂直居中，
+   * 底部留白把它稍微抬离正中，避开迷你播放条。
+   */
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 42, paddingBottom: 56 },
   emptyIcon: { opacity: 0.5 },
   emptyTitle: { marginTop: 12 },
   emptyDescription: { marginTop: 7, textAlign: 'center', lineHeight: 19 },

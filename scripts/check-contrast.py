@@ -472,6 +472,43 @@ def check_unsafe_pairings(src_root):
     return len(found)
 
 
+# 用户自定义背景图时，PageContent 的 picComponent 用 0.56 不透明度的
+# c-content-background 遮罩压在底图上（见 PageContent.tsx）。
+# 这是刻意的产品取舍——注释写着「用户选它就是为了看得见」——但代价是
+# 底图仍有 44% 露出来，内容层的对比度不再由主题色板保证。
+#
+# 这里只做**记录与测量**，不作为失败项：把遮罩提到能达标（0.87+）会让
+# 背景图几乎不可见，等于取消这个功能。真正的解法需要产品决策。
+def report_custom_bg_limit(themes, rules):
+    print()
+    print("=== 用户自定义背景图的对比度上限（记录项，非失败）===")
+    imgs = [
+        ((0, 0, 0), "全黑"), ((255, 255, 255), "全白"),
+        ((255, 0, 0), "饱和红"), ((0, 255, 0), "饱和绿"),
+        ((124, 252, 0), "电光绿"), ((255, 240, 150), "暖黄"),
+    ]
+    scrim = 0.56
+    for token, label, minimum in (("c-font", "歌名 15pt", 4.5), ("c-font-label", "歌手行 12pt", 4.5)):
+        worst = (99, "")
+        for tid, colors, is_dark in themes:
+            theme = build_active(colors, is_dark, rules)
+            page = page_base(theme)
+            s, _ = parse(theme["c-content-background"])
+            t, ta = parse(theme[token])
+            for img, name in imgs:
+                bg = tuple(round(s[i] * scrim + img[i] * (1 - scrim)) for i in range(3))
+                px = tuple(round(t[i] * ta + bg[i] * (1 - ta)) for i in range(3))
+                r = contrast(px, bg)
+                if r < worst[0]:
+                    worst = (r, f"{tid}{'/深' if is_dark else ''}/{name}")
+        verdict = "达标" if worst[0] >= minimum else f"不达标（需 {minimum}）"
+        print(f"  {label:<14} 最低 {worst[0]:5.2f}:1  {verdict}  @{worst[1]}")
+    print(f"  现状遮罩 {scrim}（PageContent.tsx，刻意保留底图可见度）。")
+    print("  实测：次要文字要达到 4.5:1 需遮罩 0.87+，那时背景图几乎不可见。")
+    print("  这是产品取舍而非缺陷；要改需先决定是否保留该功能。")
+    return 0
+
+
 def check_text_token_hygiene():
     """禁止把原始色板 token 直接用作文字或图标的颜色。
 
@@ -552,6 +589,7 @@ def main():
     failures += check_fg_bg_pairs(raw, rules)
     failures += check_user_theme_space(raw)
     failures += check_text_token_hygiene()
+    report_custom_bg_limit(raw, rules)
     return 1 if failures else 0
 
 

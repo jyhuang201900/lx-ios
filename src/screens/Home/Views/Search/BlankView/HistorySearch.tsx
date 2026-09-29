@@ -33,7 +33,7 @@ const ListItem = ({ keyword, onSearch, onRemove }: {
         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         onPress={() => { onRemove(keyword) }}
       >
-      <Icon name="close" size={IconSize.affordance} color={theme['c-font-label']} />
+      <Icon name="close" size={IconSize.inline} color={theme['c-font-label']} />
       </TouchableOpacity>
     </Button>
   )
