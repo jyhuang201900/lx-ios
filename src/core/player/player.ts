@@ -23,6 +23,7 @@ import {
 } from '@/core/player/tempPlayList'
 import { getMusicUrlInfo, getPicPath, getLyricInfo } from '@/core/music'
 import { requestMsg } from '@/utils/message'
+import { getContentLength } from '@/utils/request'
 import { getRandom } from '@/utils/common'
 import { filterList } from './utils'
 import BackgroundTimer from 'react-native-background-timer'
@@ -169,8 +170,23 @@ export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
     currentStreamInfo.url = result.url
     currentStreamInfo.quality = result.quality
     currentStreamInfo.source = result.source
-    playerActions.setStreamInfo({ source: result.source, quality: result.quality })
+    playerActions.setStreamInfo({ source: result.source, quality: result.quality, size: null })
     setResource(musicInfo, result.url, currentTime, result.quality)
+
+    /**
+     * 体积单独查：HEAD 一次播放地址，取 content-length。
+     *
+     * 放在 setResource 之后、不 await——播放不该为了一个读数等一次网络往返。
+     * 拿到后只更新 size，并核对仍是同一首歌、同一个地址，避免快速切歌时
+     * 把上一首的体积写到当前这首上。
+     */
+    const sizeMusicId = musicInfo.id
+    const sizeUrl = result.url
+    void getContentLength(result.url).then(size => {
+      if (size == null) return
+      if (currentStreamInfo.musicId != sizeMusicId || currentStreamInfo.url != sizeUrl) return
+      playerActions.setStreamInfo({ source: result.source, quality: result.quality, size })
+    })
   }).catch((err: any) => {
     setStatusText(err.message as string)
     global.app_event.error()

@@ -227,3 +227,26 @@ export const checkUrl = async(url, options = {}) => {
     }
   })
 }
+
+/**
+ * 用 HEAD 拿音频文件的实际字节数。
+ *
+ * 播放地址的响应头里带 content-length，这是唯一对「所有音质都成立」的体积来源：
+ * 搜索结果里的 `meta._qualitys[quality].size` 只覆盖内置音源解析得出的档位，
+ * 自定义音源的 hires / atmos / master 不在其中，那几档就永远读不到体积。
+ *
+ * 返回 null 表示拿不到（服务器不返回该头、跨域限制、或请求失败），
+ * 调用方应当把它当作「没有这个读数」而不是 0。
+ */
+export const getContentLength = async(url, options = {}) => {
+  try {
+    const resp = await fetchData(url, { method: 'head', ...options }).request
+    if (resp.statusCode !== 200) return null
+    // whatwg-fetch 的 Headers.map 是小写 key 的普通对象
+    const raw = resp.headers?.['content-length'] ?? resp.headers?.['Content-Length']
+    const size = Number(raw)
+    return Number.isFinite(size) && size > 0 ? size : null
+  } catch {
+    return null
+  }
+}

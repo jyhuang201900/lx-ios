@@ -23,6 +23,17 @@ export interface InitState {
   streamInfo: {
     source: LX.Source | null
     quality: LX.Quality | null
+    /**
+     * 当前这条流实际有多少字节。
+     *
+     * 之前体积是从搜索结果的 `meta._qualitys[quality].size` 里读的，那个表
+     * 只覆盖内置音源能解析出来的档位（最高到 flac24bit）；自定义音源的
+     * hires / atmos / master 并不在搜索结果里，于是这几档永远读不到体积，
+     * 界面就把「体积」整列去掉了。
+     *
+     * 改为记录播放地址的真实大小（HTTP 响应头），任何音质、任何音源都有值。
+     */
+    size: number | null
   }
 
   playedList: LX.Player.PlayMusicInfo[]
@@ -74,6 +85,7 @@ const state: InitState = {
   streamInfo: {
     source: null,
     quality: null,
+    size: null,
   },
   loadErrorPicUrl: '',
 

@@ -8,6 +8,7 @@ import { useSettingValue } from '@/store/setting/hook'
 import { useTheme } from '@/store/theme/hook'
 import { useUserApiList } from '@/store/userApi'
 import { createStyle } from '@/utils/tools'
+import { sizeFormate } from '@/utils/common'
 import { getQualitySpecName, getTrackQualities } from '@/utils/quality'
 import { Radius, TabularNums, Typography, createGlassStyle } from '@/theme/layout'
 
@@ -60,19 +61,33 @@ const useStreamReadout = () => {
         : ''
     const customSourceName = source ? customApi?.sources?.[source]?.name : undefined
 
-    // 体积取歌曲元数据里该音质档位的实际文件大小（如 "42.8M"）。
-    // 本地文件与未知档位没有这个值，此时不显示该列——留一个「—」
-    // 会让人以为这里本该有数据。
-    const size = !isLocal && quality
-      ? (musicInfo?.source != 'local' ? musicInfo?.meta._qualitys?.[quality]?.size : null)
+    /**
+     * 体积取的是**当前这条流**的真实大小，来自播放地址的 content-length。
+     *
+     * 以前这里是查搜索结果的 `meta._qualitys[quality].size`。那张表只覆盖
+     * 内置音源能解析出来的档位（最高到 flac24bit），自定义音源的
+     * hires / atmos / master 根本不在搜索结果里，于是选到这几档时体积
+     * 永远是空的，界面干脆把整列去掉了——这就是「hi-res 以上没有体积」。
+     *
+     * HEAD 拿不到 content-length 时（部分服务器不响应 HEAD、跨域限制等），
+     * 回退到搜索元数据里的旧值——它只覆盖内置音源的低档位，但聊胜于无。
+     *
+     * 本地文件不显示：它的体积属于文件属性，不是「这条流有多大」，
+     * 和这里的语义不同。
+     */
+    const metaSize = !isLocal && quality && musicInfo?.source != 'local'
+      ? musicInfo?.meta._qualitys?.[quality]?.size
       : null
+    const size = !isLocal
+      ? (streamInfo.size ? sizeFormate(streamInfo.size) : (metaSize ?? ''))
+      : ''
 
     return {
       source: customApi && customSourceName
         ? `${customApi.name} · ${customSourceName || sourceLabel}`
         : sourceLabel,
       format: getQualitySpecName(quality),
-      size: size ?? '',
+      size,
     }
   }, [customApi, playMusicInfo, preferredQuality, sourceNameType, streamInfo, t])
 }
