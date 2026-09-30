@@ -94,7 +94,8 @@ const styles = createStyle({
     justifyContent: 'center',
   },
   title: {
-    paddingTop: 20,
+    /** 与 BlankView 的 paddingTop: 0 配合，标题与顶栏之间保留最小呼吸距离。 */
+    paddingTop: 10,
     fontWeight: '600',
     letterSpacing: 0.2,
   },

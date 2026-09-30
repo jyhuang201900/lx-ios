@@ -1,4 +1,4 @@
-import { memo, useRef } from 'react'
+import { memo, useRef, useState } from 'react'
 import { View, TouchableOpacity, FlatList, type FlatListProps, StyleSheet } from 'react-native'
 
 import { Icon } from '@/components/common/Icon'
@@ -15,6 +15,7 @@ import listState from '@/store/list/state'
 import { LIST_IDS } from '@/config/constant'
 import { PageMetrics, Radius, Typography, createContentSurface, glassCardShadow, neonGlow } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
+import Input from '@/components/common/Input'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
 
@@ -74,13 +75,25 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   )
 }, (prevProps, nextProps) => prevProps.item === nextProps.item && prevProps.activeId === nextProps.activeId)
 
-export default ({ onShowMenu, onCreate }: {
+export default ({ onShowMenu, onCreate, onSearch }: {
   onShowMenu: (info: { listInfo: LX.List.MyListInfo, index: number }, position: Position) => void
   onCreate?: () => void
+  /** 工具栏搜索框的输入回调，由外层接到当前歌单的歌曲搜索 */
+  onSearch: (keyword: string) => void
 }) => {
   const theme = useTheme()
   const allList = useMyList()
   const activeListId = useActiveListId()
+  const [keyword, setKeyword] = useState('')
+
+  /**
+   * 工具栏上的搜索框只负责收字：歌单内的歌曲数据在 MusicList 手里，
+   * 所以这里把每次输入都交给它去过滤并展示结果。
+   */
+  const handleChangeKeyword = (text: string) => {
+    setKeyword(text)
+    onSearch(text)
+  }
 
   const renderItem: FlatListType['renderItem'] = ({ item, index }) => (
     <ListItem
@@ -94,31 +107,45 @@ export default ({ onShowMenu, onCreate }: {
 
   return (
     <View style={styles.library}>
+      {/*
+        工具栏从左到右：播放全部 / 新建列表 / 搜索框。
+        搜索框原来是挂在「当前歌单」那张卡片右侧的放大镜，占掉了歌单名和
+        歌曲数最需要的横向空间；上移到工具栏后，下面那行只留歌单本身。
+      */}
       <PageToolbar>
-        {/*
-          这里原本在最左侧渲染「N 个歌单」。列表本身就在下面一条条列着，
-          数量对用户没有决策价值，却占掉了工具栏最显眼的位置。
-          工具栏改为右侧对齐两个操作，和其余页面「标题在左、操作在右」的规律一致。
-        */}
-        <View style={styles.headerActions}>
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel={global.i18n.t('play_all')}
-            onPress={() => { void playList(activeListId, 0) }}
-            style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-solid'] }}
-          >
-            <Icon name="play" color={theme['c-on-solid']} size={15} />
-            <Text size={12} color={theme['c-on-solid']}>{global.i18n.t('play_all')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel={global.i18n.t('list_create')}
-            onPress={onCreate}
-            style={{ ...styles.createButton, ...createContentSurface(theme, { radius: Radius.pill }) }}
-          >
-            <Icon name="add-music" color={theme['c-primary-font-active']} size={15} />
-            <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('list_create')}</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('play_all')}
+          onPress={() => { void playList(activeListId, 0) }}
+          style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-solid'] }}
+        >
+          <Icon name="play" color={theme['c-on-solid']} size={15} />
+          <Text size={12} color={theme['c-on-solid']}>{global.i18n.t('play_all')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={global.i18n.t('list_create')}
+          onPress={onCreate}
+          style={{ ...styles.createButton, ...createContentSurface(theme, { radius: Radius.pill }) }}
+        >
+          <Icon name="add-music" color={theme['c-primary-font-active']} size={15} />
+          <Text size={12} color={theme['c-primary-font-active']}>{global.i18n.t('list_create')}</Text>
+        </TouchableOpacity>
+        <View style={{ ...styles.searchCard, ...createContentSurface(theme, { radius: Radius.control }) }}>
+          <Icon name="search-2" size={15} color={theme['c-font-label']} />
+          <Input
+            value={keyword}
+            onChangeText={handleChangeKeyword}
+            onClearText={() => { handleChangeKeyword('') }}
+            clearBtn
+            placeholder={global.i18n.t('search_input_placeholder')}
+            returnKeyType="search"
+            enterKeyHint="search"
+            autoCorrect={false}
+            spellCheck={false}
+            style={styles.searchInput}
+            size={13}
+          />
         </View>
       </PageToolbar>
       <FlatList
@@ -136,9 +163,10 @@ export default ({ onShowMenu, onCreate }: {
 
 const styles = createStyle({
   library: { flexGrow: 0, flexShrink: 0 },
-  headerActions: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 8 },
-  playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 6 },
-  createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 6 },
+  playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 6, flexShrink: 0 },
+  searchCard: { flex: 1, minWidth: 0, height: 40, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  searchInput: { height: 36, paddingLeft: 0, fontSize: 13 },
+  createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 6, flexShrink: 0 },
   // 与 libraryHeader 的 16 对齐，避免同一页出现两条左边缘
   rail: { paddingHorizontal: PageMetrics.gutter, gap: 10 },
   // 外层不裁剪，让 glassCardShadow 在 iOS 上可以显示

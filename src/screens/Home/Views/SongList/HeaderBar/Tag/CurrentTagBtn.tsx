@@ -5,7 +5,7 @@ import { Icon } from '@/components/common/Icon'
 import { useI18n } from '@/lang'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
-import { IconSize, Radius, createContentSurface } from '@/theme/layout'
+import { IconSize, PageMetrics, Radius, ToolbarMetrics, createContentSurface } from '@/theme/layout'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
 
@@ -42,21 +42,30 @@ export default forwardRef<CurrentTagBtnType, CurrentTagBtnProps>(({ onShowList }
 
 const styles = createStyle({
   btn: {
-    minHeight: 40,
-    paddingLeft: 10,
-    paddingRight: 10,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    /**
+     * 标签按钮原本只给 minHeight + 左右内边距，宽度由文字撑开，
+     * 并且 justifyContent / alignItems 都是 'flex-start'——按钮默认是
+     * column 方向，flex-start 把内容顶到顶部，真机上「华语 >」看起来
+     * 就是偏上、没垂直居中。
+     *
+     * 统一到四字基准宽度并显式居中，与同一行的音源 / 排序 / 打开对齐。
+     */
+    width: ToolbarMetrics.chipWidth,
+    height: PageMetrics.controlHeight,
+    paddingHorizontal: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
   },
   sourceMenu: {
-    maxWidth: 64,
-    textAlign: 'left',
+    maxWidth: '100%',
+    textAlign: 'center',
     textAlignVertical: 'center',
+    includeFontPadding: false,
     paddingRight: 3,
   },
 })

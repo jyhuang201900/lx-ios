@@ -9,7 +9,7 @@ import Text from '@/components/common/Text'
 import { useI18n } from '@/lang'
 import { navigations } from '@/navigation'
 import commonState from '@/store/common/state'
-import { Radius } from '@/theme/layout'
+import { PageMetrics, Radius, ToolbarMetrics } from '@/theme/layout'
 import { useTheme } from '@/store/theme/hook'
 import { Icon } from '@/components/common/Icon'
 
@@ -67,11 +67,14 @@ export default forwardRef<OpenListType, {}>((props, ref) => {
 
 const styles = createStyle({
   button: {
+    /**
+     * 「打开」原本是内容自适应宽度（图标 + 两字），比同排其他控件窄一截。
+     * 统一到四字基准宽度，图标与文字在容器里水平垂直居中。
+     */
+    width: ToolbarMetrics.chipWidth,
+    height: PageMetrics.controlHeight,
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingLeft: 10,
-    paddingRight: 10,
-    minHeight: 40,
+    justifyContent: 'center',
     borderRadius: Radius.pill,
     flexDirection: 'row',
     gap: 5,

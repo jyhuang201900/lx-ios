@@ -61,7 +61,7 @@ const Component = <S extends Sources>({ fontSize = 15, center, onSourceChange }:
       btnStyle={styles.sourceMenuButton}
     >
       <View style={styles.sourceMenu}>
-        <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} numberOfLines={1} size={fontSize}>{t(`source_${sourceNameType}_${source}`)}</Text>
+        <Text style={{ width: '100%', textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false }} numberOfLines={1} size={fontSize}>{t(`source_${sourceNameType}_${source}`)}</Text>
       </View>
     </DorpDownMenu>
   )
@@ -78,11 +78,12 @@ const styles = createStyle({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    // paddingTop: 12,
-    // paddingBottom: 12,
-    paddingLeft: 15,
-    paddingRight: 15,
+    /**
+     * 内边距收到 8：音源名统一按四字宽度摆放（由外层容器给宽度），
+     * 再留 15pt 的左右内边距会把文字挤到换行边缘。
+     */
+    paddingLeft: 8,
+    paddingRight: 8,
     // backgroundColor: '#ccc',
-
   },
 })

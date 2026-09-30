@@ -13,7 +13,7 @@ import DorpDownMenu from '@/components/common/DorpDownMenu'
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { type BoardItem } from '@/store/leaderboard/state'
-import { Gap, PageMetrics, Radius, createContentSurface } from '@/theme/layout'
+import { Gap, PageMetrics, Radius, ToolbarMetrics, createContentSurface } from '@/theme/layout'
 
 export interface HeaderBarProps {
   onSourceChange: (source: LX.OnlineSource) => void
@@ -103,9 +103,40 @@ const styles = createStyle({
     gap: Gap.inline,
     paddingHorizontal: PageMetrics.gutter,
   },
-  source: { height: PageMetrics.controlHeight, flexGrow: 0, flexShrink: 0, borderRadius: Radius.control },
-  boardSelector: { minWidth: 116, maxWidth: 220, flexShrink: 0, height: PageMetrics.controlHeight, borderRadius: Radius.control, justifyContent: 'flex-start' },
-  boardSelectorContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', paddingHorizontal: 10 },
-  boardSelectorText: { textAlign: 'left', textAlignVertical: 'center', paddingRight: 6 },
-  playAllButton: { minHeight: PageMetrics.controlHeight, paddingHorizontal: 10, borderRadius: Radius.pill, flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'flex-start' },
+  source: {
+    /** 音源名与同一行的榜单 / 播放全部对齐到同一个四字基准宽度。 */
+    width: ToolbarMetrics.chipWidth,
+    height: PageMetrics.controlHeight,
+    flexGrow: 0,
+    flexShrink: 0,
+    justifyContent: 'center',
+    borderRadius: Radius.control,
+  },
+  boardSelector: {
+    /**
+     * 榜单按钮原本写死 minWidth: 116 / maxWidth: 220，并且 justifyContent
+     * 是 'flex-start'——按钮默认 column 方向，flex-start 把「热歌榜 >」
+     * 顶到顶部，真机上就是用户看到的没垂直居中。
+     *
+     * 改成四字基准宽度起步，长榜单名最多放到约八字宽，超出部分省略；
+     * 内容显式居中。顶栏本身可横向滚动，所以放宽上限不会挤掉其他控件。
+     */
+    minWidth: ToolbarMetrics.chipWidth,
+    maxWidth: ToolbarMetrics.chipWidth * 1.75,
+    flexShrink: 0,
+    height: PageMetrics.controlHeight,
+    borderRadius: Radius.control,
+    justifyContent: 'center',
+  },
+  boardSelectorContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 },
+  boardSelectorText: { textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false, paddingRight: 6 },
+  playAllButton: {
+    minHeight: PageMetrics.controlHeight,
+    paddingHorizontal: 14,
+    borderRadius: Radius.pill,
+    flexDirection: 'row',
+    gap: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 })

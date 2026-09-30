@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react'
 
 import listState from '@/store/list/state'
 import ListMenu, { type ListMenuType, type Position, type SelectInfo } from './ListMenu'
@@ -18,7 +18,16 @@ import MusicToggleModal, { type MusicToggleModalType } from './MusicToggleModal'
 import DownloadQualityPicker, { type DownloadQualityPickerType } from '@/components/DownloadQualityPicker'
 
 
-export default () => {
+export interface MusicListType {
+  /** 打开当前歌单内的歌曲搜索栏（多选等场景仍会用到） */
+  showSearch: () => void
+  /** 由工具栏搜索框驱动：按关键词过滤当前歌单并展示结果浮层 */
+  search: (keyword: string) => void
+  /** 清空关键词时收起结果浮层 */
+  hideSearch: () => void
+}
+
+export default forwardRef<MusicListType, {}>((props, ref) => {
   // const t = useI18n()
   const activeListRef = useRef<ActiveListType>(null)
   const listMusicSearchRef = useRef<ListMusicSearchType>(null)
@@ -79,6 +88,30 @@ export default () => {
     } else activeListRef.current?.setVisibleBar(false)
     listSearchBarRef.current?.show()
   }, [])
+
+  /**
+   * 把搜索能力暴露给外层。
+   *
+   * 原本这个入口是「当前歌单」卡片右侧那个放大镜按钮；那一行现在要留给
+   * 歌单名和数量，搜索框统一上移到工具栏，所以这里必须能被工具栏调用。
+   *
+   * search() 直接复用既有的搜索结果浮层（ListMusicSearch），它内部已按
+   * 关键词做过滤并带 200ms 防抖；不隐藏「当前歌单」卡片，避免工具栏输入
+   * 时下方布局跳一下。
+   */
+  useImperativeHandle(ref, () => ({
+    showSearch: handleShowSearch,
+    search(keyword: string) {
+      if (!keyword) {
+        listMusicSearchRef.current?.hide()
+        return
+      }
+      listMusicSearchRef.current?.search(keyword, layoutHeightRef.current)
+    },
+    hideSearch() {
+      listMusicSearchRef.current?.hide()
+    },
+  }), [handleShowSearch])
   const handleExitSearch = useCallback(() => {
     isShowSearchBarModeBar.current = false
     listMusicSearchRef.current?.hide()
@@ -124,7 +157,7 @@ export default () => {
   return (
     <View style={styles.container}>
       <View style={{ zIndex: 2 }}>
-        <ActiveList ref={activeListRef} onShowSearchBar={handleShowSearch} onScrollToTop={hancelScrollToTop} />
+        <ActiveList ref={activeListRef} onScrollToTop={hancelScrollToTop} />
         <MultipleModeBar
           ref={multipleModeBarRef}
           onSwitchMode={hancelSwitchSelectMode}
@@ -178,8 +211,7 @@ export default () => {
       <DownloadQualityPicker ref={downloadQualityPickerRef} />
     </View>
   )
-}
-
+})
 
 const styles = createStyle({
   container: {

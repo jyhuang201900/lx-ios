@@ -11,7 +11,7 @@ import SourceSelector, {
 import { type Source } from '@/store/songlist/state'
 import Tag, { type TagType, type TagProps } from './Tag'
 import OpenList, { type OpenListType } from './OpenList'
-import { Gap, PageMetrics, Radius, createContentSurface } from '@/theme/layout'
+import { Gap, PageMetrics, Radius, ToolbarMetrics, createContentSurface } from '@/theme/layout'
 import { useTheme } from '@/store/theme/hook'
 
 export interface HeaderBarProps {
@@ -92,11 +92,16 @@ const styles = createStyle({
     paddingHorizontal: PageMetrics.gutter,
   },
   source: {
+    /**
+     * 音源名与同一行的排序 / 标签 / 打开按钮对齐到同一个四字基准宽度。
+     * 之前用 minWidth: 64，文字由内容撑开，和旁边的固定宽度控件凑在一起
+     * 就参差不齐；同时 flexGrow: 0 让它在横向滚动容器里保持自然宽度。
+     */
+    width: ToolbarMetrics.chipWidth,
     height: PageMetrics.controlHeight,
-    /** 音源名容器：minWidth 给文字一个下限，不参与伸缩，和搜索页同一套约束。 */
-    minWidth: 64,
     flexGrow: 0,
     flexShrink: 0,
+    justifyContent: 'center',
     // 圆角与描边由 createContentSurface 统一给出
   },
 })

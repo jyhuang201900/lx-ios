@@ -9,7 +9,6 @@ import { useSettingValue } from '@/store/setting/hook'
 import Text, { AnimatedColorText } from '@/components/common/Text'
 import { setSpText } from '@/utils/pixelRatio'
 import playerState from '@/store/player/state'
-import { scrollTo } from '@/utils/scroll'
 import PlayLine, { type PlayLineType } from '../components/PlayLine'
 import KaraokeLine from '../components/KaraokeLine'
 import { normalizeExtendedLyricText } from '../components/lyricText'
@@ -179,7 +178,8 @@ export default () => {
   const isFirstSetLrc = useRef(true)
   const scrollInfoRef = useRef<NativeSyntheticEvent<NativeScrollEvent>['nativeEvent'] | null>(null)
   const listLayoutInfoRef = useRef<{ spaceHeight: number, lineHeights: number[] }>({ spaceHeight: 0, lineHeights: [] })
-  const scrollCancelRef = useRef<(() => void) | null>(null)
+  const listHeightRef = useRef(0)
+  const correctScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isShowLyricProgressSetting = useSettingValue('playDetail.isShowLyricProgressSetting')
   // useLock()
   // const [imgUrl, setImgUrl] = useState(null)
@@ -194,43 +194,90 @@ export default () => {
   // }, [playMusicInfo])
 
   // const imgWidth = useMemo(() => layout.width * 0.75, [layout.width])
+  /**
+   * 计算第 index 行居中所需的滚动偏移。
+   *
+   * 行高来自每一行的 onLayout；缺失的行高先用已测行的平均值估算，
+   * 这样即使那一行还没渲染出来也能算出一个可用的位置。
+   */
+  const computeScrollOffset = (index: number) => {
+    const { spaceHeight, lineHeights } = listLayoutInfoRef.current
+    const measuredHeight = listHeightRef.current
+    const viewport = measuredHeight > 0
+      ? measuredHeight
+      : (scrollInfoRef.current?.layoutMeasurement.height ?? 0)
+    if (!spaceHeight || !viewport) return null
+
+    const measured = lineHeights.slice(0, index + 1).filter(h => h > 0)
+    const average = measured.length
+      ? measured.reduce((sum, h) => sum + h, 0) / measured.length
+      : 0
+    if (!average) return null
+
+    let offset = spaceHeight
+    for (let i = 0; i < index; i++) offset += lineHeights[i] || average
+    offset += (lineHeights[index] || average) / 2
+    return Math.max(0, offset - viewport * 0.42)
+  }
+
+  /**
+   * 定位到当前行。
+   *
+   * 这里原本只在「当前行紧接上一行」且已经收到过滚动事件时才自己算偏移，
+   * 其余情况一律交给 FlatList 的 scrollToIndex。而没有 getItemLayout 的变高
+   * 列表里，scrollToIndex 只能滚到已经渲染出来的行；歌词页是滑过去才挂载的，
+   * 首次进入时当前行通常落在 initialNumToRender(12) 之外，scrollToIndex 失败，
+   * 触发 onScrollToIndexFailed 后每 100ms 重试一次，直到那一行被渲染出来——
+   * 真机上就是「滑到歌词页后很久才开始滚动」。
+   *
+   * 现在改成自己算偏移并用 scrollToOffset 直接跳：不依赖目标行是否已渲染，
+   * 首帧就能定位。随后再校正一次，等真实行高补上后位置是准的。
+   */
   const handleScrollToActive = (index = lineRef.current.line) => {
     if (index < 0) return
-    if (flatListRef.current) {
-      // console.log('handleScrollToActive', index)
-      if (scrollInfoRef.current && lineRef.current.line - lineRef.current.prevLine == 1) {
-        let offset = listLayoutInfoRef.current.spaceHeight
-        for (let line = 0; line < index; line++) {
-          offset += listLayoutInfoRef.current.lineHeights[line] ?? 0
-        }
-        offset += (listLayoutInfoRef.current.lineHeights[line] ?? 0) / 2
-        try {
-          scrollCancelRef.current = scrollTo(flatListRef.current, scrollInfoRef.current, offset - scrollInfoRef.current.layoutMeasurement.height * 0.42, 600, () => {
-            scrollCancelRef.current = null
-          })
-        } catch {}
-      } else {
-        if (scrollCancelRef.current) {
-          scrollCancelRef.current()
-          scrollCancelRef.current = null
-        }
-        try {
-          flatListRef.current.scrollToIndex({
-            index,
-            animated: true,
-            viewPosition: 0.42,
-          })
-        } catch {}
-      }
+    const list = flatListRef.current
+    if (!list) return
+
+    const offset = computeScrollOffset(index)
+    if (offset == null) {
+      // 行高还没量到，先按索引滚一次；下面的定时校正会补上准确位置
+      try {
+        list.scrollToIndex({ index, animated: true, viewPosition: 0.42 })
+      } catch {}
+    } else {
+      try {
+        list.scrollToOffset({ offset, animated: true })
+      } catch {}
     }
+
+    // 行高是逐帧量出来的，隔一拍再算一次，位置才算准
+    if (correctScrollTimeoutRef.current) clearTimeout(correctScrollTimeoutRef.current)
+    correctScrollTimeoutRef.current = setTimeout(() => {
+      correctScrollTimeoutRef.current = null
+      const corrected = computeScrollOffset(index)
+      if (corrected == null) return
+      if (offset != null && Math.abs(corrected - offset) < 1) return
+      try {
+        list.scrollToOffset({ offset: corrected, animated: true })
+      } catch {}
+    }, 260)
   }
 
   const handleScroll = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {
     scrollInfoRef.current = nativeEvent
+    listHeightRef.current = nativeEvent.layoutMeasurement.height
     if (isPauseScrollRef.current) {
       playLineRef.current?.updateScrollInfo(nativeEvent)
     }
   }
+
+  /**
+   * 视口高度在第一次滚动事件之前是未知的，而首次定位必须用到它。
+   * FlatList 自己的 onLayout 最早、也最可靠。
+   */
+  const handleListLayout = useCallback(({ nativeEvent }: LayoutChangeEvent) => {
+    listHeightRef.current = nativeEvent.layout.height
+  }, [])
   const handleScrollBeginDrag = () => {
     isPauseScrollRef.current = true
     playLineRef.current?.setVisible(true)
@@ -241,10 +288,6 @@ export default () => {
     if (scrollTimoutRef.current) {
       clearTimeout(scrollTimoutRef.current)
       scrollTimoutRef.current = null
-    }
-    if (scrollCancelRef.current) {
-      scrollCancelRef.current()
-      scrollCancelRef.current = null
     }
   }
 
@@ -270,6 +313,10 @@ export default () => {
       if (scrollTimoutRef.current) {
         clearTimeout(scrollTimoutRef.current)
         scrollTimoutRef.current = null
+      }
+      if (correctScrollTimeoutRef.current) {
+        clearTimeout(correctScrollTimeoutRef.current)
+        correctScrollTimeoutRef.current = null
       }
     }
   }, [])
@@ -374,6 +421,7 @@ export default () => {
         renderItem={renderItem}
         keyExtractor={getkey}
         style={styles.container}
+        onLayout={handleListLayout}
         ref={flatListRef}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={spaceComponent}

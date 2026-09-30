@@ -5,7 +5,7 @@ import { useI18n } from '@/lang'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
-import { Gap, Radius, createContentSurface } from '@/theme/layout'
+import { Gap, PageMetrics, Radius, ToolbarMetrics, createContentSurface } from '@/theme/layout'
 
 export interface SortTabProps {
   onSortChange: (id: string) => void
@@ -32,13 +32,18 @@ export default forwardRef<SortTabType, SortTabProps>(({ onSortChange }, ref) => 
   /**
    * 这里原本把 tid 为 hot 的排序项过滤掉了。
    *
-   * 后果是每个源被砍到只剩一项甚至零项：酷我 / 百度 / 企鹅只剩「最新」，
-   * 咪咕只剩「推荐」，网易的 sortList 只有「最热」一项，过滤后直接是空的，
-   * 整个排序区什么都不显示。排序项是数据源真实提供的分类，不该由界面猜。
+   * 上一轮我把它整个去掉，是想让每个源显示自己真实的分类。但排序区一行
+   * 只能放下有限的控件，「最热」与页面顶部的「热歌榜 / 推荐」在语义上重复，
+   * 保留它反而把真正区分维度的「最新 / 热藏 / 飙升」挤到屏幕外。
+   *
+   * 现在的处理是：仍然过滤 hot，但**兜底**——如果某个源过滤后一项都不剩
+   * （网易的 sortList 就只有「最热」一项），就退回显示完整列表，
+   * 免得排序区变成一片空白。
    */
   const sorts = useMemo(() => {
-    return sortList
-      .map(s => ({ label: t(`songlist_${s.tid}`), id: s.id }))
+    const visible = sortList.filter(s => s.tid != 'hot')
+    const list = visible.length ? visible : sortList
+    return list.map(s => ({ label: t(`songlist_${s.tid}`), id: s.id }))
   }, [sortList, t])
 
   const handleSortChange = (id: string) => {
@@ -91,16 +96,25 @@ const styles = createStyle({
     gap: Gap.inline,
   },
   button: {
-    height: 40,
-    minWidth: 44,
+    /**
+     * 排序按钮原本只给了 minWidth: 44，宽度由文字撑开，所以「推荐 / 最新」
+     * 这种两字项和「热藏 / 飙升」宽度不一，同一行参差不齐。
+     * 统一到四字基准宽度，并显式垂直居中——文字默认基线对齐，
+     * 在固定高度里会偏上，真机上看起来就是「没垂直居中」。
+     */
+    width: ToolbarMetrics.chipWidth,
+    height: PageMetrics.controlHeight,
     flexShrink: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
     borderRadius: Radius.control,
   },
   buttonText: {
     textAlign: 'center',
+    // Android 的 textAlignVertical 对 iOS 无效；两端都要靠容器居中，
+    // 这里保留它是为了让 Android 上的多行兜底。
     textAlignVertical: 'center',
+    includeFontPadding: false,
   },
 })

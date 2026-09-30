@@ -68,8 +68,14 @@ export default forwardRef<BlankViewType, BlankViewProps>(({ onSearch }, ref) => 
 
 
 const styles = createStyle({
+  /**
+   * 「热门搜索」整块原来从顶栏下方 8pt 才开始，加上 HotSearch 标题自己
+   * 又有一个 paddingTop: 20，实际首行标题离顶栏 28pt。对空态来说这块留白
+   * 太大，把热门词压到了屏幕下半部分。这里收到 0，标题自己的 paddingTop
+   * 负责最小呼吸距离。
+   */
   content: {
-    paddingTop: 8,
+    paddingTop: 0,
     paddingBottom: 28,
     paddingHorizontal: PageMetrics.gutter,
   },

@@ -13,14 +13,13 @@ import { useSettingValue } from '@/store/setting/hook'
 import { Radius, createContentSurface } from '@/theme/layout'
 
 export interface ActiveListProps {
-  onShowSearchBar: () => void
   onScrollToTop: () => void
 }
 export interface ActiveListType {
   setVisibleBar: (visible: boolean) => void
 }
 
-export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, onScrollToTop }, ref) => {
+export default forwardRef<ActiveListType, ActiveListProps>(({ onScrollToTop }, ref) => {
   const theme = useTheme()
   const currentListId = useActiveListId()
   const fetching = useListFetching(currentListId)
@@ -59,9 +58,6 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
         </View>
         { fetching ? <Loading color={theme['c-primary']} style={styles.loading} /> : null }
       </TouchableOpacity>
-      <TouchableOpacity accessibilityRole="button" accessibilityLabel={global.i18n.t('nav_search')} style={{ ...styles.currentListBtns, ...createContentSurface(theme, { radius: Radius.pill }) }} onPress={onShowSearchBar}>
-        <Icon color={theme['c-font']} name="search-2" size={16} />
-      </TouchableOpacity>
     </View>
   )
 })
@@ -70,7 +66,7 @@ export default forwardRef<ActiveListType, ActiveListProps>(({ onShowSearchBar, o
 const styles = createStyle({
   currentList: {
     flexDirection: 'row',
-    paddingRight: 10,
+    paddingRight: 14,
     height: 52,
     marginHorizontal: 16,
     marginTop: 12,
@@ -101,13 +97,5 @@ const styles = createStyle({
   },
   loading: {
     marginRight: 5,
-  },
-  currentListBtns: {
-    width: 42,
-    height: 42,
-    borderRadius: Radius.pill,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor: 'rgba(0,0,0,0.2)',
   },
 })

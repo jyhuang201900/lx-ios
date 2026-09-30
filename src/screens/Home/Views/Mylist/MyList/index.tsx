@@ -12,7 +12,7 @@ import DuplicateMusic, { type DuplicateMusicType } from './DuplicateMusic'
 import { useMyList } from '@/store/list/hook'
 
 
-export default () => {
+export default ({ onSearch }: { onSearch: (keyword: string) => void }) => {
   const allList = useMyList()
   const listMenuRef = useRef<ListMenuType>(null)
   const listNameEditRef = useRef<ListNameEditType>(null)
@@ -25,6 +25,7 @@ export default () => {
       <List
         onCreate={() => listNameEditRef.current?.showCreate(allList.length)}
         onShowMenu={(info, position) => listMenuRef.current?.show(info, position)}
+        onSearch={onSearch}
       />
       <ListNameEdit ref={listNameEditRef} />
       <ListMusicSort ref={listMusicSortRef} />
