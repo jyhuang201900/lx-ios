@@ -629,3 +629,23 @@ measure in the first place, so the correct move was to put scrolling one level
 out and let the inner rows size to their content. That also let the sort list
 stop dropping the `hot` entry: the previous filter left NetEase with zero sort
 items, and no amount of styling fixes an empty list.
+
+### Phase 61: Chip Centring, My List Search, Lyric Positioning
+- [x] Find the chip misalignment: `justifyContent: 'flex-start'` on a column-direction pressable
+- [x] Put every toolbar chip on one four-character basis
+- [x] Restore the `hot` filter with a fallback so no source ends up with an empty sort row
+- [x] Reorder the my-list toolbar to 播放全部 / 新建列表 / search, and wire the field to the real in-list filter
+- [x] Drop the search button from the current-playlist card
+- [x] Replace `scrollToIndex` with a measured-offset scroll on the lyric page
+- [x] Raise the hot-search block
+- [x] Verify curves, reverb, contrast, tsc, eslint, i18n, DSP and the iOS bundle
+- **Status:** complete
+
+## Notes on Phase 61
+The lyric page was slow to position for a structural reason: it used
+`scrollToIndex` on a variable-height list with no `getItemLayout`, and the
+page only mounts when the user swipes to it. The current line therefore sat
+outside the first twelve rendered rows, the call failed, and
+`onScrollToIndexFailed` retried every 100ms until that row happened to render.
+Computing the offset from measured row heights removes the dependency on the
+target row existing at all.

@@ -1,5 +1,64 @@
 # Progress Log
 
+## Session: 2026-09-30 — chip centring, my-list search, lyric positioning
+
+用户又报六条：歌单页文字没垂直居中、控件宽度不统一、排行榜同样问题、
+我的列表工具栏要「播放全部 / 新建列表 / 搜索框」且收藏行去掉搜索、
+歌词页定位很慢、热门搜索整体太靠下。
+
+**顶栏垂直居中：真因不是 padding，是主轴方向。**
+
+排序按钮和标签按钮都写了 `justifyContent: 'flex-start'` +
+`alignItems: 'flex-start'`。Pressable 默认是 column 方向，所以
+`justifyContent` 管的是**纵向**——flex-start 把文字顶到框顶，
+固定 40pt 高度里看着就是「没居中」。两处都改成 `center`，
+并补 `includeFontPadding: false`（Android 的字体上下留白会让居中再偏一点）。
+
+**四字基准宽度。**
+
+音源名、排序项、标签、打开原本各按内容撑宽，同一行参差不齐。
+新增 `ToolbarMetrics.chipWidth`（设计值 88，经 createStyle 缩放到
+常见机型约 91pt），四个控件统一用它。排行榜的榜单按钮也从写死的
+`minWidth: 116` 改为同一基准，长名字最多放到约 1.75 倍宽再省略。
+
+**「最热」的处理换了个方向。**
+
+上一轮我把 hot 过滤整个删掉，理由是「显示数据源真实的分类」。但排序区
+一行放不下那么多控件，hot 与页面语义重复，保留它反而把「最新 / 热藏 /
+飙升」挤出屏幕。现在恢复过滤，但加兜底：过滤后若一项不剩（网易就只有
+hot 一项），退回显示完整列表，避免空白。
+
+**我的列表工具栏重排。**
+
+顺序改为 播放全部 / 新建列表 / 搜索框。搜索框原本挂在「当前歌单」卡片
+右侧，占掉了歌单名和歌曲数需要的横向空间；上移后那行只留歌单本身。
+搜索框不是摆设——`MusicList` 通过 `useImperativeHandle` 暴露 `search()`
+与 `hideSearch()`，复用既有的 `ListMusicSearch` 过滤浮层，输入即过滤。
+
+**歌词定位慢：根因是 scrollToIndex 对未渲染行无效。**
+
+歌词列表是变高的、没有 `getItemLayout`，而歌词页又是滑过去才挂载
+（`LyricPage` 的 lazy mount）。首次进入时当前行通常在
+`initialNumToRender(12)` 之外，`scrollToIndex` 失败 →
+`onScrollToIndexFailed` 每 100ms 重试一次 → 直到那一行被渲染出来才滚。
+真机上就是「滑到歌词页很久才开始滚动」。
+
+改成自己算偏移：按已测行高累加（缺失行用已测平均值估算），
+用 `scrollToOffset` 直接跳，不依赖目标行是否已渲染；随后 260ms
+再按真实行高校正一次。视口高度从 FlatList 的 `onLayout` 拿，
+不再等第一次滚动事件。顺带删掉了 `@/utils/scroll` 的 JS 逐帧滚动
+（600ms、每 10ms 一次 setState 级别的 scrollToOffset）。
+
+**热门搜索上移。**
+
+空态容器 `paddingTop: 8` + 标题自身 `paddingTop: 20`，首行离顶栏 28pt。
+容器收到 0，标题收到 10，整块上移 18pt。
+
+验证：tsc --noEmit 0 错误；改动目录 eslint 0 问题；check-contrast.py 0 失败；
+check-i18n-keys.js 3 语言 663 键一致；check-sound-effect-dsp.js 通过；
+check-curves.mjs 0 项失败；iOS bundle 打包成功（28 个资源）。
+本机 Windows 无法启动 iOS 模拟器，未做真机截图复核。
+
 ## Session: 2026-09-30 — toolbar collapse, my list density, local music
 
 用户报了六个问题：歌单页排序区显示异常、三个控件中间空一大块、我的列表里歌单卡片太大、
