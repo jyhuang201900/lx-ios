@@ -53,7 +53,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
   return (
     <PageToolbar>
       <View style={{ ...styles.source, ...createContentSurface(theme, { radius: Radius.control }) }}>
-        <SourceSelector ref={sourceSelectorRef} style={styles.source} onSourceChange={onSourceChange} />
+        <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
       </View>
       <DorpDownMenu
         menus={menus}

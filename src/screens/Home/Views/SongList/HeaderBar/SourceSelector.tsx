@@ -1,7 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { StyleSheet, View, type ViewStyle } from 'react-native'
 
-import { createStyle } from '@/utils/tools'
 import SourceSelector, {
   type SourceSelectorType as _SourceSelectorType,
   type SourceSelectorProps as _SourceSelectorProps,
@@ -14,14 +12,13 @@ type SourceSelectorCommonType = _SourceSelectorType<Sources>
 
 export interface SourceSelectorProps {
   onSourceChange: SourceSelectorCommonProps['onSourceChange']
-  style?: ViewStyle
 }
 
 export interface SourceSelectorType {
   setSource: (source: Source) => void
 }
 
-export default forwardRef<SourceSelectorType, SourceSelectorProps>(({ style, onSourceChange }, ref) => {
+export default forwardRef<SourceSelectorType, SourceSelectorProps>(({ onSourceChange }, ref) => {
   const sourceSelectorRef = useRef<SourceSelectorCommonType>(null)
 
   useImperativeHandle(ref, () => ({
@@ -30,17 +27,5 @@ export default forwardRef<SourceSelectorType, SourceSelectorProps>(({ style, onS
     },
   }), [])
 
-
-  return (
-    <View style={StyleSheet.compose(styles.selector, style)}>
-      <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
-    </View>
-  )
-})
-
-const styles = createStyle({
-  selector: {
-    flexGrow: 0,
-    flexShrink: 0,
-  },
+  return <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
 })

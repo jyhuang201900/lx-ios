@@ -59,13 +59,12 @@ const styles = createStyle({
   source: {
     height: PageMetrics.controlHeight,
     /**
-     * 这里原本只有 height + flexShrink: 0，没有任何宽度下限。
-     * 内层 DorpDownMenu 的按钮是 flex: 1（flexBasis 0%），在无宽度约束的
-     * 父容器里会塌缩到 0 宽，文字也就跟着没有宽度——真机上表现为
-     * 顶栏最左侧渲染成一个空白色块，而不是音源名。
-     * 搜索页 / 排行榜的同一控件都带 minWidth，这里补齐到同一档。
+     * 音源名的容器。
+     * minWidth 给文字一个下限，flexGrow/flexShrink: 0 让它在 PageToolbar
+     * 的横排里既不被拉伸也不被压缩——和搜索页保持同一套约束。
      */
     minWidth: 64,
+    flexGrow: 0,
     flexShrink: 0,
     // 圆角与描边由 createContentSurface 统一给出
   },
