@@ -4,7 +4,7 @@
 在不破坏现有 React Native 功能的前提下，改善 iOS 版本的界面完成度与核心使用体验，并完成可验证的代码检查。
 
 ## Current Phase
-Phase 59
+Phase 60
 
 ## Phases
 ### Phase 1: Requirements & Discovery
@@ -603,3 +603,29 @@ The badge was the least readable text in the app — 9pt, no background, 1.75:1 
 and it sits in the element users see most. The "unsupported source" fade was
 also a category error: the row stays fully tappable, so it is a warning, not a
 disabled state, and warnings should say what they mean rather than get dimmer.
+
+### Phase 60: Toolbar Collapse, My List Density and Local Music
+- [x] Trace the song list toolbar's empty middle to a zero-width horizontal ScrollView
+- [x] Trace the settings page's 131pt top gap to the same zero-basis bug in NavList
+- [x] Stop filtering the `hot` sort item out of the per-source sort list
+- [x] Make both toolbars horizontally scrollable instead of shrinking controls away
+- [x] Shrink the my-list cards from 180x82 to a single 46pt row
+- [x] Drop the duplicated playlist kind line and the standalone count label
+- [x] Rebuild the local music sort row around the controls instead of an orphan label
+- [x] Verify curves, reverb, contrast, tsc, eslint, i18n, DSP and the iOS bundle
+- **Status:** complete
+
+## Notes on Phase 60
+Two separate screens had the same defect and it had the same shape both times:
+a horizontal `ScrollView` with `flexGrow: 0`, or a trailing `flexGrow: 0` after
+`flex: 1`. A non-zero `flexShrink` makes Yoga resolve `flexBasis` to `0%`, so
+the scroller measured to zero width and every child was clipped. On the song
+list page that was the ~160pt gap between the source name and the sort tabs;
+on the settings page it was the whole navigation row, which read as a 131pt
+blank band under the status bar.
+
+The fix is not a bigger `minWidth`. The scroller has no content width to
+measure in the first place, so the correct move was to put scrolling one level
+out and let the inner rows size to their content. That also let the sort list
+stop dropping the `hot` entry: the previous filter left NetEase with zero sort
+items, and no amount of styling fixes an empty list.

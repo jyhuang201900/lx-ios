@@ -13,16 +13,10 @@ import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
 import Loading from '@/components/common/Loading'
 import listState from '@/store/list/state'
 import { LIST_IDS } from '@/config/constant'
-import { ListMetrics, PageMetrics, Radius, Typography, createContentSurface, glassCardShadow, neonGlow } from '@/theme/layout'
+import { PageMetrics, Radius, Typography, createContentSurface, glassCardShadow, neonGlow } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
 
 type FlatListType = FlatListProps<LX.List.MyListInfo>
-const getListKind = (id: string) => {
-  if (id === LIST_IDS.LOVE) return global.i18n.t('list_name_love')
-  if (id === LIST_IDS.DEFAULT) return global.i18n.t('list_name_default')
-  if (id === LIST_IDS.TEMP) return global.i18n.t('list_name_temp')
-  return global.i18n.t('list_create')
-}
 
 const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   onPress: (item: LX.List.MyListInfo) => void
@@ -44,18 +38,24 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   }
 
   return (
-      <View style={{ ...styles.cardShell, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-control-surface'], ...(active ? neonGlow(theme, { radius: 12, opacity: 0.32 }) : glassCardShadow) }}>
-      <View style={{ ...styles.card, ...createContentSurface(theme, { radius: Radius.card }), ...(active ? { borderColor: theme['c-primary'], borderTopColor: theme['c-primary'] } : null) }}>
+      <View style={{ ...styles.cardShell, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-control-surface'], ...(active ? neonGlow(theme, { radius: 10, opacity: 0.32 }) : glassCardShadow) }}>
+      <View style={{ ...styles.card, ...createContentSurface(theme, { radius: Radius.control }), ...(active ? { borderColor: theme['c-primary'], borderTopColor: theme['c-primary'] } : null) }}>
       <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} style={styles.cardMain} onPress={() => { onPress(item) }}>
         <View style={{ ...styles.cardIcon, backgroundColor: active ? theme['c-primary-dark-500'] : theme['c-primary-background-active'] }}>
             {/* 选中态的图标底是 c-primary-dark-500，图标必须用配合深底的 c-000；
                 同一文件里另外三处 `active ? c-font : c-font-label` 都在卡片表面上，
                 不要一起改——那里的 c-font 是对的。 */}
-            <Icon name={item.id === LIST_IDS.LOVE ? 'love' : item.id === LIST_IDS.DEFAULT ? 'play-outline' : 'album'} size={17} color={active ? theme['c-on-solid'] : theme['c-font-label']} />
+            <Icon name={item.id === LIST_IDS.LOVE ? 'love' : item.id === LIST_IDS.DEFAULT ? 'play-outline' : 'album'} size={15} color={active ? theme['c-on-solid'] : theme['c-font-label']} />
         </View>
+        {/*
+          原本这里是两行：歌单名 + 类别名。内置歌单的名称和类别本来就是同一句话
+          （「我的收藏」/「我的收藏」），等于把同一个词写了两遍；自定义歌单那一行
+          显示的又是「新建列表」——一个动作文案，不是类别。整行去掉，
+          只留歌单名和数量。
+        */}
         <View style={styles.cardCopy}>
-          <Text numberOfLines={2} ellipsizeMode="tail" size={Typography.body} color={theme['c-font']}>{item.name}</Text>
-          <Text numberOfLines={1} size={Typography.sub} color={active ? theme['c-font'] : theme['c-font-label']}>{getListKind(item.id)}{count == null ? '' : ` · ${global.i18n.t('list_song_count', { num: count })}`}</Text>
+          <Text numberOfLines={1} ellipsizeMode="tail" size={Typography.compact} color={theme['c-font']} style={styles.cardName}>{item.name}</Text>
+          {count == null ? null : <Text numberOfLines={1} size={Typography.caption} color={theme['c-font-label']}>{global.i18n.t('list_song_count', { num: count })}</Text>}
         </View>
         {fetching ? <Loading color={active ? theme['c-font'] : theme['c-font-label']} /> : null}
       </TouchableOpacity>
@@ -67,7 +67,7 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
         onPress={handleShowMenu}
         style={styles.moreButton}
       >
-        <Icon name="dots-vertical" color={active ? theme['c-font'] : theme['c-font-label']} size={15} />
+        <Icon name="dots-vertical" color={active ? theme['c-font'] : theme['c-font-label']} size={16} />
       </TouchableOpacity>
       </View>
     </View>
@@ -95,7 +95,11 @@ export default ({ onShowMenu, onCreate }: {
   return (
     <View style={styles.library}>
       <PageToolbar>
-        <Text size={11} color={theme['c-font-label']}>{global.i18n.t('list_total', { num: allList.length })}</Text>
+        {/*
+          这里原本在最左侧渲染「N 个歌单」。列表本身就在下面一条条列着，
+          数量对用户没有决策价值，却占掉了工具栏最显眼的位置。
+          工具栏改为右侧对齐两个操作，和其余页面「标题在左、操作在右」的规律一致。
+        */}
         <View style={styles.headerActions}>
           <TouchableOpacity
             accessibilityRole="button"
@@ -132,16 +136,22 @@ export default ({ onShowMenu, onCreate }: {
 
 const styles = createStyle({
   library: { flexGrow: 0, flexShrink: 0 },
-  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  headerActions: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 8 },
   playAllButton: { minHeight: 40, paddingHorizontal: 12, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 6 },
   createButton: { minHeight: 40, paddingHorizontal: 13, borderRadius: Radius.pill, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 6 },
   // 与 libraryHeader 的 16 对齐，避免同一页出现两条左边缘
   rail: { paddingHorizontal: PageMetrics.gutter, gap: 10 },
   // 外层不裁剪，让 glassCardShadow 在 iOS 上可以显示
-  cardShell: { width: scaleSizeW(180), height: scaleSizeH(82), borderRadius: Radius.card },
-  card: { flex: 1, borderWidth: StyleSheet.hairlineWidth, borderRadius: Radius.card, flexDirection: 'row', overflow: 'hidden' },
-  cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: ListMetrics.thumbSize / 4 },
-  cardIcon: { width: ListMetrics.thumbSize - 4, height: ListMetrics.thumbSize - 4, borderRadius: ListMetrics.thumbRadius, alignItems: 'center', justifyContent: 'center' },
-  cardCopy: { flex: 1, paddingLeft: 8, paddingRight: 4, justifyContent: 'center', gap: 4 },
+  /**
+   * 卡片原本是 180×82，两行文字，横向只能露出两张半。
+   * 它承载的只是一次选择，不需要这么大的面积；压到单行 46pt 高、
+   * 一屏能看见更多歌单，横向滚动也不再是主要交互。
+   */
+  cardShell: { width: scaleSizeW(168), height: scaleSizeH(46), borderRadius: Radius.control },
+  card: { flex: 1, borderWidth: StyleSheet.hairlineWidth, borderRadius: Radius.control, flexDirection: 'row', overflow: 'hidden' },
+  cardMain: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 8 },
+  cardIcon: { width: 28, height: 28, borderRadius: Radius.control, alignItems: 'center', justifyContent: 'center' },
+  cardCopy: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingLeft: 8, paddingRight: 2, gap: 4 },
+  cardName: { flexShrink: 1 },
   moreButton: { width: 44, height: '100%', alignItems: 'center', justifyContent: 'center' },
 })

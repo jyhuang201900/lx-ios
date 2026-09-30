@@ -59,15 +59,27 @@ export default ({ onChangeId }: {
 
 
 const styles = createStyle({
+  /**
+   * 这里原本同时写了 flex: 1 和 flexGrow: 0 / flexShrink: 0。
+   *
+   * Yoga 的 resolveFlexBasisPtr 只看 flex 简写：只要 flex 大于 0，
+   * flexBasis 就取 0（非 web 默认时），flexGrow / flexShrink 不会覆盖它。
+   * 所以 flex: 1 后面跟 flexGrow: 0，得到的是 basis 0 + 不增长，
+   * 宽度恒为 0——十个导航项一个都画不出来。真机上设置页顶部那 131pt
+   * 空白（状态栏 59 + 空工具栏 68）就是它。
+   *
+   * 改回 flexGrow: 1 让 ScrollView 占满工具栏宽度，内容超出时自己横向滚动。
+   * height: '100%' 保留，让选中胶囊填满工具栏高度。
+   */
   container: {
-    flex: 1,
     height: '100%',
-    flexGrow: 0,
-    flexShrink: 0,
+    flexGrow: 1,
+    flexShrink: 1,
   },
   contentContainer: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
+    alignItems: 'center',
   },
   listItem: {
     height: '100%',

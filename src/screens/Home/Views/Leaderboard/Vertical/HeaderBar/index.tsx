@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { View, TouchableOpacity } from 'react-native'
+import { ScrollView, View, TouchableOpacity } from 'react-native'
 
 // import { useGetter, useDispatch } from '@/store'
 // import Tag from './Tag'
@@ -13,8 +13,7 @@ import DorpDownMenu from '@/components/common/DorpDownMenu'
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import { type BoardItem } from '@/store/leaderboard/state'
-import { PageMetrics, Radius, createContentSurface } from '@/theme/layout'
-import PageToolbar from '@/components/common/PageToolbar'
+import { Gap, PageMetrics, Radius, createContentSurface } from '@/theme/layout'
 
 export interface HeaderBarProps {
   onSourceChange: (source: LX.OnlineSource) => void
@@ -51,7 +50,19 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
 
 
   return (
-    <PageToolbar>
+    /**
+     * 与歌单页顶栏同理：这里是三个控件（音源 / 榜单 / 播放全部）。
+     * 榜单名长度由数据决定，长榜单名（如「KTV 男生必点」）加上固定的 116pt
+     * 宽度会被截断，而播放全部一旦被顶出去就点不到了。
+     * 整条改为横向滚动，三者按顺序紧挨着排，窄屏下可横向滚动。
+     */
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      keyboardShouldPersistTaps="always"
+      style={styles.toolbar}
+      contentContainerStyle={styles.toolbarContent}
+    >
       <View style={{ ...styles.source, ...createContentSurface(theme, { radius: Radius.control }) }}>
         <SourceSelector ref={sourceSelectorRef} onSourceChange={onSourceChange} />
       </View>
@@ -73,14 +84,28 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
         <Icon name="play" size={15} color={theme['c-on-solid']} />
         <Text size={12} color={theme['c-on-solid']}>{global.i18n.t('play_all')}</Text>
       </TouchableOpacity>
-    </PageToolbar>
+    </ScrollView>
   )
 })
 
 const styles = createStyle({
+  toolbar: {
+    flexGrow: 0,
+    flexShrink: 0,
+    height: PageMetrics.toolbarHeight,
+    marginTop: PageMetrics.toolbarMargin,
+    marginBottom: PageMetrics.toolbarMargin,
+    zIndex: 2,
+  },
+  toolbarContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Gap.inline,
+    paddingHorizontal: PageMetrics.gutter,
+  },
   source: { height: PageMetrics.controlHeight, flexGrow: 0, flexShrink: 0, borderRadius: Radius.control },
-  boardSelector: { width: 116, flexShrink: 1, height: PageMetrics.controlHeight, borderRadius: Radius.control, justifyContent: 'flex-start' },
-  boardSelectorContent: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', paddingHorizontal: 10 },
-  boardSelectorText: { flex: 1, textAlign: 'left', textAlignVertical: 'center', paddingRight: 6 },
+  boardSelector: { minWidth: 116, maxWidth: 220, flexShrink: 0, height: PageMetrics.controlHeight, borderRadius: Radius.control, justifyContent: 'flex-start' },
+  boardSelectorContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', paddingHorizontal: 10 },
+  boardSelectorText: { textAlign: 'left', textAlignVertical: 'center', paddingRight: 6 },
   playAllButton: { minHeight: PageMetrics.controlHeight, paddingHorizontal: 10, borderRadius: Radius.pill, flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'flex-start' },
 })

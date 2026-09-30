@@ -286,8 +286,15 @@ export default () => {
         size={13}
       />
     </View>
+    {/*
+      这一行原本左边是一个孤立的「应用音乐库」标签，右边是排序条，两者挤在
+      同一条 32pt 高、左右各留 16pt 的行里——标签既不是标题也不属于排序，
+      排序条被它顶到右侧，四个按钮在小屏上还会换行。
+
+      排序控件自己已经说明用途，去掉标签，让它整行排满、左对齐，
+      与上方搜索框、下方列表共用同一条左边缘。
+    */}
     <View style={styles.sectionHeader}>
-      <Text size={12} color={theme['c-font-label']}>{global.i18n.t('local_music_storage')}</Text>
       <View style={{ ...styles.sortBar, ...createContentSurface(theme, { radius: Radius.pill }) }}>
         {
           (
@@ -349,9 +356,9 @@ const styles = createStyle({
   toolbarButton: { width: 36, height: 36, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
   searchCard: { marginHorizontal: PageMetrics.gutter, marginBottom: 10, minHeight: 42, borderRadius: Radius.control, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 11, flexDirection: 'row', alignItems: 'center' },
   searchInput: { height: 38, paddingLeft: 8, fontSize: 13 },
-  sectionHeader: { minHeight: 32, paddingHorizontal: PageMetrics.gutter, paddingBottom: 7, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 8 },
-  sortBar: { height: 34, flexGrow: 0, flexShrink: 1, flexDirection: 'row', alignItems: 'center', padding: 3, borderRadius: Radius.pill, gap: 2 },
-  sortButton: { height: '100%', flexGrow: 1, paddingHorizontal: 7, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
+  sectionHeader: { minHeight: 32, paddingHorizontal: PageMetrics.gutter, marginBottom: 4, flexDirection: 'row', alignItems: 'center' },
+  sortBar: { flex: 1, height: 34, flexDirection: 'row', alignItems: 'center', padding: 3, borderRadius: Radius.pill, gap: 2 },
+  sortButton: { height: '100%', flex: 1, paddingHorizontal: 4, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
   list: { paddingHorizontal: PageMetrics.gutter, paddingBottom: 32 },
   emptyList: { flexGrow: 1 },
   /**
