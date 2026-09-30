@@ -8,7 +8,6 @@ import ListMusicAdd, { type MusicAddModalType as ListMusicAddType } from '@/comp
 import ListMusicMultiAdd, { type MusicMultiAddModalType as ListAddMultiType } from '@/components/MusicMultiAddModal'
 import { createStyle } from '@/utils/tools'
 import { type LayoutChangeEvent, View } from 'react-native'
-import ActiveList, { type ActiveListType } from './ActiveList'
 import MultipleModeBar, { type SelectMode, type MultipleModeBarType } from './MultipleModeBar'
 import ListSearchBar, { type ListSearchBarType } from './ListSearchBar'
 import ListMusicSearch, { type ListMusicSearchType } from './ListMusicSearch'
@@ -29,7 +28,6 @@ export interface MusicListType {
 
 export default forwardRef<MusicListType, {}>((props, ref) => {
   // const t = useI18n()
-  const activeListRef = useRef<ActiveListType>(null)
   const listMusicSearchRef = useRef<ListMusicSearchType>(null)
   const listRef = useRef<ListType>(null)
   const multipleModeBarRef = useRef<MultipleModeBarType>(null)
@@ -50,7 +48,7 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
   const hancelMultiSelect = useCallback(() => {
     if (isShowSearchBarModeBar.current) {
       multipleModeBarRef.current?.setVisibleBar(false)
-    } else activeListRef.current?.setVisibleBar(false)
+    }
     isShowMultipleModeBar.current = true
     multipleModeBarRef.current?.show()
     listRef.current?.setIsMultiSelectMode(true)
@@ -58,7 +56,7 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
   const hancelExitSelect = useCallback(() => {
     if (isShowSearchBarModeBar.current) {
       multipleModeBarRef.current?.setVisibleBar(true)
-    } else activeListRef.current?.setVisibleBar(true)
+    }
     // console.log('hancelExitSelect', isShowSearchBarModeBar.current)
     multipleModeBarRef.current?.exitSelectMode()
     listRef.current?.setIsMultiSelectMode(false)
@@ -68,10 +66,6 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
     multipleModeBarRef.current?.setSwitchMode(mode)
     listRef.current?.setSelectMode(mode)
   }, [])
-  const hancelScrollToTop = useCallback(() => {
-    listRef.current?.scrollToTop()
-  }, [])
-
   const showMenu = useCallback((musicInfo: LX.Music.MusicInfo, index: number, position: Position) => {
     listMenuRef.current?.show({
       musicInfo,
@@ -85,7 +79,7 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
     isShowSearchBarModeBar.current = true
     if (isShowMultipleModeBar.current) {
       multipleModeBarRef.current?.setVisibleBar(false)
-    } else activeListRef.current?.setVisibleBar(false)
+    }
     listSearchBarRef.current?.show()
   }, [])
 
@@ -119,7 +113,7 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
     // console.log('handleExitSearch', isShowMultipleModeBar.current)
     if (isShowMultipleModeBar.current) {
       multipleModeBarRef.current?.setVisibleBar(true)
-    } else activeListRef.current?.setVisibleBar(true)
+    }
   }, [])
   const handleScrollToInfo = useCallback((info: LX.Music.MusicInfo) => {
     listRef.current?.scrollToInfo(info)
@@ -156,8 +150,13 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ zIndex: 2 }}>
-        <ActiveList ref={activeListRef} onScrollToTop={hancelScrollToTop} />
+      {/*
+        这一层原本托着「当前歌单」卡片，多选栏和搜索栏是绝对定位挂在它
+        上面的，靠它的高度撑开。卡片本身已经删掉（上面那排歌单选择器
+        已经标出当前选中的是哪个），所以这里退化成零高度的宿主：
+        两个浮层各自带固定高度，需要时覆盖在列表顶部。
+      */}
+      <View style={styles.modeBarHost}>
         <MultipleModeBar
           ref={multipleModeBarRef}
           onSwitchMode={hancelSwitchSelectMode}
@@ -217,5 +216,15 @@ const styles = createStyle({
   container: {
     flex: 1,
     flexDirection: 'column',
+  },
+  /**
+   * 多选栏 / 搜索栏的宿主。
+   *
+   * 这两个浮层在隐藏时返回 null，所以宿主的高度是自适应的：都隐藏时为 0，
+   * 不占任何垂直空间（这正是删掉「当前歌单」卡片要换来的收益）；
+   * 其中一个显示时，它把下面的歌曲列表往下推，而不是盖住第一行。
+   */
+  modeBarHost: {
+    zIndex: 2,
   },
 })

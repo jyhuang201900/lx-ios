@@ -185,12 +185,13 @@ export default forwardRef<ListSearchBarType, ListSearchBarProps>(({ onSearch, on
 
 const styles = createStyle({
   container: {
-    flex: 1,
-    position: 'absolute',
-    left: 0,
-    top: 0,
+    /**
+     * 原本是绝对定位，挂在「当前歌单」卡片上方把它盖住。卡片删掉之后
+     * 如果继续绝对定位，就会盖住列表第一行；改为参与布局、自带固定高度，
+     * 显示时把列表往下推，隐藏时组件返回 null、不占空间。
+     */
     width: '100%',
-    height: '100%',
+    height: 52,
     flexDirection: 'row',
     paddingLeft: 12,
     borderBottomWidth: BorderWidths.normal,
