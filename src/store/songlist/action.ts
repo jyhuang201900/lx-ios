@@ -45,6 +45,8 @@ export default {
     state.listDetailInfo.info = { ...result.info }
     state.listDetailInfo.maxPage = Math.ceil(state.listDetailInfo.total / result.limit)
 
+    global.state_event.songlistDetailUpdated({ ...state.listDetailInfo })
+
     return state.listDetailInfo
   },
   clearListDetail() {
@@ -57,5 +59,7 @@ export default {
     state.listDetailInfo.key = null
     state.listDetailInfo.info = {}
     state.listDetailInfo.maxPage = 1
+
+    global.state_event.songlistDetailUpdated({ ...state.listDetailInfo })
   },
 }

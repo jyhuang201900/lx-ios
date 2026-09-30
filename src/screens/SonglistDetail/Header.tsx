@@ -13,7 +13,7 @@ import { useI18n } from '@/lang'
 import { useListInfo } from './state'
 import { useAnimateOnecNumber } from '@/utils/hooks/useAnimateNumber'
 import { useStatusbarHeight } from '@/store/common/hook'
-import { Typography } from '@/theme/layout'
+import { FontWeight, Gap, Typography } from '@/theme/layout'
 
 const IMAGE_WIDTH = scaleSizeW(70)
 
@@ -96,25 +96,30 @@ export default forwardRef<HeaderType, HeaderProps>(({ componentId }: { component
 
   return (
     <View style={{ ...styles.container, paddingTop: statusBarHeight, borderBottomColor: theme['c-border-background'] }}>
-      <View style={{ flexDirection: 'row', flexGrow: 0, flexShrink: 0, padding: 10 }}>
+      {/*
+        这一块原先自带 padding: 10，叠在列表容器的 16pt 内缩上就是 26pt，
+        封面比下面的歌曲行多缩进 10pt，整屏看起来是歪的。
+        水平方向改由列表容器统一负责，这里只留垂直呼吸。
+      */}
+      <View style={styles.heroRow}>
         <Pic componentId={componentId} playCount={detailInfo.playCount} imgUrl={detailInfo.imgUrl} />
-        <View style={{ flexDirection: 'column', flexGrow: 1, flexShrink: 1, paddingLeft: 5 }} nativeID={NAV_SHEAR_NATIVE_IDS.songlistDetail_title}>
-          <Text size={14} numberOfLines={ 1 }>{detailInfo.name}</Text>
+        <View style={styles.heroCopy} nativeID={NAV_SHEAR_NATIVE_IDS.songlistDetail_title}>
+          <Text size={Typography.page} numberOfLines={2} style={styles.title}>{detailInfo.name}</Text>
           {
             (info.author || detailInfo.playCount)
-              ? <Text size={11} color={theme['c-font-label']} numberOfLines={1}>
+              ? <Text size={Typography.caption} color={theme['c-font-label']} numberOfLines={1} style={styles.metaLine}>
                   {[info.author, detailInfo.playCount].filter(Boolean).join(' · ')}
                 </Text>
               : null
           }
           {detailInfo.songCount ? (
-            <Text size={11} color={theme['c-font-label']} numberOfLines={1}>
+            <Text size={Typography.caption} color={theme['c-font-label']} numberOfLines={1} style={styles.metaLine}>
               {t('list_song_count', { num: detailInfo.songCount })}
             </Text>
           ) : null}
-          <View style={{ flexGrow: 0, flexShrink: 1 }}>
-            <Text size={13} style={styles.desc} color={theme['c-font-label']} numberOfLines={ 4 }>{detailInfo.desc}</Text>
-          </View>
+          {detailInfo.desc ? (
+            <Text size={Typography.sub} style={styles.desc} color={theme['c-font-label']} numberOfLines={4}>{detailInfo.desc}</Text>
+          ) : null}
         </View>
       </View>
       <ButtonBar />
@@ -129,12 +134,29 @@ export default forwardRef<HeaderType, HeaderProps>(({ componentId }: { component
 })
 
 const styles = createStyle({
-  desc: { lineHeight: 19 },
   container: {
     flexDirection: 'column',
     flexWrap: 'nowrap',
     borderBottomWidth: BorderWidths.normal,
+    paddingBottom: Gap.tight,
   },
+  /** 与歌曲行共用列表容器的水平内缩，只补垂直呼吸 */
+  heroRow: {
+    flexDirection: 'row',
+    flexGrow: 0,
+    flexShrink: 0,
+    paddingVertical: Gap.tight,
+  },
+  heroCopy: {
+    flexDirection: 'column',
+    flexGrow: 1,
+    flexShrink: 1,
+    paddingLeft: Gap.tight,
+    gap: 2,
+  },
+  title: { fontWeight: FontWeight.semibold },
+  metaLine: { marginTop: 1 },
+  desc: { lineHeight: 18, marginTop: 4 },
   listItemImg: {
     // backgroundColor: '#eee',
     flexGrow: 0,

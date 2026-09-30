@@ -2,6 +2,7 @@ import Event from './Event'
 import type { InitState as CommonState } from '@/store/common/state'
 import type { InitState as ListState } from '@/store/list/state'
 import type { InitState as PlayerState } from '@/store/player/state'
+import type { InitState as SonglistState } from '@/store/songlist/state'
 import type { InitState as VersionState } from '@/store/version/state'
 import { type I18n } from '@/lang'
 
@@ -78,6 +79,17 @@ export class StateEvent extends Event {
 
   playTempPlayListChanged(tempPlayList: PlayerState['tempPlayList']) {
     this.emit('playTempPlayListChanged', tempPlayList)
+  }
+
+  /**
+   * 歌单详情更新。
+   *
+   * 详情页顶部的「收藏 / 播放全部」要在拿到详情后才能点，而这两个按钮
+   * 原本直接读模块级的 songlistState——store 变了组件不会重渲染，
+   * 于是按钮的可用状态永远停在首帧（详情还没回来 → 一直是禁用）。
+   */
+  songlistDetailUpdated(detail: SonglistState['listDetailInfo']) {
+    this.emit('songlistDetailUpdated', detail)
   }
 
   /**
