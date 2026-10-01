@@ -303,6 +303,17 @@ export const handleGetOnlineMusicUrl = async({ musicInfo, quality, onToggleSourc
     reqPromise = Promise.reject(err)
   }
   return reqPromise.then(({ url, type }: { url: string, type: LX.Quality }) => {
+    /**
+     * 这里返回的 `type` 是**请求值**，不是**实际值**。
+     *
+     * 脚本只返回一个 URL 字符串，协议里没有字段说明它实际给的是哪一档
+     * （userApiFallback 的 normalizeRequestSuccess 强制 response 必须是字符串）。
+     * 请求 master、后端回 flac 时，这个值依然是 master。
+     *
+     * 真实档位由调用方用流本身反推（见 inferQualityFromStream）：
+     * 放在调用方做是为了不阻塞播放起播——这里每加一次网络往返，
+     * 每次播放都要多等一次。
+     */
     return { musicInfo, url, quality: type, isFromCache: false }
   }).catch(async(err: any) => {
     console.log(err)

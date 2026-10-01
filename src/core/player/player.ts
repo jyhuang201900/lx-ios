@@ -23,7 +23,8 @@ import {
 } from '@/core/player/tempPlayList'
 import { getMusicUrlInfo, getPicPath, getLyricInfo } from '@/core/music'
 import { requestMsg } from '@/utils/message'
-import { getContentLength } from '@/utils/request'
+import { probeAudioStream } from '@/utils/request'
+import { inferQualityFromStream } from '@/utils/quality'
 import { getRandom } from '@/utils/common'
 import { filterList } from './utils'
 import BackgroundTimer from 'react-native-background-timer'
@@ -174,18 +175,33 @@ export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
     setResource(musicInfo, result.url, currentTime, result.quality)
 
     /**
-     * 体积单独查：HEAD 一次播放地址，取 content-length。
+     * 一次 HEAD 同时办两件事：拿真实体积、核实真实音质。
      *
-     * 放在 setResource 之后、不 await——播放不该为了一个读数等一次网络往返。
-     * 拿到后只更新 size，并核对仍是同一首歌、同一个地址，避免快速切歌时
-     * 把上一首的体积写到当前这首上。
+     * 放在 setResource 之后、不 await——播放不该为了读数等一次网络往返。
+     * 拿到后核对仍是同一首歌、同一个地址，避免快速切歌时把上一首的结果
+     * 写到当前这首上。
+     *
+     * 为什么要核实音质：自定义音源脚本只返回一个 URL 字符串，协议里没有
+     * 字段说明它实际给的是哪一档（userApiFallback 的 normalizeRequestSuccess
+     * 强制 response 必须是字符串）。`result.quality` 是**请求值**——请求
+     * master、后端实际回 flac 时它依然是 master，界面就显示成 master，
+     * 体积也和 flac 一样。用流的真实字节数和歌曲时长反推码率，才能得到
+     * 实际拿到的是哪一档。
      */
-    const sizeMusicId = musicInfo.id
-    const sizeUrl = result.url
-    void getContentLength(result.url).then(size => {
-      if (size == null) return
-      if (currentStreamInfo.musicId != sizeMusicId || currentStreamInfo.url != sizeUrl) return
-      playerActions.setStreamInfo({ source: result.source, quality: result.quality, size })
+    const probeMusicId = musicInfo.id
+    const probeUrl = result.url
+    const requestedQuality = result.quality
+    void probeAudioStream(result.url).then(probe => {
+      if (!probe) return
+      if (currentStreamInfo.musicId != probeMusicId || currentStreamInfo.url != probeUrl) return
+      // 请求档位得不到实测码率支撑时，纠正为实际档位；判断不了就保持原判
+      // 下载项（ListItem）没有 interval 字段，此时无法反推码率，保持原判
+      const interval = 'progress' in musicInfo ? musicInfo.metadata.musicInfo.interval : musicInfo.interval
+      const actualQuality = requestedQuality
+        ? (inferQualityFromStream(requestedQuality, probe.size, interval) ?? requestedQuality)
+        : requestedQuality
+      currentStreamInfo.quality = actualQuality
+      playerActions.setStreamInfo({ source: result.source, quality: actualQuality, size: probe.size })
     })
   }).catch((err: any) => {
     setStatusText(err.message as string)

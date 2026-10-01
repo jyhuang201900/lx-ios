@@ -4,7 +4,8 @@ import settingState from '@/store/setting/state'
 import { downloadFile, existsFile, externalStorageDirectoryPath, mkdir, stopDownload, unlink, writeFile } from '@/utils/fs'
 import { toast } from '@/utils/tools'
 import { Platform } from 'react-native'
-import { getTrackQualities } from '@/utils/quality'
+import { getTrackQualities, inferQualityFromStream } from '@/utils/quality'
+import { probeAudioStream } from '@/utils/request'
 
 export type DownloadTaskStatus = 'queued' | 'downloading' | 'completed' | 'failed' | 'canceled'
 
@@ -156,6 +157,29 @@ const cleanupDownloadPath = async(id: string) => {
   await unlink(path).catch(() => {})
 }
 
+
+/**
+ * 把「请求的音质」纠正成「实际拿到的音质」。
+ *
+ * 自定义音源脚本只返回一个 URL 字符串，协议里没有字段说明它实际给的是哪一档
+ * （见 userApiFallback 的 normalizeRequestSuccess，那里强制 response 必须是字符串）。
+ * 请求 master、后端回 flac 时，`getMusicUrlInfo` 返回的仍是 master——
+ * 于是文件名后缀、体积、完成提示全都是 master，但文件其实是 flac。
+ *
+ * 下载本来就要等网络，这里多一次 HEAD 是划算的：它决定文件后缀和体积显示
+ * 是否属实。探测失败或判断不了时保持原判，不臆测。
+ */
+const resolveActualQuality = async(
+  url: string,
+  requested: LX.Quality,
+  musicInfo: LX.Music.MusicInfoOnline,
+): Promise<{ quality: LX.Quality, size: number | null }> => {
+  const probe = await probeAudioStream(url).catch(() => null)
+  if (!probe) return { quality: requested, size: null }
+  const inferred = inferQualityFromStream(requested, probe.size, musicInfo.interval)
+  return { quality: inferred ?? requested, size: probe.size }
+}
+
 const runDownloadTask = async(taskId: string) => {
   const task = downloadTasks.get(taskId)
   if (!task) return
@@ -175,9 +199,13 @@ const runDownloadTask = async(taskId: string) => {
     if (canceledDownloadIds.has(taskId)) return
     if (!quality) throw new Error('quality unavailable')
 
-    const path = await getUniqueDownloadPath(task.musicInfo, quality)
+    // 用流本身核实真实档位，再决定文件名后缀与显示
+    const actual = await resolveActualQuality(url, quality, task.musicInfo)
+    if (canceledDownloadIds.has(taskId)) return
+
+    const path = await getUniqueDownloadPath(task.musicInfo, actual.quality)
     downloadPaths.set(taskId, path)
-    updateDownloadTask(taskId, { quality })
+    updateDownloadTask(taskId, { quality: actual.quality, totalBytes: actual.size ?? 0 })
 
     const job = downloadFile(url, path, {
       background: true,
@@ -208,7 +236,7 @@ const runDownloadTask = async(taskId: string) => {
       if (lyric) await writeFile(path.replace(/\.[^.]+$/, '.lrc'), lyric).catch(() => {})
     }
     updateDownloadTask(taskId, { status: 'completed', progress: 1 })
-    toast(global.i18n.t('player_download_success', { quality }), 'long')
+    toast(global.i18n.t('player_download_success', { quality: actual.quality }), 'long')
   } catch (err) {
     console.log('download current music failed', err)
     if (!canceledDownloadIds.has(taskId)) {
@@ -296,9 +324,12 @@ export const downloadMusic = async(musicInfo: LX.Music.MusicInfoOnline, requeste
     })
     if (!quality) throw new Error('quality unavailable')
 
+    // 同上：文件名后缀必须反映实际拿到的格式，而不是请求的格式
+    const actual = await resolveActualQuality(url, quality, musicInfo)
+
     const directory = getLocalMusicDirectory()
     if (!await existsFile(directory)) await mkdir(directory)
-    const fileName = createFileName(musicInfo, quality)
+    const fileName = createFileName(musicInfo, actual.quality)
     let path = `${directory}/${fileName}`
     if (await existsFile(path)) path = `${directory}/${fileName.replace(/(\.[^.]+)$/, `_${Date.now()}$1`)}`
     const result = await downloadFile(url, path, { background: true }).promise
@@ -308,7 +339,7 @@ export const downloadMusic = async(musicInfo: LX.Music.MusicInfoOnline, requeste
       const lyric = createLyricSidecar(lyricInfo)
       if (lyric) await writeFile(path.replace(/\.[^.]+$/, '.lrc'), lyric).catch(() => {})
     }
-    toast(global.i18n.t('player_download_success', { quality }))
+    toast(global.i18n.t('player_download_success', { quality: actual.quality }))
   } catch (err) {
     console.log('download current music failed', err)
     toast(global.i18n.t('player_download_failed'))

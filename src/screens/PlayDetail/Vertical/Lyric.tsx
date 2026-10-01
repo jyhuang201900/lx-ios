@@ -223,16 +223,40 @@ export default () => {
   /**
    * 定位到当前行。
    *
-   * 这里原本只在「当前行紧接上一行」且已经收到过滚动事件时才自己算偏移，
-   * 其余情况一律交给 FlatList 的 scrollToIndex。而没有 getItemLayout 的变高
-   * 列表里，scrollToIndex 只能滚到已经渲染出来的行；歌词页是滑过去才挂载的，
-   * 首次进入时当前行通常落在 initialNumToRender(12) 之外，scrollToIndex 失败，
-   * 触发 onScrollToIndexFailed 后每 100ms 重试一次，直到那一行被渲染出来——
-   * 真机上就是「滑到歌词页后很久才开始滚动」。
+   * 分两步，缺一不可：
    *
-   * 现在改成自己算偏移并用 scrollToOffset 直接跳：不依赖目标行是否已渲染，
-   * 首帧就能定位。随后再校正一次，等真实行高补上后位置是准的。
+   * 1) 先按估算偏移快速跳一次。行高只有「已经渲染出来的行」才量得到，
+   *    而 FlatList 是虚拟化的——当前行通常在一屏之外。所以这里用已测行的
+   *    平均高度补齐未知行，先滚到大致位置，把目标行拉进渲染窗口。
+   *
+   * 2) 等目标行的真实高度量到之后，再用 scrollToIndex 落到精确位置。
+   *
+   * 只有第 1 步会「对不上」：当前行越靠后，累加的估算值越多，误差越大。
+   * 只有第 2 步会「很慢」：没有 getItemLayout 时 scrollToIndex 对未渲染的
+   * 行会直接失败，只能靠 onScrollToIndexFailed 反复重试，直到那行被渲染。
+   * 两步合起来才既有速度又有精度。
    */
+  const scheduleExactScroll = (index: number) => {
+    if (correctScrollTimeoutRef.current) clearTimeout(correctScrollTimeoutRef.current)
+    let attempts = 0
+    const tick = () => {
+      correctScrollTimeoutRef.current = null
+      const list = flatListRef.current
+      if (!list) return
+      // 目标行已经有真实高度，说明它进入了渲染窗口，可以精确对齐了
+      if (listLayoutInfoRef.current.lineHeights[index]) {
+        try {
+          list.scrollToIndex({ index, animated: true, viewPosition: 0.42 })
+        } catch {}
+        return
+      }
+      // 最多等约 1 秒；超时就停在估算位置上，不再无限重试
+      if (++attempts >= 12) return
+      correctScrollTimeoutRef.current = setTimeout(tick, 80)
+    }
+    correctScrollTimeoutRef.current = setTimeout(tick, 80)
+  }
+
   const handleScrollToActive = (index = lineRef.current.line) => {
     if (index < 0) return
     const list = flatListRef.current
@@ -240,7 +264,7 @@ export default () => {
 
     const offset = computeScrollOffset(index)
     if (offset == null) {
-      // 行高还没量到，先按索引滚一次；下面的定时校正会补上准确位置
+      // 连平均高度都还没有（首次进入、一行都没量到），先按索引试一次
       try {
         list.scrollToIndex({ index, animated: true, viewPosition: 0.42 })
       } catch {}
@@ -250,17 +274,7 @@ export default () => {
       } catch {}
     }
 
-    // 行高是逐帧量出来的，隔一拍再算一次，位置才算准
-    if (correctScrollTimeoutRef.current) clearTimeout(correctScrollTimeoutRef.current)
-    correctScrollTimeoutRef.current = setTimeout(() => {
-      correctScrollTimeoutRef.current = null
-      const corrected = computeScrollOffset(index)
-      if (corrected == null) return
-      if (offset != null && Math.abs(corrected - offset) < 1) return
-      try {
-        list.scrollToOffset({ offset: corrected, animated: true })
-      } catch {}
-    }, 260)
+    scheduleExactScroll(index)
   }
 
   const handleScroll = ({ nativeEvent }: NativeSyntheticEvent<NativeScrollEvent>) => {

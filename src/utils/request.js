@@ -238,14 +238,38 @@ export const checkUrl = async(url, options = {}) => {
  * 返回 null 表示拿不到（服务器不返回该头、跨域限制、或请求失败），
  * 调用方应当把它当作「没有这个读数」而不是 0。
  */
-export const getContentLength = async(url, options = {}) => {
+/**
+ * 探测一条音频流的真实元信息：字节数与容器格式。
+ *
+ * 用途是**核实**：自定义音源脚本只会返回一个 URL 字符串，协议里没有字段
+ * 说明它实际给的是哪一档音质（见 userApiFallback 的 normalizeRequestSuccess，
+ * 那里强制 response 必须是字符串）。客户端原本把「请求时传的音质」当成
+ * 「拿到的音质」回填，于是选了 master、后端实际给 flac 时，界面照样显示
+ * master，体积也和 flac 一模一样。
+ *
+ * 这里从响应本身取两个客观事实：
+ * - content-length：字节数
+ * - content-type / 扩展名：容器格式
+ *
+ * 拿不到就返回 null，调用方据此保持原判，不臆测。
+ */
+export const probeAudioStream = async(url, options = {}) => {
   try {
     const resp = await fetchData(url, { method: 'head', ...options }).request
     if (resp.statusCode !== 200) return null
+    const headers = resp.headers ?? {}
     // whatwg-fetch 的 Headers.map 是小写 key 的普通对象
-    const raw = resp.headers?.['content-length'] ?? resp.headers?.['Content-Length']
-    const size = Number(raw)
-    return Number.isFinite(size) && size > 0 ? size : null
+    const rawSize = headers['content-length'] ?? headers['Content-Length']
+    const size = Number(rawSize)
+    const contentType = headers['content-type'] ?? headers['Content-Type'] ?? ''
+    // HEAD 不一定给 content-type（很多 CDN 只给 content-length），
+    // 此时退回 URL 路径里的扩展名
+    const ext = /\.([a-z0-9]{2,5})(?:$|[?#])/i.exec(url)?.[1]?.toLowerCase() ?? ''
+    return {
+      size: Number.isFinite(size) && size > 0 ? size : null,
+      contentType: String(contentType).toLowerCase(),
+      ext,
+    }
   } catch {
     return null
   }

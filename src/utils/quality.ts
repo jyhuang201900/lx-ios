@@ -92,3 +92,75 @@ export const getQualitySpecName = (quality: LX.Quality | null | undefined): stri
   if (!quality) return ''
   return qualitySpecNames[quality] ?? quality.toUpperCase()
 }
+
+/**
+ * 各档位的典型码率（kbps），用于把「实际字节数」反推回真实档位。
+ *
+ * 数值取自各平台公开的规格：有损档就是标称码率；无损档按 16bit/44.1kHz
+ * 压缩后的常见值取；hi-res 以上按 24bit/96kHz 量级取。这是一张**判据表**，
+ * 不是精确测量值，所以只用来区分量级（128k vs 无损 vs 母带），
+ * 不做精细比较。
+ */
+const qualityBitrate: Partial<Record<LX.Quality, number>> = {
+  '128k': 128,
+  '192k': 192,
+  '320k': 320,
+  flac: 900,
+  ape: 900,
+  wav: 1411,
+  flac24bit: 2300,
+  hires: 2300,
+  master: 4600,
+}
+
+/** 把 "04:16" 这样的时长转成秒 */
+export const parseIntervalToSeconds = (interval: string | null | undefined): number => {
+  if (!interval) return 0
+  const parts = interval.split(':').map(v => Number(v))
+  if (!parts.length || parts.some(v => !Number.isFinite(v))) return 0
+  return parts.reduce((total, v) => total * 60 + v, 0)
+}
+
+/**
+ * 用实际的流大小和时长反推真实码率，再判断它是否支撑得住所请求的档位。
+ *
+ * 为什么需要这个：自定义音源脚本只返回一个 URL 字符串，协议里没有任何字段
+ * 说明它实际给的是哪一档（见 userApiFallback 的 normalizeRequestSuccess，
+ * 那里强制 response 必须是字符串）。客户端原本把「请求的音质」直接当成
+ * 「拿到的音质」，于是请求 master、后端实际回 flac 时，界面照旧显示 master，
+ * 体积也和 flac 一模一样。
+ *
+ * 返回 null 表示**无法判断**（缺时长、缺大小、或该档位没有判据），
+ * 此时调用方必须保持原判，不能臆测。
+ */
+export const inferQualityFromStream = (
+  requested: LX.Quality,
+  size: number | null,
+  interval: string | null | undefined,
+): LX.Quality | null => {
+  if (!size || size <= 0) return null
+  const seconds = parseIntervalToSeconds(interval)
+  if (!seconds) return null
+
+  const expected = qualityBitrate[requested]
+  if (!expected) return null
+
+  const actualKbps = (size * 8) / seconds / 1000
+  // 实测码率够得上请求档位（留 25% 余量给容器开销与静音段），就认可
+  if (actualKbps >= expected * 0.75) return null
+
+  // 够不上：在判据表里找码率最接近实际的那一档
+  let best: LX.Quality | null = null
+  let bestGap = Infinity
+  for (const [quality, bitrate] of Object.entries(qualityBitrate) as Array<[LX.Quality, number]>) {
+    // 只在「不高于请求档位」的候选里挑，避免把降级判成升档
+    if (bitrate > expected) continue
+    const gap = Math.abs(bitrate - actualKbps)
+    if (gap < bestGap) {
+      bestGap = gap
+      best = quality
+    }
+  }
+  if (!best || best === requested) return null
+  return best
+}
