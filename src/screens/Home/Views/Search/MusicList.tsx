@@ -2,8 +2,9 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 
 import OnlineList, { type OnlineListType, type OnlineListProps } from '@/components/OnlineList'
 import { search } from '@/core/search/music'
 import searchMusicState, { type Source } from '@/store/search/music/state'
-import { addTempPlayList } from '@/core/player/tempPlayList'
-import { playNext } from '@/core/player/player'
+import { setTempList } from '@/core/list'
+import { playList } from '@/core/player/player'
+import { LIST_IDS } from '@/config/constant'
 import { toast } from '@/utils/tools'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
 
@@ -12,6 +13,9 @@ import { hapticFeedback } from '@/utils/nativeModules/utils'
 // | 'onPlayList'
 // | 'onRefresh'
 // >
+
+/** 搜索结果在播放器里的来源标识 */
+const SEARCH_LIST_ID = 'search__result'
 
 export interface MusicListType {
   loadList: (text: string, source: Source) => void
@@ -56,12 +60,14 @@ export default forwardRef<MusicListType, {}>((props, ref) => {
         toast(global.i18n.t('no_item'))
         return
       }
-      addTempPlayList(list.map(item => ({
-        listId: '',
-        musicInfo: item,
-        isTop: true,
-      })))
-      void playNext()
+      /**
+       * 原来是把这些歌塞进「稍后播放」队列再 playNext——那不是播放列表：
+       * 队列播完就空，点下一首也没有上下文，打开播放队列也看不到它们。
+       * 改为把搜索结果建成播放列表，从第一首开始播，与其他页面一致。
+       */
+      void setTempList(SEARCH_LIST_ID, [...list]).then(() => {
+        void playList(LIST_IDS.TEMP, 0)
+      })
     },
   }), [])
 

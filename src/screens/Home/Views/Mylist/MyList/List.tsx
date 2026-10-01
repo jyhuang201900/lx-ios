@@ -4,8 +4,8 @@ import { View, TouchableOpacity, FlatList, type FlatListProps, StyleSheet } from
 import { Icon } from '@/components/common/Icon'
 import { useTheme } from '@/store/theme/hook'
 import { useActiveListId, useListFetching, useMyList } from '@/store/list/hook'
-import { createStyle } from '@/utils/tools'
-import { setActiveList } from '@/core/list'
+import { createStyle, toast } from '@/utils/tools'
+import { getListMusics, setActiveList } from '@/core/list'
 import { playList } from '@/core/player/player'
 import Text from '@/components/common/Text'
 import { type Position } from './ListMenu'
@@ -116,7 +116,22 @@ export default ({ onShowMenu, onCreate, onSearch }: {
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={global.i18n.t('play_all')}
-          onPress={() => { void playList(activeListId, 0) }}
+          onPress={() => {
+            /**
+             * 先确保这份列表已经进缓存，再开播。
+             *
+             * playList 内部用 getListMusicSync 读缓存；如果用户还没进过
+             * 「我的列表」的歌曲区，缓存里可能还没有这份列表，直接播会
+             * 取到空列表。getListMusics 会按需从存储读入并写回缓存。
+             */
+            void getListMusics(activeListId).then(list => {
+              if (!list.length) {
+                toast(global.i18n.t('no_item'))
+                return
+              }
+              void playList(activeListId, 0)
+            })
+          }}
           style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-solid'] }}
         >
           <Icon name="play" color={theme['c-on-solid']} size={15} />

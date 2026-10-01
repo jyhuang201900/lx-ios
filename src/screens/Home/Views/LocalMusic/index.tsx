@@ -4,10 +4,10 @@ import { AppState, FlatList, InteractionManager, Platform, RefreshControl, Style
 import Text from '@/components/common/Text'
 import { Icon } from '@/components/common/Icon'
 import Input from '@/components/common/Input'
-import { removeListMusics } from '@/core/list'
+import { removeListMusics, setTempList } from '@/core/list'
 import { getLocalMusicDirectory, subscribeDownloadTasks } from '@/core/download'
 import DownloadQueue from './DownloadQueue'
-import { playNext } from '@/core/player/player'
+import { playList } from '@/core/player/player'
 import { LIST_IDS } from '@/config/constant'
 import { buildLocalMusicInfo, buildLocalMusicInfoByFilePath } from '@/screens/Home/Views/Mylist/MyList/listAction'
 import { existsFile, extname, mkdir, readDir, selectFile, unlink, type FileType } from '@/utils/fs'
@@ -15,12 +15,14 @@ import { confirmDialog, createStyle, toast } from '@/utils/tools'
 import type { MusicMetadataFull } from '@/utils/localMediaMetadata'
 import { getLocalMetadataCacheKey, readMetadataCached } from '@/utils/localMediaMetadataCache'
 import { useTheme } from '@/store/theme/hook'
-import { addTempPlayList } from '@/core/player/tempPlayList'
 import LocalMusicItem from './LocalMusicItem'
 import { FontWeight, PageMetrics, Radius, Typography, createContentSurface } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
 
 const audioExtensions = ['mp3', 'flac', 'wav', 'ape', 'ogg', 'm4a', 'aac']
+
+/** 本地列表在播放器里的来源标识，用于和在线歌单区分 */
+const LOCAL_LIST_ID = 'local__files'
 
 const isAudioFile = (file: FileType) => file.isFile && (file.mimeType?.startsWith('audio/') || audioExtensions.includes(extname(file.name).toLowerCase()))
 
@@ -98,12 +100,6 @@ export default () => {
     }
   }, [directory, refresh])
 
-  const playFile = useCallback(async(file: FileType, metadata: MusicMetadataFull | null) => {
-    const musicInfo = metadata ? buildLocalMusicInfo(file.path, metadata) : buildLocalMusicInfoByFilePath(file)
-    addTempPlayList([{ listId: LIST_IDS.PLAY_LATER, musicInfo, isTop: true }])
-    await playNext()
-  }, [])
-
   const removeFile = useCallback(async(file: FileType) => {
     const confirmed = await confirmDialog({
       title: global.i18n.t('local_music_delete_title'),
@@ -142,15 +138,6 @@ export default () => {
     setMetadataMap(next)
   }, [])
 
-  const renderItem = useCallback<NonNullable<FlatListProps<FileType>['renderItem']>>(({ item }) => (
-    <LocalMusicItem
-      file={item}
-      onPlay={playFile}
-      onDelete={removeFile}
-      onMetadata={handleMetadata}
-    />
-  ), [playFile, removeFile, handleMetadata])
-  const keyExtractor = useCallback<NonNullable<FlatListProps<FileType>['keyExtractor']>>(item => item.path, [])
   const visibleFiles = useMemo(() => {
     const keyword = search.trim().toLowerCase()
     return files.filter(file => {
@@ -179,6 +166,30 @@ export default () => {
     })
   }, [files, metadataMap, search, sortMode])
 
+  /**
+   * 单曲播放。
+   *
+   * 原来是把这一首塞进「稍后播放」队列再 playNext——那不是播放列表：
+   * 队列播完就空，点下一首也没有上下文。现在改为把**当前可见的整份本地列表**
+   * 建成播放列表，并从点中的这一首开始播，行为和其他页面一致。
+   */
+  const playFile = useCallback(async(file: FileType, metadata: MusicMetadataFull | null) => {
+    const musicInfo = metadata ? buildLocalMusicInfo(file.path, metadata) : buildLocalMusicInfoByFilePath(file)
+    const all = visibleFiles.map(f => buildMusicInfoFromFile(f))
+    const index = all.findIndex(m => m.id == musicInfo.id)
+    await setTempList(LOCAL_LIST_ID, all)
+    void playList(LIST_IDS.TEMP, index < 0 ? 0 : index)
+  }, [visibleFiles, buildMusicInfoFromFile])
+
+  const renderItem = useCallback<NonNullable<FlatListProps<FileType>['renderItem']>>(({ item }) => (
+    <LocalMusicItem
+      file={item}
+      onPlay={playFile}
+      onDelete={removeFile}
+      onMetadata={handleMetadata}
+    />
+  ), [playFile, removeFile, handleMetadata])
+  const keyExtractor = useCallback<NonNullable<FlatListProps<FileType>['keyExtractor']>>(item => item.path, [])
   useEffect(() => {
     let cancelled = false
     const currentKeys = new Set(files.map(getLocalMetadataCacheKey))
@@ -223,12 +234,9 @@ export default () => {
 
   const playAllVisible = useCallback(async() => {
     if (!visibleFiles.length) return
-    addTempPlayList(visibleFiles.map(file => ({
-      listId: LIST_IDS.PLAY_LATER,
-      musicInfo: buildMusicInfoFromFile(file),
-      isTop: true,
-    })))
-    await playNext()
+    // 与单曲播放同理：建的是播放列表，不是待播队列
+    await setTempList(LOCAL_LIST_ID, visibleFiles.map(file => buildMusicInfoFromFile(file)))
+    void playList(LIST_IDS.TEMP, 0)
   }, [visibleFiles, buildMusicInfoFromFile])
 
   return <View style={styles.container}>

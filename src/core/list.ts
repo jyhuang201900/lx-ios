@@ -166,7 +166,14 @@ export const setUserList = (lists: LX.List.UserListInfo[]) => {
  * @param id
  * @param list
  */
-export const setTempList = async(id: string, list: LX.Music.MusicInfoOnline[]) => {
+/**
+ * 用一份歌曲列表替换「临时列表」，并记住它来自哪个来源列表。
+ *
+ * 这是「播放全部」的落地点：把整份歌单写进临时列表，再用 playList 以它
+ * 为播放列表开播。之前类型写死成 MusicInfoOnline，本地歌曲传不进来，
+ * 于是本地歌曲页只能退而求其次把歌塞进「稍后播放」队列——那不是播放列表。
+ */
+export const setTempList = async(id: string, list: LX.Music.MusicInfo[]) => {
   await overwriteListMusics(LIST_IDS.TEMP, list)
   listAction.setTempListMeta({ id })
 }
