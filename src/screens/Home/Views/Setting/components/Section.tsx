@@ -31,7 +31,7 @@ const styles = createStyle({
     padding: Gap.block,
     marginBottom: Gap.block,
     borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: Radius.card,
   },
   title: {
     // 与内部设置项（paddingHorizontal: 10）左对齐

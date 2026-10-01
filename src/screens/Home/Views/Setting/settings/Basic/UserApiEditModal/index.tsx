@@ -10,6 +10,7 @@ import List from './List'
 import ImportBtn from './ImportBtn'
 import ScriptImportExport, { type ScriptImportExportType } from './ScriptImportExport'
 import ScriptImportOnline, { type ScriptImportOnlineType } from './ScriptImportOnline'
+import { Radius } from '@/theme/layout'
 
 // interface UrlInputType {
 //   setText: (text: string) => void
@@ -191,7 +192,7 @@ const styles = createStyle({
     flex: 1,
     padding: 10,
     alignItems: 'center',
-    borderRadius: 4,
+    borderRadius: Radius.button,
     marginRight: 15,
   },
 })

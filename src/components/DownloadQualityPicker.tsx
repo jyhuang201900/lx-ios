@@ -68,7 +68,7 @@ export default forwardRef<DownloadQualityPickerType>((_, ref) => {
 const styles = createStyle({
   content: { paddingHorizontal: 16, paddingBottom: 24 },
   track: { minHeight: 58, borderRadius: Radius.card, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center' },
-  trackIcon: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  trackIcon: { width: 36, height: 36, borderRadius: Radius.control, alignItems: 'center', justifyContent: 'center' },
   trackCopy: { flex: 1, gap: 4, paddingLeft: 10 },
   hint: { paddingTop: 18, paddingBottom: 8, textAlign: 'center', textAlignVertical: 'center' },
   qualityList: { gap: 8 },

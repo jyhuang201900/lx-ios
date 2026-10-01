@@ -4,6 +4,7 @@ import { View } from 'react-native'
 
 import CheckBox, { type CheckBoxProps } from '@/components/common/CheckBox'
 import { createStyle } from '@/utils/tools'
+import { Radius } from '@/theme/layout'
 
 
 export default memo((props: CheckBoxProps) => {
@@ -19,7 +20,7 @@ const styles = createStyle({
     paddingHorizontal: 10,
     minHeight: 42,
     justifyContent: 'center',
-    borderRadius: 12,
+    borderRadius: Radius.control,
     // marginTop: -10,
     // marginBottom: 0,
   },

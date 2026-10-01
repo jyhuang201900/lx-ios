@@ -7,7 +7,7 @@ import Modal, { type ModalType } from './Modal'
 import { createStyle } from '@/utils/tools'
 import { useTheme } from '@/store/theme/hook'
 import Text from './Text'
-import { scaleSizeH, scaleSizeW } from '@/utils/pixelRatio'
+import { scaleSizeH, scaleSizeW, setSpText } from '@/utils/pixelRatio'
 import { Radius, createGlassStyle } from '@/theme/layout'
 
 const menuItemHeight = scaleSizeH(44)
@@ -92,11 +92,28 @@ const Menu = ({
   // console.log(buttonPosition)
 
   const menuItemStyle = useMemo(() => {
+    /**
+     * 菜单宽度原本直接等于触发按钮的宽度。
+     *
+     * 这在「小芸音乐」这类长标签上会直接截断：按钮为了和同一行的其他控件
+     * 对齐只有约 91pt，而四个中文字加左右内边距需要约 100pt，于是标签被
+     * 压成「小蜗…」。菜单是浮层，不受按钮宽度的约束，应当至少放得下最长
+     * 的那一项。
+     *
+     * 下限按「最长标签的估算宽度」给，并夹在屏幕宽度内，避免长英文标签
+     * （如 Wake Me Up When September Ends）把菜单撑出屏幕。
+     */
+    const measured = width ?? menuSize.width ?? menuItemWidth
+    const longestLabel = menus.reduce((max, menu) => Math.max(max, menu.label?.length ?? 0), 0)
+    // 中文按字号 1 倍、西文按 0.6 倍估算；再加左右各 16pt 内边距
+    const estimated = setSpText(fontSize) * longestLabel * 0.75 + 32
+    const maxWidth = windowSize.width - 24
+    const fitted = Math.min(Math.max(measured, estimated), maxWidth)
     return {
-      width: width ?? menuSize.width ?? menuItemWidth,
+      width: fitted,
       height: height ?? menuSize.height ?? menuItemHeight,
     }
-  }, [menuSize, width, height])
+  }, [menuSize, width, height, menus, fontSize, windowSize.width])
 
   const menuStyle = useMemo(() => {
     let menuHeight = menus.length * menuItemStyle.height

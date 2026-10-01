@@ -4,6 +4,7 @@ import Button, { type BtnProps } from '@/components/common/Button'
 import Text from '@/components/common/Text'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
+import { Radius } from '@/theme/layout'
 
 type ButtonProps = BtnProps
 
@@ -22,7 +23,7 @@ const styles = createStyle({
     minHeight: 42,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 12,
+    borderRadius: Radius.button,
     marginRight: 8,
     alignItems: 'center',
     justifyContent: 'center',

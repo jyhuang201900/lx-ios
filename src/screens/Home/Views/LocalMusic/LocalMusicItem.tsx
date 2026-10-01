@@ -99,7 +99,7 @@ const styles = createStyle({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 16,
+    borderRadius: Radius.card,
   },
   rowMain: {
     flex: 1,

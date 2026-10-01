@@ -353,7 +353,7 @@ const styles = createStyle({
   toolbarCopy: { flex: 1, gap: 2 },
   toolbarTitle: { fontWeight: FontWeight.semibold },
   toolbarActions: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  toolbarButton: { width: 36, height: 36, borderRadius: Radius.pill, alignItems: 'center', justifyContent: 'center' },
+  toolbarButton: { width: 36, height: 36, borderRadius: Radius.full, alignItems: 'center', justifyContent: 'center' },
   searchCard: { marginHorizontal: PageMetrics.gutter, marginBottom: 10, minHeight: 42, borderRadius: Radius.control, borderWidth: StyleSheet.hairlineWidth, paddingHorizontal: 11, flexDirection: 'row', alignItems: 'center' },
   searchInput: { height: 38, paddingLeft: 8, fontSize: 13 },
   sectionHeader: { minHeight: 32, paddingHorizontal: PageMetrics.gutter, marginBottom: 4, flexDirection: 'row', alignItems: 'center' },

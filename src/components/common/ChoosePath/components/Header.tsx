@@ -7,7 +7,7 @@ import { getExternalStoragePaths, stat } from '@/utils/fs'
 import { useTheme } from '@/store/theme/hook'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { useStatusbarHeight } from '@/store/common/hook'
-import { createShadow } from '@/theme/layout'
+import { Radius, createShadow } from '@/theme/layout'
 import NewFolderModal, { type NewFolderType } from './NewFolderModal'
 import OpenStorageModal, { type OpenDirModalType } from './OpenStorageModal'
 import type { PathItem } from './ListItem'
@@ -135,7 +135,7 @@ const styles = createStyle({
     flexGrow: 1,
     flexShrink: 1,
     minWidth: 240,
-    borderRadius: 4,
+    borderRadius: Radius.button,
     paddingTop: 2,
     paddingBottom: 2,
   },

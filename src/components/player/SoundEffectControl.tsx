@@ -993,7 +993,7 @@ const styles = createStyle({
   overview: { minHeight: 68, borderRadius: Radius.card, borderWidth: 1, paddingHorizontal: 14, marginBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 10 },
   overviewCopy: { flex: 1, minWidth: 0, gap: 4 },
   overviewTitle: { fontWeight: '600' },
-  overviewStatus: { maxWidth: '48%', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 7 },
+  overviewStatus: { maxWidth: '48%', borderRadius: Radius.control, paddingHorizontal: 10, paddingVertical: 7 },
   layout: {
     flexDirection: 'row',
     alignItems: 'stretch',
@@ -1012,7 +1012,7 @@ const styles = createStyle({
   },
   sectionBlock: {
     minWidth: 0,
-    borderRadius: 16,
+    borderRadius: Radius.card,
     padding: 12,
   },
   sectionCard: { borderWidth: 1 },
@@ -1048,14 +1048,14 @@ const styles = createStyle({
   tipButton: {
     width: 32,
     height: 32,
-    borderRadius: 12,
+    borderRadius: Radius.control,
     alignItems: 'center',
     justifyContent: 'center',
   },
   resetButton: {
     minHeight: 32,
     paddingHorizontal: 12,
-    borderRadius: 12,
+    borderRadius: Radius.control,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1104,7 +1104,7 @@ const styles = createStyle({
     paddingHorizontal: 9,
     marginRight: 8,
     marginBottom: 8,
-    borderRadius: 12,
+    borderRadius: Radius.control,
     gap: 5,
   },
   placeholderGroup: {
@@ -1169,7 +1169,7 @@ const styles = createStyle({
   presetButton: {
     minHeight: 34,
     paddingHorizontal: 11,
-    borderRadius: 12,
+    borderRadius: Radius.control,
     marginRight: 8,
     marginBottom: 8,
     alignItems: 'center',
@@ -1181,7 +1181,7 @@ const styles = createStyle({
     paddingHorizontal: 8,
     marginRight: 8,
     marginBottom: 8,
-    borderRadius: 12,
+    borderRadius: Radius.control,
     borderWidth: 1,
     borderStyle: 'dashed',
     alignItems: 'center',

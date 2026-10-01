@@ -149,7 +149,7 @@ const styles = createStyle({
   removeButton: {
     width: 20,
     height: 20,
-    borderRadius: Radius.pill,
+    borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },

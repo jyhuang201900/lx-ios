@@ -10,7 +10,7 @@ import { BTN_WIDTH } from './MoreBtn/Btn'
 import { useMemo } from 'react'
 import { markTimeoutExitInteraction } from '@/core/player/timeoutExit'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
-import { neonGlow } from '@/theme/layout'
+import { Radius, neonGlow } from '@/theme/layout'
 import { usePressEmphasis } from '@/theme/press'
 
 const PrevBtn = ({ size }: { size: number }) => {
@@ -130,14 +130,14 @@ const styles = createStyle({
     // backgroundColor: '#ccc',
   },
   playBtn: {
-    borderRadius: 999,
+    borderRadius: Radius.full,
     justifyContent: 'center',
     alignItems: 'center',
   },
   // 视觉面与命中区分离：命中区保持固定尺寸，缩放与辉光只作用在视觉面上，
   // 这样按压缩放不会连带改变可点区域。
   playBtnFace: {
-    borderRadius: 999,
+    borderRadius: Radius.full,
     justifyContent: 'center',
     alignItems: 'center',
   },

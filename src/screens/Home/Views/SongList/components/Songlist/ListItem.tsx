@@ -32,7 +32,7 @@ export default memo(({ item, index, width, showSource, onPress }: {
             <View style={{ ...styles.listItemImg, backgroundColor: theme['c-content-background'] }}>
               <View style={styles.listItemImgClip}>
                 <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
-                  <Image url={item.img} nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_from_${item.id}`} style={{ width: itemWidth, height: itemWidth, borderRadius: 16 }} />
+                  <Image url={item.img} nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_from_${item.id}`} style={{ width: itemWidth, height: itemWidth, borderRadius: Radius.card }} />
                   { showSource ? (
                     <Text
                       style={{

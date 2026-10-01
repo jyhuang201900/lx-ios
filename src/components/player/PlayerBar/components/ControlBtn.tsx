@@ -65,7 +65,7 @@ const styles = createStyle({
   button: {
     width: BUTTON_SIZE,
     height: BUTTON_SIZE,
-    borderRadius: Radius.pill,
+    borderRadius: Radius.full,
     justifyContent: 'center',
     alignItems: 'center',
   },

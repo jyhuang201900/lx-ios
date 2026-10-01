@@ -63,7 +63,7 @@ const styles = createStyle({
   button: {
     minHeight: 38,
     minWidth: 64,
-    borderRadius: 12,
+    borderRadius: Radius.control,
     justifyContent: 'center',
     alignItems: 'center',
   },

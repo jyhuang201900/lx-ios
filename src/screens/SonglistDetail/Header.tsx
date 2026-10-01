@@ -13,7 +13,7 @@ import { useI18n } from '@/lang'
 import { useListInfo } from './state'
 import { useAnimateOnecNumber } from '@/utils/hooks/useAnimateNumber'
 import { useStatusbarHeight } from '@/store/common/hook'
-import { FontWeight, Gap, Typography } from '@/theme/layout'
+import { Radius, FontWeight, Gap, Typography } from '@/theme/layout'
 
 const IMAGE_WIDTH = scaleSizeW(70)
 
@@ -57,7 +57,7 @@ const Pic = ({ componentId, playCount, imgUrl }: {
 
   return (
     <View style={{ ...styles.listItemImg, width: IMAGE_WIDTH, height: IMAGE_WIDTH }}>
-      <Image nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_to_${info.id}`} url={pic} style={{ flex: 1, borderRadius: 4 }} />
+      <Image nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_to_${info.id}`} url={pic} style={{ flex: 1, borderRadius: Radius.control }} />
       {
         playCount && animated ? <CountText count={playCount} /> : null
       }

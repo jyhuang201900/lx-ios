@@ -7,6 +7,7 @@ import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 import Dialog, { type DialogType } from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
+import { Radius } from '@/theme/layout'
 
 interface RuleInputType {
   setText: (text: string) => void
@@ -169,7 +170,7 @@ const styles = createStyle({
     flex: 1,
     padding: 10,
     alignItems: 'center',
-    borderRadius: 4,
+    borderRadius: Radius.button,
     marginRight: 15,
   },
 })

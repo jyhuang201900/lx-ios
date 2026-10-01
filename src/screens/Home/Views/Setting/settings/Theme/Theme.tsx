@@ -38,7 +38,7 @@ const ThemeItem = ({ id, name, color, image, setTheme, showAll }: {
           {
             image
               ? <ImageBackground style={{ ...styles.imageContent, width: scaleSizeH(IMAGE_HEIGHT), backgroundColor: color }}
-                  imageStyle={{ borderRadius: 12 }}
+                  imageStyle={{ borderRadius: Radius.control }}
                   source={image} />
               : <View style={{ ...styles.imageContent, width: scaleSizeH(IMAGE_HEIGHT), backgroundColor: color }}></View>
             }
@@ -140,7 +140,7 @@ const styles = createStyle({
   },
   colorContent: {
     height: COLOR_ITEM_HEIGHT,
-    borderRadius: 12,
+    borderRadius: Radius.control,
     borderWidth: 1.6,
     alignItems: 'center',
     justifyContent: 'center',

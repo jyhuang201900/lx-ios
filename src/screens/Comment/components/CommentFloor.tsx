@@ -12,6 +12,7 @@ import { useI18n } from '@/lang'
 import Image from '@/components/common/Image'
 import CommentImage from './CommentImage'
 import CommentText from './CommentText'
+import { Radius } from '@/theme/layout'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const defaultUser = require('@/resources/images/defaultUser.jpg')
 
@@ -156,7 +157,7 @@ const stylesRaw = StyleSheet.create({
   avatar: {
     height: avatarWidth,
     width: avatarWidth,
-    borderRadius: 4,
+    borderRadius: Radius.control,
   },
 })
 

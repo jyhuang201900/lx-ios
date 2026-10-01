@@ -150,7 +150,7 @@ const styles = createStyle({
     width: 34,
     height: 34,
     marginLeft: 4,
-    borderRadius: 12,
+    borderRadius: Radius.control,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -10,7 +10,7 @@ import { marginLeft } from '../constant'
 import { BTN_WIDTH } from '../MoreBtn/Btn'
 import { markTimeoutExitInteraction } from '@/core/player/timeoutExit'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
-import { neonGlow } from '@/theme/layout'
+import { Radius, neonGlow } from '@/theme/layout'
 
 // const WIDTH = scaleSizeW(48)
 
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     // marginLeft: 10,
   },
   playBtn: {
-    borderRadius: 999,
+    borderRadius: Radius.full,
     justifyContent: 'center',
     alignItems: 'center',
   },

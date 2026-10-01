@@ -6,7 +6,7 @@ import { useTheme } from '@/store/theme/hook'
 import { useReduceMotion } from '@/utils/hooks'
 import { buildEqGeometry } from '@/utils/curves'
 import { createStyle } from '@/utils/tools'
-import { Typography } from '@/theme/layout'
+import { Radius, Typography } from '@/theme/layout'
 
 export interface EqCurveProps {
   /** 各频段增益（dB），键为频点 */
@@ -184,7 +184,7 @@ export default memo(({ gains, frequencies, min, max, height = 88, transitionId }
               top: p.y - 3.5,
               width: 7,
               height: 7,
-              borderRadius: 4,
+              borderRadius: Radius.control,
               backgroundColor: pointFill,
               borderWidth: 1.5,
               borderColor: curveColor,

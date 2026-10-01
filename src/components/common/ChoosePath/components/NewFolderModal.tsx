@@ -7,6 +7,7 @@ import { createStyle, toast } from '@/utils/tools'
 import { mkdir } from '@/utils/fs'
 import { useTheme } from '@/store/theme/hook'
 import type { PathItem } from './ListItem'
+import { Radius } from '@/theme/layout'
 const filterFileName = /[\\/:*?#"<>|]/
 
 
@@ -112,7 +113,7 @@ const styles = createStyle({
     flexGrow: 1,
     flexShrink: 1,
     minWidth: 240,
-    borderRadius: 4,
+    borderRadius: Radius.button,
     paddingTop: 2,
     paddingBottom: 2,
   },

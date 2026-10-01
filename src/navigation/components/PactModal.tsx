@@ -13,6 +13,7 @@ import { updateSetting } from '@/core/common'
 import { checkUpdate } from '@/core/version'
 import { initDeeplink } from '@/core/init/deeplink'
 import settingState from '@/store/setting/state'
+import { Radius } from '@/theme/layout'
 
 const Content = () => {
   return (
@@ -200,7 +201,7 @@ const styles = createStyle({
     paddingLeft: 10,
     paddingRight: 10,
     alignItems: 'center',
-    borderRadius: 4,
+    borderRadius: Radius.button,
     marginRight: 15,
   },
 })

@@ -12,6 +12,7 @@ import ButtonPrimary from '@/components/common/ButtonPrimary'
 import { useUnmounted } from '@/utils/hooks'
 import { Icon } from '@/components/common/Icon'
 import type { PathItem } from './ListItem'
+import { Radius } from '@/theme/layout'
 const filterFileName = /[\\:*?#"<>|]/
 
 
@@ -185,7 +186,7 @@ const styles = createStyle({
     flexGrow: 1,
     flexShrink: 1,
     minWidth: 240,
-    borderRadius: 4,
+    borderRadius: Radius.button,
     paddingTop: 3,
     paddingBottom: 3,
     height: 'auto',
