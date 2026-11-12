@@ -33,8 +33,18 @@ const ORBS: Orb[] = [
   { color: 'c-primary', size: 0.88, left: 0.46, top: 0.62, opacity: 0.5, drift: -22, duration: 14500, delay: 2400 },
 ]
 
-/** 深色主题下同样的饱和度会压低次要文字对比度，整体减一档亮度 */
-const DARK_OPACITY_SCALE = 0.6
+/**
+ * 深色主题下的极光强度。
+ *
+ * 原来 0.6：光球本身 0.62/0.42/0.5，乘下来 0.37/0.25/0.30，再被 PageContent
+ * 那层 0.76 的遮罩压一遍，落到屏幕上只剩 7~9% —— 整个深色页面是一块均匀
+ * 深灰，签名里的绿雾一点都看不见。浅色下同样三个球透出来是能看见的，
+ * 深浅两套差了一个数量级，这不是"深色要克制"，是那层光没了。
+ *
+ * 0.9 让深色下的有效强度回到 11~14%：暗底上能读出方向感，又不会把页面
+ * 提成中灰，次要文字对比度仍然够。
+ */
+const DARK_OPACITY_SCALE = 0.9
 
 const OrbView = memo(({ orb, color, base, width, height, opacityScale, animated }: {
   orb: Orb
