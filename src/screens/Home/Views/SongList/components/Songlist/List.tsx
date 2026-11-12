@@ -13,8 +13,19 @@ import { hapticFeedback } from '@/utils/nativeModules/utils'
 
 type FlatListType = FlatListProps<ListInfoItem>
 
-// const MAX_WIDTH = scaleSizeW(110)
-const MIN_WIDTH = scaleSizeW(110)
+/**
+ * 网格列数的最小可读宽度，绝对 pt，不参与缩放。
+ *
+ * 原算法分三步：先算「能塞几个 MIN_WIDTH+GAP」，用这个数均分可用宽，
+ * 再拿均分结果反推列数——三步都在缩放后的数值上取整。375pt 的 SE 上
+ * 结果是 3 列、每列 118pt：标题两行都放不下，副标题在真机图上直接被
+ * 切成「1万 · 55 首...」。
+ *
+ * 改成一步：可用宽除以最小可读宽度向下取整。122 这个阈值让 375pt 得
+ * 2 列（每列约 177pt）、402pt 得 3 列（约 127pt）、430pt 仍是 3 列、
+ * 768pt 得 6 列，不需要在缩放系数上二次取整。
+ */
+const MIN_ITEM_WIDTH = 122
 const GAP = scaleSizeW(20)
 
 export interface ListProps {
@@ -59,11 +70,8 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
   // 行列信息必须在 renderItem 之前计算：useCallback 的依赖数组在渲染时立即求值，
   // 若声明在后面会因访问尚未初始化的变量抛 ReferenceError
   const rowInfo = useMemo(() => {
-    let w = width - GAP
-    let n = width / (MIN_WIDTH + GAP)
-    if (n > 10) n = 10
-    let computedItemWidth = Math.floor(w / n)
-    const num = Math.max(Math.floor(width / computedItemWidth), 2)
+    const avail = Math.max(width - GAP, MIN_ITEM_WIDTH)
+    const num = Math.max(2, Math.min(Math.floor(avail / MIN_ITEM_WIDTH), 6))
     return {
       num,
       width: (width - GAP) / num,
