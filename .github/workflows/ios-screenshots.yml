@@ -67,8 +67,22 @@ jobs:
       - name: Install CocoaPods dependencies
         shell: bash
         run: |
+          set -o pipefail
           cd ios
-          bundle exec pod install
+          # run 18 挂在这一步：96 秒后 exit 1，随后的 Build 直接 skipped，
+          # 一张图都没拍。pod install 会走网络（spec 元数据、CDN），是整条
+          # 流水线里最容易偶发失败的一环，所以给它三次机会，并在失败时把
+          # 日志尾巴打出来——否则只看到一个 exit code 1，查不出原因。
+          for attempt in 1 2 3; do
+            if bundle exec pod install 2>&1 | tee /tmp/pod-install.log; then
+              exit 0
+            fi
+            echo "::warning::pod install failed on attempt $attempt"
+            tail -n 60 /tmp/pod-install.log
+            sleep 20
+          done
+          echo "::error::pod install failed after 3 attempts"
+          exit 1
 
       # DerivedData：原生代码在 iOS 适配分支上很少动，缓存命中的 run 只需
       # 重打 JS bundle 并重新链接。key 里带上 Podfile.lock 与 ios 源文件的
