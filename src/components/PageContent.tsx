@@ -101,6 +101,12 @@ export default ({ children, aurora = 'static', cover = null }: Props) => {
         resizeMode="cover"
         // 背景做柔和虚化，为上层玻璃表面提供可透出的色彩底色
         blurRadius={BLUR_RADIUS}
+        // 深色主题不用底图。同一张亮底图在 0.9 的暗遮罩下仍会透出 10%，
+        // 截图里就是屏幕下半部几道竖向亮纹加一道弧形——遮罩提到 0.95 才勉强
+        // 干净，但那样极光也被一起压死了。深色模式下这个位置要的是"夜"，
+        // 不是"磨砂玻璃后面有张图"，所以直接把底图关掉，底色交给
+        // c-content-background，光源只留极光一层。
+        opacity={theme.isDark ? 0 : 1}
       />
       {/* 极光层压在遮罩之下：色彩由遮罩统一调和，既保证对比度又让上层玻璃有颜色可透 */}
       <AuroraBackground width={windowSize.width} height={windowSize.height} animated={aurora === 'animated'} />
@@ -112,12 +118,11 @@ export default ({ children, aurora = 'static', cover = null }: Props) => {
             backgroundColor: theme['c-main-background'],
             // 玻璃质感的关键：遮罩留出可透出的余量，纯不透明会把背景完全压死。
             //
-            // 深色这一档从 0.8 提到 0.9：浅色主题的底图是米白抽象图，压到 0.84
-            // 只剩一层几乎看不见的色相，读作"干净的纸"；同一张图在深色下却反过来
-            // ——0.8 的暗遮罩底下还留着 20% 的亮，实机截图里就是一屏中灰加几道
-            // 隐约的竖向纹路，像屏幕脏了。深色模式下底色应该读成"夜",不是"磨砂玻璃
-            // 后面有张图"。0.9 之后底图只剩色相余量，极光仍然是唯一可见的光源。
-            opacity: theme.isDark ? 0.9 : 0.84,
+            // 深色这一档收回到 0.82：底图已经在上面关掉了，遮罩下面只剩极光
+            // 一层。原来把遮罩提到 0.9 是为了压底图，结果连极光一起压到不可见，
+            // 深色页退化成一块均匀的深灰。0.82 让极光（本身已有 0.6 的深色系数）
+            // 透出 18%，是深色下唯一的光源。
+            opacity: theme.isDark ? 0.82 : 0.84,
           },
         ]}
       />
