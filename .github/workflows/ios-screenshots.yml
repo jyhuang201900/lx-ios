@@ -1,7 +1,7 @@
 name: iOS Screenshots
 
 # 在 macOS runner 上启动 iOS 模拟器、安装 Release 包、启动并截图。
-# 产物 ios-screenshots 里每台机型一组：首页、稳定态、播放详情（空态）。
+# 产物 ios-screenshots 里每台机型一组：首页、稳定态、播放详情。
 # 目的：没有本地 Mac 时，也能拿到真实渲染画面核对版式。
 on:
   workflow_dispatch:
@@ -92,18 +92,24 @@ jobs:
             DEVICES="iPhone 16 Pro,iPhone SE (3rd generation)"
           fi
 
-          LIST="$(xcrun simctl list devices available)"
-          echo "$LIST"
+          xcrun simctl list devices available
 
           udid_of() {
-            echo "$LIST" | grep -F "$1 (" | head -1 | grep -oE '[0-9A-F-]{36}' || true
+            xcrun simctl list devices available -j \
+              | jq -r --arg n "$1" '[.devices[][] | select(.isAvailable and .name == $n)][0].udid // empty'
           }
           name_of() {
-            echo "$LIST" | grep -F "$1 (" | head -1 | sed -E 's/^ *//; s/ \([0-9A-F-]{36}.*$//' || true
+            xcrun simctl list devices available -j \
+              | jq -r --arg u "$1" '[.devices[][] | select(.udid == $u)][0].name // empty'
+          }
+          first_iphone() {
+            xcrun simctl list devices available -j \
+              | jq -r '[.devices[][] | select(.isAvailable and (.name | startswith("iPhone")))][0].udid // empty'
           }
 
-          # 首启的「谨防被骗」弹窗会盖住整个界面，截图前把已读标记写进 AsyncStorage
-          seed_first_run_flags() {
+          # 首启有两个闸门：谨防被骗提示、许可协议。两者在 AsyncStorage 里都有开关，
+          # 直接写进去，截图才拍得到真正的界面；顺带把语言钉到中文。
+          write_manifest() {
             local container manifest
             container="$(xcrun simctl get_app_container "$1" "$IOS_BUNDLE_IDENTIFIER" data 2>/dev/null || true)"
             if [ -z "$container" ]; then
@@ -115,10 +121,15 @@ jobs:
               echo "::warning::没找到 AsyncStorage manifest，首启提示可能弹窗"
               return 0
             fi
-            echo "seed: $manifest"
-            jq '. + {"@cheat_tip":"true"}' "$manifest" > "$manifest.tmp"
+            echo "seed: $2 <- $manifest"
+            jq --arg v "$2" '. + {"@cheat_tip":"true","@setting_v1":$v}' "$manifest" > "$manifest.tmp"
             mv "$manifest.tmp" "$manifest"
           }
+
+          # 首页用配置：不自动进详情页
+          SETTING_HOME='{"version":"2.0","common.isAgreePact":true,"common.langId":"zh-cn","player.startupPushPlayDetailScreen":false}'
+          # 详情页用配置：Home 挂载后直接推播放详情页，不需要点按、不需要 deep link
+          SETTING_DETAIL='{"version":"2.0","common.isAgreePact":true,"common.langId":"zh-cn","player.startupPushPlayDetailScreen":true}'
 
           TARGETS=""
           IFS=',' read -ra WANTED <<< "$DEVICES"
@@ -136,7 +147,7 @@ jobs:
           done
 
           if [ -z "$TARGETS" ]; then
-            FALLBACK="$(echo "$LIST" | grep -E '^ *iPhone ' | head -1 | grep -oE '[0-9A-F-]{36}' || true)"
+            FALLBACK="$(first_iphone)"
             if [ -z "$FALLBACK" ]; then
               echo "::error::这台 runner 上没有可用的 iPhone 模拟器"
               exit 1
@@ -147,7 +158,10 @@ jobs:
 
           for UDID in $TARGETS; do
             NAME="$(name_of "$UDID")"
-            SLUG="$(echo "$NAME" | tr ' ()' '---' | tr -s '-' | tr 'A-Z' 'a-z')"
+            if [ -z "$NAME" ]; then
+              NAME="device-${UDID%%-*}"
+            fi
+            SLUG="$(echo "$NAME" | tr ' ()/' '----' | tr -s '-' | tr 'A-Z' 'a-z')"
             echo "== $NAME ($UDID) -> shots/$SLUG"
 
             xcrun simctl boot "$UDID" || true
@@ -160,23 +174,23 @@ jobs:
 
             xcrun simctl install "$UDID" "$APP_PATH"
 
-            # 先启动一次建出存储目录，写已读标记，再重启拍照
-            xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER" \
-              -AppleLanguages '(zh-Hans)' -AppleLocale zh_CN >/dev/null || true
+            # 先启动一次建出存储目录，写首启标记，再重启拍照
+            xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER" >/dev/null || true
             sleep 8
             xcrun simctl terminate "$UDID" "$IOS_BUNDLE_IDENTIFIER" || true
-            seed_first_run_flags "$UDID"
+            write_manifest "$UDID" "$SETTING_HOME"
 
-            xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER" \
-              -AppleLanguages '(zh-Hans)' -AppleLocale zh_CN >/dev/null
+            xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER" >/dev/null
             sleep 12
             xcrun simctl io "$UDID" screenshot "shots/${SLUG}-01-home.png"
-            sleep 6
+            sleep 5
             xcrun simctl io "$UDID" screenshot "shots/${SLUG}-02-home-settled.png"
 
-            # 播放详情页（无歌曲时是空态）——用来核对详情页版式
-            xcrun simctl openurl "$UDID" 'lxmusic://player/openDetail' || true
-            sleep 5
+            # 换成"启动即进播放详情"的配置，冷启动再拍一组
+            xcrun simctl terminate "$UDID" "$IOS_BUNDLE_IDENTIFIER" || true
+            write_manifest "$UDID" "$SETTING_DETAIL"
+            xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER" >/dev/null
+            sleep 14
             xcrun simctl io "$UDID" screenshot "shots/${SLUG}-03-play-detail.png"
 
             # 进程还活着才算启动成功；崩溃时日志里能直接看到原因
