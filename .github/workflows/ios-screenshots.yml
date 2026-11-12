@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       devices:
-        description: '机型，逗号分隔；留空则用 iPhone 16 Pro'
+        description: '机型，逗号分隔；留空则用 iPhone 16 Pro + iPhone SE'
         required: false
         default: ''
 
@@ -98,7 +98,8 @@ jobs:
 
           DEVICES="${{ inputs.devices }}"
           if [ -z "$DEVICES" ]; then
-            DEVICES="iPhone 16 Pro"
+            # 大屏 + 小屏：同一套版式在两种宽度下才看得出有没有挤压和截断
+            DEVICES="iPhone 16 Pro,iPhone SE (3rd generation)"
           fi
 
           with_timeout 120 xcrun simctl list devices available
@@ -139,10 +140,23 @@ jobs:
               && mv "$manifest.tmp" "$manifest"
           }
 
-          # 首页用配置：不进详情页
-          SETTING_HOME='{"version":"2.0","common.isAgreePact":true,"common.langId":"zh_cn","player.startupPushPlayDetailScreen":false}'
-          # 详情页用配置：Home 挂载后直接推播放详情页，无需点按和 deep link
-          SETTING_DETAIL='{"version":"2.0","common.isAgreePact":true,"common.langId":"zh_cn","player.startupPushPlayDetailScreen":true}'
+          # 模拟器上点不了，界面落点只能靠预置存储：基础设置 + 每页增量。
+          # 每页都冷启动一次，拍完一张就停掉，避免上一页的状态串到下一页。
+          BASE_SETTING='{"version":"2.0","common.isAgreePact":true,"common.langId":"zh_cn"}'
+          seed_settings() {
+            local udid="$1" extra="$2" merged
+            merged="$(jq -c -n --argjson b "$BASE_SETTING" --argjson e "$extra" '$b + $e')"
+            write_manifest "$udid" "$merged"
+          }
+          shoot() {
+            local udid="$1" out="$2" extra="$3" settle="$4"
+            with_timeout 60 xcrun simctl terminate "$udid" "$IOS_BUNDLE_IDENTIFIER" >/dev/null 2>&1 || true
+            seed_settings "$udid" "$extra"
+            with_timeout 60 xcrun simctl launch "$udid" "$IOS_BUNDLE_IDENTIFIER"
+            sleep "$settle"
+            with_timeout 60 xcrun simctl io "$udid" screenshot "$out"
+            echo "[$(stamp)] shot $(basename "$out")"
+          }
 
           TARGETS=""
           IFS=',' read -ra WANTED <<< "$DEVICES"
@@ -186,20 +200,21 @@ jobs:
             with_timeout 60 xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER"
             sleep 8
             with_timeout 60 xcrun simctl terminate "$UDID" "$IOS_BUNDLE_IDENTIFIER"
-            write_manifest "$UDID" "$SETTING_HOME"
 
-            with_timeout 60 xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER"
-            sleep 12
-            with_timeout 60 xcrun simctl io "$UDID" screenshot "shots/${SLUG}-01-home.png"
+            # 首页/搜索空态，隔 5 秒再拍一张稳定态
+            shoot "$UDID" "shots/${SLUG}-01-home.png" '{"player.startupPushPlayDetailScreen":false}' 12
             sleep 5
             with_timeout 60 xcrun simctl io "$UDID" screenshot "shots/${SLUG}-02-home-settled.png"
 
-            # 换成"启动即进播放详情"的配置，冷启动再拍一组
-            with_timeout 60 xcrun simctl terminate "$UDID" "$IOS_BUNDLE_IDENTIFIER"
-            write_manifest "$UDID" "$SETTING_DETAIL"
-            with_timeout 60 xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER"
-            sleep 14
-            with_timeout 60 xcrun simctl io "$UDID" screenshot "shots/${SLUG}-03-play-detail.png"
+            # 播放详情：Home 挂载后直接推，不需要点按
+            shoot "$UDID" "shots/${SLUG}-03-play-detail.png" '{"player.startupPushPlayDetailScreen":true}' 14
+
+            # 五个标签页：靠 common.startupNavId 冷启动落位
+            shoot "$UDID" "shots/${SLUG}-04-songlist.png" '{"common.startupNavId":"nav_songlist"}' 10
+            shoot "$UDID" "shots/${SLUG}-05-chart.png" '{"common.startupNavId":"nav_top"}' 12
+            shoot "$UDID" "shots/${SLUG}-06-love.png" '{"common.startupNavId":"nav_love"}' 10
+            shoot "$UDID" "shots/${SLUG}-07-local.png" '{"common.startupNavId":"nav_local"}' 10
+            shoot "$UDID" "shots/${SLUG}-08-setting.png" '{"common.startupNavId":"nav_setting"}' 10
 
             # 进程还活着才算启动成功
             if ! xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$IOS_BUNDLE_IDENTIFIER"; then

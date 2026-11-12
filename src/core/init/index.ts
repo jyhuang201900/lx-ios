@@ -14,6 +14,7 @@ import settingState from '@/store/setting/state'
 import { checkUpdate } from '@/core/version'
 import { bootLog } from '@/utils/bootLog'
 import { cheatTip } from '@/utils/tools'
+import { NAV_MENUS } from '@/config/constant'
 
 let isFirstPush = true
 const handlePushedHomeScreen = async() => {
@@ -59,6 +60,14 @@ export default async() => {
   bootLog('Data inited.')
   await initCommonState(setting)
   bootLog('Common State inited.')
+
+  // 截图流程用：模拟器点不了，只能靠预置的启动标签把界面直接送到目标页。
+  // 值非法时保持默认（search），产品行为不变。
+  const startupNavId = setting['common.startupNavId']
+  if (startupNavId && NAV_MENUS.some(menu => menu.id == startupNavId)) {
+    commonActions.setNavActiveId(startupNavId)
+    bootLog(`Startup nav -> ${startupNavId}`)
+  }
 
   void initSync(setting)
   bootLog('Sync inited.')

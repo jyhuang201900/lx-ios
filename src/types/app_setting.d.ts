@@ -1,4 +1,5 @@
 import type { I18n } from '@/lang/i18n'
+import type { NAV_ID_Type } from '@/config/constant'
 
 declare global {
   namespace LX {
@@ -36,6 +37,12 @@ declare global {
        * 语言id
        */
       'common.langId': I18n['locale'] | null
+      /**
+       * 冷启动时落在哪个标签页。只给截图流程用：
+       * 模拟器没法点按，只能靠预置存储把界面直接送到目标页。
+       * 界面默认 null（走 search），不进设置面板。
+       */
+      'common.startupNavId': NAV_ID_Type | null
 
       /**
        * api id
