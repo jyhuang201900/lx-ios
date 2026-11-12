@@ -12,7 +12,8 @@ on:
         default: ''
 
 permissions:
-  contents: read
+  # 要把截图推到 shots 分支，必须能写
+  contents: write
 
 concurrency:
   group: ios-screenshots
@@ -234,14 +235,19 @@ jobs:
       - name: Shrink screenshots
         if: always()
         # 3x 的 iPhone 16 Pro 截图单张 1.8~3.4MB，16 张打完包 20MB，
-        # 在这条线路上按 15KB/s 拉就是 25 分钟。缩到长边 1748（2x）后
-        # 细节仍然够看清字重和圆角，体积降到三分之一以内。
+        # 在这条线路上按 15KB/s 拉就是 25 分钟。上一次只做了 sips -Z 1748，
+        # 仍是 19MB——截图的噪点纹理让 PNG 几乎压不动。转成 q90 的 JPEG
+        # 后单张约 350KB，整包 5MB 出头，下载时间降到几分钟；文字边缘、
+        # 圆角、字重仍然看得清，够做版式判断。
         run: |
           shopt -s nullglob
           for f in shots/*.png; do
-            sips -Z 1748 "$f" >/dev/null 2>&1 || true
+            j="${f%.png}.jpg"
+            if sips -s format jpeg -s formatOptions 90 -Z 1748 "$f" --out "$j" >/dev/null 2>&1; then
+              rm -f "$f"
+            fi
           done
-          du -ch shots/*.png 2>/dev/null | tail -1 || true
+          du -ch shots/*.jpg 2>/dev/null | tail -1 || true
 
       - name: Upload screenshots
         if: always()
@@ -250,6 +256,33 @@ jobs:
           name: ios-screenshots
           path: shots
           if-no-files-found: warn
+
+      - name: Publish shots to the shots branch
+        if: always()
+        # artifact 通道（api.github.com）在这条线路上只有 2~15KB/s，19MB
+        # 要挂半小时以上；同一仓库的 git 传输却是秒级。这里把图 push 到
+        # 一条独立的 shots 分支（每次 force 覆盖），本地 `git fetch
+        # --depth 1 origin shots` 就能取到，artifact 只留作兜底。
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(shots/*.jpg)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "no jpg, skip publish"
+            exit 0
+          fi
+          publish="$(mktemp -d)"
+          cp "${files[@]}" "$publish/"
+          cd "$publish"
+          git init -q .
+          git checkout -q -b shots
+          git config user.email "actions@github.com"
+          git config user.name "github-actions"
+          git add -A
+          git commit -q -m "shots: run ${GITHUB_RUN_NUMBER} ${GITHUB_SHA::7}"
+          git push -q --force "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" shots
+          echo "published ${#files[@]} files to the shots branch"
 
       - name: Upload build log on failure
         if: failure()
