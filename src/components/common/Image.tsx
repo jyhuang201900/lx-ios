@@ -4,7 +4,7 @@ import { createStyle } from '@/utils/tools'
 import { type ComponentProps, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { View, type ViewProps, StyleSheet, Image as FastImage } from 'react-native'
 // import FastImage, { type FastImageProps } from 'react-native-fast-image'
-import { Icon } from './Icon'
+import Text from './Text'
 import { useLayout } from '@/utils/hooks'
 // export type { OnLoadEvent } from 'react-native-fast-image'
 
@@ -46,17 +46,18 @@ const EmptyPic = memo(({ style, nativeID }: { style: ImageProps['style'], native
   const theme = useTheme()
   const { onLayout, width } = useLayout()
   /**
-   * 占位图不再写品牌缩写。
+   * 占位图不写品牌缩写。
    *
    * 这里原来渲染 `L` + `X` 两个字母，按宽度缩放到 64pt——封面位 352pt 时
    * 是一屏最醒目的东西，读起来像"应用渲染失败把 logo 漏出来了"，而不是
    * "这张封面还没加载"。而且品牌已经改名「听歌」，字母对不上任何现称。
    *
-   * 改成一枚低对比的唱片图标：任何尺寸下都读作"这里本该有一张封面"，
-   * 和 Apple Music 空封面的灰色音符是同一套语言。上限 56pt 是故意的——
-   * 占位不该在大封面上抢主视觉。
+   * 用 `♪` 而不是 iconfont：字体里那个 `album` 字形是「圆角框里一个音符」，
+   * 和标签栏的「歌单」图标是同一个符号——放到迷你条 44pt 的封面上，
+   * 整条读作"歌单缩略图"；放到 352pt 封面上，放大后更像一个歌单入口。
+   * U+266A 是纯音符，任何系统字体都有，语义只有"音乐"这一层。
    */
-  const size = Math.min(Math.max(width * 0.42, 18), 56)
+  const size = Math.min(Math.max(width * 0.42, 16), 56)
 
   return (
     <View
@@ -64,14 +65,7 @@ const EmptyPic = memo(({ style, nativeID }: { style: ImageProps['style'], native
       onLayout={onLayout}
       nativeID={nativeID}
     >
-      <Icon
-        name="album"
-        // rawSize 绕过 scaleSizeW：这里的 size 是按已布局宽度算出的 pt 值，
-        // 再乘一次屏幕缩放会让大封面上的图标偏大一档
-        rawSize={size}
-        color={theme['c-primary-font']}
-        style={styles.mark}
-      />
+      <Text size={size} color={theme['c-primary-font']} style={styles.mark}>♪</Text>
     </View>
   )
 })

@@ -27,12 +27,22 @@ export const HEADER_HEIGHT = scaleSizeH(_HEADER_HEIGHT)
 const Title = () => {
   const theme = useTheme()
   const musicInfo = usePlayerMusicInfo()
-
+  // 无歌时原本两行都是空串：顶栏中间整块留白，两侧只剩 ‹ 和 …，
+  // 截图上看像顶栏渲染失败。给一句状态，和迷你条用同一个词。
+  const empty = !musicInfo.id
 
   return (
     <View style={styles.titleContent}>
-      <Text numberOfLines={1} style={styles.title}>{musicInfo.name}</Text>
-      <Text numberOfLines={1} style={styles.title} size={12} color={theme['c-font-label']}>{musicInfo.singer}</Text>
+      <Text
+        numberOfLines={1}
+        style={styles.title}
+        color={empty ? theme['c-font-label'] : theme['c-font']}
+      >
+        {empty ? global.i18n.t('play_bar_idle_title') : musicInfo.name}
+      </Text>
+      {empty
+        ? null
+        : <Text numberOfLines={1} style={styles.title} size={12} color={theme['c-font-label']}>{musicInfo.singer}</Text>}
     </View>
   )
 }

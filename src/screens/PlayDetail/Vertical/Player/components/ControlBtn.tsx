@@ -27,7 +27,7 @@ const PrevBtn = ({ size }: { size: number }) => {
       activeOpacity={0.5}
       onPress={handlePlayPrev}
     >
-      <Icon name='prevMusic' color={theme['c-button-font']} rawSize={size * 0.7} />
+      <Icon name='prevMusic' color={theme['c-button-font']} rawSize={size * ICON_RATIO} />
     </TouchableOpacity>
   )
 }
@@ -46,7 +46,7 @@ const NextBtn = ({ size }: { size: number }) => {
       activeOpacity={0.5}
       onPress={handlePlayNext}
     >
-      <Icon name='nextMusic' color={theme['c-button-font']} rawSize={size * 0.7} />
+      <Icon name='nextMusic' color={theme['c-button-font']} rawSize={size * ICON_RATIO} />
     </TouchableOpacity>
   )
 }
@@ -81,11 +81,19 @@ const TogglePlayBtn = ({ size }: { size: number }) => {
           press.transformStyle,
         ]}
       >
-        <Icon name={isPlay ? 'pause' : 'play'} color={theme['c-button-font-selected']} rawSize={size * 0.7} />
+        <Icon name={isPlay ? 'pause' : 'play'} color={theme['c-button-font-selected']} rawSize={size * ICON_RATIO} />
       </Animated.View>
     </TouchableOpacity>
   )
 }
+
+/**
+ * 按钮直径之外唯一由视觉决定的量：符号相对按钮的比例。
+ * 原来写 0.7，72pt 的按钮得到 50pt 的三角——截图里三个符号几乎顶满圆，
+ * 和底部 42pt 的操作行不是一个量级。0.46 得到 33pt，与 HIG 里
+ * 播放控件的符号尺寸（约 30~34pt）对齐。
+ */
+const ICON_RATIO = 0.46
 
 const MAX_SIZE = PlayMetrics.playSizeMax
 const MIN_SIZE = PlayMetrics.playSizeMin
