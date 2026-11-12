@@ -2419,10 +2419,14 @@ RCT_EXPORT_MODULE();
 
 - (void)emitState:(NSString *)state position:(NSNumber *)position duration:(NSNumber *)duration {
   self.currentState = state ?: @"idle";
+  // STREAMINFO 解出来之后 sampleRate/bitsPerSample 才有值（之前是 0）。
+  // 一并带给 JS：播放页的规格读数要用真值，而不是拿音质档位名冒充采样率。
   [self emitEventWithType:@"state" body:@{
     @"state": self.currentState,
     @"position": position ?: @(self.lastKnownPosition),
     @"duration": duration ?: @(self.duration),
+    @"sampleRate": @(self.sampleRate),
+    @"bitsPerSample": @(self.bitsPerSample),
   }];
 }
 

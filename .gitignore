@@ -69,3 +69,7 @@ buck-out/
 
 # python 核验脚本的字节码缓存
 __pycache__/
+
+# 设计审计产物（本地生成，不入库）
+graphify-out/
+shots-gh/

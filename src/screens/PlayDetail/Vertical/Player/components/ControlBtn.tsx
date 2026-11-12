@@ -6,11 +6,10 @@ import { playNext, playPrev, togglePlay } from '@/core/player/player'
 import { useIsPlay } from '@/store/player/hook'
 import { createStyle } from '@/utils/tools'
 import { useWindowSize } from '@/utils/hooks'
-import { BTN_WIDTH } from './MoreBtn/Btn'
 import { useMemo } from 'react'
 import { markTimeoutExitInteraction } from '@/core/player/timeoutExit'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
-import { Radius, neonGlow } from '@/theme/layout'
+import { Radius, neonGlow, PlayMetrics } from '@/theme/layout'
 import { usePressEmphasis } from '@/theme/press'
 
 const PrevBtn = ({ size }: { size: number }) => {
@@ -88,8 +87,8 @@ const TogglePlayBtn = ({ size }: { size: number }) => {
   )
 }
 
-const MAX_SIZE = BTN_WIDTH * 1.6
-const MIN_SIZE = BTN_WIDTH * 1.2
+const MAX_SIZE = PlayMetrics.playSizeMax
+const MIN_SIZE = PlayMetrics.playSizeMin
 
 export default () => {
   const winSize = useWindowSize()
@@ -100,7 +99,9 @@ export default () => {
       maxHeight,
     }
   }, [maxHeight])
-  const size = Math.min(Math.max(winSize.width * 0.33 * global.lx.fontSize * 0.4, MIN_SIZE), MAX_SIZE, maxHeight)
+  // 方向 A：主导航键是整页唯一的实心圆，直径 70（小屏 62、大字号 74 封顶）。
+  // 系数保持与全局字号联动，但不再被 MoreBtn 的 42pt 基准绑住。
+  const size = Math.min(Math.max(winSize.width * 0.40 * global.lx.fontSize * 0.45, MIN_SIZE), MAX_SIZE, maxHeight)
 
   return (
     <View style={containerStyle}>

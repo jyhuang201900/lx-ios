@@ -1,22 +1,27 @@
 import { createStyle } from '@/utils/tools'
 import { View } from 'react-native'
-import PlayModeBtn from './PlayModeBtn'
-import MusicAddBtn from './MusicAddBtn'
-import TimeoutExitBtn from './TimeoutExitBtn'
+import PlayModeBtn from '@/screens/PlayDetail/components/controls/PlayModeBtn'
+import MusicAddBtn from '@/screens/PlayDetail/components/controls/MusicAddBtn'
+import TimeoutExitBtn from '@/screens/PlayDetail/components/controls/TimeoutExitBtn'
 import QualityBtn from './QualityBtn'
-import DownloadBtn from './DownloadBtn'
-import QueueBtn from './QueueBtn'
+import DownloadBtn from '@/screens/PlayDetail/components/controls/DownloadBtn'
+import QueueBtn from '@/screens/PlayDetail/components/controls/QueueBtn'
+import { ControlMetricsProvider } from '@/screens/PlayDetail/components/controls/Metrics'
+
+const METRICS = { size: 32, iconSize: 22, marginBottom: 7 }
 
 export default () => {
   return (
-    <View style={styles.container}>
-      <TimeoutExitBtn />
-      <MusicAddBtn />
-      <DownloadBtn />
-      <QualityBtn />
-      <PlayModeBtn />
-      <QueueBtn />
-    </View>
+    <ControlMetricsProvider value={METRICS}>
+      <View style={styles.container}>
+        <TimeoutExitBtn />
+        <MusicAddBtn />
+        <DownloadBtn />
+        <QualityBtn />
+        <PlayModeBtn />
+        <QueueBtn />
+      </View>
+    </ControlMetricsProvider>
   )
 }
 

@@ -1,4 +1,5 @@
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native'
+import { useSyncExternalStore } from 'react'
 
 type StreamingFlacState = 'idle' | 'loading' | 'playing' | 'paused' | 'buffering' | 'stopped'
 
@@ -7,6 +8,10 @@ export interface StreamingFlacStateEvent {
   state: StreamingFlacState
   position?: number
   duration?: number
+  /** STREAMINFO 的采样率（Hz）；首帧之前为 0 */
+  sampleRate?: number
+  /** STREAMINFO 的位深（bit）；首帧之前为 0 */
+  bitsPerSample?: number
 }
 
 export interface StreamingFlacErrorEvent {
@@ -97,8 +102,46 @@ export const getStreamingFlacState = async() => assertSupported('getState')()
 
 export const onStreamingFlacEvent = (listener: (event: StreamingFlacEvent) => void) => {
   if (!emitter) return () => {}
-  const subscription = emitter.addListener('streaming-flac-event', listener)
+  const subscription = emitter.addListener('streaming-flac-event', (event: StreamingFlacEvent) => {
+    if (event.type == 'state') updateStreamFormat(event)
+    listener(event)
+  })
   return () => {
     subscription.remove()
   }
 }
+
+/**
+ * 当前流的真实格式（来自原生 STREAMINFO）。
+ *
+ * 单独放一份而不是塞进播放状态：采样率/位深只在流式 FLAC 时有意义，
+ * 本地文件与其它音源走的是另一条解码路径，混进通用状态会让读数在两种
+ * 来源之间来回跳。值在首帧之前是 0，调用方据此不渲染。
+ */
+export interface StreamingFlacFormat {
+  sampleRate: number
+  bitsPerSample: number
+}
+
+let streamFormat: StreamingFlacFormat = { sampleRate: 0, bitsPerSample: 0 }
+const formatListeners = new Set<() => void>()
+
+export const getStreamingFlacFormat = () => streamFormat
+
+const subscribeStreamFormat = (listener: () => void) => {
+  formatListeners.add(listener)
+  return () => { formatListeners.delete(listener) }
+}
+
+const updateStreamFormat = (event: StreamingFlacStateEvent) => {
+  const next = {
+    sampleRate: event.sampleRate ?? 0,
+    bitsPerSample: event.bitsPerSample ?? 0,
+  }
+  if (next.sampleRate == streamFormat.sampleRate && next.bitsPerSample == streamFormat.bitsPerSample) return
+  streamFormat = next
+  formatListeners.forEach(listener => { listener() })
+}
+
+/** 播放页读数用：只在原生真的报过 STREAMINFO 之后才返回非零值。 */
+export const useStreamingFlacFormat = () => useSyncExternalStore(subscribeStreamFormat, getStreamingFlacFormat)

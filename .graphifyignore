@@ -1,0 +1,14 @@
+# graphify scan scope for the iOS audit.
+# The graph exists to answer "what does every iOS-side function do and who calls it",
+# so the vendored third-party code and the Android tree are out of scope.
+node_modules/
+android/
+.git/
+publish/
+doc/images/
+ios/Vendor/
+package-lock.json
+**/*.png
+**/*.ttf
+**/*.jar
+**/*.keystore

@@ -662,5 +662,6 @@
   "quality_atmos_plus": "臻品全景声",
   "quality_atmos": "全景声",
   "quality_hires": "Hi-Res 无损",
-  "quality_master_hint": "仅在当前音源和歌曲实际支持时使用，失败会自动降级"
+  "quality_master_hint": "仅在当前音源和歌曲实际支持时使用，失败会自动降级",
+  "player_sample_rate": "采样"
 }

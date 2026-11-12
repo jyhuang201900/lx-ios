@@ -8,19 +8,21 @@ import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { useBufferProgress } from '@/plugins/player'
-import { Gap, TabularNums } from '@/theme/layout'
+import { Gap, TabularNums, Typography } from '@/theme/layout'
 
 // const FONT_SIZE = 13
 
 const PlayTimeCurrent = ({ timeStr }: { timeStr: string }) => {
   const theme = useTheme()
   // console.log(timeStr)
-  return <Text color={theme['c-font-label']} style={TabularNums}>{timeStr}</Text>
+  // 方向 A：时间是刻度，不是正文。15pt 与歌名同级会把进度条的视觉重量拉高，
+  // 收到 caption（11）+ 等宽数字，读起来像仪表而不是一段句子。
+  return <Text size={Typography.caption} color={theme['c-font-label']} style={TabularNums}>{timeStr}</Text>
 }
 
 const PlayTimeMax = memo(({ timeStr }: { timeStr: string }) => {
   const theme = useTheme()
-  return <Text color={theme['c-font-label']} style={TabularNums}>{timeStr}</Text>
+  return <Text size={Typography.caption} color={theme['c-font-label']} style={TabularNums}>{timeStr}</Text>
 })
 
 export default () => {

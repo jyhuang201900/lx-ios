@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390, initial-scale=1">
+<title>方向 A · 光学玻璃</title>
+<style>
+  :root{
+    --bg:#06070a;
+    --ink:#f4f7f6;
+    --dim:rgba(244,247,246,.56);
+    --faint:rgba(244,247,246,.28);
+    --accent:#3ecf9a;
+    --hair:rgba(255,255,255,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+  html,body{width:390px;height:844px;overflow:hidden;background:var(--bg)}
+  body{
+    font-family:-apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--ink);
+    position:relative;
+  }
+  /* 极光：两团，压得很低，只给玻璃一点可透的色 */
+  .aurora{position:absolute;inset:-18% -30%;pointer-events:none;filter:blur(2px)}
+  .aurora i{position:absolute;display:block;border-radius:50%}
+  .aurora .a{width:520px;height:520px;left:-140px;top:-120px;
+    background:radial-gradient(circle at 50% 50%, rgba(62,207,154,.38), rgba(62,207,154,0) 68%)}
+  .aurora .b{width:460px;height:460px;right:-160px;top:300px;
+    background:radial-gradient(circle at 50% 50%, rgba(64,132,255,.26), rgba(64,132,255,0) 70%)}
+  .veil{position:absolute;inset:0;background:
+    linear-gradient(180deg, rgba(6,7,10,.30) 0%, rgba(6,7,10,.12) 40%, rgba(6,7,10,.72) 100%)}
+
+  .screen{position:relative;width:390px;height:844px;display:flex;flex-direction:column;
+    padding:56px 26px 30px}
+
+  .top{display:flex;align-items:center;justify-content:space-between;height:28px}
+  .top .k{font-size:12px;letter-spacing:.14em;color:var(--dim)}
+  .glyph{width:34px;height:34px;display:grid;place-items:center;border-radius:17px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+  .glyph svg{width:16px;height:16px;stroke:var(--ink);stroke-width:1.4;fill:none;opacity:.86}
+
+  .art{margin-top:26px;position:relative;width:338px;height:338px;border-radius:20px;
+    overflow:hidden;isolation:isolate;
+    box-shadow:0 26px 60px -22px rgba(0,0,0,.9), 0 2px 0 rgba(255,255,255,.04)}
+  .art .plate{position:absolute;inset:0;
+    background:
+      conic-gradient(from 210deg at 62% 38%, #0a1a17 0deg, #16483a 58deg, #1f7a5c 96deg, #0b211c 150deg, #123a51 230deg, #0a1a17 330deg),
+      radial-gradient(120% 90% at 20% 8%, rgba(255,255,255,.16), rgba(255,255,255,0) 46%)}
+  .art .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:saturate(.62) contrast(1.06) brightness(.72)}
+  .art .tint{position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(10,26,23,.18) 0%, rgba(10,26,23,.36) 62%, rgba(6,7,10,.72) 100%),
+      radial-gradient(90% 70% at 70% 20%, rgba(62,207,154,.22), rgba(62,207,154,0) 60%)}
+  .art .grain{position:absolute;inset:0;opacity:.24;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='120' height='120' filter='url(%23n)' opacity='.5'/></svg>")}
+  .art .ring{position:absolute;left:50%;top:50%;width:210px;height:210px;margin:-105px 0 0 -105px;
+    border-radius:50%;border:1px solid rgba(255,255,255,.14)}
+  .art .ring.two{width:150px;height:150px;margin:-75px 0 0 -75px;border-color:rgba(255,255,255,.09)}
+  .art .mark{position:absolute;left:22px;bottom:20px;font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.62)}
+  .art .num{position:absolute;right:22px;top:18px;font-size:11px;color:rgba(255,255,255,.5);
+    font-variant-numeric:tabular-nums}
+  .spec{position:absolute;inset:0;border-radius:20px;pointer-events:none;
+    border:1px solid transparent;
+    border-top-color:rgba(255,255,255,.34);border-left-color:rgba(255,255,255,.16);
+    border-right-color:rgba(255,255,255,.06);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
+
+  .meta{margin-top:30px;display:flex;align-items:flex-end;justify-content:space-between}
+  .meta h1{font-size:24px;font-weight:600;letter-spacing:.01em}
+  .meta p{margin-top:7px;font-size:13px;color:var(--dim)}
+  .tech{text-align:right;font-size:10.5px;line-height:1.8;color:var(--faint);
+    font-variant-numeric:tabular-nums;letter-spacing:.06em}
+  .tech b{display:block;font-weight:400;color:var(--dim)}
+
+  .lyric{margin-top:22px;height:48px;position:relative;overflow:hidden}
+  .lyric .ln{font-size:14px;line-height:24px;color:var(--faint);transition:color .3s}
+  .lyric .ln.on{color:var(--ink);font-weight:500}
+
+  .timeline{margin-top:auto}
+  .bar{height:1px;background:rgba(255,255,255,.14);position:relative;border-radius:1px}
+  .bar .fill{position:absolute;left:0;top:-.5px;height:2px;width:41%;border-radius:1px;
+    background:linear-gradient(90deg,rgba(62,207,154,.35),var(--accent));
+    box-shadow:0 0 12px rgba(62,207,154,.7)}
+  .bar .dot{position:absolute;left:41%;top:-3px;width:8px;height:8px;margin-left:-4px;border-radius:50%;
+    background:#fff;box-shadow:0 0 0 3px rgba(62,207,154,.22),0 0 14px rgba(62,207,154,.8)}
+  .t{display:flex;justify-content:space-between;margin-top:9px;font-size:10.5px;color:var(--faint);
+    font-variant-numeric:tabular-nums;letter-spacing:.08em}
+
+  .controls{margin-top:26px;display:flex;align-items:center;justify-content:space-between;padding:0 4px}
+  .ctl{width:44px;height:44px;display:grid;place-items:center;border-radius:22px}
+  .ctl svg{width:20px;height:20px;fill:var(--ink);opacity:.82}
+  .ctl.sub svg{width:18px;height:18px;opacity:.5}
+  .play{width:70px;height:70px;border-radius:35px;display:grid;place-items:center;position:relative;
+    background:radial-gradient(120% 120% at 30% 20%,#57e9b3,#22a97c 62%,#157a58);
+    box-shadow:0 14px 34px -10px rgba(62,207,154,.55), inset 0 1px 0 rgba(255,255,255,.4)}
+  .play svg{width:24px;height:24px;fill:#04150f}
+  .bottom{margin-top:22px;display:flex;align-items:center;justify-content:space-between;
+    padding-top:16px;border-top:1px solid var(--hair)}
+  .bottom .grp{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--dim)}
+  .chip{padding:6px 11px;border-radius:9px;border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.05);font-size:11px;color:var(--dim);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+  .chip.hot{color:var(--ink);border-color:rgba(62,207,154,.45);background:rgba(62,207,154,.12)}
+</style>
+</head>
+<body>
+<div class="aurora"><i class="a"></i><i class="b"></i></div>
+<div class="veil"></div>
+
+<main class="screen">
+  <div class="top">
+    <div class="glyph" aria-label="返回"><svg viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></div>
+    <div class="k">正在播放</div>
+    <div class="glyph" aria-label="更多"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg></div>
+  </div>
+
+  <div class="art">
+    <img class="photo" src="cover.jpg" alt="">
+    <div class="tint"></div>
+    <div class="grain"></div>
+    <div class="mark">TINGGE · 01</div>
+    <div class="spec"></div>
+  </div>
+
+  <div class="meta">
+    <div>
+      <h1>夜航</h1>
+      <p>深蓝电台 · 潮汐记事</p>
+    </div>
+    <div class="tech"><b>44.1 kHz</b>1411 kbps</div>
+  </div>
+
+  <div class="lyric" id="lyric">
+    <div class="ln on">海面把城市折成一半</div>
+    <div class="ln">灯塔在雾里换了口气</div>
+  </div>
+
+  <div class="timeline">
+    <div class="bar"><div class="fill"></div><div class="dot"></div></div>
+    <div class="t"><span>01:43</span><span>04:12</span></div>
+  </div>
+
+  <div class="controls">
+    <div class="ctl sub" aria-label="随机"><svg viewBox="0 0 24 24"><path d="M4 7h3l10 10h3v-3M4 17h3l3-3M17 4v3h3"/></svg></div>
+    <div class="ctl" aria-label="上一首"><svg viewBox="0 0 24 24"><path d="M7 5h2v14H7zM19 5v14l-9-7z"/></svg></div>
+    <div class="play" id="play" role="button" aria-label="暂停">
+      <svg viewBox="0 0 24 24" id="playIcon"><path d="M7 4h4v16H7zM15 4h4v16h-4z"/></svg>
+    </div>
+    <div class="ctl" aria-label="下一首"><svg viewBox="0 0 24 24"><path d="M15 5h2v14h-2zM5 5v14l9-7z"/></svg></div>
+    <div class="ctl sub" aria-label="单曲循环"><svg viewBox="0 0 24 24"><path d="M6 9V7h11l-2-2M18 15v2H7l2 2"/></svg></div>
+  </div>
+
+  <div class="bottom">
+    <div class="grp"><span class="chip hot">无损</span><span class="chip">歌词</span></div>
+    <div class="grp" aria-label="队列">
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.4"><path d="M4 7h11M4 12h11M4 17h7M18 9v8"/></svg>
+      <span>下一首 · 3</span>
+    </div>
+  </div>
+</main>
+
+<script>
+  const play = document.getElementById('play')
+  const icon = document.getElementById('playIcon')
+  let playing = true
+  play.addEventListener('click', () => {
+    playing = !playing
+    icon.innerHTML = playing
+      ? '<path d="M7 4h4v16H7zM15 4h4v16h-4z"/>'
+      : '<path d="M8 5l11 7-11 7z"/>'
+    play.setAttribute('aria-label', playing ? '暂停' : '播放')
+  })
+  document.querySelectorAll('#lyric .ln').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('#lyric .ln').forEach(n => n.classList.remove('on'))
+      el.classList.add('on')
+    })
+  })
+</script>
+</body>
+</html>

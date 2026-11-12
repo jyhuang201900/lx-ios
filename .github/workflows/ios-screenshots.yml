@@ -1,0 +1,145 @@
+name: iOS Screenshots
+
+# 在 macOS runner 上启动 iOS 模拟器、安装 Release 包、启动并截图。
+# 产物 ios-screenshots（每台机型一个目录），用于在没有本地 Mac 时做真实渲染复核。
+on:
+  workflow_dispatch:
+    inputs:
+      devices:
+        description: '机型，逗号分隔；留空则用 iPhone 15 与 iPhone SE (3rd generation)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-screenshots
+  cancel-in-progress: true
+
+jobs:
+  screenshot:
+    name: Screenshot on iOS Simulator
+    runs-on: macos-14
+    timeout-minutes: 45
+    env:
+      NO_FLIPPER: 1
+      IOS_WORKSPACE: ios/LxMusicMobile.xcworkspace
+      IOS_SCHEME: LxMusicMobile
+      IOS_BUNDLE_IDENTIFIER: cn.toside.music.mobile
+      DERIVED_DATA_PATH: build/DerivedData
+
+    steps:
+      - name: Check out git repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install CocoaPods dependencies
+        shell: bash
+        run: |
+          cd ios
+          bundle exec pod install --repo-update
+
+      # Release 会把 JS 打进 app，模拟器里不需要再起 Metro。
+      - name: Build for simulator
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild \
+            -workspace "$IOS_WORKSPACE" \
+            -scheme "$IOS_SCHEME" \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$DERIVED_DATA_PATH" \
+            PRODUCT_BUNDLE_IDENTIFIER="$IOS_BUNDLE_IDENTIFIER" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            clean build 2>&1 | tee build/xcodebuild-sim.log
+
+      - name: Boot simulators and capture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p shots
+          APP_PATH="$(find "$DERIVED_DATA_PATH/Build/Products/Release-iphonesimulator" -maxdepth 1 -name '*.app' -print -quit)"
+          if [ -z "$APP_PATH" ]; then
+            echo "::error::没有找到 .app"; find "$DERIVED_DATA_PATH/Build/Products" -maxdepth 3 -name '*.app'; exit 1
+          fi
+          echo "app: $APP_PATH"
+
+          DEVICES="${{ inputs.devices }}"
+          if [ -z "$DEVICES" ]; then
+            DEVICES="iPhone 15,iPhone SE (3rd generation)"
+          fi
+          IFS=',' read -ra WANTED <<< "$DEVICES"
+
+          xcrun simctl list devices available
+
+          for RAW in "${WANTED[@]}"; do
+            NAME="$(echo "$RAW" | sed 's/^ *//;s/ *$//')"
+            UDID=$(xcrun simctl list devices available | grep -F "$NAME (" | head -1 | grep -oE '[0-9A-F-]{36}' || true)
+            if [ -z "$UDID" ]; then
+              echo "::warning::模拟器不可用，跳过：$NAME"
+              continue
+            fi
+            SLUG="$(echo "$NAME" | tr ' ()' '---' | tr -s '-' | tr 'A-Z' 'a-z')"
+            echo "== $NAME ($UDID) -> shots/$SLUG"
+
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl ui "$UDID" appearance dark || true
+            # 固定状态栏，截图里不会出现 3:07 或半格电这类随机信息
+            xcrun simctl status_bar "$UDID" override \
+              --time "9:41" --batteryState charged --batteryLevel 100 \
+              --wifiBars 3 --cellularBars 4 || true
+
+            xcrun simctl install "$UDID" "$APP_PATH"
+            xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER"
+
+            sleep 10
+            xcrun simctl io "$UDID" screenshot "shots/${SLUG}-01-home.png"
+            sleep 6
+            xcrun simctl io "$UDID" screenshot "shots/${SLUG}-02-settled.png"
+
+            # 进程还活着才算启动成功；崩溃时日志里能直接看到原因
+            if ! xcrun simctl spawn "$UDID" launchctl list | grep -q "$IOS_BUNDLE_IDENTIFIER"; then
+              echo "::error::$NAME 上应用未在运行"
+            fi
+            xcrun simctl spawn "$UDID" log show --last 3m --style compact \
+              --predicate 'process == "LxMusicMobile"' > "shots/${SLUG}-device.log" || true
+            xcrun simctl status_bar "$UDID" clear || true
+          done
+
+          ls -la shots
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-screenshots
+          path: shots
+          if-no-files-found: warn
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sim-build-log
+          path: build/xcodebuild-sim.log
+          if-no-files-found: ignore

@@ -24,6 +24,11 @@ export const Radius = {
   control: 8,
   button: 10,
   card: 12,
+  /**
+   * 播放页封面。比 card 大一档是刻意的：338pt 的大图上 12pt 圆角读起来像
+   * 被裁切的矩形，20pt 才像一块独立浮起的玻璃。
+   */
+  hero: 20,
   sheet: 16,
   /** 仅用于宽高相等的圆形按钮（如悬浮播放键） */
   full: 999,
@@ -97,6 +102,24 @@ export const PageMetrics = {
   toolbarHeight: 52,
   toolbarMargin: 8,
   controlHeight: 40,
+} as const
+
+/**
+ * 播放页竖屏度量（方向 A · 光学玻璃）。
+ *
+ * 封面占满内容宽度而不是按屏宽百分比：百分比在不同宽度的机型上会让左右留白
+ * 忽宽忽窄，视觉重心跟着漂。这里固定「屏宽减左右各 26」，390pt 机型得到 338，
+ * 430pt 机型得到 378，留白始终是同一个 26。
+ *
+ * 高度用可用区的 0.46 兜底：小屏（SE 类）封面不能把歌词和控件挤出屏幕。
+ */
+export const PlayMetrics = {
+  coverInset: 26,
+  coverHeightRatio: 0.46,
+  /** 播放键直径：A 版是 70，上下限防止小屏/大字号时压住进度条 */
+  playSize: 70,
+  playSizeMin: 62,
+  playSizeMax: 74,
 } as const
 
 /**

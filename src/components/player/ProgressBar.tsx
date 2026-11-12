@@ -127,10 +127,13 @@ const Progress = ({ progress, duration, buffered }: {
 
 
 const progressContentPadding = 10
-const progressHeight = 3.6
+// 方向 A：进度是一条 2pt 细线，靠端点光点指示位置。
+// 3.6pt 在深色底上读起来是"色块"，与封面玻璃、1pt 描边不是一套语言；
+// 2pt 加上光点才像仪表指针。命中区仍由 padding 保证 24pt 内容高 + 上下各 10。
+const progressHeight = 2
 const progressContentHeight = progressContentPadding * 2 + progressHeight
 const progressHeightSize = scaleSizeH(progressHeight)
-let progressDotSize = scaleSizeW(progressContentHeight * 0.8)
+let progressDotSize = scaleSizeW(progressContentHeight * 0.5)
 const styles = createStyle({
   progress: {
     width: '100%',

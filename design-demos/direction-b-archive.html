@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390, initial-scale=1">
+<title>方向 B · 唱片档案</title>
+<style>
+  :root{
+    --paper:#efede6;
+    --ink:#191713;
+    --dim:#6d675c;
+    --faint:#a49d90;
+    --rule:rgba(25,23,19,.16);
+    --rust:#9c4a2f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+  html,body{width:390px;height:844px;overflow:hidden;background:var(--paper)}
+  body{font-family:-apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--ink);position:relative}
+  /* 纸：不是纯色，右上角有一点受潮的暖，左下压冷 */
+  body:before{content:"";position:fixed;inset:0;pointer-events:none;
+    background:
+      radial-gradient(90% 60% at 88% 2%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%),
+      radial-gradient(70% 50% at 4% 96%, rgba(120,110,92,.14), rgba(120,110,92,0) 62%)}
+  body:after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23p)' opacity='.22'/></svg>")}
+
+  .page{position:relative;width:390px;height:844px;padding:58px 30px 26px;display:flex;flex-direction:column}
+
+  .head{display:flex;justify-content:space-between;align-items:baseline;
+    font-size:10.5px;letter-spacing:.2em;color:var(--faint)}
+  .head .side{letter-spacing:.12em}
+
+  .sleeve{margin-top:30px;display:grid;grid-template-columns:172px 1fr;gap:22px;align-items:start}
+  .cover{width:172px;height:172px;position:relative;background:#e4ded1;border:1px solid var(--rule);
+    display:flex;align-items:flex-end;justify-content:space-between;padding:12px 12px 10px}
+  .cover .vt{writing-mode:vertical-rl;font-family:"Songti SC","STSong","SimSun",serif;
+    font-size:30px;line-height:1.05;letter-spacing:.06em;color:var(--ink)}
+  .cover .cat{writing-mode:vertical-rl;font-size:8px;letter-spacing:.2em;color:rgba(25,23,19,.55);
+    align-self:flex-start}
+  .cover .side{position:absolute;right:12px;bottom:9px;font-size:8px;letter-spacing:.22em;color:rgba(25,23,19,.5)}
+  .cover .edge{position:absolute;inset:5px;border:1px solid rgba(25,23,19,.12);pointer-events:none}
+
+  .info{padding-top:2px}
+  .info .kicker{font-size:10px;letter-spacing:.24em;color:var(--rust)}
+  .info h1{margin-top:10px;font-size:27px;font-weight:600;line-height:1.15;letter-spacing:.01em}
+  .info .artist{margin-top:8px;font-size:12.5px;color:var(--dim)}
+  .info .album{margin-top:4px;font-size:12.5px;color:var(--dim)}
+  .info .spec{margin-top:16px;font-size:10.5px;line-height:1.9;color:var(--faint);
+    font-variant-numeric:tabular-nums;letter-spacing:.06em}
+  .info .spec b{font-weight:400;color:var(--dim)}
+
+  .lyric{margin-top:30px;padding-top:20px;border-top:1px solid var(--rule);
+    display:flex;flex-direction:column;gap:0}
+  .lyric .row{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:baseline;
+    padding:7px 0}
+  .lyric .bar{width:2px;height:15px;background:transparent;margin-top:3px}
+  .lyric .row.on .bar{background:var(--rust)}
+  .lyric .txt{font-family:"Songti SC","STSong","SimSun",serif;font-size:16px;line-height:1.9;
+    color:var(--faint);transition:color .25s}
+  .lyric .row.on .txt{color:var(--ink)}
+  .lyric .row.past .txt{color:rgba(25,23,19,.42)}
+
+  .spacer{flex:1}
+
+  .progress{margin-top:26px}
+  .track{height:1px;background:var(--rule);position:relative}
+  .track .done{position:absolute;left:0;top:0;height:1px;width:41%;background:var(--ink)}
+  .track .needle{position:absolute;top:-4px;left:41%;width:1px;height:9px;background:var(--ink)}
+  .stamp{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;
+    color:var(--faint);font-variant-numeric:tabular-nums;letter-spacing:.1em}
+
+  .transport{margin-top:22px;display:flex;align-items:center;justify-content:space-between}
+  .tbtn{width:40px;height:40px;display:grid;place-items:center;border-radius:20px;border:1px solid transparent}
+  .tbtn svg{width:18px;height:18px;fill:none;stroke:var(--ink);stroke-width:1.3;opacity:.7}
+  .tbtn.sub svg{width:15px;height:15px;opacity:.4}
+  .tplay{width:58px;height:58px;border:1px solid var(--ink);border-radius:29px;
+    display:grid;place-items:center;position:relative}
+  .tplay:after{content:"";position:absolute;inset:5px;border:1px solid var(--rule);border-radius:50%}
+  .tplay svg{width:20px;height:20px;fill:var(--ink);stroke:none;position:relative;z-index:1}
+
+  .foot{margin-top:24px;padding-top:14px;border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;align-items:center;font-size:10.5px;
+    color:var(--faint);letter-spacing:.08em}
+  .foot .q{display:flex;align-items:center;gap:6px;color:var(--dim)}
+  .foot .q svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.3}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="head"><span>A 面 · 04:12</span><span class="side">TINGGE / 内页</span></div>
+
+  <section class="sleeve">
+    <div class="cover">
+      <div class="edge"></div>
+      <div class="vt">夜航</div>
+      <div class="cat">TT-003 / 2023</div>
+      <div class="side">SIDE A</div>
+    </div>
+    <div class="info">
+      <div class="kicker">正在播放</div>
+      <h1>夜航</h1>
+      <div class="artist">深蓝电台</div>
+      <div class="album">收录于《潮汐记事》</div>
+      <div class="spec"><b>FLAC</b> · 1411 kbps<br><b>44.1 kHz</b> · 立体声</div>
+    </div>
+  </section>
+
+  <section class="lyric" id="lyric">
+    <div class="row past"><div class="bar"></div><div class="txt">港口把最后一盏灯收起</div></div>
+    <div class="row on"><div class="bar"></div><div class="txt">海面把城市折成一半</div></div>
+    <div class="row"><div class="bar"></div><div class="txt">灯塔在雾里换了口气</div></div>
+    <div class="row"><div class="bar"></div><div class="txt">我把频率调到你的名字</div></div>
+  </section>
+
+  <div class="spacer"></div>
+
+  <section class="progress">
+    <div class="track"><div class="done"></div><div class="needle"></div></div>
+    <div class="stamp"><span>01:43</span><span>−02:29</span></div>
+  </section>
+
+  <section class="transport">
+    <div class="tbtn sub" aria-label="随机"><svg viewBox="0 0 24 24"><path d="M4 7h3l10 10h3M4 17h3l3-3M17 4v3h3"/></svg></div>
+    <div class="tbtn" aria-label="上一首"><svg viewBox="0 0 24 24"><path d="M8 6v12M18 6v12l-8-6z"/></svg></div>
+    <div class="tplay" id="play" role="button" aria-label="暂停">
+      <svg viewBox="0 0 24 24" id="playIcon"><path d="M8 6h3v12H8zM14 6h3v12h-3z"/></svg>
+    </div>
+    <div class="tbtn" aria-label="下一首"><svg viewBox="0 0 24 24"><path d="M16 6v12M6 6v12l8-6z"/></svg></div>
+    <div class="tbtn sub" aria-label="循环"><svg viewBox="0 0 24 24"><path d="M6 9V7h11l-2-2M18 15v2H7l2 2"/></svg></div>
+  </section>
+
+  <div class="foot">
+    <span>第 3 首 / 共 11 首</span>
+    <span class="q"><svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h7M18 9v8"/></svg>队列</span>
+  </div>
+</main>
+
+<script>
+  const play = document.getElementById('play')
+  const icon = document.getElementById('playIcon')
+  let playing = true
+  play.addEventListener('click', () => {
+    playing = !playing
+    icon.innerHTML = playing
+      ? '<path d="M8 6h3v12H8zM14 6h3v12h-3z"/>'
+      : '<path d="M9 6l10 6-10 6z"/>'
+    play.setAttribute('aria-label', playing ? '暂停' : '播放')
+  })
+  document.querySelectorAll('#lyric .row').forEach(row => {
+    row.addEventListener('click', () => {
+      document.querySelectorAll('#lyric .row').forEach(r => { r.classList.remove('on'); r.classList.add('past') })
+      row.classList.remove('past'); row.classList.add('on')
+    })
+  })
+</script>
+</body>
+</html>

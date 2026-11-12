@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=390, initial-scale=1">
+<title>方向 C · 声场仪表</title>
+<style>
+  :root{
+    --bg:#0a0b0c;
+    --panel:#0f1113;
+    --line:rgba(255,255,255,.08);
+    --line-2:rgba(255,255,255,.16);
+    --ink:#e9e6df;
+    --dim:#8b877e;
+    --faint:#5d5a54;
+    --amber:#e3a455;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+  html,body{width:390px;height:844px;overflow:hidden;background:var(--bg)}
+  body{color:var(--ink);position:relative;
+    font-family:-apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif}
+  /* 网格底：工程图纸的 8pt 格，压到几乎看不见 */
+  body:before{content:"";position:fixed;inset:0;pointer-events:none;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size:32px 32px}
+  body:after{content:"";position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(120% 60% at 50% 0%, rgba(227,164,85,.07), rgba(227,164,85,0) 60%),
+      radial-gradient(90% 50% at 50% 100%, rgba(255,255,255,.04), rgba(255,255,255,0) 60%)}
+
+  .mono{font-family:"SF Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+    font-variant-numeric:tabular-nums;letter-spacing:.04em}
+
+  .app{position:relative;width:390px;height:844px;display:flex;flex-direction:column;
+    padding:54px 24px 24px}
+
+  .bar{display:flex;align-items:center;justify-content:space-between;height:26px}
+  .bar .id{font-size:10px;letter-spacing:.3em;color:var(--faint)}
+  .bar .live{display:flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.22em;color:var(--amber)}
+  .bar .live i{width:5px;height:5px;border-radius:50%;background:var(--amber);
+    box-shadow:0 0 8px rgba(227,164,85,.9);display:block}
+
+  .deck{margin-top:24px;display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:center;
+    padding-bottom:20px;border-bottom:1px solid var(--line)}
+  .deck .cov{width:96px;height:96px;position:relative;background:#121416;overflow:hidden;
+    border:1px solid var(--line-2)}
+  .deck .cov .scan{position:absolute;inset:0;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, rgba(255,255,255,0) 1px 4px)}
+  .deck .cov .glow{position:absolute;left:-20%;top:38%;width:140%;height:30%;
+    background:radial-gradient(60% 100% at 50% 50%, rgba(227,164,85,.55), rgba(227,164,85,0) 70%)}
+  .deck .cov .tag{position:absolute;left:6px;bottom:5px;font-size:8px;letter-spacing:.2em;color:rgba(233,230,223,.5)}
+  .deck h1{font-size:17px;font-weight:600;letter-spacing:.02em}
+  .deck .who{margin-top:6px;font-size:11.5px;color:var(--dim)}
+  .deck .fmt{margin-top:12px;display:flex;gap:10px;font-size:9.5px;color:var(--faint);letter-spacing:.14em}
+  .deck .fmt b{color:var(--amber);font-weight:400}
+
+  .scope{margin-top:22px;position:relative;height:198px}
+  .scope .grid{position:absolute;inset:0;
+    background-image:linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size:100% 25%}
+  .spec{position:absolute;left:0;right:0;bottom:0;height:198px;display:flex;align-items:flex-end;gap:3px}
+  .spec i{flex:1;background:linear-gradient(180deg, rgba(227,164,85,.95), rgba(227,164,85,.18));
+    border-radius:1px 1px 0 0;opacity:.9;transform-origin:bottom;transition:transform .18s}
+  .scope .axis{position:absolute;left:0;right:0;top:-2px;display:flex;justify-content:space-between;
+    font-size:8px;letter-spacing:.16em;color:var(--faint)}
+
+  .read{display:grid;grid-template-columns:repeat(4,1fr);margin-top:18px;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .cell{padding:12px 0 11px;border-right:1px solid var(--line)}
+  .cell:last-child{border-right:none;padding-left:12px}
+  .cell:not(:last-child){padding-left:0}
+  .cell .k{font-size:8.5px;letter-spacing:.18em;color:var(--faint)}
+  .cell .v{margin-top:5px;font-size:14px;color:var(--ink)}
+
+  .eq{margin-top:20px;display:grid;grid-template-columns:1fr 108px;gap:16px;align-items:center}
+  .eq .curve{position:relative;height:64px;border-bottom:1px solid var(--line-2)}
+  .eq .curve svg{width:100%;height:100%;display:block}
+  .eq .lab{font-size:6.5px;letter-spacing:.1em;color:var(--faint);
+    display:flex;justify-content:space-between;margin-top:5px}
+  .eq .pre{margin-top:0}
+  .eq .pre .kv{display:flex;justify-content:space-between;font-size:9px;color:var(--faint);
+    padding:4px 0;border-bottom:1px solid var(--line)}
+  .eq .pre .kv b{font-weight:400;color:var(--dim)}
+
+  .time{margin-top:auto;padding-top:22px}
+  .lyr{font-size:13px;color:rgba(233,230,223,.82);letter-spacing:.05em;margin-bottom:16px}
+  .lyr:before{content:"";display:inline-block;width:6px;height:6px;margin-right:9px;
+    background:var(--amber);transform:translateY(-1px)}
+  .ticks{position:relative;height:18px;display:flex;gap:2px;align-items:flex-end}
+  .ticks i{flex:1;height:6px;background:rgba(255,255,255,.10)}
+  .ticks i.on{background:var(--amber);height:10px}
+  .ticks i.head{background:#fff;height:14px;box-shadow:0 0 10px rgba(227,164,85,.8)}
+  .stamp{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--dim)}
+
+  .keys{margin-top:18px;display:flex;align-items:center;gap:10px}
+  .key{width:46px;height:46px;border:1px solid var(--line-2);background:var(--panel);
+    display:grid;place-items:center;border-radius:3px}
+  .key svg{width:17px;height:17px;fill:var(--ink);opacity:.72}
+  .key.ghost{width:40px;border-color:transparent;background:transparent;border-radius:3px}
+  .key.ghost svg{opacity:.4}
+  .play{flex:1;height:52px;border-radius:3px;border:1px solid rgba(227,164,85,.5);
+    background:linear-gradient(180deg,rgba(227,164,85,.22),rgba(227,164,85,.08));
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+  .play svg{width:16px;height:16px;fill:var(--amber)}
+  .play span{font-size:10.5px;letter-spacing:.26em;color:var(--amber)}
+
+  .foot{margin-top:14px;display:flex;justify-content:space-between;align-items:center;
+    font-size:10px;color:var(--faint);letter-spacing:.12em}
+  .foot .q{display:flex;gap:8px;align-items:center}
+  .foot .q svg{width:13px;height:13px;stroke:var(--faint);fill:none;stroke-width:1.3}
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="bar">
+    <div class="id">DECODER / 01</div>
+    <div class="live"><i></i>LOSSLESS</div>
+  </div>
+
+  <section class="deck">
+    <div class="cov"><div class="scan"></div><div class="glow"></div><div class="tag">TIDE</div></div>
+    <div>
+      <h1>夜航</h1>
+      <div class="who">深蓝电台 · 潮汐记事</div>
+      <div class="fmt"><b>FLAC</b><span>44.1 kHz</span><span>STEREO</span></div>
+    </div>
+  </section>
+
+  <section class="scope" aria-label="实时频谱">
+    <div class="axis"><span>30 Hz</span><span>1 kHz</span><span>16 kHz</span></div>
+    <div class="grid"></div>
+    <div class="spec" id="spec"></div>
+  </section>
+
+  <section class="read mono">
+    <div class="cell"><div class="k">缓冲</div><div class="v">2.4 s</div></div>
+    <div class="cell"><div class="k">码率</div><div class="v">1411</div></div>
+    <div class="cell"><div class="k">采样</div><div class="v">44.1k</div></div>
+    <div class="cell"><div class="k">延迟</div><div class="v">12 ms</div></div>
+  </section>
+
+  <section class="eq">
+    <div>
+      <div class="curve">
+        <svg viewBox="0 0 220 64" preserveAspectRatio="none" aria-label="均衡曲线">
+          <path d="M0 44 L18 40 L36 46 L54 30 L72 36 L90 18 L108 24 L126 14 L144 26 L162 22 L180 34 L198 28 L220 38"
+            fill="none" stroke="#e3a455" stroke-width="1.2" stroke-linejoin="round"/>
+          <path d="M0 44 L18 40 L36 46 L54 30 L72 36 L90 18 L108 24 L126 14 L144 26 L162 22 L180 34 L198 28 L220 38 L220 64 L0 64 Z"
+            fill="rgba(227,164,85,.08)"/>
+        </svg>
+      </div>
+      <div class="lab"><span>31</span><span>125</span><span>500</span><span>2k</span><span>8k</span><span>16k</span></div>
+    </div>
+    <div class="pre mono">
+      <div class="kv"><span>DRY</span><b>100%</b></div>
+      <div class="kv"><span>WET</span><b>0%</b></div>
+      <div class="kv"><span>EQ</span><b>OFF</b></div>
+    </div>
+  </section>
+
+  <section class="time">
+    <div class="lyr" id="lyr">海面把城市折成一半</div>
+    <div class="ticks" id="ticks"></div>
+    <div class="stamp mono"><span>01:43.42</span><span>-02:28.58</span></div>
+  </section>
+
+  <section class="keys">
+    <div class="key ghost" aria-label="随机"><svg viewBox="0 0 24 24"><path d="M4 7h3l10 10h3v-3M4 17h3l3-3M17 4v3h3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></div>
+    <div class="key" aria-label="上一首"><svg viewBox="0 0 24 24"><path d="M7 5h2v14H7zM19 5v14l-9-7z"/></svg></div>
+    <div class="play" id="play" role="button" aria-label="暂停">
+      <svg viewBox="0 0 24 24" id="playIcon"><path d="M7 4h4v16H7zM15 4h4v16h-4z"/></svg>
+      <span id="playLabel">PAUSE</span>
+    </div>
+    <div class="key" aria-label="下一首"><svg viewBox="0 0 24 24"><path d="M15 5h2v14h-2zM5 5v14l9-7z"/></svg></div>
+    <div class="key ghost" aria-label="循环"><svg viewBox="0 0 24 24"><path d="M6 9V7h11l-2-2M18 15v2H7l2 2" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></div>
+  </section>
+
+  <div class="foot mono">
+    <span>TRACK 03 / 11</span>
+    <span class="q"><svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h7M18 9v8"/></svg>QUEUE</span>
+  </div>
+</main>
+
+<script>
+  // 频谱柱：固定的一组高度，避免随机带来的"每帧都在抖"的假动效
+  const heights = [18,26,34,28,44,58,72,64,80,92,86,74,96,110,102,88,118,132,120,104,112,126,138,128,116,100,90,78,68,58,50,42,36,30,26,22,18,16,14,12,10,8]
+  const spec = document.getElementById('spec')
+  heights.forEach(h => {
+    const i = document.createElement('i')
+    i.style.height = Math.round(h * 1.34) + 'px'
+    spec.appendChild(i)
+  })
+
+  const ticks = document.getElementById('ticks')
+  for (let n = 0; n < 44; n++) {
+    const i = document.createElement('i')
+    if (n < 18) i.className = 'on'
+    if (n === 18) i.className = 'head'
+    ticks.appendChild(i)
+  }
+
+  const play = document.getElementById('play')
+  const icon = document.getElementById('playIcon')
+  const label = document.getElementById('playLabel')
+  let playing = true
+  play.addEventListener('click', () => {
+    playing = !playing
+    icon.innerHTML = playing
+      ? '<path d="M7 4h4v16H7zM15 4h4v16h-4z"/>'
+      : '<path d="M8 5l11 7-11 7z"/>'
+    label.textContent = playing ? 'PAUSE' : 'PLAY'
+    play.setAttribute('aria-label', playing ? '暂停' : '播放')
+  })
+
+  // 轻微呼吸：只动 3%，不破坏"仪表"的稳定感
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let t = 0
+    setInterval(() => {
+      t += 1
+      const bars = spec.children
+      for (let n = 0; n < bars.length; n++) {
+        const base = heights[n]
+        const k = 1 + 0.03 * Math.sin((n * 0.7) + t * 0.9)
+        bars[n].style.transform = `scaleY(${k})`
+      }
+    }, 420)
+  }
+</script>
+</body>
+</html>

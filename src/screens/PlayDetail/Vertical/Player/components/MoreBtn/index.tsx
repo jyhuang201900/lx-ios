@@ -1,26 +1,29 @@
 import { createStyle } from '@/utils/tools'
 import { View } from 'react-native'
-import PlayModeBtn from './PlayModeBtn'
-import MusicAddBtn from './MusicAddBtn'
-import DesktopLyricBtn from './DesktopLyricBtn'
+import PlayModeBtn from '@/screens/PlayDetail/components/controls/PlayModeBtn'
+import MusicAddBtn from '@/screens/PlayDetail/components/controls/MusicAddBtn'
+import DesktopLyricBtn from '@/screens/PlayDetail/components/controls/DesktopLyricBtn'
 import CommentBtn from './CommentBtn'
 import CollectBtn from './CollectBtn'
-import QualityBtn from './QualityBtn'
-import DownloadBtn from './DownloadBtn'
-import QueueBtn from './QueueBtn'
+import DownloadBtn from '@/screens/PlayDetail/components/controls/DownloadBtn'
+import QueueBtn from '@/screens/PlayDetail/components/controls/QueueBtn'
+import { ControlMetricsProvider } from '@/screens/PlayDetail/components/controls/Metrics'
+
+const METRICS = { size: 42, iconSize: 24, marginBottom: 0 }
 
 export default () => {
   return (
-    <View style={styles.container}>
-      <DesktopLyricBtn />
-      <CollectBtn />
-      <MusicAddBtn />
-      <DownloadBtn />
-      <QualityBtn />
-      <PlayModeBtn />
-      <CommentBtn />
-      <QueueBtn />
-    </View>
+    <ControlMetricsProvider value={METRICS}>
+      <View style={styles.container}>
+        <DesktopLyricBtn />
+        <CollectBtn />
+        <MusicAddBtn />
+        <DownloadBtn />
+        <PlayModeBtn />
+        <CommentBtn />
+        <QueueBtn />
+      </View>
+    </ControlMetricsProvider>
   )
 }
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>顶栏研究 · 六个控件怎么收</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:390px;background:#080a0b;color:#eef2f0;
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;padding:24px 0 28px}
+  .hd{padding:0 22px;font-size:11px;letter-spacing:.14em;color:#6f6a62;margin:0 0 8px}
+  .stage{position:relative;margin-bottom:18px;padding:0 0 10px;
+    background:radial-gradient(120% 180% at 8% 0%, rgba(62,207,154,.20), rgba(6,7,10,0) 62%),
+      radial-gradient(90% 160% at 96% 120%, rgba(64,132,255,.14), rgba(6,7,10,0) 60%),#0a0c0d}
+  .row{display:flex;align-items:center;height:52px;padding:0 12px;gap:2px}
+  .g{width:40px;height:40px;display:grid;place-items:center;border-radius:20px}
+  .g svg{width:17px;height:17px;stroke:rgba(238,242,240,.74);fill:none;stroke-width:1.5}
+  .t{flex:1;text-align:center;min-width:0;padding:0 8px}
+  .t b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .t span{display:block;font-size:10.5px;color:rgba(238,242,240,.56);margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip{height:28px;padding:0 10px;border-radius:8px;border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.05);font-size:10.5px;color:rgba(238,242,240,.7);
+    display:flex;align-items:center;gap:5px;margin-right:4px}
+  .chip svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.4}
+  .more{width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,255,255,.14);
+    display:grid;place-items:center;color:rgba(238,242,240,.66);font-size:13px;margin-left:4px}
+  .note{font-size:10px;line-height:1.7;color:#7d786f;padding:0 22px 6px}
+  .v3 .t{text-align:left;padding-left:2px}
+  .v3 .right{display:flex;align-items:center;margin-left:auto}
+</style>
+</head>
+<body>
+  <p class="hd">V1 · 现状：6 个控件</p>
+  <div class="stage">
+    <div class="row">
+      <span class="g"><svg viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></span>
+      <span class="t"><b>夜航</b><span>深蓝电台</span></span>
+      <span class="g"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></span>
+      <span class="g"><svg viewBox="0 0 24 24"><path d="M7 7h10v10H7z"/></svg></span>
+      <span class="g"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>
+      <span class="g"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 6 19.4"/></svg></span>
+    </div>
+  </div>
+  <p class="note">标题居中、左右各挤 3 个图标；倍速/定时/音效/设置四个都靠图标猜，读屏器才知道是什么。</p>
+
+  <p class="hd">V2 · 一个规格胶囊 + 更多</p>
+  <div class="stage">
+    <div class="row">
+      <span class="g"><svg viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></span>
+      <span class="t"><b>夜航</b><span>深蓝电台</span></span>
+      <span class="chip">FLAC <svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></span>
+      <span class="more">…</span>
+    </div>
+  </div>
+  <p class="note">规格用文字胶囊（看得懂），倍速/定时/音效/设置进「…」；顶栏从 6 个命中区降到 2 个，标题获得更多宽度。</p>
+
+  <p class="hd">V3 · 左标题 + 规格 + 更多</p>
+  <div class="stage v3">
+    <div class="row">
+      <span class="g"><svg viewBox="0 0 24 24"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg></span>
+      <span class="t"><b>夜航</b><span>深蓝电台 · 潮汐记事</span></span>
+      <span class="right"><span class="chip">FLAC</span><span class="more">…</span></span>
+    </div>
+  </div>
+  <p class="note">标题左对齐，歌手后面还能带专辑；与 A 版“标题靠左、读数靠右”同一套网格。</p>
+</body>
+</html>

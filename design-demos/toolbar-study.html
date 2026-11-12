@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>工具行研究 · 图标架 vs 芯片</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0b0c0d;color:#e9e6df;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    padding:28px 24px 40px;width:390px}
+  h1{font-size:13px;font-weight:600;letter-spacing:.02em}
+  .note{font-size:10.5px;color:#8b877e;margin-top:6px;line-height:1.6}
+  .variant{margin-top:22px}
+  .cap{font-size:10px;letter-spacing:.16em;color:#6f6a62;margin-bottom:8px}
+  .strip{padding:10px 0 6px;border-top:1px solid rgba(255,255,255,.13)}
+  .row{display:flex;align-items:center;justify-content:space-between;padding:0 2px}
+  .ico{width:42px;height:42px;display:grid;place-items:center}
+  .ico svg{width:21px;height:21px;stroke:rgba(244,247,246,.62);fill:none;stroke-width:1.4}
+  .chips{display:flex;gap:8px;align-items:center}
+  .chip{height:32px;padding:0 13px;border-radius:9px;border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.05);display:flex;align-items:center;gap:7px;
+    font-size:11.5px;color:rgba(244,247,246,.72)}
+  .chip.on{border-color:rgba(62,207,154,.5);background:rgba(62,207,154,.14);color:#eafff5}
+  .chip svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.3}
+  .more{width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.12);
+    display:grid;place-items:center;color:rgba(244,247,246,.6);font-size:14px}
+  .tiny{font-size:9px;color:#5d5a54;margin-top:7px;line-height:1.6}
+</style>
+</head>
+<body>
+  <h1>播放页工具行：8 个入口怎么放</h1>
+  <p class="note">同一屏宽 390。上：保留 8 个图标的工具架。下：3 个芯片 + 「…」。</p>
+
+  <section class="variant">
+    <div class="cap">A · 图标工具架（全部可见）</div>
+    <div class="strip">
+      <div class="row">
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 4v12l-4-4M12 16l4-4M5 20h14"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M4 9h11l-2-2M20 15H9l2 2"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M6 6h12v12H6zM9 9h6v6H9z"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l3 6 6 .8-4.5 4.3 1.1 6L12 17l-5.6 3.1 1.1-6L3 9.8 9 9z"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-3-6.2M20 5v4h-4"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M4 6h13M4 12h13M4 18h9"/></svg></span>
+      </div>
+      <p class="tiny">42pt 命中区 × 8 = 336pt，屏宽 390 减两侧 22 后仍有 346pt：单行放得下，最窄机型 375 也够。</p>
+    </div>
+  </section>
+
+  <section class="variant">
+    <div class="cap">B · 芯片 + 更多</div>
+    <div class="strip">
+      <div class="row">
+        <div class="chips">
+          <span class="chip on">无损</span>
+          <span class="chip"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 11h10M5 16h7"/></svg>歌词</span>
+          <span class="chip"><svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h7M18 9v8"/></svg>队列</span>
+        </div>
+        <span class="more">…</span>
+      </div>
+      <p class="tiny">下载、加入歌单、播放模式、定时退出、桌面歌词要再进一层。少一半直达，但底部更安静。</p>
+    </div>
+  </section>
+</body>
+</html>

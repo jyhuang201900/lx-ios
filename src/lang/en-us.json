@@ -662,5 +662,6 @@
   "quality_atmos_plus": "Premium Spatial",
   "quality_atmos": "Spatial Audio",
   "quality_hires": "Hi-Res Lossless",
-  "quality_master_hint": "Used only when the source and track support it; falls back automatically on failure."
+  "quality_master_hint": "Used only when the source and track support it; falls back automatically on failure.",
+  "player_sample_rate": "Rate"
 }

@@ -10,6 +10,7 @@ import { useUserApiList } from '@/store/userApi'
 import { createStyle } from '@/utils/tools'
 import { sizeFormate } from '@/utils/common'
 import { getQualitySpecName, getTrackQualities } from '@/utils/quality'
+import { useStreamingFlacFormat } from '@/utils/nativeModules/streamingFlac'
 import { Radius, TabularNums, Typography, createGlassStyle } from '@/theme/layout'
 
 const getMusicInfo = (musicInfo: LX.Player.PlayMusic | null) => musicInfo && 'progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo
@@ -43,6 +44,7 @@ const useStreamReadout = () => {
   const userApiList = useUserApiList()
   const streamInfo = useStreamInfo()
   const playMusicInfo = usePlayMusicInfo()
+  const streamFormat = useStreamingFlacFormat()
 
   const customApi = apiSource.startsWith('user_api')
     ? userApiList.find(api => api.id == apiSource)
@@ -81,15 +83,21 @@ const useStreamReadout = () => {
     const size = !isLocal
       ? (streamInfo.size ? sizeFormate(streamInfo.size) : (metaSize ?? ''))
       : ''
+    // 采样率/位深只来自原生 STREAMINFO（首帧之前为 0），因此只在流播放时出现；
+    // 本地文件与别的音源没有这条数据，宁可少一格也不拿档位名顶替。
+    const sampleRate = streamFormat.sampleRate > 0
+      ? `${(streamFormat.sampleRate / 1000).toFixed(1).replace(/\.0$/, '')} kHz${streamFormat.bitsPerSample > 0 ? ` · ${streamFormat.bitsPerSample} bit` : ''}`
+      : ''
 
     return {
       source: customApi && customSourceName
         ? `${customApi.name} · ${customSourceName || sourceLabel}`
         : sourceLabel,
       format: getQualitySpecName(quality),
+      sampleRate,
       size,
     }
-  }, [customApi, playMusicInfo, preferredQuality, sourceNameType, streamInfo, t])
+  }, [customApi, playMusicInfo, preferredQuality, sourceNameType, streamFormat, streamInfo, t])
 }
 
 const Readout = memo(({ label, value, valueColor, align = 'left', grow = false }: {
@@ -121,7 +129,7 @@ const Divider = () => {
 export default ({ style }: { style?: StyleProp<ViewStyle> }) => {
   const theme = useTheme()
   const t = useI18n()
-  const { source, format, size } = useStreamReadout()
+  const { source, format, sampleRate, size } = useStreamReadout()
 
   if (!source && !format) return null
 
@@ -131,6 +139,8 @@ export default ({ style }: { style?: StyleProp<ViewStyle> }) => {
     <Readout key="source" label={t('player_source')} value={source} grow />,
     format ? <Divider key="d1" /> : null,
     format ? <Readout key="format" label={t('player_format')} value={format} valueColor={theme['c-primary-font']} /> : null,
+    sampleRate ? <Divider key="d3" /> : null,
+    sampleRate ? <Readout key="sampleRate" label={t('player_sample_rate')} value={sampleRate} /> : null,
     size ? <Divider key="d2" /> : null,
     size ? <Readout key="size" label={t('player_size')} value={size} align="right" /> : null,
   ].filter(Boolean)

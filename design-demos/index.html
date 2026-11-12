@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>听歌 · 播放页三方向</title>
+<style>
+  :root{--board:#141312;--ink:#efece6;--dim:#9a958c;--line:rgba(255,255,255,.12)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--board);color:var(--ink);
+    font-family:-apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif;
+    padding:64px 72px 80px}
+  header{display:flex;align-items:flex-end;justify-content:space-between;
+    padding-bottom:26px;border-bottom:1px solid var(--line)}
+  h1{font-size:30px;font-weight:600;letter-spacing:.01em}
+  header p{font-size:13px;color:var(--dim);max-width:520px;line-height:1.7}
+  .stage{display:flex;align-items:flex-start;gap:56px;margin-top:48px}
+  .col{display:flex;flex-direction:column;gap:18px}
+  .col.main{transform:translateY(-10px)}
+  .shot{position:relative;border-radius:34px;overflow:hidden;background:#000;
+    box-shadow:0 40px 80px -40px #000, 0 0 0 1px rgba(255,255,255,.08)}
+  .shot img{display:block;width:100%;height:auto}
+  .col.small .shot{width:230px}
+  .col.mid .shot{width:268px}
+  .col.main .shot{width:300px}
+  .cap{display:flex;gap:10px;align-items:baseline}
+  .cap b{font-size:13px;font-weight:600;letter-spacing:.02em}
+  .cap span{font-size:11.5px;color:var(--dim);line-height:1.6}
+  .tag{display:inline-block;font-size:10px;letter-spacing:.18em;color:var(--dim);
+    border:1px solid var(--line);border-radius:999px;padding:4px 9px;margin-bottom:6px}
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);
+    display:flex;gap:40px;flex-wrap:wrap;color:var(--dim);font-size:12px;line-height:1.8}
+  footer b{color:var(--ink);font-weight:500}
+  .alt{margin-top:34px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .alt div{border:1px solid var(--line);border-radius:14px;padding:16px 18px;font-size:12px;
+    color:var(--dim);line-height:1.75}
+  .alt b{display:block;color:var(--ink);font-size:12.5px;margin-bottom:6px;font-weight:600}
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="tag">TINGGE · PLAYER · 3 DIRECTIONS</div>
+      <h1>播放页，三个方向</h1>
+    </div>
+    <p>同一首歌、同一套信息，三种结构：光学玻璃把封面当发光体，唱片档案把它当印刷品，声场仪表把它当信号源。黄色标签只是选型用的方向名，不是产品文案。</p>
+  </header>
+
+  <section class="stage">
+    <div class="col mid">
+      <div class="cap"><b>A · 光学玻璃</b><span>材质与光<br>现有语言的强化版</span></div>
+      <div class="shot"><img src="shots/direction-a-optics.png" alt="方向 A 光学玻璃"></div>
+      <div class="cap"><span>封面 338pt 悬浮玻璃，极光只做底色；<br>进度是 1px 发光线，控件留白最大。</span></div>
+    </div>
+
+    <div class="col main">
+      <div class="cap"><b>B · 唱片档案</b><span>排版与纸<br>最不像播放器的一版</span></div>
+      <div class="shot"><img src="shots/direction-b-archive.png" alt="方向 B 唱片档案"></div>
+      <div class="cap"><span>封面是印刷封套（竖排歌名 + 编号），<br>歌词用宋体居中偏左，靠一条竖线标当前行。</span></div>
+    </div>
+
+    <div class="col small">
+      <div class="cap"><b>C · 声场仪表</b><span>数据与刻度<br>把解码状态摆到台面</span></div>
+      <div class="shot"><img src="shots/direction-c-instrument.png" alt="方向 C 声场仪表"></div>
+      <div class="cap"><span>频谱占主位，缓冲/码率/采样/延迟四格读数，<br>播放键做成设备按键。</span></div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div><b>A 的第二稿</b>进度改成封面外圈的细环，时间贴在环上；封面随播放缓慢自转（减弱动态效果时静止）。</div>
+    <div><b>B 的第二稿</b>歌词改成双栏对开（原文/译文），左栏窄、右栏宽，像歌词本跨页。</div>
+    <div><b>C 的第二稿</b>频谱换成一条滚动示波线，读数改为纵向刻度尺，更像硬件面板。</div>
+  </section>
+
+  <footer>
+    <span><b>可交互</b>　三份 HTML 都能点：播放/暂停会换图标，歌词行可点选。</span>
+    <span><b>已验证</b>　删除 android/ 与安卓流水线后，tsc 零错误、三语 664 键一致。</span>
+    <span><b>说明</b>　曲目《夜航》为示例数据，不指向真实作品；封面为程序化材质。</span>
+  </footer>
+</body>
+</html>
