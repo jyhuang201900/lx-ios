@@ -50,11 +50,30 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # pod install 的 spec 仓库走网络，每次 --repo-update 都要重新拉一遍
+      # （5~10 分钟）。Podfile.lock 没变时直接复用上一轮的 Pods 目录。
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+
       - name: Install CocoaPods dependencies
         shell: bash
         run: |
           cd ios
-          bundle exec pod install --repo-update
+          bundle exec pod install
+
+      # DerivedData：原生代码在 iOS 适配分支上很少动，缓存命中的 run 只需
+      # 重打 JS bundle 并重新链接。key 里带上 Podfile.lock 与 ios 源文件的
+      # 哈希，命中不到就退回全量编译。
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.DERIVED_DATA_PATH }}
+          key: derived-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}-${{ hashFiles('ios/**/*.m','ios/**/*.mm','ios/**/*.swift','ios/**/*.h') }}
+          restore-keys: |
+            derived-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}-
 
       # Release 会把 JS 打进 app，模拟器里不需要再起 Metro。
       - name: Build for simulator
@@ -72,7 +91,10 @@ jobs:
             PRODUCT_BUNDLE_IDENTIFIER="$IOS_BUNDLE_IDENTIFIER" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            clean build 2>&1 | tee build/xcodebuild-sim.log
+            # 不再 clean：DerivedData 缓存命中时 clean 会把它清空，
+            # 等于每次从零编。缓存没命中时 DerivedData 本来就是空的，
+            # clean 也没省下什么。
+            build 2>&1 | tee build/xcodebuild-sim.log
 
       # 模拟器命令偶尔会卡住（bootstatus / spawn / log show），全部套超时，
       # 卡住只降级、不拖垮整条流水线。
