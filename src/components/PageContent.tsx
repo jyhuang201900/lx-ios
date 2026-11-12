@@ -96,17 +96,24 @@ export default ({ children, aurora = 'static', cover = null }: Props) => {
   const themeComponent = useMemo(() => (
     <View style={{ flex: 1, overflow: 'hidden' }}>
       <ImageBackground
-        style={{ position: 'absolute', left: 0, top: 0, height: windowSize.height, width: windowSize.width, backgroundColor: theme['c-content-background'] }}
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          height: windowSize.height,
+          width: windowSize.width,
+          backgroundColor: theme['c-content-background'],
+          // 深色主题不用底图。同一张亮底图在 0.9 的暗遮罩下仍会透出 10%，
+          // 截图里就是屏幕下半部几道竖向亮纹加一道弧形——遮罩提到 0.95 才勉强
+          // 干净，但那样极光也被一起压死了。深色模式下这个位置要的是"夜"，
+          // 不是"磨砂玻璃后面有张图"，所以直接把底图透明掉，底色交给
+          // c-content-background，光源只留极光一层。
+          opacity: theme.isDark ? 0 : 1,
+        }}
         source={theme['bg-image']}
         resizeMode="cover"
         // 背景做柔和虚化，为上层玻璃表面提供可透出的色彩底色
         blurRadius={BLUR_RADIUS}
-        // 深色主题不用底图。同一张亮底图在 0.9 的暗遮罩下仍会透出 10%，
-        // 截图里就是屏幕下半部几道竖向亮纹加一道弧形——遮罩提到 0.95 才勉强
-        // 干净，但那样极光也被一起压死了。深色模式下这个位置要的是"夜"，
-        // 不是"磨砂玻璃后面有张图"，所以直接把底图关掉，底色交给
-        // c-content-background，光源只留极光一层。
-        opacity={theme.isDark ? 0 : 1}
       />
       {/* 极光层压在遮罩之下：色彩由遮罩统一调和，既保证对比度又让上层玻璃有颜色可透 */}
       <AuroraBackground width={windowSize.width} height={windowSize.height} animated={aurora === 'animated'} />
