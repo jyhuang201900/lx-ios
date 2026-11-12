@@ -276,6 +276,7 @@
   "download_queue_cancel": "取消",
   "search_input_placeholder": "搜我所想...",
   "search__welcome": "搜我所想~~😉",
+  "search__welcome_desc": "输入歌名、歌手或专辑名，结果会按音源聚合",
   "search_history_search": "历史搜索",
   "search_hot_search": "热门搜索",
   "search_type_music": "歌曲",

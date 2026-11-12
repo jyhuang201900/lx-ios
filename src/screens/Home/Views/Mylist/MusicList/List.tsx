@@ -1,6 +1,6 @@
 import { playList } from '@/core/player/player'
 import { useCallback, useMemo, useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react'
-import { FlatList, View, type NativeScrollEvent, type NativeSyntheticEvent, type FlatListProps } from 'react-native'
+import { FlatList, type NativeScrollEvent, type NativeSyntheticEvent, type FlatListProps } from 'react-native'
 
 import listState from '@/store/list/state'
 import playerState from '@/store/player/state'
@@ -14,11 +14,9 @@ import type { Position } from './ListMenu'
 import type { SelectMode } from './MultipleModeBar'
 import { useActiveListId } from '@/store/list/hook'
 import { useSettingValue } from '@/store/setting/hook'
-import Text from '@/components/common/Text'
-import { Icon } from '@/components/common/Icon'
 import RetryButton from '@/components/common/RetryButton'
+import EmptyState from '@/components/common/EmptyState'
 import { useI18n } from '@/lang'
-import { useTheme } from '@/store/theme/hook'
 import { setNavActiveId } from '@/core/common'
 
 type FlatListType = FlatListProps<LX.Music.MusicInfo>
@@ -52,7 +50,6 @@ const usePlayIndex = () => {
 
 const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, onSelectAll }, ref) => {
   const t = useI18n()
-  const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
   const [currentList, setList] = useState<LX.List.ListMusics>([])
   const listFirstScrollRef = useRef(false)
@@ -295,13 +292,11 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
   const emptyComponent = useMemo(() => {
     if (currentList.length) return null
     return (
-      <View style={styles.empty}>
-        <Icon name="add-music" size={28} color={theme['c-font-label']} style={styles.emptyIcon} />
-        <Text style={styles.emptyTitle} size={14} color={theme['c-font-label']}>{t('no_item')}</Text>
+      <EmptyState icon="add-music" title={t('no_item')} compact>
         <RetryButton label={t('play_list_add_song_tip')} onPress={handleGoSearch} />
-      </View>
+      </EmptyState>
     )
-  }, [currentList.length, t, theme, handleGoSearch])
+  }, [currentList.length, t, handleGoSearch])
 
   return (
     <FlatList

@@ -12,8 +12,8 @@ import { MULTI_SELECT_BAR_HEIGHT } from './MultipleModeBar'
 import { useI18n } from '@/lang'
 import Text from '@/components/common/Text'
 import Loading from '@/components/common/Loading'
-import { Icon } from '@/components/common/Icon'
 import RetryButton from '@/components/common/RetryButton'
+import EmptyState from '@/components/common/EmptyState'
 import { handlePlay } from './listAction'
 import { useSettingValue } from '@/store/setting/hook'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
@@ -251,21 +251,15 @@ const List = forwardRef<ListType, ListProps>(({
         )
       case 'error':
         return (
-          <View style={styles.empty}>
-            <Text style={styles.emptyTitle} size={14} color={theme['c-font-label']}>{t('list_error')}</Text>
+          <EmptyState title={t('list_error')} compact>
             <RetryButton label={t('retry_button_text')} onPress={onLoadMore} />
-          </View>
+          </EmptyState>
         )
       case 'end':
-        return (
-          <View style={styles.empty}>
-            <Icon name="album" size={28} color={theme['c-font-label']} style={styles.emptyIcon} />
-            <Text style={styles.emptyTitle} size={14} color={theme['c-font-label']}>{t('no_item')}</Text>
-          </View>
-        )
+        return <EmptyState icon="album" title={t('no_item')} compact />
       default: return null
     }
-  }, [currentList.length, status, t, theme, onLoadMore])
+  }, [currentList.length, status, t, onLoadMore])
 
   return (
     <FlatList
