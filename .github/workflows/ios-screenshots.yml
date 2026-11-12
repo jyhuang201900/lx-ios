@@ -20,7 +20,7 @@ concurrency:
 jobs:
   screenshot:
     name: Screenshot on iOS Simulator
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 45
     env:
       NO_FLIPPER: 1
