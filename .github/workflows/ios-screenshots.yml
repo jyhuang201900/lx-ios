@@ -10,6 +10,12 @@ on:
         description: '机型，逗号分隔；留空则用 iPhone 16 Pro + iPhone SE'
         required: false
         default: ''
+  # 备用扳机：本机到 api.github.com 的链路经常整段不通（workflow_dispatch
+  # 打不出去），而 git push 到 github.com 还能用。往这条分支推任意提交
+  # 就会跑一轮截图，用的仍是默认双机型。
+  push:
+    branches:
+      - shoot
 
 permissions:
   # 要把截图推到 shots 分支，必须能写
