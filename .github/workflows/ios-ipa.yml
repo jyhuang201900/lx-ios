@@ -1,10 +1,13 @@
 name: Build iOS IPA
 
 on:
+  # 不要挂 branches。
+  #
+  # 以前每次 push 到 main 都会起一个完整 IPA 构建（macos-15，实测量级
+  # 30~200 分钟），而 push 是每改一次 UI 就来一次。结果是截图 run 在
+  # 排队时被自己的 IPA 构建挤在后面，两个 run 同时占着 macos 配额。
+  # 发版走 tag，临时验证走手动。
   push:
-    branches:
-      - main
-      - ios-adaptation
     tags:
       - 'v*'
   workflow_dispatch:
