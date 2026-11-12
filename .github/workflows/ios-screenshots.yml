@@ -245,6 +245,12 @@ jobs:
             # 搜索页：默认设置下会去拉热词，等它落定再拍
             shoot "$UDID" "shots/${SLUG}-09-search.png" '{"common.startupNavId":"nav_search","search.isShowHotSearch":true}' 16
 
+            # 深色主题：模拟器的 appearance 已经设成 dark，但应用默认不跟随系统
+            # （common.isAutoTheme=false），所以浅色页都是浅色。这里直接钉 theme.id，
+            # 检查玻璃层、空封面占位、TabBar 选中色在暗底上还站不站得住。
+            shoot "$UDID" "shots/${SLUG}-10-home-dark.png" '{"theme.id":"black"}' 12
+            shoot "$UDID" "shots/${SLUG}-11-play-detail-dark.png" '{"theme.id":"black","player.startupPushPlayDetailScreen":true}' 14
+
             # 进程还活着才算启动成功
             if ! xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$IOS_BUNDLE_IDENTIFIER"; then
               echo "::warning::$NAME 上没看到应用进程，附设备日志"
