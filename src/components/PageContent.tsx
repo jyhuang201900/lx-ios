@@ -64,7 +64,7 @@ const FrostFilm = memo(({ isDark, width, height }: { isDark: boolean, width: num
       resizeMode="repeat"
       // repeat 必须拿到数值宽高：只给 absoluteFill 的四边约束时，iOS 不会平铺，
       // 只在左上角画一块 48pt 的噪点方块（实机截图里就是个白斑）。
-      style={{ position: 'absolute', left: 0, top: 0, width, height, opacity: isDark ? 0.46 : 0.4 }}
+      style={{ position: 'absolute', left: 0, top: 0, width, height, opacity: isDark ? 0.32 : 0.4 }}
     />
   </View>
 ))
@@ -110,8 +110,14 @@ export default ({ children, aurora = 'static', cover = null }: Props) => {
           StyleSheet.absoluteFill,
           {
             backgroundColor: theme['c-main-background'],
-            // 玻璃质感的关键：遮罩留出可透出的余量，纯不透明会把背景完全压死
-            opacity: theme.isDark ? 0.8 : 0.84,
+            // 玻璃质感的关键：遮罩留出可透出的余量，纯不透明会把背景完全压死。
+            //
+            // 深色这一档从 0.8 提到 0.9：浅色主题的底图是米白抽象图，压到 0.84
+            // 只剩一层几乎看不见的色相，读作"干净的纸"；同一张图在深色下却反过来
+            // ——0.8 的暗遮罩底下还留着 20% 的亮，实机截图里就是一屏中灰加几道
+            // 隐约的竖向纹路，像屏幕脏了。深色模式下底色应该读成"夜",不是"磨砂玻璃
+            // 后面有张图"。0.9 之后底图只剩色相余量，极光仍然是唯一可见的光源。
+            opacity: theme.isDark ? 0.9 : 0.84,
           },
         ]}
       />
