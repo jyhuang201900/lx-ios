@@ -90,6 +90,9 @@ const useStreamReadout = () => {
       : ''
 
     return {
+      // 没有在播歌曲时整块不出现：只剩一个空的「来源」标签加一个 128K，
+      // 看起来像渲染没完成（实机截图里就是这样）。
+      hasTrack: !!musicInfo,
       source: customApi && customSourceName
         ? `${customApi.name} · ${customSourceName || sourceLabel}`
         : sourceLabel,
@@ -129,9 +132,9 @@ const Divider = () => {
 export default ({ style }: { style?: StyleProp<ViewStyle> }) => {
   const theme = useTheme()
   const t = useI18n()
-  const { source, format, sampleRate, size } = useStreamReadout()
+  const { hasTrack, source, format, sampleRate, size } = useStreamReadout()
 
-  if (!source && !format) return null
+  if (!hasTrack || (!source && !format)) return null
 
   // 列数随实际可得的读数变化：体积未知时就不占位列，
   // 免得留一个空格子破坏仪表的节奏。

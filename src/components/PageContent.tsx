@@ -56,14 +56,15 @@ const ContentContainer = ({ children }: Props) => {
  * 叠一层约 4% 的极细颗粒后，观感立刻从"半透明"变成"磨砂"（真实毛玻璃的颗粒来自蚀刻面）。
  * 透明度按噪点 PNG 自带的 alpha 折算，0.4 大约等于 4% 的最终颗粒强度。
  */
-const FrostFilm = memo(({ isDark }: { isDark: boolean }) => (
+const FrostFilm = memo(({ isDark, width, height }: { isDark: boolean, width: number, height: number }) => (
   // 外层负责不拦截触摸：Image 不接受 pointerEvents 属性
   <View pointerEvents="none" style={StyleSheet.absoluteFill}>
     <Image
       source={noiseImage}
       resizeMode="repeat"
-      // 用绝对定位的四边约束给 Image 一个确定尺寸：Android 的 repeat 需要明确宽高
-      style={[StyleSheet.absoluteFill, { opacity: isDark ? 0.46 : 0.4 }]}
+      // repeat 必须拿到数值宽高：只给 absoluteFill 的四边约束时，iOS 不会平铺，
+      // 只在左上角画一块 48pt 的噪点方块（实机截图里就是个白斑）。
+      style={{ position: 'absolute', left: 0, top: 0, width, height, opacity: isDark ? 0.46 : 0.4 }}
     />
   </View>
 ))
@@ -114,7 +115,7 @@ export default ({ children, aurora = 'static', cover = null }: Props) => {
           },
         ]}
       />
-      <FrostFilm isDark={theme.isDark} />
+      <FrostFilm isDark={theme.isDark} width={windowSize.width} height={windowSize.height} />
       <ContentContainer>
         <View style={{ flex: 1, flexDirection: 'column' }}>
           {children}
@@ -142,7 +143,7 @@ export default ({ children, aurora = 'static', cover = null }: Props) => {
             },
           ]}
         />
-        <FrostFilm isDark={theme.isDark} />
+        <FrostFilm isDark={theme.isDark} width={windowSize.width} height={windowSize.height} />
         <ContentContainer>
           <View style={{ flex: 1, flexDirection: 'column' }}>
             {children}
@@ -175,7 +176,7 @@ export default ({ children, aurora = 'static', cover = null }: Props) => {
           },
         ]}
       />
-      <FrostFilm isDark={theme.isDark} />
+      <FrostFilm isDark={theme.isDark} width={windowSize.width} height={windowSize.height} />
       <ContentContainer>
         <View style={{ flex: 1, flexDirection: 'column' }}>
           {children}

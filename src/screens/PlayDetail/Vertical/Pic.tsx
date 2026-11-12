@@ -40,9 +40,11 @@ export default ({ componentId }: { componentId: string }) => {
     // 方向 A：封面是独立发光体，宽度按「屏宽减左右各 26」取，留白不随机型漂移；
     // 高度上限优先用容器量到的真实可用高（短屏才不会压住进度条），
     // 首帧还没量到时退回窗口推算值。
-    const fallbackWidth = winWidth - PlayMetrics.coverInset * 2
+    const maxWidth = winWidth - PlayMetrics.coverInset * 2
     const fallbackHeight = (winHeight - statusBarHeight - HEADER_HEIGHT) * PlayMetrics.coverHeightRatio
-    const availableWidth = box.width > 0 ? box.width : fallbackWidth
+    // 宽度上限永远是设计值：容器是整页宽（paddingHorizontal 0），
+    // 直接拿 box.width 会让封面贴到屏幕边（实测 402pt 屏上量出 388pt）。
+    const availableWidth = Math.min(maxWidth, box.width > 0 ? box.width : maxWidth)
     const availableHeight = (box.height > 0 ? box.height : fallbackHeight) - 8
     const imgWidth = Math.min(availableWidth, availableHeight)
     return {

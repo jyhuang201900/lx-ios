@@ -140,9 +140,9 @@ jobs:
           }
 
           # 首页用配置：不进详情页
-          SETTING_HOME='{"version":"2.0","common.isAgreePact":true,"common.langId":"zh-cn","player.startupPushPlayDetailScreen":false}'
+          SETTING_HOME='{"version":"2.0","common.isAgreePact":true,"common.langId":"zh_cn","player.startupPushPlayDetailScreen":false}'
           # 详情页用配置：Home 挂载后直接推播放详情页，无需点按和 deep link
-          SETTING_DETAIL='{"version":"2.0","common.isAgreePact":true,"common.langId":"zh-cn","player.startupPushPlayDetailScreen":true}'
+          SETTING_DETAIL='{"version":"2.0","common.isAgreePact":true,"common.langId":"zh_cn","player.startupPushPlayDetailScreen":true}'
 
           TARGETS=""
           IFS=',' read -ra WANTED <<< "$DEVICES"

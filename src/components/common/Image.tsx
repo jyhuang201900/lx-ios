@@ -45,7 +45,9 @@ const normalizeUri = (url?: string | number | null) => {
 const EmptyPic = memo(({ style, nativeID }: { style: ImageProps['style'], nativeID: ImageProps['nativeID'] }) => {
   const theme = useTheme()
   const { onLayout, width } = useLayout()
-  const size = width * 0.36
+  // 占位字母按宽度缩放，但要有上限：专辑封面这类大图（388pt）会算出
+  // 140pt 的 L，压在大片留白上像个渲染错误。52pt 以上的图统一收到 64pt。
+  const size = Math.min(width * 0.36, 64)
 
   return (
     <View style={StyleSheet.compose({ ...styles.emptyPic, backgroundColor: theme['c-primary-light-900-alpha-200'], gap: size * 0.1 }, style)} onLayout={onLayout} nativeID={nativeID}>
