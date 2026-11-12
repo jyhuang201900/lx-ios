@@ -216,6 +216,9 @@ jobs:
             shoot "$UDID" "shots/${SLUG}-07-local.png" '{"common.startupNavId":"nav_local"}' 10
             shoot "$UDID" "shots/${SLUG}-08-setting.png" '{"common.startupNavId":"nav_setting"}' 10
 
+            # 搜索页：默认设置下会去拉热词，等它落定再拍
+            shoot "$UDID" "shots/${SLUG}-09-search.png" '{"common.startupNavId":"nav_search"}' 14
+
             # 进程还活着才算启动成功
             if ! xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$IOS_BUNDLE_IDENTIFIER"; then
               echo "::warning::$NAME 上没看到应用进程，附设备日志"

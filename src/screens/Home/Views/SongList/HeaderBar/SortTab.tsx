@@ -5,7 +5,7 @@ import { useI18n } from '@/lang'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
 import { createStyle } from '@/utils/tools'
-import { Gap, PageMetrics, Radius, ToolbarMetrics, createContentSurface } from '@/theme/layout'
+import { Gap, PageMetrics, Radius, ToolbarMetrics } from '@/theme/layout'
 
 export interface SortTabProps {
   onSortChange: (id: string) => void
@@ -73,9 +73,15 @@ export default forwardRef<SortTabType, SortTabProps>(({ onSortChange }, ref) => 
               key={s.id}
               style={{
                 ...styles.button,
-                ...(active
-                  ? { backgroundColor: theme['c-primary-background-active'] }
-                  : createContentSurface(theme, { radius: Radius.control })),
+                /**
+                 * 非选中项原本也是描边胶囊，于是这一行里音源、排序、标签、打开
+                 * 四个控件全是同形状的胶囊，两个还是实心（选中排序 + 主按钮）
+                 * ——真机上读不出主次。
+                 *
+                 * 排序项是"同一组里的单选"，只有当前值需要存在感：选中的留
+                 * 浅绿实心态，未选中的退成纯文字。一行里就只剩一个状态块。
+                 */
+                ...(active ? { backgroundColor: theme['c-primary-background-active'] } : null),
               }}
               onPress={() => { handleSortChange(s.id) }}
             >
