@@ -80,6 +80,7 @@ const EmptyPic = memo(({ style, nativeID }: { style: ImageProps['style'], native
 })
 
 const Image = memo(({ url, cache, resizeMode = 'cover', style, onError, nativeID }: ImageProps) => {
+  const theme = useTheme()
   const [isError, setError] = useState(false)
   const handleError = useCallback(() => {
     setError(true)
@@ -96,7 +97,16 @@ const Image = memo(({ url, cache, resizeMode = 'cover', style, onError, nativeID
     showDefault ? <EmptyPic style={style} nativeID={nativeID} />
       : (
           <FastImage
-            style={style}
+            /**
+             * 加载中要给封面位一个底色。
+             *
+             * 这里原来是裸 style：图片还没落盘的那一两秒，FastImage 是透明的，
+             * 透出来的是卡片的白底——歌单页第一张卡就这么拍进过截图，一格纯白
+             * 方片，和其它封面并排时读作"这张图坏了"。占位图（EmptyPic）用的是
+             * c-primary-light-900-alpha-200，加载中也用同一个色，视觉上就是
+             * "封面位在这里，图马上到"，而不是一块白板。
+             */
+            style={StyleSheet.compose(style, { backgroundColor: theme['c-primary-light-900-alpha-200'] })}
             source={{
               uri: uri!,
               headers: defaultHeaders,
