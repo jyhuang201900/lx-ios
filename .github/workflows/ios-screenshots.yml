@@ -91,9 +91,6 @@ jobs:
             PRODUCT_BUNDLE_IDENTIFIER="$IOS_BUNDLE_IDENTIFIER" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            # 不再 clean：DerivedData 缓存命中时 clean 会把它清空，
-            # 等于每次从零编。缓存没命中时 DerivedData 本来就是空的，
-            # clean 也没省下什么。
             build 2>&1 | tee build/xcodebuild-sim.log
 
       # 模拟器命令偶尔会卡住（bootstatus / spawn / log show），全部套超时，
@@ -290,12 +287,21 @@ jobs:
         run: |
           shopt -s nullglob
           files=(shots/*.jpg)
-          if [ ${#files[@]} -eq 0 ]; then
-            echo "no jpg, skip publish"
+          publish="$(mktemp -d)"
+          if [ ${#files[@]} -gt 0 ]; then
+            cp "${files[@]}" "$publish/"
+          fi
+          # 构建失败时截图目录是空的，artifact 里的日志也只有几百字节
+          # （api.github.com 这条线路拉不动）。日志尾部跟着分支一起走，
+          # 失败原因才拿得到。
+          if [ -s build/xcodebuild-sim.log ]; then
+            tail -n 200 build/xcodebuild-sim.log > "$publish/xcodebuild-tail.txt"
+          fi
+          entries=$(ls -A "$publish")
+          if [ -z "$entries" ]; then
+            echo "nothing to publish"
             exit 0
           fi
-          publish="$(mktemp -d)"
-          cp "${files[@]}" "$publish/"
           cd "$publish"
           git init -q .
           git checkout -q -b shots
@@ -304,7 +310,7 @@ jobs:
           git add -A
           git commit -q -m "shots: run ${GITHUB_RUN_NUMBER} ${GITHUB_SHA::7}"
           git push -q --force "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" shots
-          echo "published ${#files[@]} files to the shots branch"
+          echo "published $(ls -1 | wc -l) files to the shots branch"
 
       - name: Upload build log on failure
         if: failure()
