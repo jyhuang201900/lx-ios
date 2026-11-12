@@ -264,6 +264,11 @@ jobs:
             # 检查玻璃层、空封面占位、TabBar 选中色在暗底上还站不站得住。
             shoot "$UDID" "shots/${SLUG}-10-home-dark.png" '{"theme.id":"black"}' 12
             shoot "$UDID" "shots/${SLUG}-11-play-detail-dark.png" '{"theme.id":"black","player.startupPushPlayDetailScreen":true}' 14
+            # 深色不能只验首页和播放页：列表页有玻璃卡片与分隔线、设置页有整排
+            # 复选行，都是浅色下定的对比度，换暗底后最容易糊成一片。
+            shoot "$UDID" "shots/${SLUG}-12-songlist-dark.png" '{"theme.id":"black","common.startupNavId":"nav_songlist"}' 10
+            shoot "$UDID" "shots/${SLUG}-13-chart-dark.png" '{"theme.id":"black","common.startupNavId":"nav_top"}' 12
+            shoot "$UDID" "shots/${SLUG}-14-setting-dark.png" '{"theme.id":"black","common.startupNavId":"nav_setting"}' 10
 
             # 进程还活着才算启动成功
             if ! xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$IOS_BUNDLE_IDENTIFIER"; then
