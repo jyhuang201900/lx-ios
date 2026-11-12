@@ -34,7 +34,21 @@ const ORBS: Orb[] = [
 ]
 
 /**
- * 深色主题下的极光强度。
+ * 深色主题下极光自己的颜色。
+ *
+ * 原来三个光球都取 `theme[orb.color]`（品牌绿 / 两个 badge 色）。浅色主题下
+ * 那就是绿雾；但 black 主题把品牌色整组反转成白，于是"极光"在深色页变成
+ * 一团灰白光晕——像素采样验证过，run24 的深色首页背景是 (36,36,36)，R 与 G
+ * 完全相同，也就是一点颜色都没有。签名元素在深色下彻底消失。
+ *
+ * 极光是天气，不是品牌色：它在夜里本来就该是绿/青的冷光。这里给深色一套
+ * 固定的极光调色板（绿 / 青 / 墨绿），不跟随主题反色；强度仍由
+ * DARK_OPACITY_SCALE 控制，所以它只是暗底上的一层雾，不会提亮页面、也不会
+ * 压到次要文字的对比度。
+ */
+const NIGHT_ORB_COLORS = ['#2f8f66', '#1d6a8c', '#2a7a5f']
+
+/** 深色主题下的极光强度。
  *
  * 原来 0.6：光球本身 0.62/0.42/0.5，乘下来 0.37/0.25/0.30，再被 PageContent
  * 那层 0.76 的遮罩压一遍，落到屏幕上只剩 7~9% —— 整个深色页面是一块均匀
@@ -144,7 +158,7 @@ export default memo(({ width, height, animated = false }: {
         <OrbView
           key={`${orb.color}-${index}`}
           orb={orb}
-          color={theme[orb.color]}
+          color={theme.isDark ? (NIGHT_ORB_COLORS[index] ?? NIGHT_ORB_COLORS[0]) : theme[orb.color]}
           base={base}
           width={size.width}
           height={size.height}
