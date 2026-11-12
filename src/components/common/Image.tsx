@@ -66,7 +66,7 @@ const EmptyPic = memo(({ style, nativeID }: { style: ImageProps['style'], native
    * 歌单卡片算出 46、165pt 的大卡算出 69，都合身），只有大图被 56 提前截断。
    * 上限放到 88，等于只放开 width > 134 的那一档。
    */
-  const size = Math.min(Math.max(width * 0.42, 16), 88)
+  const size = Math.min(Math.max(width * 0.42, 16), 110)
 
   return (
     <View
@@ -133,6 +133,6 @@ const styles = createStyle({
   // 颜色仍取 c-primary-font（对任意主题自纠到 ≥4.5:1），再降透明度
   // 到 0.6：它是装饰性占位而不是信息文本，不该和真实封面抢眼
   mark: {
-    opacity: 0.6,
+    opacity: 0.85,
   },
 })
