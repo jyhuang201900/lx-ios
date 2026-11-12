@@ -18,6 +18,7 @@ import { useTheme } from '@/store/theme/hook'
 import LocalMusicItem from './LocalMusicItem'
 import { FontWeight, PageMetrics, Radius, Typography, createContentSurface } from '@/theme/layout'
 import PageToolbar from '@/components/common/PageToolbar'
+import EmptyState from '@/components/common/EmptyState'
 
 const audioExtensions = ['mp3', 'flac', 'wav', 'ape', 'ogg', 'm4a', 'aac']
 
@@ -344,14 +345,9 @@ export default () => {
         />
       )}
       renderItem={renderItem}
-      ListEmptyComponent={search ? <View style={styles.empty}>
-        <Icon name="search-2" size={28} color={theme['c-font-label']} style={styles.emptyIcon} />
-        <Text style={styles.emptyTitle} size={14}>{global.i18n.t('local_music_no_match')}</Text>
-      </View> : <View style={styles.empty}>
-        <Icon name="music_time" size={28} color={theme['c-font-label']} style={styles.emptyIcon} />
-        <Text style={styles.emptyTitle} size={14}>{global.i18n.t('local_music_empty_title')}</Text>
-        <Text style={styles.emptyDescription} size={Typography.sub} color={theme['c-font-label']}>{global.i18n.t('local_music_empty_desc')}</Text>
-      </View>}
+      ListEmptyComponent={search
+        ? <EmptyState icon="search-2" title={global.i18n.t('local_music_no_match')} />
+        : <EmptyState icon="music_time" title={global.i18n.t('local_music_empty_title')} description={global.i18n.t('local_music_empty_desc')} />}
     />
   </View>
 }

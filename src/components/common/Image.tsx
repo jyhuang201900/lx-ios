@@ -57,7 +57,15 @@ const EmptyPic = memo(({ style, nativeID }: { style: ImageProps['style'], native
    * 整条读作"歌单缩略图"；放到 352pt 封面上，放大后更像一个歌单入口。
    * U+266A 是纯音符，任何系统字体都有，语义只有"音乐"这一层。
    */
-  const size = Math.min(Math.max(width * 0.42, 16), 56)
+  /**
+   * 上限按容器尺寸分档，不是一刀切 56。
+   *
+   * 56 是配 44pt 迷你条封面定的：44 × 0.42 ≈ 18，视觉刚好。但同一个 56
+   * 套到 340pt 的播放页封面上，只占 16%——整片浅绿里一颗小音符，读起来
+   * 是"加载失败"而不是"这张专辑还没封面"。大封面放到 88（26%），小缩略
+   * 图仍走原比例，两边都不失衡。
+   */
+  const size = Math.min(Math.max(width * 0.42, 16), width >= 200 ? 88 : 56)
 
   return (
     <View

@@ -22,6 +22,18 @@ export default memo(({ item, index, width, showSource, onPress }: {
   const t = useI18n()
   const itemWidth = width - gap
   const hasMeta = [item.author, item.play_count, item.total].some(Boolean)
+  /**
+   * 三段挤一行必然截断。
+   *
+   * 卡片宽度只有三列的一半（~110pt），`作者 · 1万 · 55 首` 拼成单行后
+   * 实测渲染成「1万 · 55 首…」——作者名整个丢掉，剩下的是两个数字，读
+   * 起来像乱码。拆两层：作者单独一行，体量（播放量 · 曲目数）另起一行
+   * 用更小的字号。信息一条不少，最长的字段（作者）也不再被截。
+   */
+  const meta = [
+    item.play_count,
+    item.total ? t('list_song_count', { num: item.total }) : '',
+  ].filter(Boolean).join(' · ')
   const handlePress = useCallback(() => {
     onPress(item, index)
   }, [index, item, onPress])
@@ -54,13 +66,14 @@ export default memo(({ item, index, width, showSource, onPress }: {
               <Text style={styles.listItemTitle} numberOfLines={ 2 }>{item.name}</Text>
             </TouchableOpacity>
             {hasMeta ? (
-              <Text style={styles.listItemMeta} color={theme['c-font-label']} numberOfLines={1}>
-                {[
-                  item.author,
-                  item.play_count,
-                  item.total ? t('list_song_count', { num: item.total }) : '',
-                ].filter(Boolean).join(' · ')}
-              </Text>
+              <>
+                {item.author ? (
+                  <Text style={styles.listItemMeta} color={theme['c-font-label']} numberOfLines={1}>{item.author}</Text>
+                ) : null}
+                {meta ? (
+                  <Text style={styles.listItemMetaSub} color={theme['c-font-label']} numberOfLines={1}>{meta}</Text>
+                ) : null}
+              </>
             ) : null}
             {/* <Text>{JSON.stringify(item)}</Text> */}
           </View>
@@ -107,5 +120,11 @@ const styles = createStyle({
   listItemMeta: {
     fontSize: Typography.sub,
     lineHeight: 17,
+  },
+  listItemMetaSub: {
+    fontSize: Typography.caption,
+    lineHeight: 15,
+    // 弱一层：作者是主，体量是辅
+    opacity: 0.8,
   },
 })

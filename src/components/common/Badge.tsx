@@ -21,8 +21,16 @@ const styles = createStyle({
 
 export type BadgeType = 'normal' | 'secondary' | 'tertiary'
 
-export default memo(({ type = 'normal', children }: {
+/**
+ * minWidth 存在的唯一理由：同一列里有宽窄不一的徽章时，把歌手名对齐。
+ *
+ * 排行榜第二行的音质徽章是 `SQ`(2 字) 和 `24bit`(5 字) 混排，宽度差 12pt，
+ * 结果每行歌手名的起始 x 都不一样，一列字读起来像锯齿。传一个共同的最小
+ * 宽度，短的那个自己撑开、文字已经居中了，视觉上就是一枚对齐的标签列。
+ */
+export default memo(({ type = 'normal', minWidth, children }: {
   type?: BadgeType
+  minWidth?: number
   children: string
 }) => {
   const theme = useTheme()
@@ -44,7 +52,7 @@ export default memo(({ type = 'normal', children }: {
   }, [type, theme])
 
   return (
-    <View style={[styles.chip, { backgroundColor: background }]}>
+    <View style={[styles.chip, minWidth ? { minWidth } : null, { backgroundColor: background }]}>
       <Text style={styles.text} size={Typography.caption} color={theme['c-primary-font']}>{children}</Text>
     </View>
   )

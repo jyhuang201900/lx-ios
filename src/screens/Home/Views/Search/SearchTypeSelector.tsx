@@ -60,7 +60,9 @@ export default () => {
 
 const styles = createStyle({
   container: {
-    height: 38,
+    // 与同一行的音源胶囊、搜索框同为 PageMetrics.controlHeight(40)：
+    // 38 是 32 的按钮 + 上下各 3，比邻居矮 2pt，整行在截图里看起来是错位的。
+    height: 40,
     flexGrow: 0,
     flexShrink: 0,
     flexDirection: 'row',
@@ -70,7 +72,7 @@ const styles = createStyle({
   },
   button: {
     width: 36,
-    height: 32,
+    height: 34,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: Radius.pill,

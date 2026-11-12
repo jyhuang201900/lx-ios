@@ -66,7 +66,7 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
         <View style={styles.itemInfo}>
           <Text numberOfLines={1}>{item.name}</Text>
           <View style={styles.listItemSingle}>
-            { tagInfo.type ? <Badge type={tagInfo.type}>{tagInfo.text}</Badge> : null }
+            { tagInfo.type ? <Badge type={tagInfo.type} minWidth={42}>{tagInfo.text}</Badge> : null }
             { showSource ? <Badge type="tertiary">{item.source}</Badge> : null }
             <Text style={styles.listItemSingleText} size={Typography.sub} color={theme['c-font-label']} numberOfLines={1}>{singer}</Text>
           </View>
