@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import { useProgress } from '@/store/player/hook'
+import { usePlayerMusicInfo, useProgress } from '@/store/player/hook'
 import { useBufferProgress } from '@/plugins/player'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
@@ -10,6 +10,11 @@ export default ({ autoUpdate }: { autoUpdate: boolean }) => {
   const theme = useTheme()
   const { progress } = useProgress(autoUpdate)
   const buffered = useBufferProgress()
+  const musicInfo = usePlayerMusicInfo()
+
+  // 没有歌时这条 2pt 细线既没有数据也读不出含义，只会横穿在迷你条底部
+  // 像一条没对齐的分割线（截图里正是这个观感）。无歌时整条不出现。
+  if (!musicInfo.id) return null
 
   return (
     <View pointerEvents="none" style={{ ...styles.track, backgroundColor: theme['c-primary-alpha-800'] }}>

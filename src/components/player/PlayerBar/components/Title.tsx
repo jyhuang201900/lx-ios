@@ -8,6 +8,7 @@ import commonState from '@/store/common/state'
 import playerState from '@/store/player/state'
 import Text from '@/components/common/Text'
 import { LIST_IDS } from '@/config/constant'
+import { useI18n } from '@/lang'
 import { createStyle } from '@/utils/tools'
 
 
@@ -16,6 +17,7 @@ export default ({ isHome }: { isHome: boolean }) => {
   const musicInfo = usePlayerMusicInfo()
   const downloadFileName = useSettingValue('download.fileName')
   const theme = useTheme()
+  const t = useI18n()
 
   const handlePress = () => {
     // console.log('')
@@ -34,15 +36,21 @@ export default ({ isHome }: { isHome: boolean }) => {
   }
   // console.log('render title')
 
-  const title = musicInfo.id
-    ? musicInfo.singer
+  /**
+   * 没有歌时这里原本渲染空字符串：迷你条中间全白，只剩封面占位、播放键
+   * 和一根空进度线，看截图第一眼读作"这条栏坏了"。给一句状态文案，
+   * 让空态也有主语（HIG 的空状态要求说明"现在是什么情况"）。
+   */
+  const empty = !musicInfo.id
+  const title = empty
+    ? t('play_bar_idle_title')
+    : musicInfo.singer
       ? downloadFileName.replace('歌手', musicInfo.singer).replace('歌名', musicInfo.name)
       : musicInfo.name
-    : ''
   // console.log(playMusicInfo)
   return (
     <TouchableOpacity style={styles.container} onLongPress={handleLongPress} onPress={handlePress} activeOpacity={0.7} >
-      <Text color={theme['c-font']} size={14} numberOfLines={1}>{title}</Text>
+      <Text color={empty ? theme['c-font-label'] : theme['c-font']} size={14} numberOfLines={1}>{title}</Text>
     </TouchableOpacity>
   )
 }

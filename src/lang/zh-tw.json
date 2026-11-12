@@ -211,6 +211,8 @@
   "play_queue_title": "播放佇列",
   "play_queue_count": "{num} 首待播",
   "play_queue_empty": "暫無待播歌曲",
+  "play_bar_idle_title": "未在播放",
+  "play_bar_idle_desc": "從排行榜或歌單挑一首開始",
   "play_queue_clear": "清空佇列",
   "play_list_loop": "重複播放清單",
   "play_list_order": "順序播放",

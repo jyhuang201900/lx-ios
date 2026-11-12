@@ -6,7 +6,7 @@ import { setNavActiveId } from '@/core/common'
 import { useI18n } from '@/lang'
 import { useNavActiveId } from '@/store/common/hook'
 import { useTheme } from '@/store/theme/hook'
-import { createGlassStyle, createShadow, neonGlow, Radius, TabBarMetrics } from '@/theme/layout'
+import { createGlassStyle, createShadow, Radius, TabBarMetrics } from '@/theme/layout'
 import { createStyle } from '@/utils/tools'
 import { hapticFeedback } from '@/utils/nativeModules/utils'
 import { usePressEmphasis } from '@/theme/press'
@@ -23,19 +23,11 @@ const TabItem = ({ icon, active, label, onPress }: {
 }) => {
   const theme = useTheme()
   // 标签栏的按压响应比播放键更轻：这是高频切换导航，动效抢戏会烦人
-  const press = usePressEmphasis({ scale: 0.9, glowBoost: 0.18 })
-
+  const press = usePressEmphasis({ scale: 0.9 })
   const faceStyle = [
     styles.tabFace,
-    { backgroundColor: active ? theme['c-primary-background-active'] : 'transparent' },
     press.transformStyle,
   ] as ViewStyle[]
-  // 签名元素只花在这一处：当前页的胶囊获得"通电"感，
-  // 其余标签完全静止，避免整条栏都在发光
-  if (active) {
-    faceStyle.push(neonGlow(theme, { radius: 9, opacity: 0.34 }))
-    faceStyle.push({ shadowOpacity: Animated.add(press.glowOpacity, 0.34) })
-  }
 
   return (
     <TouchableOpacity
@@ -51,16 +43,18 @@ const TabItem = ({ icon, active, label, onPress }: {
         <Icon
           name={icon}
           size={TabBarMetrics.iconSize}
-          // HIG tab-bars.md：内容层色彩丰富时，标签栏应取单色外观，
-          // 避免标签色与内容层底色相近而难以辨识
-          color={active ? theme['c-font'] : theme['c-font-label']}
+          // HIG tab-bars.md：选中态的差别是 tint，不是一块底色。
+          // 这里原来给当前页铺 c-primary-background-active + neonGlow，
+          // 截图上看是一块浅绿方块——和空态 badge、播放键的圆钮同色，
+          // 整屏出现三块同级绿块，当前页反而读成"按下去的按钮"。
+          color={active ? theme['c-primary-font'] : theme['c-font-label']}
         />
         <Text
           size={TabBarMetrics.labelSize}
-          // 字重承担"当前在哪"的主要表达，胶囊与辉光是次要线索
+          // 字重承担"当前在哪"的第二层线索，与 tint 一起构成选中态
           style={active ? styles.labelActive : undefined}
           numberOfLines={1}
-          color={active ? theme['c-font'] : theme['c-font-label']}
+          color={active ? theme['c-primary-font'] : theme['c-font-label']}
         >
           {label}
         </Text>

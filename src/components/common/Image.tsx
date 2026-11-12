@@ -4,7 +4,7 @@ import { createStyle } from '@/utils/tools'
 import { type ComponentProps, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { View, type ViewProps, StyleSheet, Image as FastImage } from 'react-native'
 // import FastImage, { type FastImageProps } from 'react-native-fast-image'
-import Text from './Text'
+import { Icon } from './Icon'
 import { useLayout } from '@/utils/hooks'
 // export type { OnLoadEvent } from 'react-native-fast-image'
 
@@ -45,18 +45,33 @@ const normalizeUri = (url?: string | number | null) => {
 const EmptyPic = memo(({ style, nativeID }: { style: ImageProps['style'], nativeID: ImageProps['nativeID'] }) => {
   const theme = useTheme()
   const { onLayout, width } = useLayout()
-  // 占位字母按宽度缩放，但要有上限：专辑封面这类大图（388pt）会算出
-  // 140pt 的 L，压在大片留白上像个渲染错误。52pt 以上的图统一收到 64pt。
-  const size = Math.min(width * 0.36, 64)
+  /**
+   * 占位图不再写品牌缩写。
+   *
+   * 这里原来渲染 `L` + `X` 两个字母，按宽度缩放到 64pt——封面位 352pt 时
+   * 是一屏最醒目的东西，读起来像"应用渲染失败把 logo 漏出来了"，而不是
+   * "这张封面还没加载"。而且品牌已经改名「听歌」，字母对不上任何现称。
+   *
+   * 改成一枚低对比的唱片图标：任何尺寸下都读作"这里本该有一张封面"，
+   * 和 Apple Music 空封面的灰色音符是同一套语言。上限 56pt 是故意的——
+   * 占位不该在大封面上抢主视觉。
+   */
+  const size = Math.min(Math.max(width * 0.42, 18), 56)
 
   return (
-    <View style={StyleSheet.compose({ ...styles.emptyPic, backgroundColor: theme['c-primary-light-900-alpha-200'], gap: size * 0.1 }, style)} onLayout={onLayout} nativeID={nativeID}>
-      {/* 占位字母原来用 c-primary-light-400-alpha-200，压在同样浅的占位底上
-          实测只有 1.17:1（orange）——比空白还糟，看起来像渲染故障。
-          改用 c-primary-font：它对任意主色都自我纠正到 ≥4.5:1，
-          在这个占位底上实测最低 4.74:1，既看得见又保住了品牌色。 */}
-      <Text size={size} color={theme['c-primary-font']}>L</Text>
-      <Text size={size} color={theme['c-primary-font']} style={styles.text}>X</Text>
+    <View
+      style={StyleSheet.compose({ ...styles.emptyPic, backgroundColor: theme['c-primary-light-900-alpha-200'] }, style)}
+      onLayout={onLayout}
+      nativeID={nativeID}
+    >
+      <Icon
+        name="album"
+        // rawSize 绕过 scaleSizeW：这里的 size 是按已布局宽度算出的 pt 值，
+        // 再乘一次屏幕缩放会让大封面上的图标偏大一档
+        rawSize={size}
+        color={theme['c-primary-font']}
+        style={styles.mark}
+      />
     </View>
   )
 })
@@ -109,11 +124,12 @@ export default Image
 const styles = createStyle({
   emptyPic: {
     borderRadius: BorderRadius.normal,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  text: {
-    paddingLeft: 2,
+  // 颜色仍取 c-primary-font（对任意主题自纠到 ≥4.5:1），再降透明度
+  // 到 0.6：它是装饰性占位而不是信息文本，不该和真实封面抢眼
+  mark: {
+    opacity: 0.6,
   },
 })

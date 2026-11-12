@@ -211,6 +211,8 @@
   "play_queue_title": "Play queue",
   "play_queue_count": "{num} upcoming",
   "play_queue_empty": "No upcoming songs",
+  "play_bar_idle_title": "Nothing playing",
+  "play_bar_idle_desc": "Pick a song from a chart or playlist",
   "play_queue_clear": "Clear queue",
   "play_list_loop": "Repeat Playlist",
   "play_list_order": "In order",
