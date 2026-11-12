@@ -3,7 +3,7 @@ import { Icon } from '@/components/common/Icon'
 import { useTheme } from '@/store/theme/hook'
 // import { useIsPlay } from '@/store/player/hook'
 import { playNext, playPrev, togglePlay } from '@/core/player/player'
-import { useIsPlay } from '@/store/player/hook'
+import { useIsPlay, usePlayerMusicInfo } from '@/store/player/hook'
 import { createStyle } from '@/utils/tools'
 import { useWindowSize } from '@/utils/hooks'
 import { useMemo } from 'react'
@@ -12,7 +12,7 @@ import { hapticFeedback } from '@/utils/nativeModules/utils'
 import { Radius, neonGlow, PlayMetrics } from '@/theme/layout'
 import { usePressEmphasis } from '@/theme/press'
 
-const PrevBtn = ({ size }: { size: number }) => {
+const PrevBtn = ({ size, disabled }: { size: number, disabled: boolean }) => {
   const theme = useTheme()
   const handlePlayPrev = () => {
     markTimeoutExitInteraction()
@@ -23,15 +23,16 @@ const PrevBtn = ({ size }: { size: number }) => {
     <TouchableOpacity
       accessibilityRole="button"
       accessibilityLabel={global.i18n.t('play_prev')}
-      style={{ ...styles.cotrolBtn, width: size, height: size }}
+      style={{ ...styles.cotrolBtn, width: size, height: size, opacity: disabled ? 0.28 : 1 }}
       activeOpacity={0.5}
+      disabled={disabled}
       onPress={handlePlayPrev}
     >
       <Icon name='prevMusic' color={theme['c-button-font']} rawSize={size * ICON_RATIO} />
     </TouchableOpacity>
   )
 }
-const NextBtn = ({ size }: { size: number }) => {
+const NextBtn = ({ size, disabled }: { size: number, disabled: boolean }) => {
   const theme = useTheme()
   const handlePlayNext = () => {
     markTimeoutExitInteraction()
@@ -42,8 +43,9 @@ const NextBtn = ({ size }: { size: number }) => {
     <TouchableOpacity
       accessibilityRole="button"
       accessibilityLabel={global.i18n.t('play_next')}
-      style={{ ...styles.cotrolBtn, width: size, height: size }}
+      style={{ ...styles.cotrolBtn, width: size, height: size, opacity: disabled ? 0.28 : 1 }}
       activeOpacity={0.5}
+      disabled={disabled}
       onPress={handlePlayNext}
     >
       <Icon name='nextMusic' color={theme['c-button-font']} rawSize={size * ICON_RATIO} />
@@ -51,7 +53,7 @@ const NextBtn = ({ size }: { size: number }) => {
   )
 }
 
-const TogglePlayBtn = ({ size }: { size: number }) => {
+const TogglePlayBtn = ({ size, disabled }: { size: number, disabled: boolean }) => {
   const theme = useTheme()
   const isPlay = useIsPlay()
   const press = usePressEmphasis({ scale: 0.92, glowBoost: 0.3 })
@@ -61,6 +63,7 @@ const TogglePlayBtn = ({ size }: { size: number }) => {
       accessibilityLabel={global.i18n.t(isPlay ? 'pause' : 'play')}
       style={{ ...styles.playBtn, width: size, height: size }}
       activeOpacity={0.6}
+      disabled={disabled}
       {...press.handlers}
       onPress={() => {
         markTimeoutExitInteraction()
@@ -75,13 +78,25 @@ const TogglePlayBtn = ({ size }: { size: number }) => {
       <Animated.View
         style={[
           styles.playBtnFace,
-          { width: size, height: size, backgroundColor: theme['c-button-background-selected'] },
-          neonGlow(theme, { radius: 14, opacity: 0.7 }),
-          { shadowOpacity: Animated.add(press.glowOpacity, 0.7) },
+          {
+            width: size,
+            height: size,
+            // 没有歌曲时这枚圆不发光：光晕是"这里是主操作"的信号，而队列空时
+            // 它按下去什么也不会发生（player.ts 的 play() 在 musicInfo 为
+            // null 时直接 return）。原来它照样是实心绿 + 辉光，和旁边已经灰掉
+            // 的六图标行互相矛盾，读作"按钮坏了"。
+            backgroundColor: disabled ? theme['c-border-background'] : theme['c-button-background-selected'],
+          },
+          disabled ? null : neonGlow(theme, { radius: 14, opacity: 0.7 }),
+          { shadowOpacity: Animated.add(press.glowOpacity, disabled ? 0 : 0.7) },
           press.transformStyle,
         ]}
       >
-        <Icon name={isPlay ? 'pause' : 'play'} color={theme['c-button-font-selected']} rawSize={size * ICON_RATIO} />
+        <Icon
+          name={isPlay ? 'pause' : 'play'}
+          color={disabled ? theme['c-font-label'] : theme['c-button-font-selected']}
+          rawSize={size * ICON_RATIO}
+        />
       </Animated.View>
     </TouchableOpacity>
   )
@@ -100,6 +115,11 @@ const MIN_SIZE = PlayMetrics.playSizeMin
 
 export default () => {
   const winSize = useWindowSize()
+  const musicInfo = usePlayerMusicInfo()
+  // 队列是空的时候，三个键按下去都不会有反应：play() 在 musicInfo 为 null
+  // 时直接 return，playPrev/playNext 在列表为空时返回 null。所以这里必须
+  // 把"不可用"画出来，而不是让用户按了才发现没动静。
+  const empty = !musicInfo.id
   const maxHeight = Math.max(winSize.height * 0.11, MIN_SIZE)
   const containerStyle = useMemo(() => {
     return {
@@ -113,9 +133,9 @@ export default () => {
 
   return (
     <View style={containerStyle}>
-      <PrevBtn size={size} />
-      <TogglePlayBtn size={size}/>
-      <NextBtn size={size} />
+      <PrevBtn size={size} disabled={empty} />
+      <TogglePlayBtn size={size} disabled={empty}/>
+      <NextBtn size={size} disabled={empty} />
     </View>
   )
 }
