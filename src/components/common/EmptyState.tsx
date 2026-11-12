@@ -57,8 +57,15 @@ const styles = createStyle({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32,
-    // 视觉重心比几何中心高一点才「看着居中」——底部留白约等于标题行高的一半
-    paddingBottom: Gap.section * 2,
+    /**
+     * 视觉重心比几何中心高一点点才「看着居中」，但只是「一点点」。
+     *
+     * 这里原来是 Gap.section * 2 = 44，是标题行高的两倍：06-love 的截图里
+     * 空态中心比列表区中心高出 36pt（约屏高 4%），下方空出一大片，读作
+     * "内容没加载出来"。收到一个 Gap.tight 后偏差降到 2% 以内，仍然是
+     * 上重下轻的视觉中心，但不再像掉在半空。
+     */
+    paddingBottom: Gap.tight,
   },
   containerCompact: {
     flex: 0,

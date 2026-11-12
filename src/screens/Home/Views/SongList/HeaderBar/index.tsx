@@ -90,6 +90,14 @@ const styles = createStyle({
     alignItems: 'center',
     gap: Gap.inline,
     paddingHorizontal: PageMetrics.gutter,
+    /**
+     * 滚到最右时再多留一个 gutter 的空白。
+     *
+     * 375pt 机型上四个控件合计约 396pt（4×88 + 3×4 + 32），静止状态就已经
+     * 超出可用宽度，「打开」贴着右边缘被切掉一角，读起来像渲染裁切。
+     * 内容溢出是横向滚动的本意，但滚到底还顶着边就不对了。
+     */
+    paddingRight: PageMetrics.gutter * 2,
   },
   source: {
     /**
