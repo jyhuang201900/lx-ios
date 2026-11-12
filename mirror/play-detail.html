@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>镜像 · 播放详情（空态封面）</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .pd { padding: 0 var(--cover-inset); display: flex; flex-direction: column; height: 100%; }
+  .pd-head {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    gap: var(--gap-tight);
+  }
+  .pd-head .back {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    color: var(--font);
+    margin-left: -8px;
+  }
+  .pd-head .title {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: center;
+    font-size: var(--fs-body);
+    color: var(--font-label);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pd-head .rate {
+    font-size: var(--fs-compact);
+    color: var(--font-label);
+    flex: 0 0 auto;
+  }
+  .pd-head .more {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    color: var(--font);
+    flex: 0 0 auto;
+  }
+
+  /* 封面：屏宽减左右各 26（PlayMetrics.coverInset），圆角 hero 20 */
+  .cover-hero {
+    width: 350px;
+    height: 350px;
+    margin: 6px auto 0;
+    border-radius: var(--radius-hero);
+    background: linear-gradient(155deg, #e2efe7, #d3e7db 55%, #eaf4ee);
+    box-shadow: 0 12px 40px -18px rgba(30, 80, 55, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    display: grid;
+    place-items: center;
+    color: var(--primary-font);
+    /* 空封面：♪ 上限 88（Image.tsx 第三轮改动） */
+    font-size: 88px;
+    opacity: 1;
+  }
+
+  .pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 40px;
+    margin-top: 10px;
+  }
+  .pager .seg {
+    width: 26px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--primary-dark-100);
+  }
+  .pager .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.16);
+  }
+
+  .progress { margin-top: 6px; }
+  .progress .track {
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+  .progress .track .knob {
+    position: absolute;
+    left: -4px;
+    top: -2.5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary-dark-100);
+  }
+  .progress .times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: var(--fs-caption);
+    color: var(--font-label);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    margin-top: 14px;
+  }
+  .controls .side {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    color: var(--primary-font);
+  }
+  .controls .play {
+    width: var(--play-size);
+    height: var(--play-size);
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, rgba(77, 175, 124, 0.34), rgba(77, 175, 124, 0.18));
+    box-shadow: 0 0 24px rgba(77, 175, 124, 0.28);
+    display: grid;
+    place-items: center;
+    color: var(--primary-font);
+  }
+
+  .extras {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px 0;
+    margin-top: auto;
+    border-top: 1px solid var(--hair);
+    color: var(--font-label);
+    font-size: 18px;
+  }
+  .extras span { width: 34px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="phone" id="screen">
+  <div class="aurora"><i class="a"></i><i class="b"></i></div>
+  <div class="grain"></div>
+  <div class="statusbar"></div>
+
+  <div class="pd">
+    <div class="pd-head">
+      <span class="back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </span>
+      <span class="title">未在播放</span>
+      <span class="rate">1.00x</span>
+      <span class="more">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
+      </span>
+    </div>
+
+    <div class="cover-hero">♪</div>
+
+    <div class="pager"><span class="seg"></span><span class="dot"></span></div>
+
+    <div class="progress">
+      <div class="track"><span class="knob"></span></div>
+      <div class="times"><span>00:00</span><span>00:00</span></div>
+    </div>
+
+    <div class="controls">
+      <span class="side">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M11 6l-8 6 8 6z"/><rect x="13.5" y="6" width="2.2" height="12" rx="1"/></svg>
+      </span>
+      <span class="play">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+      <span class="side">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><rect x="8.3" y="6" width="2.2" height="12" rx="1"/><path d="M13 6l8 6-8 6z"/></svg>
+      </span>
+    </div>
+
+    <div class="extras">
+      <span>♡</span><span>♡＋</span><span>⤓</span><span>⇄</span><span>💬</span><span>1↓2</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

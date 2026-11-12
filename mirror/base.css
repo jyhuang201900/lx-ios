@@ -1,0 +1,361 @@
+/*
+ * 版式镜像的公共层。
+ *
+ * 这份 CSS 不是随手调出来的：每个数值都对着 src/theme/layout.ts 里的
+ * Radius / Gap / PageMetrics / Typography / PlayMetrics 抄下来的，
+ * 目的是在 Windows / Ubuntu 上（没有 Xcode、装不了 iOS 模拟器的机器）
+ * 用 Chromium 渲出和 RN 同一套度量，秒级验证间距、字重、截断、对齐。
+ *
+ * 它验证的是版式；验证不了的是 iOS 原生渲染差异（SF Pro 字面、滚动回弹、
+ * safe area 计算、玻璃的真实叠色）。所以节奏是：镜像里改到满意 →
+ * GitHub Actions 的 macOS 跑一次真机截图复核，而不是每改一行就排队等 CI。
+ */
+
+:root {
+  /* 圆角：src/theme/layout.ts:23-41 */
+  --radius-control: 8px;
+  --radius-button: 10px;
+  --radius-card: 12px;
+  --radius-hero: 20px;
+  --radius-sheet: 16px;
+  --radius-full: 999px;
+
+  /* 间距：src/theme/layout.ts:88-94（按信息层级分层，不是随手取值） */
+  --gap-inline: 4px;
+  --gap-tight: 8px;
+  --gap-block: 14px;
+  --gap-section: 22px;
+  --gap-page: 30px;
+
+  /* 栅格：src/theme/layout.ts:100-105 */
+  --gutter: 16px;
+  --toolbar-h: 52px;
+  --toolbar-margin: 8px;
+  --control-h: 40px;
+
+  /* 字号：src/theme/layout.ts:216-223（caption 11 是 HIG 下限） */
+  --fs-page: 17px;
+  --fs-section: 15px;
+  --fs-body: 15px;
+  --fs-compact: 13px;
+  --fs-sub: 12px;
+  --fs-caption: 11px;
+
+  /* 播放页：src/theme/layout.ts:116-123 */
+  --cover-inset: 26px;
+  --play-size: 70px;
+
+  /* 主题：green（src/theme/themes/createThemes.js:7-24），取自截图比对 */
+  --primary: rgb(77, 175, 124);
+  --primary-font: rgb(45, 104, 74);
+  --primary-dark-100: rgb(69, 158, 112);
+  --primary-light-900: rgba(77, 175, 124, 0.10);
+  --primary-light-800: rgba(77, 175, 124, 0.20);
+  --font: #212121;
+  --font-label: #616161;
+  --font-faint: #9a9a9a;
+  --bg: #fbfbfa;
+  --hair: rgba(0, 0, 0, 0.08);
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(0, 0, 0, 0.06);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--font);
+  font-family: -apple-system, "SF Pro Text", "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  overflow: hidden;
+}
+
+/* 机身：402×874 是 iPhone 16 Pro 的逻辑尺寸；截图时用 DPR 3 得 1206×2622 */
+.phone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 402px;
+  height: 874px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.phone.se {
+  width: 375px;
+  height: 667px;
+}
+
+/* 背景：极光两团 + 噪点，和 RN 里的 grain 层同一个做法（SVG turbulence） */
+.aurora {
+  position: absolute;
+  inset: -18% -30%;
+  pointer-events: none;
+}
+.aurora i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+}
+.aurora .a {
+  width: 560px;
+  height: 560px;
+  left: -160px;
+  top: -140px;
+  background: radial-gradient(circle at 50% 50%, rgba(77, 175, 124, 0.16), rgba(77, 175, 124, 0) 68%);
+}
+.aurora .b {
+  width: 500px;
+  height: 500px;
+  right: -180px;
+  top: 320px;
+  background: radial-gradient(circle at 50% 50%, rgba(90, 160, 255, 0.10), rgba(90, 160, 255, 0) 70%);
+}
+.grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.16;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='120' height='120' filter='url(%23n)' opacity='.5'/></svg>");
+}
+
+/* 状态栏占位：真机上由系统画，镜像里只留高度，避免版式整体上移 */
+.statusbar {
+  height: 59px;
+  flex: 0 0 auto;
+}
+
+/* 工具栏：src/screens/.../HeaderBar/index.tsx —— PageToolbar 高 52、左右 gutter 16 */
+.toolbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-tight);
+  height: var(--toolbar-h);
+  margin: var(--toolbar-margin) var(--gutter) 0;
+  flex: 0 0 auto;
+}
+
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+/* 音源胶囊：内容自适应宽度，minWidth 64（SourceSelector.tsx:32 fontSize 15） */
+.source-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  height: var(--control-h);
+  padding: 0 12px;
+  border-radius: var(--radius-button);
+  font-size: var(--fs-section);
+  color: var(--primary-font);
+  flex: 0 0 auto;
+}
+
+/* 搜索框：输入区占满剩余宽度 */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--control-h);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 10px;
+  border-radius: var(--radius-button);
+  color: var(--font-faint);
+  font-size: var(--fs-section);
+}
+.search-box .ico {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  border: 2px solid var(--font-faint);
+  border-radius: 50%;
+  position: relative;
+}
+.search-box .ico::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  width: 7px;
+  height: 2px;
+  background: var(--font-faint);
+  transform: rotate(45deg);
+}
+
+/* 右侧双图标分组：38pt 容器（SearchTypeSelector） */
+.type-toggle {
+  display: flex;
+  align-items: center;
+  height: var(--control-h);
+  padding: 2px;
+  border-radius: var(--radius-button);
+  flex: 0 0 auto;
+  gap: 2px;
+}
+.type-toggle .opt {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-control);
+  display: grid;
+  place-items: center;
+  color: var(--font-label);
+}
+.type-toggle .opt.on {
+  background: var(--primary-light-800);
+  color: var(--primary-font);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 空态：src/components/common/EmptyState.tsx
+   flex:1 + center + paddingBottom Gap.section*2(44) + paddingHorizontal 32 */
+.empty-state {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px 44px;
+  text-align: center;
+}
+.empty-state .badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primary-light-900);
+  display: grid;
+  place-items: center;
+  color: var(--primary-font);
+  font-size: 26px;
+}
+.empty-state .title {
+  margin-top: 14px;
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--font);
+}
+.empty-state .desc {
+  margin-top: 6px;
+  font-size: var(--fs-sub);
+  line-height: 18px;
+  color: var(--font-label);
+  max-width: 260px;
+}
+
+/* 迷你播放条 */
+.player-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-tight);
+  height: 56px;
+  padding: 0 var(--gutter);
+  flex: 0 0 auto;
+}
+.player-bar .cover {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-control);
+  background: var(--primary-light-800);
+  color: var(--primary-font);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex: 0 0 auto;
+}
+.player-bar .meta {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.player-bar .meta .t {
+  font-size: var(--fs-compact);
+  color: var(--font-label);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.player-bar .meta .s {
+  margin-top: 2px;
+  font-size: var(--fs-caption);
+  color: var(--font-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.player-bar .play {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(77, 175, 124, 0.22);
+  color: var(--primary-font);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.player-bar .next {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: var(--font-label);
+  flex: 0 0 auto;
+}
+
+/* TabBar：6 项，选中只换 color（已去掉色块与 glow） */
+.tabbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: stretch;
+  height: 62px;
+  padding: 0 4px;
+  flex: 0 0 auto;
+}
+.tabbar .tab {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--font-label);
+  font-size: var(--fs-caption);
+}
+.tabbar .tab.on {
+  color: var(--primary-font);
+  font-weight: 600;
+}
+.tabbar .tab .g {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* 通用文字 */
+.h1 {
+  font-size: var(--fs-page);
+  font-weight: 600;
+}
+.sub {
+  font-size: var(--fs-sub);
+  color: var(--font-label);
+}

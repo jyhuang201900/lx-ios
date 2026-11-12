@@ -228,6 +228,18 @@ jobs:
 
           ls -la shots
 
+      - name: Shrink screenshots
+        if: always()
+        # 3x 的 iPhone 16 Pro 截图单张 1.8~3.4MB，16 张打完包 20MB，
+        # 在这条线路上按 15KB/s 拉就是 25 分钟。缩到长边 1748（2x）后
+        # 细节仍然够看清字重和圆角，体积降到三分之一以内。
+        run: |
+          shopt -s nullglob
+          for f in shots/*.png; do
+            sips -Z 1748 "$f" >/dev/null 2>&1 || true
+          done
+          du -ch shots/*.png 2>/dev/null | tail -1 || true
+
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>镜像 · 排行榜（音质 chip 对齐）</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .chart-head {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-tight);
+    padding: 0 var(--gutter);
+    height: var(--toolbar-h);
+  }
+  .chart-head .chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    height: var(--control-h);
+    padding: 0 12px;
+    border-radius: var(--radius-button);
+    font-size: var(--fs-section);
+    color: var(--primary-font);
+    flex: 0 0 auto;
+  }
+  .chart-head .solid {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: var(--control-h);
+    padding: 0 14px;
+    border-radius: var(--radius-button);
+    background: var(--primary-font);
+    color: #fff;
+    font-size: var(--fs-section);
+    margin-left: auto;
+    flex: 0 0 auto;
+  }
+
+  .list {
+    flex: 1 1 auto;
+    overflow: hidden;
+    padding-top: 4px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-inline);
+    padding: 0 var(--gutter) 0 0;
+  }
+  /* 序号列 34pt（OnlineList/ListItem 的序号容器） */
+  .row .no {
+    width: 34px;
+    text-align: center;
+    font-size: var(--fs-compact);
+    color: var(--font-faint);
+    flex: 0 0 auto;
+  }
+  .row .main {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: var(--gap-block) 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  .row .name {
+    font-size: var(--fs-body);
+    color: var(--font);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 22px;
+  }
+  /* 第二行：音质 chip + 歌手。chip 用 minWidth 42 修对齐 */
+  .row .subline {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-inline);
+    margin-top: 2px;
+    line-height: 16px;
+  }
+  .badge-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 15px;
+    padding: 0 5px;
+    border-radius: var(--radius-button);
+    font-size: var(--fs-caption);
+    border: 1px solid rgba(77, 175, 124, 0.45);
+    color: var(--primary-dark-100);
+    flex: 0 0 auto;
+  }
+  .badge-chip.hq {
+    border-color: rgba(200, 140, 40, 0.5);
+    color: #a9762a;
+  }
+  .row .artist {
+    font-size: var(--fs-sub);
+    color: var(--font-label);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row .time {
+    font-size: var(--fs-caption);
+    color: var(--font-faint);
+    flex: 0 0 auto;
+    margin-left: auto;
+    padding-left: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="phone" id="screen">
+  <div class="aurora"><i class="a"></i><i class="b"></i></div>
+  <div class="grain"></div>
+  <div class="statusbar"></div>
+
+  <div class="chart-head">
+    <div class="chip glass">小蜗音乐</div>
+    <div class="chip glass">热歌榜 ›</div>
+    <div class="solid">▶ 播放全部</div>
+  </div>
+
+  <div class="list">
+    <div class="row"><div class="no">1</div><div class="main"><div class="name">夜航</div><div class="subline"><span class="badge-chip">SQ</span><span class="artist">陈默</span></div></div><div class="time">04:12</div></div>
+    <div class="row"><div class="no">2</div><div class="main"><div class="name">山河故人</div><div class="subline"><span class="badge-chip">SQ</span><span class="artist">李知远</span></div></div><div class="time">03:48</div></div>
+    <div class="row"><div class="no">3</div><div class="main"><div class="name">南方以南</div><div class="subline"><span class="badge-chip hq">24bit</span><span class="artist">周未</span></div></div><div class="time">05:02</div></div>
+    <div class="row"><div class="no">4</div><div class="main"><div class="name">晚风告白</div><div class="subline"><span class="badge-chip">SQ</span><span class="artist">许澈</span></div></div><div class="time">03:31</div></div>
+    <div class="row"><div class="no">5</div><div class="main"><div class="name">长夜将尽</div><div class="subline"><span class="badge-chip">HQ</span><span class="artist">程鹿</span></div></div><div class="time">04:26</div></div>
+    <div class="row"><div class="no">6</div><div class="main"><div class="name">像风一样</div><div class="subline"><span class="badge-chip hq">24bit</span><span class="artist">王菲</span></div></div><div class="time">04:44</div></div>
+    <div class="row"><div class="no">7</div><div class="main"><div class="name">岛屿云烟</div><div class="subline"><span class="badge-chip">SQ</span><span class="artist">林一</span></div></div><div class="time">03:59</div></div>
+    <div class="row"><div class="no">8</div><div class="main"><div class="name">无人之境</div><div class="subline"><span class="badge-chip hq">24bit</span><span class="artist">邓川</span></div></div><div class="time">05:21</div></div>
+    <div class="row"><div class="no">9</div><div class="main"><div class="name">旧巷</div><div class="subline"><span class="badge-chip">SQ</span><span class="artist">沈青</span></div></div><div class="time">03:17</div></div>
+  </div>
+
+  <div class="player-bar">
+    <div class="cover">♪</div>
+    <div class="meta"><div class="t">未在播放</div><div class="s">从榜单或歌单挑一首开始</div></div>
+    <div class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+    <div class="next"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6l9 6-9 6z"/><rect x="16" y="6" width="2.4" height="12" rx="1"/></svg></div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tab"><span class="g">⌕</span><span>搜索</span></div>
+    <div class="tab"><span class="g">♪</span><span>歌单</span></div>
+    <div class="tab on"><span class="g">≋</span><span>排行榜</span></div>
+    <div class="tab"><span class="g">♡</span><span>我的列表</span></div>
+    <div class="tab"><span class="g">⬒</span><span>本地歌曲</span></div>
+    <div class="tab"><span class="g">◎</span><span>设置</span></div>
+  </div>
+</div>
+</body>
+</html>

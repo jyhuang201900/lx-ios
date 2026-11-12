@@ -292,7 +292,7 @@ const List = forwardRef<ListType, ListProps>(({ onShowMenu, onMuiltSelectMode, o
   const emptyComponent = useMemo(() => {
     if (currentList.length) return null
     return (
-      <EmptyState icon="add-music" title={t('no_item')} compact>
+      <EmptyState icon="add-music" title={t('no_item')}>
         <RetryButton label={t('play_list_add_song_tip')} onPress={handleGoSearch} />
       </EmptyState>
     )
@@ -331,6 +331,9 @@ const styles = createStyle({
   },
   content: {
     paddingBottom: 14,
+    // 空列表时让 contentContainerStyle 撑满剩余高度，EmptyState 才能在其中居中，
+    // 而不是贴着卡片区顶部落下、底下留一大片空白。
+    flexGrow: 1,
   },
   empty: {
     flexGrow: 1,
