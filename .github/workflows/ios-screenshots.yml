@@ -159,19 +159,20 @@ jobs:
 
           # 首启有两个闸门：谨防被骗提示、许可协议。两者都在 AsyncStorage 的
           # manifest.json 里有开关，直接写进去，截图才拍得到真正的界面。
-          write_manifest() {
-            local udid="$1" setting="$2" container manifest
-            container="$(xcrun simctl get_app_container "$udid" "$IOS_BUNDLE_IDENTIFIER" data 2>/dev/null)"
-            if [ -z "$container" ]; then
-              echo "::warning::拿不到 app 容器，跳过早读标记"
-              return 0
-            fi
+          manifest_path() {
+            local udid="$1" container manifest
+            container="$(xcrun simctl get_app_container "$udid" "$IOS_BUNDLE_IDENTIFIER" data 2>/dev/null)" || return 0
+            [ -n "$container" ] || return 0
             manifest="$container/Library/Application Support/$IOS_BUNDLE_IDENTIFIER/RCTAsyncLocalStorage_V1/manifest.json"
             if [ ! -f "$manifest" ]; then
-              echo "::warning::manifest 不在默认路径，回退搜索"
               manifest="$(find "$container" -name manifest.json -path '*RCTAsyncLocalStorage*' -print -quit)"
             fi
-            if [ -z "$manifest" ] || [ ! -f "$manifest" ]; then
+            [ -n "$manifest" ] && [ -f "$manifest" ] && echo "$manifest"
+          }
+          write_manifest() {
+            local udid="$1" setting="$2" manifest
+            manifest="$(manifest_path "$udid")"
+            if [ -z "$manifest" ]; then
               echo "::warning::没找到 AsyncStorage manifest，首启提示可能弹窗"
               return 0
             fi
@@ -188,10 +189,30 @@ jobs:
             merged="$(jq -c -n --argjson b "$BASE_SETTING" --argjson e "$extra" '$b + $e')"
             write_manifest "$udid" "$merged"
           }
+          # 演示歌：给"有歌态"的页面用。
+          #
+          # MusicInfo 的 meta.picUrl 故意留 null —— 封面走 EmptyPic 的 ♪ 占位，
+          # 正好也验一遍有歌时占位是什么观感。startupAutoPlay 显式关掉，所以
+          # 不会真去请求播放地址，只是把播放列表与当前曲目塞进状态。
+          DEMO_LIST='[{"id":"kw_demo0001","name":"午夜霓虹","singer":"演示歌手","source":"kw","interval":"03:42","meta":{"songId":"demo0001","albumName":"演示专辑","picUrl":null,"qualitys":[],"_qualitys":{},"albumId":"demoalbum"}}]'
+          DEMO_PLAY='{"time":0,"maxTime":222,"listId":"demo","index":0}'
+          seed_demo() {
+            local udid="$1" manifest
+            manifest="$(manifest_path "$udid")"
+            if [ -z "$manifest" ]; then
+              echo "::warning::没找到 manifest，演示歌没写进去"
+              return 0
+            fi
+            jq --arg l "$DEMO_LIST" --arg p "$DEMO_PLAY" \
+              '. + {"@list__demo":$l,"@play_info":$p}' "$manifest" > "$manifest.tmp" \
+              && mv "$manifest.tmp" "$manifest"
+            echo "seed demo track"
+          }
           shoot() {
-            local udid="$1" out="$2" extra="$3" settle="$4"
+            local udid="$1" out="$2" extra="$3" settle="$4" demo="${5:-}"
             with_timeout 60 xcrun simctl terminate "$udid" "$IOS_BUNDLE_IDENTIFIER" >/dev/null 2>&1 || true
             seed_settings "$udid" "$extra"
+            [ -n "$demo" ] && seed_demo "$udid"
             with_timeout 60 xcrun simctl launch "$udid" "$IOS_BUNDLE_IDENTIFIER"
             sleep "$settle"
             with_timeout 60 xcrun simctl io "$udid" screenshot "$out"
@@ -245,8 +266,7 @@ jobs:
             # 已经被上一次启动写出来了。改成轮询等文件出现（最多 30 秒）。
             with_timeout 60 xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER"
             for i in $(seq 1 30); do
-              CONTAINER="$(xcrun simctl get_app_container "$UDID" "$IOS_BUNDLE_IDENTIFIER" data 2>/dev/null || true)"
-              if [ -n "$CONTAINER" ] && find "$CONTAINER" -name manifest.json -path '*RCTAsyncLocalStorage*' -print -quit 2>/dev/null | grep -q .; then
+              if [ -n "$(manifest_path "$UDID")" ]; then
                 echo "[$(stamp)] manifest ready after ${i}s"
                 break
               fi
@@ -282,6 +302,11 @@ jobs:
             shoot "$UDID" "shots/${SLUG}-12-songlist-dark.png" '{"theme.id":"black","common.startupNavId":"nav_songlist"}' 10
             shoot "$UDID" "shots/${SLUG}-13-chart-dark.png" '{"theme.id":"black","common.startupNavId":"nav_top"}' 12
             shoot "$UDID" "shots/${SLUG}-14-setting-dark.png" '{"theme.id":"black","common.startupNavId":"nav_setting"}' 10
+
+            # 有歌态：前面 14 张全是空列表，迷你条永远是「未在播放」，等于
+            # 真实用起来最常看的那一屏从没被检查过。这两页塞一首演示曲进去。
+            shoot "$UDID" "shots/${SLUG}-15-player-song.png" '{"player.startupAutoPlay":false}' 12 demo
+            shoot "$UDID" "shots/${SLUG}-16-play-detail-song.png" '{"player.startupAutoPlay":false,"player.startupPushPlayDetailScreen":true}' 14 demo
 
             # 进程还活着才算启动成功
             if ! xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$IOS_BUNDLE_IDENTIFIER"; then
