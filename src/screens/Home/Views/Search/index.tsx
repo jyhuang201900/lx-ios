@@ -14,6 +14,7 @@ import { createStyle } from '@/utils/tools'
 import TipList, { type TipListType } from './TipList'
 import List, { type ListType } from './List'
 import { addHistoryWord } from '@/core/search/search'
+import { useSettingValue } from '@/store/setting/hook'
 
 
 interface SearchInfo {
@@ -29,6 +30,7 @@ export default () => {
   const layoutHeightRef = useRef<number>(0)
   const searchInfo = useRef<SearchInfo>({ temp_source: 'kw', source: 'kw', searchType: 'music' })
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const startupSearchText = useSettingValue('common.startupSearchText')
 
   useEffect(() => {
     void getSearchSetting().then(info => {
@@ -44,8 +46,11 @@ export default () => {
           headerBarRef.current?.setSourceList(searchSonglistState.sources, info.source)
           break
       }
-      headerBarRef.current?.setText(searchState.searchText)
-      listRef.current?.loadList(searchState.searchText, searchInfo.current.source, searchInfo.current.searchType)
+      // 截图流程会预置一个关键词，让首屏直接落在"有结果"的搜索页上；
+      // 正常使用中 searchText 只来自用户输入，这里不会改变原有交互。
+      const text = searchState.searchText || startupSearchText || ''
+      headerBarRef.current?.setText(text)
+      listRef.current?.loadList(text, searchInfo.current.source, searchInfo.current.searchType)
     })
 
     const handleTypeChange = (type: SearchType) => {

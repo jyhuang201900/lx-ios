@@ -344,6 +344,7 @@ jobs:
             shoot "$UDID" "shots/${SLUG}-15-player-song.png" '{"player.startupAutoPlay":false}' 12 demo
             shoot "$UDID" "shots/${SLUG}-16-play-detail-song.png" '{"player.startupAutoPlay":false,"player.startupPushPlayDetailScreen":true}' 14 demo
             shoot "$UDID" "shots/${SLUG}-17-search-history.png" '{"common.startupNavId":"nav_search","search.isShowHistorySearch":true}' 12 '' hist
+            shoot "$UDID" "shots/${SLUG}-18-search-result.png" '{"common.startupNavId":"nav_search","common.startupSearchText":"周杰伦"}' 16
 
             # 进程还活着才算启动成功
             if ! xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$IOS_BUNDLE_IDENTIFIER"; then

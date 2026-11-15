@@ -45,6 +45,12 @@ declare global {
       'common.startupNavId': NAV_ID_Type | null
 
       /**
+       * 截图流程用：启动后自动把关键词填进搜索框并搜一次，界面默认 null。
+       * 走的是和 common.startupNavId 同一条路子，不进设置面板。
+       */
+      'common.startupSearchText': string | null
+
+      /**
        * api id
        */
       'common.apiSource': string
