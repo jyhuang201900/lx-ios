@@ -336,7 +336,6 @@ jobs:
             shoot "$UDID" "shots/${SLUG}-03-play-detail.png" '{"player.startupPushPlayDetailScreen":true}' 14
 
             # 五个标签页：靠 common.startupNavId 冷启动落位
-            shoot "$UDID" "shots/${SLUG}-04-songlist.png" '{"common.startupNavId":"nav_songlist"}' 10
             shoot "$UDID" "shots/${SLUG}-19-songlist-loading.png" '{"common.startupNavId":"nav_songlist"}' 2
             shoot "$UDID" "shots/${SLUG}-05-chart.png" '{"common.startupNavId":"nav_top"}' 12
             shoot "$UDID" "shots/${SLUG}-06-love.png" '{"common.startupNavId":"nav_love"}' 10
@@ -427,7 +426,8 @@ jobs:
           fi
           # 模拟器崩溃时 app 直接黑屏，报告落在 runner 的 DiagnosticReports 里
           if [ -d "$HOME/Library/Logs/DiagnosticReports" ]; then
-            ls -t "$HOME/Library/Logs/DiagnosticReports"/*.ips 2>/dev/null | head -n 3 \
+            ls -t "$HOME/Library/Logs/DiagnosticReports"/*.ips 2>/dev/null \
+              | grep -i "LxMusic" | head -n 3 \
               | while read -r f; do cp "$f" "$publish/crash-$(basename "$f")" 2>/dev/null || true; done
           fi
           entries=$(ls -A "$publish")
