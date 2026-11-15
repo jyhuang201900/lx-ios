@@ -75,7 +75,9 @@ const Panel = ({
   }, [windowSize, buttonPosition])
 
   return (
-    <TouchableWithoutFeedback onPress={onHide}>
+    // 遮罩只是「点外面关掉」，不该被 VoiceOver 当成一个元素，否则整个面板
+    // 会合成一个朗读块，里面的选项一个都聚焦不到。
+    <TouchableWithoutFeedback onPress={onHide} accessible={false}>
       <View style={{ ...styles.menu, ...style }}>
         <View onStartShouldSetResponder={() => true}>
           {children}

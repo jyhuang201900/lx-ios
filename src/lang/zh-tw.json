@@ -32,6 +32,7 @@
   "copy_name": "分享歌曲",
   "copy_name_tip": "已複製",
   "create_new_folder": "建立資料夾",
+  "choose_path_storage": "外置記憶卡",
   "create_new_folder_error_tip": "輸入的名稱不合法",
   "create_new_folder_tip": "請輸入新資料夾名",
   "date_format_hour": "{num} 小時前",

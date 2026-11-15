@@ -61,7 +61,12 @@ export default ({ check, label, children, onChange, helpTitle, helpDesc, disable
       })
     }
     return (helpTitle ?? helpDesc) ? (
-      <TouchableOpacity style={styles.helpBtn} onPress={handleShowHelp}>
+      <TouchableOpacity
+        style={styles.helpBtn}
+        onPress={handleShowHelp}
+        accessibilityRole="button"
+        accessibilityLabel={helpTitle ?? helpDesc}
+      >
         <Icon size={15 * size} name="help" />
       </TouchableOpacity>
     ) : null

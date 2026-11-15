@@ -32,6 +32,7 @@
   "copy_name": "Share Song",
   "copy_name_tip": "Copied",
   "create_new_folder": "Create new folder",
+  "choose_path_storage": "Storage card",
   "create_new_folder_error_tip": "The name entered is invalid",
   "create_new_folder_tip": "Please enter a new folder name",
   "date_format_hour": "{num} hours ago",
