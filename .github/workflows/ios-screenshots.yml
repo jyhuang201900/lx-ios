@@ -177,7 +177,10 @@ jobs:
               return 0
             fi
             echo "seed settings -> $manifest"
-            jq --arg v "$setting" '. + {"@cheat_tip":"true","@setting_v1":$v}' "$manifest" > "$manifest.tmp" \
+            # 先删掉上一页留下的演示数据：@list__demo / @play_info / 搜索历史
+            # 都写在同一个 manifest 里，不清的话 15/16 页的"有歌态"会漏到 17 页
+            # 及之后每一页，后面拍到的就不是本页该有的状态了。
+            jq --arg v "$setting" 'del(.["@list__demo"], .["@play_info"], .["@search_history_list"]) | . + {"@cheat_tip":"true","@setting_v1":$v}' "$manifest" > "$manifest.tmp" \
               && mv "$manifest.tmp" "$manifest"
           }
 

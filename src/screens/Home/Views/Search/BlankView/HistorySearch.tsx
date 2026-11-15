@@ -102,7 +102,7 @@ export default forwardRef<HistorySearchType, HistorySearchProps>((props, ref) =>
                 accessibilityRole="button"
                 accessibilityLabel={t('search_history_clear')}
               >
-                <Icon name="eraser" color={theme['c-font-label']} size={14} />
+                <Icon name="eraser" color={theme['c-font-label']} size={16} />
               </TouchableOpacity>
             </View>
             <View style={styles.list}>
