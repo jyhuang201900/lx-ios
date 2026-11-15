@@ -331,7 +331,9 @@ const styles = createStyle({
   content: {
     paddingHorizontal: PageMetrics.gutter,
     // 底部留白，避免最后一行被迷你播放条压住
-    paddingBottom: Gap.page,
+    // 迷你播放条是浮在列表之上的（约 55pt：44 的封面 + 上下各 6 的 padding），
+    // 只留 Gap.page(30) 时最后一行会被压掉半截，滚到底也露不出来。
+    paddingBottom: Gap.page + 60,
   },
   footer: {
     textAlign: 'center',

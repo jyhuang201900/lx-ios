@@ -80,7 +80,12 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
           <Text numberOfLines={1}>{item.name}</Text>
           <View style={styles.listItemSingle}>
             { tagInfo.type ? <Badge type={tagInfo.type} minWidth={42}>{tagInfo.text}</Badge> : null }
-            { showSource ? <Badge type="tertiary">{item.source}</Badge> : null }
+            {/*
+              * 这里原来直接打印音源 id，用户在搜索结果里看到的是 "kw" "kg" "tx"，
+              * 除了写代码的人没人读得懂。lang 里本来就有 source_alias_* 系列
+              * （小蜗音乐 / 小枸音乐 / 小秋音乐），是同一套品牌名。
+              */}
+            { showSource ? <Badge type="tertiary">{global.i18n.t(`source_alias_${item.source}` as Parameters<typeof global.i18n.t>[0])}</Badge> : null }
             <Text style={styles.listItemSingleText} size={Typography.sub} color={theme['c-font-label']} numberOfLines={1}>{singer}</Text>
           </View>
         </View>
