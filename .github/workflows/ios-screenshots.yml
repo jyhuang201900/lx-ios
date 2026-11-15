@@ -208,11 +208,27 @@ jobs:
               && mv "$manifest.tmp" "$manifest"
             echo "seed demo track"
           }
+          # 搜索历史：搜索页在 isShowHistorySearch 打开时优先显示这块，
+          # 不用模拟键盘输入就能拍到"有内容"的搜索页。
+          DEMO_HISTORY='["周杰伦","晴天","告白气球","稻香","夜曲","七里香"]'
+          seed_search_history() {
+            local udid="$1" manifest
+            manifest="$(manifest_path "$udid")"
+            if [ -z "$manifest" ]; then
+              echo "::warning::没找到 manifest，搜索历史没写进去"
+              return 0
+            fi
+            jq --arg h "$DEMO_HISTORY" \
+              '. + {"@search_history_list":$h}' "$manifest" > "$manifest.tmp" \
+              && mv "$manifest.tmp" "$manifest"
+            echo "seed search history"
+          }
           shoot() {
-            local udid="$1" out="$2" extra="$3" settle="$4" demo="${5:-}"
+            local udid="$1" out="$2" extra="$3" settle="$4" demo="${5:-}" hist="${6:-}"
             with_timeout 60 xcrun simctl terminate "$udid" "$IOS_BUNDLE_IDENTIFIER" >/dev/null 2>&1 || true
             seed_settings "$udid" "$extra"
             [ -n "$demo" ] && seed_demo "$udid"
+            [ -n "$hist" ] && seed_search_history "$udid"
             with_timeout 60 xcrun simctl launch "$udid" "$IOS_BUNDLE_IDENTIFIER"
             sleep "$settle"
             with_timeout 60 xcrun simctl io "$udid" screenshot "$out"
@@ -307,6 +323,7 @@ jobs:
             # 真实用起来最常看的那一屏从没被检查过。这两页塞一首演示曲进去。
             shoot "$UDID" "shots/${SLUG}-15-player-song.png" '{"player.startupAutoPlay":false}' 12 demo
             shoot "$UDID" "shots/${SLUG}-16-play-detail-song.png" '{"player.startupAutoPlay":false,"player.startupPushPlayDetailScreen":true}' 14 demo
+            shoot "$UDID" "shots/${SLUG}-17-search-history.png" '{"common.startupNavId":"nav_search","search.isShowHistorySearch":true}' 12 '' hist
 
             # 进程还活着才算启动成功
             if ! xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$IOS_BUNDLE_IDENTIFIER"; then
