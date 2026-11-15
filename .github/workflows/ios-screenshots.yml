@@ -256,6 +256,15 @@ jobs:
             launch_app "$udid" || return 1
             sleep "$settle"
             with_timeout 60 xcrun simctl io "$udid" screenshot "$out"
+            # 黑屏/白屏的 PNG 压完只剩十几 KB（正常页 400KB 起）。SE 版歌单页
+            # 曾经拍出一张 35KB 的纯黑，这里自检一次，废了就重拍。
+            local bytes
+            bytes="$(stat -f%z "$out" 2>/dev/null || echo 0)"
+            if [ "$bytes" -lt 60000 ]; then
+              echo "::warning::$(basename "$out") 只有 ${bytes}B，像是空屏，重拍一次"
+              sleep 5
+              with_timeout 60 xcrun simctl io "$udid" screenshot "$out"
+            fi
             echo "[$(stamp)] shot $(basename "$out")"
           }
 
@@ -328,7 +337,7 @@ jobs:
 
             # 五个标签页：靠 common.startupNavId 冷启动落位
             shoot "$UDID" "shots/${SLUG}-04-songlist.png" '{"common.startupNavId":"nav_songlist"}' 10
-            shoot "$UDID" "shots/${SLUG}-19-songlist-loading.png" '{"common.startupNavId":"nav_songlist"}' 3
+            shoot "$UDID" "shots/${SLUG}-19-songlist-loading.png" '{"common.startupNavId":"nav_songlist"}' 2
             shoot "$UDID" "shots/${SLUG}-05-chart.png" '{"common.startupNavId":"nav_top"}' 12
             shoot "$UDID" "shots/${SLUG}-06-love.png" '{"common.startupNavId":"nav_love"}' 10
             shoot "$UDID" "shots/${SLUG}-07-local.png" '{"common.startupNavId":"nav_local"}' 10
@@ -415,6 +424,11 @@ jobs:
           fi
           if [ -s build/boot.log ]; then
             tail -n 160 build/boot.log > "$publish/boot-tail.txt"
+          fi
+          # 模拟器崩溃时 app 直接黑屏，报告落在 runner 的 DiagnosticReports 里
+          if [ -d "$HOME/Library/Logs/DiagnosticReports" ]; then
+            ls -t "$HOME/Library/Logs/DiagnosticReports"/*.ips 2>/dev/null | head -n 3 \
+              | while read -r f; do cp "$f" "$publish/crash-$(basename "$f")" 2>/dev/null || true; done
           fi
           entries=$(ls -A "$publish")
           if [ -z "$entries" ]; then
