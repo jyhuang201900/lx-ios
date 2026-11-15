@@ -226,13 +226,30 @@ jobs:
               && mv "$manifest.tmp" "$manifest"
             echo "seed search history"
           }
+          # simctl launch 偶发"返回 0 但 app 没起来"——run27 的 SE 版我的列表
+          # 就拍到模拟器桌面。这里认启动输出里的 pid，没拿到就重来，最多三次。
+          launch_app() {
+            local udid="$1" i out
+            for i in 1 2 3; do
+              out="$(with_timeout 60 xcrun simctl launch "$udid" "$IOS_BUNDLE_IDENTIFIER" 2>&1)"
+              if echo "$out" | grep -qE ': [0-9]+$'; then
+                echo "$out"
+                return 0
+              fi
+              echo "::warning::launch 第 $i 次没拿到 pid：$(echo "$out" | head -n 1)"
+              with_timeout 60 xcrun simctl terminate "$udid" "$IOS_BUNDLE_IDENTIFIER" >/dev/null 2>&1 || true
+              sleep 3
+            done
+            echo "::error::app 三次都没起来：$IOS_BUNDLE_IDENTIFIER"
+            return 1
+          }
           shoot() {
             local udid="$1" out="$2" extra="$3" settle="$4" demo="${5:-}" hist="${6:-}"
             with_timeout 60 xcrun simctl terminate "$udid" "$IOS_BUNDLE_IDENTIFIER" >/dev/null 2>&1 || true
             seed_settings "$udid" "$extra"
             [ -n "$demo" ] && seed_demo "$udid"
             [ -n "$hist" ] && seed_search_history "$udid"
-            with_timeout 60 xcrun simctl launch "$udid" "$IOS_BUNDLE_IDENTIFIER"
+            launch_app "$udid" || return 1
             sleep "$settle"
             with_timeout 60 xcrun simctl io "$udid" screenshot "$out"
             echo "[$(stamp)] shot $(basename "$out")"
