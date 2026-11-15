@@ -61,7 +61,20 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
 
   return (
     <View style={{ ...styles.listItem, width: rowInfo.rowWidth, minHeight: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'] }}>
-      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }} style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityState={{ selected: isSelected }}
+        /**
+         * 原来只有 role 与选中态，没有标签——VoiceOver 读到的是"按钮"两个字，
+         * 整行 11 行列表没有一行能听出是哪首歌。行里的可视信息就三样：序号、
+         * 歌名、歌手（含专辑），按这个顺序拼，和屏幕上读到的顺序一致。
+         */
+        accessibilityLabel={`${index + 1}，${item.name}，${singer}`}
+        style={styles.listItemLeft}
+        activeOpacity={0.65}
+        onPress={() => { onPress(item, index) }}
+        onLongPress={() => { onLongPress(item, index) }}
+      >
         <Text style={styles.sn} size={13} color={theme['c-font-label']}>{index + 1}</Text>
         <View style={styles.itemInfo}>
           <Text numberOfLines={1}>{item.name}</Text>

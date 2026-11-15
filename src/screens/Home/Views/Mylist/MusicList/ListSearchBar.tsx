@@ -173,7 +173,7 @@ export default forwardRef<ListSearchBarType, ListSearchBarProps>(({ onSearch, on
         <View style={styles.content}>
           <SearchInput ref={searchInputRef} onSearch={onSearch} />
         </View>
-        <TouchableOpacity onPress={onExitSearch} style={styles.btn}>
+        <TouchableOpacity onPress={onExitSearch} style={styles.btn} accessibilityRole="button" accessibilityLabel={t('list_select_cancel')}>
           <Text style={styles.btnText} color={theme['c-button-font']}>{t('list_select_cancel')}</Text>
         </TouchableOpacity>
       </Animated.View>

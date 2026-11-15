@@ -42,6 +42,9 @@ const Tabs = <T extends LX.OnlineSource>({ list, source, onChangeSource }: {
               onChangeSource(s.action as T)
             }}
             key={s.action}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: source == s.action }}
+            accessibilityLabel={s.label}
           >
             <Text style={styles.tabButtonText} color={source == s.action ? theme['c-primary-font-active'] : theme['c-font']}>{s.label}</Text>
           </TouchableOpacity>

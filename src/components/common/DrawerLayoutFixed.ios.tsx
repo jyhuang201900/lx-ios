@@ -96,7 +96,8 @@ const DrawerLayoutFixed = forwardRef<DrawerLayoutFixedType, Props>(({
                   pointerEvents={visible ? 'auto' : 'none'}
                   style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, opacity: overlayOpacity }}
                 >
-                  <Pressable onPress={closeDrawer} style={{ flex: 1, backgroundColor: '#000' }} />
+                  {/* 纯遮罩：点它收起抽屉是手势，不做可聚焦元素，声音焦点留给抽屉内的菜单项 */}
+                  <Pressable onPress={closeDrawer} accessible={false} style={{ flex: 1, backgroundColor: '#000' }} />
                 </Animated.View>
                 <Animated.View
                   pointerEvents={visible ? 'auto' : 'none'}

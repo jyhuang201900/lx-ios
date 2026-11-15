@@ -108,7 +108,13 @@ export default forwardRef<ModalType, ModalProps>(({
       {
         bgHide
           ? (
-              <TouchableWithoutFeedback onPress={handleBgClose}>
+              /**
+               * 这一层只是"点背景关闭"。它包住了整个 content，而
+               * TouchableWithoutFeedback 默认 accessible=true —— 等于把整个
+               * 弹窗合并成一个朗读元素，里面的按钮一个都聚焦不到。设 false
+               * 之后声音焦点回到内部控件；点背景关闭本身是手势，不需要朗读。
+               */
+              <TouchableWithoutFeedback onPress={handleBgClose} accessible={false}>
                 {content}
               </TouchableWithoutFeedback>
             )

@@ -58,8 +58,10 @@ export default ({ isHome }: { isHome: boolean }) => {
     })
   }, [])
 
+  // 封面是纯装饰：歌名已经由 Title 朗读，图片本身不携带额外信息。
+  // 设成不可聚焦，VoiceOver 就不会在迷你条上停两次。
   return (
-    <TouchableOpacity onLongPress={handleLongPress} onPress={handlePress} activeOpacity={0.7} >
+    <TouchableOpacity onLongPress={handleLongPress} onPress={handlePress} activeOpacity={0.7} accessible={false}>
       <View style={{ ...styles.imageFrame, ...styles.imageShadow, backgroundColor: theme['c-primary'] }}>
         <View style={styles.imageClip}>
           <Image url={musicInfo.pic} nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_pic} style={styles.image} onError={handleError} />

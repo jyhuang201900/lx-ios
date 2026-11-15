@@ -49,7 +49,19 @@ export default ({ isHome }: { isHome: boolean }) => {
       : musicInfo.name
   // console.log(playMusicInfo)
   return (
-    <TouchableOpacity style={styles.container} onLongPress={handleLongPress} onPress={handlePress} activeOpacity={0.7} >
+    <TouchableOpacity
+      style={styles.container}
+      onLongPress={handleLongPress}
+      onPress={handlePress}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      /**
+       * 迷你条是整屏最常被点的一处，VoiceOver 下原来读的是一串无名按钮。
+       * 标题已经拼好「歌手 - 歌名」或「未在播放」，直接当标签用——用户听到的
+       * 就是屏幕上看到的那一行，不需要再解释"点它会打开播放页"。
+       */
+      accessibilityLabel={title}
+    >
       <Text color={empty ? theme['c-font-label'] : theme['c-font']} size={14} numberOfLines={1}>{title}</Text>
     </TouchableOpacity>
   )

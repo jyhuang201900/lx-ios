@@ -41,7 +41,7 @@ const ListItem = memo(({ item, index, activeId, onPress, onShowMenu }: {
   return (
       <View style={{ ...styles.cardShell, backgroundColor: active ? theme['c-primary-background-hover'] : theme['c-control-surface'], ...(active ? neonGlow(theme, { radius: 10, opacity: 0.32 }) : glassCardShadow) }}>
       <View style={{ ...styles.card, ...createContentSurface(theme, { radius: Radius.control }), ...(active ? { borderColor: theme['c-primary'], borderTopColor: theme['c-primary'] } : null) }}>
-      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} style={styles.cardMain} onPress={() => { onPress(item) }}>
+      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} accessibilityLabel={item.name} style={styles.cardMain} onPress={() => { onPress(item) }}>
         <View style={{ ...styles.cardIcon, backgroundColor: active ? theme['c-primary-dark-500'] : theme['c-primary-background-active'] }}>
             {/* 选中态的图标底是 c-primary-dark-500，图标必须用配合深底的 c-000；
                 同一文件里另外三处 `active ? c-font : c-font-label` 都在卡片表面上，

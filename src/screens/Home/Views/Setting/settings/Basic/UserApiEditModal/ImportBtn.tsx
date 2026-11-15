@@ -66,7 +66,7 @@ export default ({ btnStyle, onImportAction }: BtnProps) => {
 
   if (Platform.OS == 'ios') {
     return (
-      <TouchableOpacity style={btnStyle} onPress={handleShowActionSheet}>
+      <TouchableOpacity style={btnStyle} onPress={handleShowActionSheet} accessibilityRole="button" accessibilityLabel={t('user_api_btn_import')}>
         <Text size={14} color={theme['c-button-font']}>{t('user_api_btn_import')}</Text>
       </TouchableOpacity>
     )

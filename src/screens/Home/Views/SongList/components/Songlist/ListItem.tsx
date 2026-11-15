@@ -43,7 +43,8 @@ export default memo(({ item, index, width, showSource, onPress }: {
           <View style={{ ...styles.listItem, width: itemWidth }}>
             <View style={{ ...styles.listItemImg, backgroundColor: theme['c-content-background'] }}>
               <View style={styles.listItemImgClip}>
-                <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
+                {/* 封面只是视觉，标题那一个按钮已经朗读了歌单名与作者 */}
+                <TouchableOpacity activeOpacity={0.5} onPress={handlePress} accessible={false}>
                   <Image url={item.img} nativeID={`${NAV_SHEAR_NATIVE_IDS.songlistDetail_pic}_from_${item.id}`} style={{ width: itemWidth, height: itemWidth, borderRadius: Radius.card }} />
                   { showSource ? (
                     <Text
@@ -62,7 +63,12 @@ export default memo(({ item, index, width, showSource, onPress }: {
                 </TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={handlePress}
+              accessibilityRole="button"
+              accessibilityLabel={item.author ? `${item.name}，${item.author}` : item.name}
+            >
               <Text style={styles.listItemTitle} numberOfLines={ 2 }>{item.name}</Text>
             </TouchableOpacity>
             {hasMeta ? (

@@ -69,7 +69,7 @@ export default memo(() => {
       nativeID={NAV_SHEAR_NATIVE_IDS.playDetail_header}
     >
       <View style={styles.container}>
-        <TouchableOpacity onPress={back} style={{ ...styles.button, width: HEADER_HEIGHT }}>
+        <TouchableOpacity onPress={back} style={{ ...styles.button, width: HEADER_HEIGHT }} accessibilityRole="button" accessibilityLabel={global.i18n.t('back')}>
           <Icon name="chevron-left" size={18} />
         </TouchableOpacity>
         <Title />

@@ -39,10 +39,10 @@ const HistoryListItem = ({ item, index, onRemove, onSelect }: {
 
   return (
     <View style={{ ...styles.listItem, borderBottomColor: theme['c-border-background'] }}>
-      <TouchableOpacity style={styles.listName} onPress={handleSetHost}>
+      <TouchableOpacity style={styles.listName} onPress={handleSetHost} accessibilityRole="button" accessibilityLabel={item}>
         <Text numberOfLines={1}>{item}</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleRemove} style={styles.listBtn}>
+      <TouchableOpacity onPress={handleRemove} style={styles.listBtn} accessibilityRole="button" accessibilityLabel={global.i18n.t('delete')}>
         <Icon name="remove" color={theme['c-font-label']} size={12} />
       </TouchableOpacity>
     </View>

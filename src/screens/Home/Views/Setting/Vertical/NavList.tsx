@@ -25,7 +25,7 @@ const ListItem = memo(({ id, activeId, onPress }: {
 
   return (
     <View style={{ ...styles.listItem, backgroundColor: active ? theme['c-primary-background-active'] : 'transparent' }}>
-      <TouchableOpacity accessibilityRole="button" style={styles.listName} activeOpacity={0.65} onPress={handlePress}>
+      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: active }} accessibilityLabel={t(`setting_${id}`)} style={styles.listName} activeOpacity={0.65} onPress={handlePress}>
         <Text style={styles.listNameText} numberOfLines={1} color={active ? theme['c-primary-font'] : theme['c-font']}>{t(`setting_${id}`)}</Text>
       </TouchableOpacity>
     </View>

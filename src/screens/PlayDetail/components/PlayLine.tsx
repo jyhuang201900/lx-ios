@@ -96,7 +96,7 @@ export default forwardRef<PlayLineType, PlayLineProps>(({ onPlayLine }, ref) => 
       <Text style={styles.label} color={theme['c-primary-font']} size={13}>{timeLabel}</Text>
       <View style={styles.lineContent}>
         <View style={{ ...styles.line, borderBottomColor: theme['c-primary-alpha-700'] }} />
-        <TouchableOpacity style={styles.button} onPress={handlePlayLine}>
+        <TouchableOpacity style={styles.button} onPress={handlePlayLine} accessibilityRole="button" accessibilityLabel={global.i18n.t('play')}>
           <Icon name="play" color={theme['c-button-font']} size={18} />
         </TouchableOpacity>
       </View>

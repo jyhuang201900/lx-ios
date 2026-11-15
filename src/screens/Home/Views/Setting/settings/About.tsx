@@ -32,7 +32,7 @@ export default memo(() => {
       </View>
       <View style={styles.part}>
         <Text style={styles.text}>你已签署本软件的</Text>
-        <TouchableOpacity onPress={openPactModal}><Text style={styles.text} color={theme['c-primary-font']}>许可协议</Text></TouchableOpacity>
+        <TouchableOpacity onPress={openPactModal} accessibilityRole="link" accessibilityLabel="许可协议"><Text style={styles.text} color={theme['c-primary-font']}>许可协议</Text></TouchableOpacity>
         <Text style={styles.text}>。</Text>
       </View>
     </Section>

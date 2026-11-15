@@ -95,7 +95,7 @@ const MenuItem = ({ id, icon, onPress }: {
         </View>
         {/* <Text style={styles.text} size={14} color={theme['c-primary-font']}>{t(id)}</Text> */}
       </View>
-    : <TouchableOpacity style={styles.menuItem} onPress={() => { onPress(id) }}>
+    : <TouchableOpacity style={styles.menuItem} onPress={() => { onPress(id) }} accessibilityRole="button" accessibilityLabel={global.i18n.t(id)}>
         <View style={styles.iconContent}>
           <Icon name={icon} size={20} color={theme['c-font-label']} />
         </View>

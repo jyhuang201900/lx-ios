@@ -51,7 +51,17 @@ export default ({ isHome }: { isHome: boolean }) => {
   }, [musicInfo.id])
 
   return (
-    <TouchableOpacity style={stylesRaw.container} activeOpacity={0.8} onPress={handleOpenDetail}>
+    <TouchableOpacity
+      style={stylesRaw.container}
+      activeOpacity={0.8}
+      onPress={handleOpenDetail}
+      /**
+       * 这一层只是"点中间大块区域也能进播放页"，功能和上面的标题按钮完全重叠。
+       * 让它退成容器（不可聚焦），VoiceOver 焦点才落在标题那一个按钮上，而不是
+       * 两个读到同一件事的元素。
+       */
+      accessible={false}
+    >
       {/* <MusicName /> */}
       <View style={styles.status}>
         <Status autoUpdate={autoUpdate} />

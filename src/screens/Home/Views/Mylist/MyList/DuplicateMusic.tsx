@@ -54,7 +54,7 @@ const ListItem = memo(({ info, index, onRemove, onPlay, selectedList, onPress }:
       {/* <View style={styles.listItemLabel}>
         <Text style={styles.sn} size={13} color={theme['c-font-label']}>{info.index + 1}</Text>
       </View> */}
-      <TouchableOpacity style={styles.listItemInfo} onPress={() => { onPress(info) }}>
+      <TouchableOpacity style={styles.listItemInfo} onPress={() => { onPress(info) }} accessibilityRole="button" accessibilityLabel={info.musicInfo.name}>
         <Text color={theme['c-font']} size={14} numberOfLines={1}>{info.musicInfo.name}</Text>
         <View style={styles.listItemAlbum}>
           <Text color={theme['c-font']} size={12} numberOfLines={1}>

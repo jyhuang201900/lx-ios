@@ -29,7 +29,7 @@ const HeaderItem = ({ id, label, isActive, onPress }: {
   const theme = useTheme()
   // console.log(theme)
   const components = useMemo(() => (
-    <TouchableOpacity style={styles.tabBtn} onPress={() => { !isActive && onPress(id) }}>
+    <TouchableOpacity style={styles.tabBtn} onPress={() => { !isActive && onPress(id) }} accessibilityRole="button" accessibilityState={{ selected: isActive }} accessibilityLabel={label}>
       <Text color={isActive ? theme['c-primary-font-active'] : theme['c-font']}>{label}</Text>
     </TouchableOpacity>
   ), [isActive, theme, label, onPress, id])
@@ -135,7 +135,7 @@ export default memo(({ componentId }: {
             {tabs.map(({ id, label }) => <HeaderItem id={id} label={label} key={id} isActive={activeId == id} onPress={toggleTab} />)}
           </View>
           <View>
-            <TouchableOpacity onPress={refreshComment} style={{ ...styles.btn, width: BAR_HEIGHT }}>
+            <TouchableOpacity onPress={refreshComment} style={{ ...styles.btn, width: BAR_HEIGHT }} accessibilityRole="button" accessibilityLabel={global.i18n.t('comment_refresh_btn')}>
               <Icon name="available_updates" size={20} color={theme['c-600']} />
             </TouchableOpacity>
           </View>

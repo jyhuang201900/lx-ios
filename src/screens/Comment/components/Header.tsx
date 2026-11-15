@@ -38,7 +38,7 @@ export default memo(({ musicInfo }: {
           <Icon name="chevron-left" size={18} />
         </TouchableOpacity>
         <Text numberOfLines={1} size={16} style={styles.title}>{t('comment_title', { name: musicInfo.name, singer: musicInfo.singer })}</Text>
-        {/* <TouchableOpacity onPress={back} style={{ ...styles.button }}>
+        {/* <TouchableOpacity onPress={back} style={{ ...styles.button }} accessibilityRole="button" accessibilityLabel={global.i18n.t('back')}>
           <Icon name="available_updates" style={{ color: theme.normal }} size={24} />
         </TouchableOpacity> */}
       </View>

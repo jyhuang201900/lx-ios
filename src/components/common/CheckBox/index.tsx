@@ -83,7 +83,19 @@ export default ({ check, label, children, onChange, helpTitle, helpDesc, disable
       : (
           <View style={contentStyle}>
             <CheckBox status={check ? 'checked' : 'unchecked'} disabled={isDisabled} onPress={handleLabelPress} tintColors={tintColors} size={size} />
-            <TouchableOpacity style={labelStyle} activeOpacity={0.3} onPress={handleLabelPress}>
+            <TouchableOpacity
+              style={labelStyle}
+              activeOpacity={0.3}
+              onPress={handleLabelPress}
+              /**
+               * 文字这一块本身就是开关（点名字等于点框），所以它要带上复选框
+               * 语义和勾选状态；否则 VoiceOver 只读出一个"设置项名字"的按钮，
+               * 听不出按了是会勾上还是取消。
+               */
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: !!check, disabled: isDisabled }}
+              accessibilityLabel={typeof label === 'string' ? label : undefined}
+            >
               {label ? <Text style={styles.name} size={15 * size}>{label}</Text> : children}
             </TouchableOpacity>
             {helpComponent}

@@ -25,7 +25,7 @@ const ThemeItem = ({ color, change }: {
   change: (color: Theme) => void
 }) => {
   return (
-    <TouchableOpacity style={styles.item} activeOpacity={0.5} onPress={() => { change(color) }}>
+    <TouchableOpacity style={styles.item} activeOpacity={0.5} onPress={() => { change(color) }} accessibilityRole="button" accessibilityLabel={color[0]}>
       <View style={styles.colorContent}>
         <View style={{ ...styles.image, backgroundColor: color[0] }}></View>
       </View>

@@ -123,10 +123,10 @@ export default forwardRef<MultipleModeBarType, MultipleModeBarProps>(({ onSelect
             <Text color={theme['c-button-font']}>{global.i18n.t('list_select_range')}</Text>
           </Button>
         </View>
-        <TouchableOpacity onPress={handleSelectAll} style={styles.btn}>
+        <TouchableOpacity onPress={handleSelectAll} style={styles.btn} accessibilityRole="button" accessibilityLabel={global.i18n.t(isSelectAll ? 'list_select_unall' : 'list_select_all')}>
           <Text color={theme['c-button-font']}>{global.i18n.t(isSelectAll ? 'list_select_unall' : 'list_select_all')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={onExitSelectMode} style={styles.btn}>
+        <TouchableOpacity onPress={onExitSelectMode} style={styles.btn} accessibilityRole="button" accessibilityLabel={global.i18n.t('list_select_cancel')}>
           <Text color={theme['c-button-font']}>{global.i18n.t('list_select_cancel')}</Text>
         </TouchableOpacity>
       </Animated.View>

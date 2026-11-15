@@ -46,7 +46,7 @@ export default memo(({ item, index, activeIndex, onPress, onShowMenu, onLongPres
 
   return (
     <View style={{ ...styles.listItem, width: rowInfo.rowWidth, minHeight: ITEM_HEIGHT, backgroundColor: isSelected ? theme['c-primary-background-hover'] : active ? theme['c-primary-input-background'] : 'rgba(0,0,0,0)', borderBottomColor: theme['c-border-background'] }}>
-      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }} style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
+      <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }} accessibilityLabel={`${index + 1}，${item.name}，${singer}`} style={styles.listItemLeft} activeOpacity={0.65} onPress={() => { onPress(item, index) }} onLongPress={() => { onLongPress(item, index) }}>
         {
           active
             ? <Icon style={styles.sn} name="play-outline" size={13} color={theme['c-font']} />

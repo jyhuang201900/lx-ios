@@ -80,7 +80,7 @@ export default forwardRef<HeaderBarType, HeaderBarProps>(({ onSourceChange, onBo
           <Icon name="chevron-right" size={12} color={theme['c-font-label']} />
         </View>
       </DorpDownMenu>
-      <TouchableOpacity accessibilityRole="button" onPress={onPlayAll} style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-dark-500'] }}>
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel={global.i18n.t('play_all')} onPress={onPlayAll} style={{ ...styles.playAllButton, backgroundColor: theme['c-primary-dark-500'] }}>
         <Icon name="play" size={15} color={theme['c-on-solid']} />
         <Text size={12} color={theme['c-on-solid']}>{global.i18n.t('play_all')}</Text>
       </TouchableOpacity>

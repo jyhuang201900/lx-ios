@@ -84,6 +84,9 @@ export default forwardRef<SortTabType, SortTabProps>(({ onSortChange }, ref) => 
                 ...(active ? { backgroundColor: theme['c-primary-background-active'] } : null),
               }}
               onPress={() => { handleSortChange(s.id) }}
+              accessibilityRole="button"
+              accessibilityState={{ selected: active }}
+              accessibilityLabel={s.label}
             >
               <Text style={styles.buttonText} color={active ? theme['c-primary-font-active'] : theme['c-font-label']}>{s.label}</Text>
             </TouchableOpacity>
