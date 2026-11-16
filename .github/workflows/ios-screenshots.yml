@@ -123,8 +123,7 @@ jobs:
           # 整段输出同时落到 build/boot.log，Publish 步骤把它一起推上 shots
           # 分支——这一步失败时 api.github.com 上的 job 日志拉不动，只有
           # 分支里的那份还拿得到。
-          exec > >(tee -a build/boot.log) 2>&1
-
+          exec >> build/boot.log 2>&1
           stamp() { date -u '+%H:%M:%S'; }
           with_timeout() {
             local secs="$1"; shift
@@ -235,7 +234,7 @@ jobs:
           launch_app() {
             local udid="$1" i out
             for i in 1 2 3; do
-              out="$(with_timeout 60 xcrun simctl launch "$udid" "$IOS_BUNDLE_IDENTIFIER" 2>&1)"
+              out="$(with_timeout 90 xcrun simctl launch "$udid" "$IOS_BUNDLE_IDENTIFIER" 2>&1)"
               if echo "$out" | grep -qE ': [0-9]+$'; then
                 echo "$out"
                 return 0
@@ -317,7 +316,7 @@ jobs:
             # 找不到文件、静默跳过，于是 01/02 两张拍成了默认的英文界面加
             # 「谨防被骗」弹窗——同一轮里 03 之后都正常，因为那时 manifest
             # 已经被上一次启动写出来了。改成轮询等文件出现（最多 30 秒）。
-            with_timeout 60 xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER"
+            with_timeout 90 xcrun simctl launch "$UDID" "$IOS_BUNDLE_IDENTIFIER"
             for i in $(seq 1 30); do
               if [ -n "$(manifest_path "$UDID")" ]; then
                 echo "[$(stamp)] manifest ready after ${i}s"
