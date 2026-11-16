@@ -8,6 +8,8 @@ const defaultSetting: LX.AppSetting = {
   'common.isAgreePact': false,
   'common.startupNavId': null,
   'common.startupSearchText': null,
+  // 截图流程用：设置页初始子页下标，默认 null（落在第一页，产品行为不变）
+  'common.startupSettingId': null,
   'common.autoHidePlayBar': true,
   'common.drawerLayoutPosition': 'left',
   'common.homePageScroll': true,

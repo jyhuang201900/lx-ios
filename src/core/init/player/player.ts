@@ -1,5 +1,6 @@
 import { addPlayedList, clearPlayedList } from '@/core/player/playedList'
-import { pause, playNext } from '@/core/player/player'
+import { pause, playNext, recoverFromPlaybackError } from '@/core/player/player'
+import { resetPlaybackFailure } from '@/core/player/recovery'
 import { setStatusText, setIsPlay } from '@/core/player/playStatus'
 // import { resetPlayerMusicInfo } from '@/core/player/playInfo'
 import { setStop } from '@/plugins/player'
@@ -14,10 +15,22 @@ import { Platform } from 'react-native'
 export default async(setting: LX.AppSetting) => {
   const setPlayStatus = () => {
     setIsPlay(true)
+    // 真正播起来了就说明这一轮失败恢复走完了，连续失败计数清零
+    const musicId = playerState.playMusicInfo.musicInfo?.id
+    if (musicId) resetPlaybackFailure(musicId)
   }
   const setPauseStatus = () => {
     setIsPlay(false)
     if (global.lx.isPlayedStop) void pause()
+  }
+
+  /**
+   * 播放报错。恢复动作（URL 失效重取、连续失败上限）在 core/player 里做，
+   * 这里只负责把事件递过去；恢复本身不替产品决定跳下一首。
+   */
+  const handlePlayError = () => {
+    setPauseStatus()
+    void recoverFromPlaybackError()
   }
 
   const handleEnded = () => {
@@ -64,7 +77,7 @@ export default async(setting: LX.AppSetting) => {
 
   global.app_event.on('play', setPlayStatus)
   global.app_event.on('pause', setPauseStatus)
-  global.app_event.on('error', setPauseStatus)
+  global.app_event.on('error', handlePlayError)
   global.app_event.on('stop', setStopStatus)
   global.app_event.on('playerEnded', handleEnded)
   global.app_event.on('picUpdated', updatePic)

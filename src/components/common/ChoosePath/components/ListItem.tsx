@@ -48,7 +48,12 @@ export default memo(({ item, onPress, rowInfo }: {
             }
           </View>
         ) : (
-          <TouchableOpacity style={styles.listItem} onPress={ () => { onPress(item) } }>
+          <TouchableOpacity
+            style={styles.listItem}
+            // 整行是进入/选择入口；没有 button 语义时 VoiceOver 只念标题和描述，听不出可以点
+            accessibilityRole="button"
+            onPress={ () => { onPress(item) } }
+          >
             <View style={styles.itemInfo}>
               <Text style={styles.listItemTitleText} numberOfLines={1}>{item.name}</Text>
               <Text style={styles.listItemDesc} size={12} color={theme['c-font-label']} numberOfLines={1}>{item.mtime ? new Date(item.mtime).toLocaleString() : item.desc}</Text>

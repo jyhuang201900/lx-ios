@@ -502,7 +502,14 @@ const PitchSection = memo(({
       <View style={styles.sectionHeader}>
         <View style={styles.sectionHeaderTitle}>
           <Text style={styles.sectionTitle}>{t('setting_play_sound_effect_pitch')}</Text>
-          <TouchableOpacity activeOpacity={0.7} onPress={onShowTip} style={styles.tipButton}>
+          {/* 只有一个图标，没有可读文本——不写 label 的话 VoiceOver 只会念“按钮” */}
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={onShowTip}
+            accessibilityRole="button"
+            accessibilityLabel={t('setting_play_sound_effect_pitch_help')}
+            style={styles.tipButton}
+          >
             <Icon name="help" size={14} color={theme['c-font-label']} />
           </TouchableOpacity>
         </View>

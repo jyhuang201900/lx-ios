@@ -199,6 +199,8 @@ const Menu = ({
                         key={menu.action}
                         style={{ ...styles.menuItem, borderBottomWidth: index == menus.length - 1 ? 0 : StyleSheet.hairlineWidth, width: menuItemStyle.width, height: menuItemStyle.height }}
                         underlayColor={theme['c-primary-background-active']}
+                        // 菜单项整行可点：补 button 语义，VoiceOver 才会报“按钮”，而不是只读一段文字
+                        accessibilityRole="button"
                         onPress={() => { menuPress(menu) }}
                       >
                         <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>

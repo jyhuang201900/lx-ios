@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import state, { type InitState } from './state'
 import { getListMusics } from '@/core/list'
+import { allMusicList, getMusicIndexInList } from '@/utils/listManage'
 
 export const useMyList = () => {
   const [lists, setList] = useState(state.allList)
@@ -74,6 +75,12 @@ export const useMusicExistsList = (list: LX.List.MyListInfo, musicInfo: LX.Music
   const [isExists, setExists] = useState(false)
 
   useEffect(() => {
+    // 为什么：列表已加载到内存时走 O(1) 下标索引，避免每一行都 await 一次存储读取（1000 首的列表会明显卡）
+    const index = getMusicIndexInList(list.id, musicInfo.id)
+    if (index > -1 || allMusicList.has(list.id)) {
+      setExists(index > -1)
+      return
+    }
     void getListMusics(list.id).then((musics) => {
       setExists(musics.some(s => s.id == musicInfo.id))
     })

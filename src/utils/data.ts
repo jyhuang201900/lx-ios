@@ -1,6 +1,124 @@
-import { getData, saveData, getAllKeys, removeDataMultiple, saveDataMultiple, removeData, getDataMultiple } from '@/plugins/storage'
+// 原始 AsyncStorage 包装只在本文件的加固层里使用，业务代码一律走下面同名的加固版本
+import {
+  getData as rawGetData,
+  saveData as rawSaveData,
+  getAllKeys as rawGetAllKeys,
+  removeDataMultiple as rawRemoveDataMultiple,
+  saveDataMultiple as rawSaveDataMultiple,
+  removeData as rawRemoveData,
+  getDataMultiple as rawGetDataMultiple,
+} from '@/plugins/storage'
 import { DEFAULT_SETTING, LIST_IDS, storageDataPrefix, type NAV_ID_Type } from '@/config/constant'
+import { log } from '@/utils/log'
 import { throttle } from './common'
+
+// ---------------------------------------------------------------------------
+// 存储层加固（storage-guard）
+// 下面几个函数刻意与 @/plugins/storage 的导出同名，用来就地覆盖导入，
+// 这样本文件所有既有调用点不用改一行就自动获得：超时保护 + 失败降级 + 写重试。
+// ---------------------------------------------------------------------------
+/** 单个存储操作超过 3 秒即视为读/写失败：iOS 上 AsyncStorage 偶发不回调，原实现会永久挂起启动流程 */
+const STORAGE_TIMEOUT = 3000
+/** 写类操作的总尝试次数（首次 + 重试一次）；第二次仍失败只记日志，不再上抛 */
+const STORAGE_WRITE_ATTEMPTS = 2
+
+/** 统一把 unknown 异常转成可日志化的字符串 */
+const storageErrorMessage = (err: unknown) => err instanceof Error ? err.message : String(err)
+
+/**
+ * 给存储 Promise 加超时，超时按失败处理（reject）。
+ * 用 Promise.race 而非直接 await，是为了让"原生层无响应"和"正常失败"走同一条降级路径；
+ * 结束时清掉定时器，否则每次存储操作都会留下一个 3 秒的悬挂定时器。
+ */
+const withStorageTimeout = async<T>(task: Promise<T>, key: string, action: string): Promise<T> => {
+  let timer: ReturnType<typeof setTimeout> | null = null
+  const timeoutTask = new Promise<never>((_resolve, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error(`storage ${action} timeout(${STORAGE_TIMEOUT}ms)`))
+    }, STORAGE_TIMEOUT)
+  })
+  return Promise.race([task, timeoutTask]).finally(() => {
+    if (timer) clearTimeout(timer)
+  })
+}
+
+/**
+ * 读 + 反序列化。JSON.parse 发生在 @/plugins/storage 内部，内容损坏时它会抛 SyntaxError，
+ * 这里连同超时、原生读写异常一起吃掉：只记一条错误日志并返回调用方给的默认值，
+ * 不让一条脏数据把启动流程打断。
+ */
+const getData = async<T = unknown>(key: string, fallback: T | null = null): Promise<T | null> => {
+  try {
+    const value = await withStorageTimeout(rawGetData<T>(key), key, 'read')
+    return value ?? fallback
+  } catch (err) {
+    log.error('storage error[getData fail]:', key, storageErrorMessage(err))
+    return fallback
+  }
+}
+
+/**
+ * 写类操作统一入口：超时 + 重试一次，第二次仍失败只记错误日志后返回。
+ * 不抛出的原因：本文件大量 `void saveData(...)` 调用，抛错会变成未捕获的 promise rejection。
+ */
+const runStorageWrite = async(key: string, action: string, task: () => Promise<unknown>): Promise<void> => {
+  for (let attempt = 1; attempt <= STORAGE_WRITE_ATTEMPTS; attempt++) {
+    try {
+      await withStorageTimeout(task(), key, action)
+      return
+    } catch (err) {
+      const msg = storageErrorMessage(err)
+      if (attempt >= STORAGE_WRITE_ATTEMPTS) {
+        log.error(`storage error[${action} fail]:`, key, msg)
+        return
+      }
+      // 首次失败大概率是瞬时状态（存储繁忙/分片写入被打断），重试一次再决定是否放弃
+      log.warn(`storage warn[${action} retry]:`, key, msg)
+    }
+  }
+}
+
+const saveData = async(key: string, value: unknown): Promise<void> => {
+  await runStorageWrite(key, 'save', async() => rawSaveData(key, value))
+}
+
+const saveDataMultiple = async(datas: Array<[string, unknown]>): Promise<void> => {
+  await runStorageWrite('multi', 'save-multi', async() => rawSaveDataMultiple(datas))
+}
+
+// 删除按写失败处理：删不掉不影响内存数据，下次写入会覆盖，所以同样只记日志不抛
+const removeData = async(key: string): Promise<void> => {
+  await runStorageWrite(key, 'remove', async() => rawRemoveData(key))
+}
+
+const removeDataMultiple = async(keys: string[]): Promise<void> => {
+  await runStorageWrite('multi', 'remove-multi', async() => rawRemoveDataMultiple(keys))
+}
+
+/** key 列表读失败降级为 []：清理类调用（清缓存、meta 汇总）拿到空列表即什么都不做，不影响主流程 */
+const getAllKeys = async(): Promise<string[]> => {
+  try {
+    return [...(await withStorageTimeout(rawGetAllKeys(), '', 'keys'))]
+  } catch (err) {
+    log.error('storage error[getAllKeys fail]:', storageErrorMessage(err))
+    return []
+  }
+}
+
+/**
+ * 批量读。失败时伪造与请求 key 一一对应的 [key, null] 占位，
+ * 保持返回结构不变，调用方（如歌词读取）按"取不到值"分支处理即可。
+ */
+const getDataMultiple = async<T extends readonly string[]>(keys: T): Promise<{ [K in keyof T]: [T[K], unknown] }> => {
+  type RawData = { [K in keyof T]: [T[K], unknown] }
+  try {
+    return await withStorageTimeout(rawGetDataMultiple(keys), keys.join(','), 'read-multi')
+  } catch (err) {
+    log.error('storage error[getDataMultiple fail]:', keys.join(','), storageErrorMessage(err))
+    return keys.map(key => [key, null]) as unknown as RawData
+  }
+}
+
 // import { gzip, ungzip } from '@/utils/nativeModules/gzip'
 // import { readFile, writeFile, temporaryDirectoryPath, unlink } from '@/utils/fs'
 // import { isNotificationsEnabled, openNotificationPermissionActivity, shareText } from '@/utils/nativeModules/utils'

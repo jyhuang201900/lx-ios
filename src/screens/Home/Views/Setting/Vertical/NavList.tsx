@@ -5,6 +5,7 @@ import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
 import Text from '@/components/common/Text'
 import { SETTING_SCREENS, type SettingScreenIds } from '../Main'
+import { pickStartupSettingId } from '../startupSetting'
 import { useI18n } from '@/lang'
 import { Radius } from '@/theme/layout'
 
@@ -40,7 +41,14 @@ const ListItem = memo(({ id, activeId, onPress }: {
 export default ({ onChangeId }: {
   onChangeId: (id: SettingScreenIds) => void
 }) => {
-  const [activeId, setActiveId] = useState(global.lx.settingActiveId)
+  // 截图流程用：manifest 预置了 common.startupSettingId 时直接选中该子页，
+  // 并写回 global，让随后挂载的 Main 渲染同一页（两边默认都读这个全局值）。
+  // 未预置（null）或下标越界时沿用 global 原值，产品行为不变。
+  const [activeId, setActiveId] = useState<SettingScreenIds>(() => {
+    const id = pickStartupSettingId(SETTING_SCREENS, global.lx.settingActiveId)
+    global.lx.settingActiveId = id
+    return id
+  })
 
   const handleChangeId = useCallback((id: SettingScreenIds) => {
     onChangeId(id)

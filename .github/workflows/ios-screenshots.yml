@@ -363,6 +363,11 @@ jobs:
             shoot "$UDID" "shots/${SLUG}-17-search-history.png" '{"common.startupNavId":"nav_search","search.isShowHistorySearch":true}' 12 '' hist
             shoot "$UDID" "shots/${SLUG}-18-search-result.png" '{"common.startupNavId":"nav_search","common.startupSearchText":"周杰伦"}' 16
 
+            # 设置子页：common.startupSettingId 是 SETTING_SCREENS 的下标，
+            # 设置页冷启动时自己选中那一项，不用点按导航条。
+            shoot "$UDID" "shots/${SLUG}-20-setting-basic.png" '{"common.startupNavId":"nav_setting","common.startupSettingId":0}' 12
+            shoot "$UDID" "shots/${SLUG}-21-setting-theme.png" '{"common.startupNavId":"nav_setting","common.startupSettingId":1}' 12
+
             # 进程还活着才算启动成功
             if ! xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$IOS_BUNDLE_IDENTIFIER"; then
               echo "::warning::$NAME 上没看到应用进程，附设备日志"

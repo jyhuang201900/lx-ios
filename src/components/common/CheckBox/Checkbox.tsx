@@ -86,6 +86,9 @@ const Checkbox = ({
       {...rest}
       onPress={onPress}
       disabled={disabled}
+      // 图形本身不单独成为焦点：外层文字行（CheckBox/index.tsx）已带 checkbox 语义与勾选状态，
+      // 这里再暴露一个没有 label 的同款控件，VoiceOver 只会多读出一个空复选框
+      accessible={false}
       accessibilityRole="checkbox"
       accessibilityState={{ disabled, checked }}
       accessibilityLiveRegion="polite"

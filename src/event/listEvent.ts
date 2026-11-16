@@ -16,10 +16,14 @@ import {
   listMusicUpdatePosition,
   listMusicClear,
   allMusicList,
+  getListMusicSync,
+  fixPlayIndexAfterRemove,
 } from '@/utils/listManage'
 import { LIST_IDS } from '@/config/constant'
 import { setActiveList, setUserList } from '@/core/list'
 import listState from '@/store/list/state'
+import playerState from '@/store/player/state'
+import playerActions from '@/store/player/action'
 
 const updateUserList = async(userLists: LX.List.UserListInfo[]) => {
   await saveUserList(userLists)
@@ -194,7 +198,17 @@ export class ListEvent extends Event {
    * @param isRemote 是否属于远程操作
    */
   async list_music_remove(listId: string, ids: string[], isRemote: boolean = false) {
+    // 删歌会让后面的下标整体前移。原来这里只删数据、不动播放位置，
+    // 于是删掉当前歌前面的曲子后播放器还按老数字指歌——轻则播错，重则下标越界。
+    // 先留一份删除前的列表（listMusicRemove 是原地压缩，直接传原数组会被改掉），
+    // 删完用同一份 ids 算出新下标再写回。
+    const beforeMusicList = getListMusicSync(listId)?.slice() ?? null
+    const { playerListId, playIndex } = playerState.playInfo
     const changedIds = await listMusicRemove(listId, ids)
+    if (beforeMusicList && playerListId === listId) {
+      const nextIndex = fixPlayIndexAfterRemove(beforeMusicList, ids, playIndex)
+      if (nextIndex !== playIndex) playerActions.updatePlayIndex(nextIndex, nextIndex)
+    }
     // console.log(changedIds)
     await checkUpdateList(changedIds)
     this.emit('list_music_remove', listId, ids, isRemote)

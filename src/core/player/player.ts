@@ -23,7 +23,7 @@ import {
 } from '@/core/player/tempPlayList'
 import { getMusicUrlInfo, getPicPath, getLyricInfo } from '@/core/music'
 import { requestMsg } from '@/utils/message'
-import { probeAudioStream } from '@/utils/request'
+import { checkUrl, probeAudioStream } from '@/utils/request'
 import { inferQualityFromStream } from '@/utils/quality'
 import { getRandom } from '@/utils/common'
 import { filterList } from './utils'
@@ -33,6 +33,7 @@ import { LIST_IDS } from '@/config/constant'
 import { addListMusics, removeListMusics } from '@/core/list'
 import { addDislikeInfo } from '@/core/dislikeList'
 import { markTimeoutExitInteraction } from './timeoutExit'
+import { isUrlExpiredError, MAX_CONSECUTIVE_FAILURES, recordPlaybackFailure, tryAcquireUrlRetry } from './recovery'
 
 // import { checkMusicFileAvailable } from '@renderer/utils/music'
 
@@ -80,6 +81,9 @@ const currentStreamInfo = {
   quality: null as LX.Quality | null,
   source: null as LX.Source | null,
 }
+// 取 URL 请求序号：每次发起 +1。异步回调回来时用它判断自己是不是已经过期的那一次
+// —— 快速切歌/换音质会叠出多个并发取流请求，晚到的旧结果不许写进当前状态。
+let urlRequestSeq = 0
 /**
  * 检查音乐信息是否已更改
  */
@@ -161,12 +165,17 @@ export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
   if (!allowCurrentPlayback && !diffCurrentMusicInfo(musicInfo)) return
   if (cancelDelayRetry) cancelDelayRetry()
   global.lx.gettingUrlId = createGettingUrlId(musicInfo)
+  // 本次取流的凭据：回调里只要发现序号已被更晚的请求顶掉，就整段丢弃
+  const requestSeq = ++urlRequestSeq
   const currentTimePromise = isRefresh
     ? getPosition().catch(() => playerState.progress.nowPlayTime)
     : Promise.resolve(playerState.progress.nowPlayTime)
   void getMusicPlayUrl(musicInfo, isRefresh, false, quality, allowCurrentPlayback).then(async(result) => {
     if (!result) return
     const currentTime = await currentTimePromise
+    // 等 getPosition 的这段时间里可能已经切歌/换音质：序号变了就丢弃，
+    // 否则会把上一首（或上一个音质）的地址写进当前这首歌的状态
+    if (requestSeq !== urlRequestSeq) return
     currentStreamInfo.musicId = musicInfo.id
     currentStreamInfo.url = result.url
     currentStreamInfo.quality = result.quality
@@ -208,11 +217,64 @@ export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
     global.app_event.error()
     addDelayNextTimeout()
   }).finally(() => {
-    if (musicInfo === playerState.playMusicInfo.musicInfo) {
+    // 序号变了说明有更新的取流请求接手了，gettingUrlId 和取流超时归它管，
+    // 这次旧请求不能把它们清掉
+    if (requestSeq === urlRequestSeq && musicInfo === playerState.playMusicInfo.musicInfo) {
       global.lx.gettingUrlId = ''
       clearLoadTimeout()
     }
   })
+}
+
+/**
+ * 播放报错后的恢复入口（由 `app_event.error` 转过来）。
+ *
+ * 只处理“播放地址失效”这一种：先用 HEAD 核实当前这条流确实回了 403/404/410，
+ * 核实成立才用同一首歌重取一次地址——重取能不能救，靠核实而不是靠猜，
+ * 解码失败之类的重取也没用，只会多卡一次。
+ *
+ * 同一首歌连续失败满 MAX_CONSECUTIVE_FAILURES 次就停在错误态并留日志，
+ * 不再重取、也不替产品决定要不要跳下一首。
+ *
+ * @returns 是否已发起重取，调用方据此决定要不要做别的兜底
+ */
+export const recoverFromPlaybackError = async(): Promise<boolean> => {
+  const musicInfo = playerState.playMusicInfo.musicInfo
+  if (!musicInfo || global.lx.isPlayedStop) return false
+
+  const failureCount = recordPlaybackFailure(musicInfo.id)
+  if (failureCount >= MAX_CONSECUTIVE_FAILURES) {
+    // 下载项（ListItem）和在线歌曲的 name 不在同一个位置，按已有约定取值
+    const minfo = 'progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo
+    console.warn(`[player-recovery] 同一首歌连续失败 ${failureCount} 次，停止重试: ${musicInfo.id} ${minfo.name}`)
+    // 这条路径不会自动跳下一首（和 player__error 的“5 秒后切换”不是一回事），所以单独用一条文案
+    setStatusText(global.i18n.t('player__error_stopped'))
+    return false
+  }
+
+  // 没记到当前这首歌的流地址，就无从判断它是否过期
+  if (currentStreamInfo.musicId !== musicInfo.id || !currentStreamInfo.url) return false
+
+  const streamUrl = currentStreamInfo.url
+  const expired = await checkUrl(streamUrl).then(() => false).catch((err: unknown) => isUrlExpiredError(err))
+  // HEAD 也是异步的：回来时已经切歌（或这首歌已被别处刷新），这次恢复就不该再动手
+  if (playerState.playMusicInfo.musicInfo !== musicInfo) return false
+
+  if (!expired) {
+    console.log(`[player-recovery] 地址仍可用，不重取: ${musicInfo.id}`)
+    return false
+  }
+  // 本轮那唯一一次名额已被用掉：说明重取过一次还是坏，交给连续失败上限收尾
+  if (!tryAcquireUrlRetry(musicInfo.id)) {
+    console.warn(`[player-recovery] 本轮已重取过一次，不再重取: ${musicInfo.id}`)
+    return false
+  }
+
+  setStatusText(global.i18n.t('player__refresh_url'))
+  // allowCurrentPlayback=true：报错时播放态已被置为暂停，这里要跳过“是否仍在播”的前置判断，
+  // 否则这次恢复会被直接短路掉
+  setMusicUrl(musicInfo, true, undefined, true)
+  return true
 }
 
 /** Re-fetch the current track at the selected quality without losing its playback position. */
@@ -233,12 +295,15 @@ const handleRestorePlay = async(restorePlayInfo: LX.Player.SavedPlayInfo) => {
   global.app_event.seekLyric(restoreTime)
 
   const playMusicInfo = playerState.playMusicInfo
+  // setPlayMusicInfo 会整体替换 playMusicInfo 对象，拿对象快照比对永远相等（等于没比对）；
+  // 记下恢复开始时的歌曲 id，回调回来时和“当前”的 id 比，切歌后的旧回调才丢得掉
+  const restoreMusicId = musicInfo.id
 
   void initTrackInfo(musicInfo, playerState.musicInfo)
 
   void getPicPath({ musicInfo, listId: playMusicInfo.listId }).then((url: string) => {
     if (
-      musicInfo.id != playMusicInfo.musicInfo?.id ||
+      restoreMusicId != playerState.playMusicInfo.musicInfo?.id ||
       playerState.musicInfo.pic == url ||
       playerState.loadErrorPicUrl == url
     ) return
@@ -247,7 +312,7 @@ const handleRestorePlay = async(restorePlayInfo: LX.Player.SavedPlayInfo) => {
   })
 
   void getLyricInfo({ musicInfo }).then((lyricInfo) => {
-    if (musicInfo.id != playMusicInfo.musicInfo?.id) return
+    if (restoreMusicId != playerState.playMusicInfo.musicInfo?.id) return
     setMusicInfo({
       lrc: lyricInfo.lyric,
       tlrc: lyricInfo.tlyric,
@@ -258,7 +323,7 @@ const handleRestorePlay = async(restorePlayInfo: LX.Player.SavedPlayInfo) => {
     global.app_event.lyricUpdated()
   }).catch((err) => {
     console.log(err)
-    if (musicInfo.id != playMusicInfo.musicInfo?.id) return
+    if (restoreMusicId != playerState.playMusicInfo.musicInfo?.id) return
     setStatusText(global.i18n.t('lyric__load_error'))
   })
 
@@ -328,6 +393,10 @@ const handlePlay = async() => {
 
   clearDelayNextTimeout()
   clearLoadTimeout()
+
+  // await setStop() 期间可能又切了一次歌：这次 handlePlay 已经过期，让后来者接管。
+  // 少了这道判断，连着切歌时 debounce 会以旧歌的参数收尾，把上一首又摆回当前状态
+  if (playerState.playMusicInfo.musicInfo !== musicInfo) return
 
 
   if (settingState.setting['player.togglePlayMethod'] == 'random' && !playMusicInfo.isTempPlay) addPlayedList(playMusicInfo as LX.Player.PlayMusicInfo)

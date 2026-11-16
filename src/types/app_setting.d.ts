@@ -51,6 +51,14 @@ declare global {
       'common.startupSearchText': string | null
 
       /**
+       * 冷启动时落在设置的哪个子页（SETTING_SCREENS 的下标）。
+       * 只给截图流程用，不进设置面板：模拟器点不了导航条，CI 只能靠预置存储
+       * 把界面直接送到设置的第 N 页；null 或下标越界时停在默认第一屏。
+       * 走的是和 common.startupNavId 同一条路子。
+       */
+      'common.startupSettingId': number | null
+
+      /**
        * api id
        */
       'common.apiSource': string

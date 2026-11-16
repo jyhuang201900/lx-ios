@@ -14,6 +14,7 @@ import apiSourceInfo from './api-source-info'
 // import direct_api_mg from './mg/api-direct'
 
 import settingState from '@/store/setting/state'
+import { REQUEST_ERROR_CODES, RequestError } from './utils'
 
 
 const apiList = {
@@ -50,7 +51,13 @@ const apis = source => {
   if (/^user_api/.test(settingState.setting['common.apiSource'])) return global.lx.apis[source]
   const api = getAPI(source)
   if (api) return api
-  throw new Error('Api is not found')
+  // 为什么：这里抛的不是网络错误，但形状与请求层一致（code/message/source），
+  // 上层只需判 err.code，不必为「音源未配置」单独写一条分支
+  throw new RequestError({
+    code: REQUEST_ERROR_CODES.NO_API,
+    message: 'Api is not found',
+    source,
+  })
 }
 
 export { apis, supportQuality }

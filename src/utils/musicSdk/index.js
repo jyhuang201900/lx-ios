@@ -6,6 +6,7 @@ import mg from './mg'
 // import bd from './bd'
 import xm from './xm'
 import { supportQuality } from './api-source'
+import { normalizeError, raceWithSignal } from './utils'
 
 
 const sources = {
@@ -58,22 +59,44 @@ export const init = () => {
 }
 
 
-export const searchMusic = async({ name, singer, source: s, limit = 25 }) => {
+/**
+ * 多源搜索汇总。
+ * @param {{ name: string, singer?: string, source?: string, limit?: number }} props 搜索条件（参数位置不变）
+ * @param {{ signal?: AbortSignal, onSourceError?: (err: import('./utils').RequestError) => void }} [requestOptions]
+ *   可选：signal 让本次汇总响应取消；onSourceError 逐个交出归一化后的源错误（不传时行为与旧版一致）
+ */
+export const searchMusic = async({ name, singer, source: s, limit = 25 }, requestOptions = {}) => {
+  const { signal, onSourceError } = requestOptions
   const trimStr = str => typeof str == 'string' ? str.trim() : str
   const musicName = trimStr(name)
   const tasks = []
   const excludeSource = ['xm']
   for (const source of sources.sources) {
     if (!sources[source.id].musicSearch || source.id == s || excludeSource.includes(source.id)) continue
-    tasks.push(sources[source.id].musicSearch.search(`${musicName} ${singer || ''}`.trim(), 1, limit).catch(_ => null))
+    tasks.push(sources[source.id].musicSearch.search(`${musicName} ${singer || ''}`.trim(), 1, limit).catch(err => {
+      // 为什么：旧代码把源错误一律吞成 null，界面分不出是超时、断网还是接口挂了；
+      // 这里保留「吞错继续搜」的默认行为，只把归一化错误经可选回调交出去
+      if (onSourceError) {
+        try {
+          onSourceError(normalizeError(err, { source: source.id }))
+        } catch {}
+      }
+      return null
+    }))
   }
-  return (await Promise.all(tasks)).filter(s => s)
+  const resultTask = Promise.all(tasks).then(list => list.filter(s => s))
+  // 为什么：不传 signal 时直接返回，取消逻辑完全不参与，保证旧调用方行为不变
+  return raceWithSignal(resultTask, signal, 'all')
 }
 
-export const findMusic = async(musicInfo) => {
+/**
+ * @param {object} musicInfo 歌曲信息（参数位置不变）
+ * @param {{ signal?: AbortSignal, onSourceError?: Function }} [requestOptions] 透传给 searchMusic
+ */
+export const findMusic = async(musicInfo, requestOptions = {}) => {
   const { name, singer, albumName, interval, source: s } = musicInfo
 
-  const lists = await searchMusic({ name, singer, source: s, limit: 25 })
+  const lists = await searchMusic({ name, singer, source: s, limit: 25 }, requestOptions)
 
   const singersRxp = /、|&|;|；|\/|,|，|\|/
   const sortSingle = singer => singersRxp.test(singer)
@@ -165,3 +188,6 @@ export const findMusic = async(musicInfo) => {
   // console.log(newResult)
   return newResult
 }
+
+// 为什么：错误工具从聚合入口再导出一次，界面层判一个 code 不必深入 utils 模块
+export { REQUEST_ERROR_CODES, RequestError, isRequestError, normalizeError } from './utils'

@@ -1,13 +1,12 @@
-// import { apis } from '../api-source'
-// import leaderboard from './leaderboard'
-// import songList from './songList'
-// import musicSearch from './musicSearch'
-// import pic from './pic'
-// import lyric from './lyric'
-// import hotSearch from './hotSearch'
-// import comment from './comment'
-// import musicInfo from './musicInfo'
-// import { closeVerifyModal } from './util'
+import { REQUEST_ERROR_CODES, RequestError } from './utils'
+
+// 为什么：虾米源已停用，但上层统一按 { code, message, source } 判错误，
+// 这里不再抛裸 Error('fail')，换成同一形状的 RequestError（仍是 instanceof Error）
+const sourceGoneError = () => new RequestError({
+  code: REQUEST_ERROR_CODES.SOURCE_UNAVAILABLE,
+  message: '虾米音源已停用',
+  source: 'xm',
+})
 
 const xm = {
   // songList,
@@ -17,26 +16,26 @@ const xm = {
   // closeVerifyModal,
   comment: {
     getComment() {
-      return Promise.reject(new Error('fail'))
+      return Promise.reject(sourceGoneError())
     },
     getHotComment() {
-      return Promise.reject(new Error('fail'))
+      return Promise.reject(sourceGoneError())
     },
   },
   getMusicUrl(songInfo, type) {
     return {
-      promise: Promise.reject(new Error('fail')),
+      promise: Promise.reject(sourceGoneError()),
     }
     // return apis('xm').getMusicUrl(songInfo, type)
   },
   getLyric(songInfo) {
     return {
-      promise: Promise.reject(new Error('fail')),
+      promise: Promise.reject(sourceGoneError()),
     }
     // return lyric.getLyric(songInfo)
   },
   getPic(songInfo) {
-    return Promise.reject(new Error('fail'))
+    return Promise.reject(sourceGoneError())
     // return pic.getPic(songInfo)
   },
   // getMusicDetailPageUrl(songInfo) {
