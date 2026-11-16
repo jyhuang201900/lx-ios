@@ -1,6 +1,6 @@
 import { stringMd5 } from 'react-native-quick-md5'
 import { decodeName } from '../index'
-import { httpFetch } from '../../request'
+import { httpFetch } from '../request'
 import { requestMsg } from '../message'
 import { timeout as defaultTimeout } from './options'
 
