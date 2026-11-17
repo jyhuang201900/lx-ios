@@ -335,6 +335,9 @@ jobs:
 
             # 播放详情：Home 挂载后直接推，不需要点按
             shoot "$UDID" "shots/${SLUG}-03-play-detail.png" '{"player.startupPushPlayDetailScreen":true}' 14
+            # 04 是唯一的浅色歌单页。7f84965 当初把这一行删了，理由写的是"拍一张已经加载好的页"，
+            # 但 12-songlist-dark 是深色版，删掉之后浅色歌单就没有任何截图 —— 恢复。
+            shoot "$UDID" "shots/${SLUG}-04-songlist.png" '{"common.startupNavId":"nav_songlist"}' 14
 
             # 五个标签页：靠 common.startupNavId 冷启动落位
             shoot "$UDID" "shots/${SLUG}-19-songlist-loading.png" '{"common.startupNavId":"nav_songlist"}' 2
