@@ -1,4 +1,4 @@
-import { httpFetch } from '../../../request'
+import { request } from '../../utils'
 
 /**
  * 创建一个适用于MG的Http请求
@@ -10,7 +10,8 @@ export const createHttpFetch = async(url, options, retryNum = 0) => {
   if (retryNum > 2) throw new Error('try max num')
   let result
   try {
-    result = await httpFetch(url, options).promise
+    // 下面按 statusCode 判成功并重试，关掉 expectOk 才保留原来的重试路径
+    result = await request(url, options, { source: 'mg', expectOk: false }).promise
   } catch (err) {
     console.log(err)
     return createHttpFetch(url, options, ++retryNum)

@@ -1,5 +1,5 @@
 import { useImperativeHandle, forwardRef, useMemo, useRef, useState, type Ref } from 'react'
-import { View, Animated, TouchableHighlight, StyleSheet } from 'react-native'
+import { View, Animated, TouchableHighlight, StyleSheet, type ColorValue } from 'react-native'
 import { useWindowSize } from '@/utils/hooks'
 
 import Modal, { type ModalType } from './Modal'
@@ -15,7 +15,9 @@ const menuItemWidth = scaleSizeW(100)
 
 export interface Position { w: number, h: number, x: number, y: number, menuWidth?: number, menuHeight?: number }
 export interface MenuSize { width?: number, height?: number }
-export type Menus = Readonly<Array<{ action: string, label: string, disabled?: boolean }>>
+// color 可选：给"不可用 / 弱化"这类菜单项单独染色用（音源健康探针要把失效音源置灰）。
+// 不传时沿用 Text 的默认色 theme['c-font']，所有既有调用方渲染结果不变。
+export type Menus = Readonly<Array<{ action: string, label: string, disabled?: boolean, color?: ColorValue }>>
 
 const styles = createStyle({
   mask: {
@@ -203,7 +205,7 @@ const Menu = ({
                         accessibilityRole="button"
                         onPress={() => { menuPress(menu) }}
                       >
-                        <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} size={fontSize} numberOfLines={1}>{menu.label}</Text>
+                        <Text style={{ width: '100%', textAlign: center ? 'center' : 'left', textAlignVertical: 'center' }} color={menu.color} size={fontSize} numberOfLines={1}>{menu.label}</Text>
                       </TouchableHighlight>
                     )
 

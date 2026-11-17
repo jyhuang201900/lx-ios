@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { formatPlayTime, decodeName } from '../../index'
 import { formatSinger, objStr2JSON } from './util'
 import album from './album'
@@ -49,7 +49,7 @@ export default {
   getTag(tryNum = 0) {
     if (this._requestObj_tags) this._requestObj_tags.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_tags = httpFetch(this.tagsUrl)
+    this._requestObj_tags = request(this.tagsUrl, {}, { source: 'kw' })
     return this._requestObj_tags.promise.then(({ body }) => {
       if (body.code !== this.successCode) return this.getTag(++tryNum)
       return this.filterTagInfo(body.data)
@@ -59,7 +59,7 @@ export default {
   getHotTag(tryNum = 0) {
     if (this._requestObj_hotTags) this._requestObj_hotTags.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_hotTags = httpFetch(this.hotTagUrl)
+    this._requestObj_hotTags = request(this.hotTagUrl, {}, { source: 'kw' })
     return this._requestObj_hotTags.promise.then(({ body }) => {
       if (body.code !== this.successCode) return this.getHotTag(++tryNum)
       return this.filterInfoHotTag(body.data[0].data)
@@ -98,7 +98,7 @@ export default {
     } else {
       id = null
     }
-    this._requestObj_list = httpFetch(this.getListUrl({ sortId, id, type, page }))
+    this._requestObj_list = request(this.getListUrl({ sortId, id, type, page }), {}, { source: 'kw' })
     return this._requestObj_list.promise.then(({ body }) => {
       if (!id || type == '10000') {
         if (body.code !== this.successCode) return this.getList(sortId, tagId, page, ++tryNum)
@@ -170,7 +170,7 @@ export default {
   getListDetailDigest8(id, page, tryNum = 0) {
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
 
-    const requestObj = httpFetch(this.getListDetailUrl(id, page))
+    const requestObj = request(this.getListDetailUrl(id, page), {}, { source: 'kw' })
     return requestObj.promise.then(({ body }) => {
       if (body.result !== 'ok') return this.getListDetail(id, page, ++tryNum)
       return {
@@ -191,7 +191,8 @@ export default {
   },
   getListDetailDigest5Info(id, tryNum = 0) {
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    const requestObj = httpFetch(`http://qukudata.kuwo.cn/q.k?op=query&cont=ninfo&node=${id}&pn=0&rn=1&fmt=json&src=mbox&level=2`)
+    // 这里要自己看状态码：非 200 时递归重试
+    const requestObj = request(`http://qukudata.kuwo.cn/q.k?op=query&cont=ninfo&node=${id}&pn=0&rn=1&fmt=json&src=mbox&level=2`, {}, { source: 'kw', expectOk: false })
     return requestObj.promise.then(({ statusCode, body }) => {
       if (statusCode != 200 || !body.child) return this.getListDetail(id, ++tryNum)
       // console.log(body)
@@ -200,7 +201,7 @@ export default {
   },
   getListDetailDigest5Music(id, page, tryNum = 0) {
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    const requestObj = httpFetch(`http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pid=${id}&pn=${page - 1}}&rn=${this.limit_song}&encode=utf-8&keyset=pl2012&identity=kuwo&pcmp4=1`)
+    const requestObj = request(`http://nplserver.kuwo.cn/pl.svc?op=getlistinfo&pid=${id}&pn=${page - 1}}&rn=${this.limit_song}&encode=utf-8&keyset=pl2012&identity=kuwo&pcmp4=1`, {}, { source: 'kw' })
     return requestObj.promise.then(({ body }) => {
       // console.log(body)
       if (body.result !== 'ok') return this.getListDetail(id, page, ++tryNum)
@@ -285,12 +286,12 @@ export default {
     return t() + t() + t() + t() + t() + t() + t() + t()
   },
   async getListDetailMusicListByBDListInfo(id, source) {
-    const { body: infoData } = await httpFetch(`https://bd-api.kuwo.cn/api/service/playlist/info/${id}?reqId=${this.getReqId()}&source=${source}`, {
+    const { body: infoData } = await request(`https://bd-api.kuwo.cn/api/service/playlist/info/${id}?reqId=${this.getReqId()}&source=${source}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
         plat: 'h5',
       },
-    }).promise.catch(() => ({ code: 0 }))
+    }, { source: 'kw' }).promise.catch(() => ({ code: 0 }))
 
     if (infoData.code != 200) return null
 
@@ -303,12 +304,12 @@ export default {
     }
   },
   async getListDetailMusicListByBDUserPub(id) {
-    const { body: infoData } = await httpFetch(`https://bd-api.kuwo.cn/api/ucenter/users/pub/${id}?reqId=${this.getReqId()}`, {
+    const { body: infoData } = await request(`https://bd-api.kuwo.cn/api/ucenter/users/pub/${id}?reqId=${this.getReqId()}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
         plat: 'h5',
       },
-    }).promise.catch(() => ({ code: 0 }))
+    }, { source: 'kw' }).promise.catch(() => ({ code: 0 }))
 
     if (infoData.code != 200) return null
 
@@ -322,12 +323,12 @@ export default {
     }
   },
   async getListDetailMusicListByBDList(id, source, page, tryNum = 0) {
-    const { body: listData } = await httpFetch(`https://bd-api.kuwo.cn/api/service/playlist/${id}/musicList?reqId=${this.getReqId()}&source=${source}&pn=${page}&rn=${this.limit_song}`, {
+    const { body: listData } = await request(`https://bd-api.kuwo.cn/api/service/playlist/${id}/musicList?reqId=${this.getReqId()}&source=${source}&pn=${page}&rn=${this.limit_song}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
         plat: 'h5',
       },
-    }).promise.catch(() => {
+    }, { source: 'kw' }).promise.catch(() => {
       if (tryNum > 2) return Promise.reject(new Error('try max num'))
       return this.getListDetailMusicListByBDList(id, source, page, ++tryNum)
     })
@@ -459,7 +460,7 @@ export default {
   },
 
   search(text, page, limit = 20) {
-    return httpFetch(`http://search.kuwo.cn/r.s?all=${encodeURIComponent(text)}&pn=${page - 1}&rn=${limit}&rformat=json&encoding=utf8&ver=mbox&vipver=MUSIC_8.7.7.0_BCS37&plat=pc&devid=28156413&ft=playlist&pay=0&needliveshow=0`)
+    return request(`http://search.kuwo.cn/r.s?all=${encodeURIComponent(text)}&pn=${page - 1}&rn=${limit}&rformat=json&encoding=utf8&ver=mbox&vipver=MUSIC_8.7.7.0_BCS37&plat=pc&devid=28156413&ft=playlist&pay=0&needliveshow=0`, {}, { source: 'kw' })
       .promise.then(({ body }) => {
         body = objStr2JSON(body)
         // console.log(body)

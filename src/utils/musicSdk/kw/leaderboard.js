@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { formatPlayTime, decodeName } from '../../index'
 import { formatSinger, wbdCrypto } from './util'
 
@@ -97,11 +97,11 @@ export default {
 
   getBoardsData() {
     if (this._requestBoardsObj) this._requestBoardsObj.cancelHttp()
-    this._requestBoardsObj = httpFetch('http://qukudata.kuwo.cn/q.k?op=query&cont=tree&node=2&pn=0&rn=1000&fmt=json&level=2')
+    this._requestBoardsObj = request('http://qukudata.kuwo.cn/q.k?op=query&cont=tree&node=2&pn=0&rn=1000&fmt=json&level=2', {}, { source: 'kw' })
     return this._requestBoardsObj.promise
   },
   getData(url) {
-    const requestDataObj = httpFetch(url)
+    const requestDataObj = request(url, {}, { source: 'kw' })
     return requestDataObj.promise
   },
   filterData(rawList) {
@@ -202,9 +202,10 @@ export default {
 
     const requestBody = { uid: '', devId: '', sFrom: 'kuwo_sdk', user_type: 'AP', carSource: 'kwplayercar_ar_6.0.1.0_apk_keluze.apk', id, pn: page - 1, rn: this.limit }
     const requestUrl = `https://wbd.kuwo.cn/api/bd/bang/bang_info?${wbdCrypto.buildParam(requestBody)}`
-    const request = httpFetch(requestUrl, { cache: 'default' }).promise
+    // 这里要自己看状态码：非 200 也算失败，要重试
+    const requestPromise = request(requestUrl, { cache: 'default' }, { source: 'kw', expectOk: false }).promise
 
-    return request.then(({ statusCode, body }) => {
+    return requestPromise.then(({ statusCode, body }) => {
       const rawData = wbdCrypto.decodeData(body)
       // console.log(rawData)
       const data = rawData.data

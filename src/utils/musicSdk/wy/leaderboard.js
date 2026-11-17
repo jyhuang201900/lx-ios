@@ -1,5 +1,5 @@
 import { weapi } from './utils/crypto'
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import musicDetailApi from './musicDetail'
 
 const topList = [{ id: 'wy__19723756', name: '飙升榜', bangid: '19723756' },
@@ -109,20 +109,28 @@ export default {
   _requestBoardsObj: null,
   getBoardsData() {
     if (this._requestBoardsObj) this._requestBoardsObj.cancelHttp()
-    this._requestBoardsObj = httpFetch('https://music.163.com/weapi/toplist', {
+    // 这里把完整响应原样交给调用方，statusCode 由调用方判断
+    this._requestBoardsObj = request('https://music.163.com/weapi/toplist', {
       method: 'post',
       form: weapi({}),
+    }, {
+      source: 'wy',
+      expectOk: false,
     })
     return this._requestBoardsObj.promise
   },
   getData(id) {
-    const requestBoardsDetailObj = httpFetch('https://music.163.com/weapi/v3/playlist/detail', {
+    // getList 要用 statusCode 判断是否重试，非 2xx 不能被提前 reject
+    const requestBoardsDetailObj = request('https://music.163.com/weapi/v3/playlist/detail', {
       method: 'post',
       form: weapi({
         id,
         n: 100000,
         p: 1,
       }),
+    }, {
+      source: 'wy',
+      expectOk: false,
     })
     return requestBoardsDetailObj.promise
   },

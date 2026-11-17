@@ -1,7 +1,6 @@
 import pako from 'pako'
 import { Buffer } from 'buffer'
-import { toMD5 } from '../utils'
-import { httpFetch } from '../../request'
+import { request, toMD5 } from '../utils'
 
 // https://github.com/lyswhut/lx-music-desktop/issues/296#issuecomment-683285784
 const enc_key = Buffer.from([0x40, 0x47, 0x61, 0x77, 0x5e, 0x32, 0x74, 0x47, 0x51, 0x36, 0x31, 0x2d, 0xce, 0xd2, 0x6e, 0x69], 'binary')
@@ -48,7 +47,8 @@ export const createHttpFetch = async(url, options, retryNum = 0) => {
   let result
   options.cache = 'default'
   try {
-    result = await httpFetch(url, options).promise
+    // 这里要自己看状态码：下面按 result.statusCode 判断失败并重试，4xx 的 body 也要能读到
+    result = await request(url, options, { source: 'kg', expectOk: false }).promise
   } catch (err) {
     console.log(err)
     return createHttpFetch(url, options, ++retryNum)

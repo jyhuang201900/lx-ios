@@ -1,5 +1,4 @@
-import { httpFetch } from '../../../request'
-import { formatSingerName } from '../../utils'
+import { formatSingerName, request } from '../../utils'
 import { decodeName, formatPlayTime, sizeFormate, dateFormat, formatPlayCount } from '../../../index'
 import { signatureParams, createHttpFetch } from './../util'
 import { getMusicInfosByList } from '../musicInfo'
@@ -86,7 +85,8 @@ export default {
   async getUserListDetailBySpecialId(id, page, tryNum = 0) {
     if (tryNum > 2) throw new Error('try max num')
 
-    const { body } = await httpFetch(this.getSongListDetailUrl(id)).promise
+    // 这里要自己看状态码：下面按 body.match 解析（需要文本响应），4xx 也要能读到，失败靠解析结果判定
+    const { body } = await request(this.getSongListDetailUrl(id), {}, { source: 'kg', expectOk: false }).promise
     let listData = body.match(this.regExps.listData)
     let listInfo = body.match(this.regExps.listInfo)
     if (!listData) return this.getListDetailBySpecialId(id, page, ++tryNum)
@@ -130,11 +130,12 @@ export default {
    * @param {*} specialId
    */
   async getCollectionIdBySpecialId(specialId) {
-    return httpFetch(`http://mobilecdnbj.kugou.com/api/v5/special/info?specialid=${specialId}`, {
+    // 这里要自己看状态码：下面靠 body.data 判断失败，4xx 的 body 也要能读到
+    return request(`http://mobilecdnbj.kugou.com/api/v5/special/info?specialid=${specialId}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Linux; Android 10; HLK-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Mobile Safari/537.36 EdgA/104.0.1293.70',
       },
-    }).promise.then(({ body }) => {
+    }, { source: 'kg', expectOk: false }).promise.then(({ body }) => {
       // console.log('getCollectionIdBySpecialId', body)
       if (!body.data.global_specialid) return Promise.reject(new Error('Failed to get global collection id.'))
       return body.data.global_specialid
@@ -208,8 +209,11 @@ export default {
   getSongList(sortId, tagId, page, tryNum = 0) {
     if (this._requestObj_list) this._requestObj_list.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_list = httpFetch(
+    // 这里要自己看状态码：下面按 body.status 判断失败并重试，4xx 的 body 也要能读到
+    this._requestObj_list = request(
       this.getSongListUrl(sortId, tagId, page),
+      {},
+      { source: 'kg', expectOk: false },
     )
     return this._requestObj_list.promise.then(({ body }) => {
       if (!body || body.status !== 1) return this.getSongList(sortId, tagId, page, ++tryNum)
@@ -219,7 +223,8 @@ export default {
   getSongListRecommend(tryNum = 0) {
     if (this._requestObj_listRecommend) this._requestObj_listRecommend.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_listRecommend = httpFetch(
+    // 这里要自己看状态码：下面按 body.status 判断失败并重试，4xx 的 body 也要能读到
+    this._requestObj_listRecommend = request(
       'http://everydayrec.service.kugou.com/guess_special_recommend',
       {
         method: 'post',
@@ -238,6 +243,7 @@ export default {
           return_max: 15,
         },
       },
+      { source: 'kg', expectOk: false },
     )
     return this._requestObj_listRecommend.promise.then(({ body }) => {
       if (body.status !== 1) return this.getSongListRecommend(++tryNum)
@@ -585,11 +591,12 @@ export default {
 
   async getListInfoByChain(chain) {
     if (this.cache.has(chain)) return this.cache.get(chain)
-    const { body } = await httpFetch(`https://m.kugou.com/share/?chain=${chain}&id=${chain}`, {
+    // 这里要自己看状态码：下面按 body.match 解析（需要文本响应），4xx 也要能读到，失败靠解析结果判定
+    const { body } = await request(`https://m.kugou.com/share/?chain=${chain}&id=${chain}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
       },
-    }).promise
+    }, { source: 'kg', expectOk: false }).promise
     // console.log(body)
     let result = body.match(/var\sphpParam\s=\s({.+?});/)
     if (result) result = JSON.parse(result[1])
@@ -600,11 +607,12 @@ export default {
   async getUserListDetailByPcChain(chain) {
     let key = `${chain}_pc_list`
     if (this.cache.has(key)) return this.cache.get(key)
-    const { body } = await httpFetch(`http://www.kugou.com/share/${chain}.html`, {
+    // 这里要自己看状态码：下面按 body.match 解析（需要文本响应），4xx 也要能读到，失败靠解析结果判定
+    const { body } = await request(`http://www.kugou.com/share/${chain}.html`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
       },
-    }).promise
+    }, { source: 'kg', expectOk: false }).promise
     let result = body.match(/var\sdataFromSmarty\s=\s(\[.+?\])/)
     if (result) result = JSON.parse(result[1])
     this.cache.set(chain, result)
@@ -659,13 +667,14 @@ export default {
   async getUserListDetail(link, page, retryNum = 0) {
     if (retryNum > 3) return Promise.reject(new Error('link try max num'))
 
-    const requestLink = httpFetch(link, {
+    // 这里要自己看状态码：下面要读 3xx 的 location 与 4xx 的 body 自己判断重试
+    const requestLink = request(link, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
         Referer: link,
       },
       follow_max: 2,
-    })
+    }, { source: 'kg', expectOk: false })
     const { headers: { location }, statusCode, body } = await requestLink.promise
     // console.log(body, location, statusCode)
     if (statusCode > 400) return this.getUserListDetail(link, page, ++retryNum)
@@ -701,7 +710,8 @@ export default {
   getListInfo(tagId, tryNum = 0) {
     if (this._requestObj_listInfo) this._requestObj_listInfo.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_listInfo = httpFetch(this.getInfoUrl(tagId))
+    // 这里要自己看状态码：下面按 body.status 判断失败并重试，4xx 的 body 也要能读到
+    this._requestObj_listInfo = request(this.getInfoUrl(tagId), {}, { source: 'kg', expectOk: false })
     return this._requestObj_listInfo.promise.then(({ body }) => {
       if (body.status !== 1) return this.getListInfo(tagId, ++tryNum)
       return {
@@ -739,7 +749,8 @@ export default {
   getTags(tryNum = 0) {
     if (this._requestObj_tags) this._requestObj_tags.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_tags = httpFetch(this.getInfoUrl())
+    // 这里要自己看状态码：下面按 body.status 判断失败并重试，4xx 的 body 也要能读到
+    this._requestObj_tags = request(this.getInfoUrl(), {}, { source: 'kg', expectOk: false })
     return this._requestObj_tags.promise.then(({ body }) => {
       if (body.status !== 1) return this.getTags(++tryNum)
       return {

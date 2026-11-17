@@ -1,10 +1,12 @@
-import { forwardRef, type Ref, useImperativeHandle, useMemo, useState } from 'react'
-import { View } from 'react-native'
+import { forwardRef, type Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import { View, type ColorValue } from 'react-native'
 
 import DorpDownMenu, { type DorpDownMenuProps as _DorpDownMenuProps } from '@/components/common/DorpDownMenu'
 import Text from '@/components/common/Text'
-import { useI18n } from '@/lang'
+import { useI18n, type Message } from '@/lang'
+import { ensureHealthLoaded, getHealthSnapshot, subscribeSourceHealth, type SourceHealthSnapshot } from '@/core/sourceHealth'
 
+import { useTheme } from '@/store/theme/hook'
 import { useSettingValue } from '@/store/setting/hook'
 import { createStyle } from '@/utils/tools'
 
@@ -34,6 +36,15 @@ const Component = <S extends Sources>({ fontSize = 15, center, onSourceChange }:
   const [list, setList] = useState([] as unknown as S)
   const [source, setSource] = useState<S[number]>('kw')
   const t = useI18n()
+  const theme = useTheme()
+
+  // 健康快照：初值先吃内存（启动时 refreshHealth 可能已经填过），再补一次读盘，之后跟订阅
+  const [health, setHealth] = useState<SourceHealthSnapshot | null>(() => getHealthSnapshot())
+  useEffect(() => {
+    setHealth(getHealthSnapshot())
+    void ensureHealthLoaded()
+    return subscribeSourceHealth(setHealth)
+  }, [])
 
   useImperativeHandle(ref, () => ({
     setSourceList(list, activeSource) {
@@ -44,7 +55,32 @@ const Component = <S extends Sources>({ fontSize = 15, center, onSourceChange }:
 
   const sourceList_t = useSourceListI18n(list)
 
-  type DorpDownMenuProps = _DorpDownMenuProps<typeof sourceList_t>
+  interface SourceMenuItem { label: string, action: S[number], color?: ColorValue }
+
+  // i18n 缺 key 时会回显 key 本身（src/lang/i18n.ts:96-99），这里再兜一层占位文案，
+  // 避免菜单项显示成"酷我音乐source_unavailable"。key 落地后自动走语言包。
+  // 待补 key 见 shots-gh/i18n-requests/source-health.md。
+  const unavailableSuffix = useMemo(() => {
+    const key = 'source_unavailable'
+    const text = t(key as unknown as keyof Message)
+    return text === key ? '（不可用）' : text
+  }, [t])
+
+  const menuItems = useMemo(() => {
+    // 只有 state === 'unavailable' 才置灰：'unknown' 是整轮全失败判出的网络问题，
+    // 断网时不该把五个源全标成不可用。点击行为一律不变，用户仍可手点一次重试。
+    const sources = health?.sources
+    return sourceList_t.map((item): SourceMenuItem => {
+      if (sources?.[item.action]?.state !== 'unavailable') return item
+      return {
+        ...item,
+        label: `${item.label}${unavailableSuffix}`,
+        color: theme['c-font-label'],
+      }
+    })
+  }, [sourceList_t, health, unavailableSuffix, theme])
+
+  type DorpDownMenuProps = _DorpDownMenuProps<typeof menuItems>
 
   const handleChangeSource: DorpDownMenuProps['onPress'] = ({ action }) => {
     onSourceChange(action)
@@ -53,7 +89,7 @@ const Component = <S extends Sources>({ fontSize = 15, center, onSourceChange }:
 
   return (
     <DorpDownMenu
-      menus={sourceList_t}
+      menus={menuItems}
       center={center}
       onPress={handleChangeSource}
       fontSize={fontSize}

@@ -1,4 +1,3 @@
-// import { httpFetch } from '../../request'
 // import { weapi } from './utils/crypto'
 import { sizeFormate, formatPlayTime } from '../../index'
 // import musicDetailApi from './musicDetail'

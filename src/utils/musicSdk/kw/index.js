@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import tipSearch from './tipSearch'
 import musicSearch from './musicSearch'
 import { formatSinger } from './util'
@@ -65,7 +65,7 @@ const kw = {
 
   getMusicInfo(songInfo) {
     if (this._musicInfoRequestObj) this._musicInfoRequestObj.cancelHttp()
-    this._musicInfoRequestObj = httpFetch(`http://www.kuwo.cn/api/www/music/musicInfo?mid=${songInfo.songmid}`)
+    this._musicInfoRequestObj = request(`http://www.kuwo.cn/api/www/music/musicInfo?mid=${songInfo.songmid}`, {}, { source: 'kw' })
     return this._musicInfoRequestObj.promise.then(({ body }) => {
       return body.code === 200 ? body.data : Promise.reject(new Error(body.msg))
     })

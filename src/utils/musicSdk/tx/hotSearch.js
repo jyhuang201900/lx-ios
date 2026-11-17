@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 
 export default {
   _requestObj: null,
@@ -6,13 +6,14 @@ export default {
     if (this._requestObj) this._requestObj.cancelHttp()
     if (retryNum > 2) return Promise.reject(new Error('try max num'))
 
-    // const _requestObj = httpFetch('https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg', {
+    // const _requestObj = request('https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg', {
     //   method: 'get',
     //   headers: {
     //     Referer: 'https://y.qq.com/portal/player.html',
     //   },
     // })
-    const _requestObj = httpFetch('https://u.y.qq.com/cgi-bin/musicu.fcg', {
+    // 下面自己按 statusCode 判成功，非 2xx 的响应体必须读得到
+    const _requestObj = request('https://u.y.qq.com/cgi-bin/musicu.fcg', {
       method: 'post',
       body: {
         comm: {
@@ -41,7 +42,7 @@ export default {
       headers: {
         Referer: 'https://y.qq.com/portal/player.html',
       },
-    })
+    }, { source: 'tx', expectOk: false })
     const { body, statusCode } = await _requestObj.promise
     // console.log(body)
     if (statusCode != 200 || body.code !== 0) throw new Error('获取热搜词失败')

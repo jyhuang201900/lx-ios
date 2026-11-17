@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import getMusicInfo from './musicInfo'
 import { b64DecodeUnicode, decodeName } from '../../index'
 import { decryptQrc } from './qrc/decode'
@@ -172,11 +172,11 @@ const decodeLyric = async(lrc, tlrc, rlrc) => {
 }
 
 const getLegacyLyric = songmid => {
-  const requestObj = httpFetch(`https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?songmid=${songmid}&g_tk=5381&loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&platform=yqq`, {
+  const requestObj = request(`https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?songmid=${songmid}&g_tk=5381&loginUin=0&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&platform=yqq`, {
     headers: {
       Referer: 'https://y.qq.com/portal/player.html',
     },
-  })
+  }, { source: 'tx' })
   requestObj.promise = requestObj.promise.then(({ body }) => {
     if (body.code != 0 || !body.lyric) return Promise.reject(new Error('Get lyric failed'))
     return {
@@ -212,7 +212,7 @@ export default {
     return {
       cancelHttp() {},
       promise: this.getSongId(mInfo).then(songId => {
-        const requestObj = httpFetch('https://u.y.qq.com/cgi-bin/musicu.fcg', {
+        const requestObj = request('https://u.y.qq.com/cgi-bin/musicu.fcg', {
           method: 'post',
           headers: {
             referer: 'https://y.qq.com',
@@ -245,7 +245,7 @@ export default {
               },
             },
           },
-        })
+        }, { source: 'tx' })
         return requestObj.promise.then(({ body }) => {
           if (body.code != this.successCode || body.req.code != this.successCode) {
             return this.getLyric(mInfo, ++retryNum).promise

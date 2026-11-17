@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { decodeName, formatPlayTime, sizeFormate, dateFormat, formatPlayCount } from '../../index'
 import infSign from './vendors/infSign.min'
 import { signatureParams } from './util'
@@ -58,7 +58,7 @@ export default {
     listDetailLink: /^.+\/(\d+)\.html(?:\?.*|&.*$|#.*$|$)/,
   },
   // async getGlobalSpecialId(specialId) {
-  //   return httpFetch(`http://mobilecdnbj.kugou.com/api/v5/special/info?specialid=${specialId}`, {
+  //   return request(`http://mobilecdnbj.kugou.com/api/v5/special/info?specialid=${specialId}`, {
   //     headers: {
   //       'User-Agent': 'Mozilla/5.0 (Linux; Android 10; HLK-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Mobile Safari/537.36 EdgA/104.0.1293.70',
   //     },
@@ -70,7 +70,7 @@ export default {
   // },
   // async getListInfoBySpecialId(special_id, retry = 0) {
   //   if (++retry > 2) throw new Error('failed')
-  //   return httpFetch(`https://m.kugou.com/plist/list/${special_id}/?json=true`, {
+  //   return request(`https://m.kugou.com/plist/list/${special_id}/?json=true`, {
   //     headers: {
   //       'User-Agent': 'Mozilla/5.0 (Linux; Android 10; HLK-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Mobile Safari/537.36 EdgA/104.0.1293.70',
   //     },
@@ -96,7 +96,7 @@ export default {
   //   if (++retry > 2) throw new Error('failed')
   //   console.log(id)
   //   const params = `specialid=0&need_sort=1&module=CloudMusic&clientver=11409&pagesize=${limit}&global_collection_id=${id}&userid=0&page=${page}&type=1&area_code=1&appid=1005`
-  //   return httpFetch(`http://pubsongscdn.tx.kugou.com/v2/get_other_list_file?${params}&signature=${signatureParams(params)}`).promise.then(({ body }) => {
+  //   return request(`http://pubsongscdn.tx.kugou.com/v2/get_other_list_file?${params}&signature=${signatureParams(params)}`).promise.then(({ body }) => {
   //     // console.log(body)
   //     if (body.data?.info == null) return this.getSongListDetailByGlobalSpecialId(id, page, limit, retry)
   //     return body.data.info
@@ -114,7 +114,8 @@ export default {
   async getListDetailBySpecialId(id, page, tryNum = 0) {
     if (tryNum > 2) throw new Error('try max num')
 
-    const { body } = await httpFetch(this.getSongListDetailUrl(id)).promise
+    // 这里要自己看状态码：下面按 body.match 解析（需要文本响应），4xx 也要能读到，失败靠解析结果判定
+    const { body } = await request(this.getSongListDetailUrl(id), {}, { source: 'kg', expectOk: false }).promise
     let listData = body.match(this.regExps.listData)
     let listInfo = body.match(this.regExps.listInfo)
     if (!listData) return this.getListDetailBySpecialId(id, page, ++tryNum)
@@ -210,8 +211,11 @@ export default {
   getSongList(sortId, tagId, page, tryNum = 0) {
     if (this._requestObj_list) this._requestObj_list.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_list = httpFetch(
+    // 这里要自己看状态码：下面按 body.status 判断失败并重试，4xx 的 body 也要能读到
+    this._requestObj_list = request(
       this.getSongListUrl(sortId, tagId, page),
+      {},
+      { source: 'kg', expectOk: false },
     )
     return this._requestObj_list.promise.then(({ body }) => {
       if (!body || body.status !== 1) return this.getSongList(sortId, tagId, page, ++tryNum)
@@ -221,7 +225,8 @@ export default {
   getSongListRecommend(tryNum = 0) {
     if (this._requestObj_listRecommend) this._requestObj_listRecommend.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_listRecommend = httpFetch(
+    // 这里要自己看状态码：下面按 body.status 判断失败并重试，4xx 的 body 也要能读到
+    this._requestObj_listRecommend = request(
       'http://everydayrec.service.kugou.com/guess_special_recommend',
       {
         method: 'post',
@@ -240,6 +245,7 @@ export default {
           return_max: 15,
         },
       },
+      { source: 'kg', expectOk: false },
     )
     return this._requestObj_listRecommend.promise.then(({ body }) => {
       if (body.status !== 1) return this.getSongListRecommend(++tryNum)
@@ -266,7 +272,8 @@ export default {
     let result
     options.cache = 'default'
     try {
-      result = await httpFetch(url, options).promise
+      // 这里要自己看状态码：下面按 result.statusCode 判断失败并重试，4xx 的 body 也要能读到
+      result = await request(url, options, { source: 'kg', expectOk: false }).promise
     } catch (err) {
       console.log(err)
       return this.createHttp(url, options, ++retryNum)
@@ -530,11 +537,12 @@ export default {
 
   async getListInfoByChain(chain) {
     if (this.cache.has(chain)) return this.cache.get(chain)
-    const { body } = await httpFetch(`https://m.kugou.com/share/?chain=${chain}&id=${chain}`, {
+    // 这里要自己看状态码：下面按 body.match 解析（需要文本响应），4xx 也要能读到，失败靠解析结果判定
+    const { body } = await request(`https://m.kugou.com/share/?chain=${chain}&id=${chain}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
       },
-    }).promise
+    }, { source: 'kg', expectOk: false }).promise
     let result = body.match(/var\sphpParam\s=\s({.+?});/)
     if (result) result = JSON.parse(result[1])
     this.cache.set(chain, result)
@@ -544,11 +552,12 @@ export default {
   async getUserListDetailByPcChain(chain) {
     let key = `${chain}_pc_list`
     if (this.cache.has(key)) return this.cache.get(key)
-    const { body } = await httpFetch(`http://www.kugou.com/share/${chain}.html`, {
+    // 这里要自己看状态码：下面按 body.match 解析（需要文本响应），4xx 也要能读到，失败靠解析结果判定
+    const { body } = await request(`http://www.kugou.com/share/${chain}.html`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
       },
-    }).promise
+    }, { source: 'kg', expectOk: false }).promise
     let result = body.match(/var\sdataFromSmarty\s=\s(\[.+?\])/)
     if (result) result = JSON.parse(result[1])
     this.cache.set(chain, result)
@@ -639,12 +648,13 @@ export default {
       } else if (!link.includes('song.html')) return this.getUserListDetail3(link.replace(/.+\/(\w+).html(?:\?.*|&.*$|#.*$|$)/, '$1'), page)
     }
 
-    const requestObj_listDetailLink = httpFetch(link, {
+    // 这里要自己看状态码：下面要读 3xx 的 location 与 4xx 的 body 自己判断重试
+    const requestObj_listDetailLink = request(link, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
         Referer: link,
       },
-    })
+    }, { source: 'kg', expectOk: false })
     const { url: location, statusCode, body } = await requestObj_listDetailLink.promise
     // console.log(body, location)
     if (statusCode > 400) return this.getUserListDetail(link, page, ++retryNum)
@@ -878,7 +888,8 @@ export default {
   getListInfo(tagId, tryNum = 0) {
     if (this._requestObj_listInfo) this._requestObj_listInfo.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_listInfo = httpFetch(this.getInfoUrl(tagId))
+    // 这里要自己看状态码：下面按 body.status 判断失败并重试，4xx 的 body 也要能读到
+    this._requestObj_listInfo = request(this.getInfoUrl(tagId), {}, { source: 'kg', expectOk: false })
     return this._requestObj_listInfo.promise.then(({ body }) => {
       if (body.status !== 1) return this.getListInfo(tagId, ++tryNum)
       return {
@@ -916,7 +927,8 @@ export default {
   getTags(tryNum = 0) {
     if (this._requestObj_tags) this._requestObj_tags.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_tags = httpFetch(this.getInfoUrl())
+    // 这里要自己看状态码：下面按 body.status 判断失败并重试，4xx 的 body 也要能读到
+    this._requestObj_tags = request(this.getInfoUrl(), {}, { source: 'kg', expectOk: false })
     return this._requestObj_tags.promise.then(({ body }) => {
       if (body.status !== 1) return this.getTags(++tryNum)
       return {
@@ -937,8 +949,9 @@ export default {
 
   search(text, page, limit = 20) {
     // http://msearchretry.kugou.com/api/v3/search/special?version=9209&keyword=%E5%91%A8%E6%9D%B0%E4%BC%A6&pagesize=20&filter=0&page=1&sver=2&with_res_tag=0
-    // return httpFetch(`http://ioscdn.kugou.com/api/v3/search/special?keyword=${encodeURIComponent(text)}&page=${page}&pagesize=${limit}&showtype=10&plat=2&version=7910&correct=1&sver=5`)
-    return httpFetch(`http://msearchretry.kugou.com/api/v3/search/special?keyword=${encodeURIComponent(text)}&page=${page}&pagesize=${limit}&showtype=10&filter=0&version=7910&sver=2`)
+    // return request(`http://ioscdn.kugou.com/api/v3/search/special?keyword=${encodeURIComponent(text)}&page=${page}&pagesize=${limit}&showtype=10&plat=2&version=7910&correct=1&sver=5`)
+    // 这里要自己看状态码：下面按 body.errcode 判断失败，4xx 的 body 也要能读到
+    return request(`http://msearchretry.kugou.com/api/v3/search/special?keyword=${encodeURIComponent(text)}&page=${page}&pagesize=${limit}&showtype=10&filter=0&version=7910&sver=2`, {}, { source: 'kg', expectOk: false })
       .promise.then(({ body }) => {
         if (body.errcode != 0) throw new Error('filed')
         // console.log(body.data.info)

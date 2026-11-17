@@ -1,71 +1,6 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { decodeLyric, lrcTools } from './util'
 import { decodeName } from '../../index'
-
-/*
-export default {
-  formatTime(time) {
-    let m = parseInt(time / 60)
-    let s = (time % 60).toFixed(2)
-    return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s)
-  },
-  sortLrcArr(arr) {
-    const lrcSet = new Set()
-    let lrc = []
-    let lrcT = []
-
-    for (const item of arr) {
-      if (lrcSet.has(item.time)) {
-        const tItem = lrc.pop()
-        tItem.time = lrc[lrc.length - 1].time
-        lrcT.push(tItem)
-        lrc.push(item)
-      } else {
-        lrc.push(item)
-        lrcSet.add(item.time)
-      }
-    }
-
-    if (lrcT.length && lrc.length > lrcT.length) {
-      const tItem = lrc.pop()
-      tItem.time = lrc[lrc.length - 1].time
-      lrcT.push(tItem)
-    }
-
-    return {
-      lrc,
-      lrcT,
-    }
-  },
-  transformLrc(songinfo, lrclist) {
-    return `[ti:${songinfo.songName}]\n[ar:${songinfo.artist}]\n[al:${songinfo.album}]\n[by:]\n[offset:0]\n${lrclist ? lrclist.map(l => `[${this.formatTime(l.time)}]${l.lineLyric}\n`).join('') : '暂无歌词'}`
-  },
-  getLyric(songId) {
-    const requestObj = httpFetch(`http://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=${songId}`)
-    requestObj.promise = requestObj.promise.then(({ body }) => {
-      // console.log(body)
-      if (!body.data?.lrclist?.length) return Promise.reject(new Error('Get lyric failed'))
-      let lrcInfo
-      try {
-        lrcInfo = this.sortLrcArr(body.data.lrclist)
-      } catch {
-        return Promise.reject(new Error('Get lyric failed'))
-      }
-      // console.log(body.data.lrclist)
-      // console.log(lrcInfo.lrc, lrcInfo.lrcT)
-      // console.log({
-      //   lyric: decodeName(this.transformLrc(body.data.songinfo, lrc)),
-      //   tlyric: decodeName(this.transformLrc(body.data.songinfo, lrcT)),
-      // })
-      return {
-        lyric: decodeName(this.transformLrc(body.data.songinfo, lrcInfo.lrc)),
-        tlyric: lrcInfo.lrcT.length ? decodeName(this.transformLrc(body.data.songinfo, lrcInfo.lrcT)) : '',
-      }
-    })
-    return requestObj
-  },
-}
- */
 
 const buf_key = Buffer.from('yeelion')
 const buf_key_len = buf_key.length
@@ -211,34 +146,13 @@ export default {
       tlyric: lrcInfo.lrcT.length ? decodeName(this.transformLrc(tags, lrcInfo.lrcT)) : '',
     }
   },
-  // getLyric2(musicInfo, isGetLyricx = true) {
-  //   const requestObj = httpFetch(`http://newlyric.kuwo.cn/newlyric.lrc?${buildParams(musicInfo.songmid, isGetLyricx)}`)
-  //   requestObj.promise = requestObj.promise.then(({ statusCode, body, raw }) => {
-  //     if (statusCode != 200) return Promise.reject(new Error(JSON.stringify(body)))
-  //     return decodeLyric({ lrcBase64: raw.toString('base64'), isGetLyricx }).then(base64Data => {
-  //       let lrcInfo
-  //       console.log(Buffer.from(base64Data, 'base64').toString())
-  //       try {
-  //         lrcInfo = this.parseLrc(Buffer.from(base64Data, 'base64').toString())
-  //       } catch {
-  //         return Promise.reject(new Error('Get lyric failed'))
-  //       }
-  //       if (lrcInfo.tlyric) lrcInfo.tlyric = lrcInfo.tlyric.replace(lrcTools.rxps.wordTimeAll, '')
-  //       lrcInfo.lxlyric = lrcTools.parse(lrcInfo.lyric)
-  //       // console.log(lrcInfo.lyric)
-  //       // console.log(lrcInfo.tlyric)
-  //       // console.log(lrcInfo.lxlyric)
-  //       // console.log(JSON.stringify(lrcInfo))
-  //     })
-  //   })
-  //   return requestObj
-  // },
   getLyric(musicInfo, isGetLyricx = true) {
     // this.getLyric2(musicInfo)
-    const requestObj = httpFetch(`http://newlyric.kuwo.cn/newlyric.lrc?${buildParams(musicInfo.songmid, isGetLyricx)}`, {
+    // 这里是二进制响应，且下面要自己看状态码再决定是否抛错，不能交给统一层判
+    const requestObj = request(`http://newlyric.kuwo.cn/newlyric.lrc?${buildParams(musicInfo.songmid, isGetLyricx)}`, {
       cache: false,
       binary: true,
-    })
+    }, { source: 'kw', expectOk: false })
     requestObj.promise = requestObj.promise.then(({ statusCode, body }) => {
       if (statusCode != 200) return Promise.reject(new Error(JSON.stringify(body)))
       return decodeLyric({ lrcBuffer: body, isGetLyricx }).then(base64Data => {

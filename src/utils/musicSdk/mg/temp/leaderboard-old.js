@@ -1,4 +1,4 @@
-import { httpFetch } from '../../../request'
+import { request } from '../../utils'
 import { formatPlayTime } from '../../../index'
 // import { sizeFormate } from '../../index'
 
@@ -61,7 +61,8 @@ export default {
     listData: /var listData = (\{.+\})<\/script>/,
   },
   getData(url) {
-    const requestObj = httpFetch(url)
+    // 调用方会读 statusCode 并解析文本 body，关掉 expectOk 才读得到非 2xx 的响应
+    const requestObj = request(url, {}, { source: 'mg', expectOk: false })
     return requestObj.promise
   },
   getSinger(singers) {

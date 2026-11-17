@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { weapi } from './utils/crypto'
 import { dateFormat2 } from '../../index'
 
@@ -124,7 +124,8 @@ export default {
 
     const cursorInfo = cursorTools.getCursor(songmid, page, limit)
 
-    const _requestObj = httpFetch('https://music.163.com/weapi/comment/resource/comments/get', {
+    // 下面要用 statusCode 与 body.code 一起判断，非 2xx 也要拿到响应体
+    const _requestObj = request('https://music.163.com/weapi/comment/resource/comments/get', {
       method: 'post',
       headers: {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
@@ -140,6 +141,9 @@ export default {
         rid: id,
         threadId: id,
       }),
+    }, {
+      source: 'wy',
+      expectOk: false,
     })
     const { body, statusCode } = await _requestObj.promise
     // console.log(body)
@@ -152,7 +156,8 @@ export default {
 
     const id = 'R_SO_4_' + songmid
 
-    const _requestObj2 = httpFetch(`https://music.163.com/weapi/v1/resource/hotcomments/${id}`, {
+    // 同上：热门评论也要自己判断 statusCode
+    const _requestObj2 = request(`https://music.163.com/weapi/v1/resource/hotcomments/${id}`, {
       method: 'post',
       headers: {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
@@ -165,6 +170,9 @@ export default {
         offset: limit * (page - 1),
         beforeTime: Date.now().toString(),
       }),
+    }, {
+      source: 'wy',
+      expectOk: false,
     })
     const { body, statusCode } = await _requestObj2.promise
     if (statusCode != 200 || body.code !== 200) throw new Error('获取热门评论失败')

@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { formatPlayCount } from '../../index'
 import { filterMusicInfoListV5 } from './musicInfo'
 import { createSignature } from './musicSearch'
@@ -77,7 +77,8 @@ export default {
     //   id = id.replace(/.*(?:\?|&)id=(\d+)(?:&.*|$)/, '$1')
     // } else if ((/[?&:/]/.test(id))) id = id.replace(this.regExps.listDetailLink, '$1')
 
-    const requestObj_listDetail = httpFetch(this.getSongListDetailUrl(id, page), { headers: this.defaultHeaders })
+    // 下面用 body.code 判成功并重试，关掉 expectOk 才保留原来的重试路径
+    const requestObj_listDetail = request(this.getSongListDetailUrl(id, page), { headers: this.defaultHeaders }, { source: 'mg', expectOk: false })
     return requestObj_listDetail.promise.then(({ body }) => {
       if (body.code !== this.successCode) return this.getListDetailList(id, page, ++tryNum)
       // console.log(JSON.stringify(body))
@@ -96,9 +97,10 @@ export default {
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
 
     if (this.cachedDetailInfo[id]) return Promise.resolve(this.cachedDetailInfo[id])
-    const requestObj_listDetailInfo = httpFetch(`https://c.musicapp.migu.cn/MIGUM3.0/resource/playlist/v2.0?playlistId=${id}`, {
+    // 同上：用 body.code 判成功并重试
+    const requestObj_listDetailInfo = request(`https://c.musicapp.migu.cn/MIGUM3.0/resource/playlist/v2.0?playlistId=${id}`, {
       headers: this.defaultHeaders,
-    })
+    }, { source: 'mg', expectOk: false })
     return requestObj_listDetailInfo.promise.then(({ body }) => {
       if (body.code !== this.successCode) return this.getListDetail(id, ++tryNum)
       // console.log(JSON.stringify(body))
@@ -117,12 +119,13 @@ export default {
   async getDetailUrl(link, page, retryNum = 0) {
     if (retryNum > 3) return Promise.reject(new Error('link try max num'))
 
-    const requestObj_listDetailLink = httpFetch(link, {
+    // 这里要看 statusCode 和 3xx 跳转后的 location，关掉 expectOk 才读得到非 2xx
+    const requestObj_listDetailLink = request(link, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
         Referer: link,
       },
-    })
+    }, { source: 'mg', expectOk: false })
     const { url: location, statusCode } = await requestObj_listDetailLink.promise
     // console.log(body, location)
     if (statusCode > 400) return this.getDetailUrl(link, page, ++retryNum)
@@ -160,7 +163,8 @@ export default {
   getList(sortId, tagId, page, tryNum = 0) {
     if (this._requestObj_list) this._requestObj_list.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_list = httpFetch(this.getSongListUrl(sortId, tagId, page), {
+    // 下面用 body.code 判成功并重试，关掉 expectOk 才保留原来的重试路径
+    this._requestObj_list = request(this.getSongListUrl(sortId, tagId, page), {
       headers: this.defaultHeaders,
       // headers: {
       //   sign: 'c3b7ae985e2206e97f1b2de8f88691e2',
@@ -172,7 +176,7 @@ export default {
       //   osVersion: 'android 7.0',
       //   'User-Agent': 'okhttp/3.9.1',
       // },
-    })
+    }, { source: 'mg', expectOk: false })
     // return this._requestObj_list.promise.then(({ statusCode, body }) => {
     //   if (statusCode !== 200) return this.getList(sortId, tagId, page)
     //   let list = body.replace(/[\r\n]/g, '').match(this.regExps.list)
@@ -269,7 +273,8 @@ export default {
   getTag(tryNum = 0) {
     if (this._requestObj_tags) this._requestObj_tags.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_tags = httpFetch(this.tagsUrl, { headers: this.defaultHeaders })
+    // 用 body.code 判成功并重试，关掉 expectOk 才保留原来的重试路径
+    this._requestObj_tags = request(this.tagsUrl, { headers: this.defaultHeaders }, { source: 'mg', expectOk: false })
     return this._requestObj_tags.promise.then(({ body }) => {
       if (body.code !== this.successCode) return this.getTag(++tryNum)
       // console.log(body)

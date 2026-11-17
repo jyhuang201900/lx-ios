@@ -1,8 +1,8 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 
 export default {
   getPic(songInfo) {
-    const requestObj = httpFetch(
+    const requestObj = request(
       'http://media.store.kugou.com/v1/get_res_privilege',
       {
         method: 'POST',
@@ -36,6 +36,7 @@ export default {
           vip: 1,
         },
       },
+      { source: 'kg' },
     )
     return requestObj.promise.then(({ body }) => {
       if (body.error_code !== 0) return Promise.reject(new Error('图片获取失败'))

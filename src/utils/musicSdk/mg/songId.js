@@ -1,4 +1,4 @@
-// import { httpFetch } from '../../request'
+// import { request } from '../utils'
 import { getMusicInfo } from './musicInfo'
 
 const getSongId = async(mInfo) => {
@@ -12,7 +12,7 @@ const getSongId = async(mInfo) => {
 //   if (musicInfo.songmid != musicInfo.copyrightId) return musicInfo.songmid
 //   if (++retry > 2) return Promise.reject(new Error('max retry'))
 
-//   const requestObj = httpFetch(`https://app.c.nf.migu.cn/MIGUM2.0/v2.0/content/listen-url?netType=00&resourceType=2&songId=${musicInfo.copyrightId}&toneFlag=PQ`, {
+//   const requestObj = request(`https://app.c.nf.migu.cn/MIGUM2.0/v2.0/content/listen-url?netType=00&resourceType=2&songId=${musicInfo.copyrightId}&toneFlag=PQ`, {
 //     headers: {
 //       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
 //       channel: '0146921',

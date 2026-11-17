@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { dateFormat2 } from '../../index'
 import getMusicInfo from './musicInfo'
 
@@ -92,7 +92,8 @@ export default {
     if (this._requestObj) this._requestObj.cancelHttp()
     const songId = await this.getSongId(mInfo)
 
-    const _requestObj = httpFetch('http://c.y.qq.com/base/fcgi-bin/fcg_global_comment_h5.fcg', {
+    // 下面自己按 statusCode 判成功，非 2xx 的响应体必须读得到
+    const _requestObj = request('http://c.y.qq.com/base/fcgi-bin/fcg_global_comment_h5.fcg', {
       method: 'POST',
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
@@ -109,7 +110,7 @@ export default {
         pagenum: page - 1,
         pagesize: limit,
       },
-    })
+    }, { source: 'tx', expectOk: false })
     const { body, statusCode } = await _requestObj.promise
     if (statusCode != 200 || body.code !== 0) throw new Error('获取评论失败')
     // console.log(body, statusCode)
@@ -124,7 +125,7 @@ export default {
     }
   },
   async getHotComment(mInfo, page = 1, limit = 20) {
-    // const _requestObj2 = httpFetch('http://c.y.qq.com/base/fcgi-bin/fcg_global_comment_h5.fcg', {
+    // const _requestObj2 = request('http://c.y.qq.com/base/fcgi-bin/fcg_global_comment_h5.fcg', {
     //   method: 'POST',
     //   headers: {
     //     'User-Agent': 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
@@ -145,7 +146,8 @@ export default {
     if (this._requestObj2) this._requestObj2.cancelHttp()
     const songId = await this.getSongId(mInfo)
 
-    const _requestObj2 = httpFetch('https://u.y.qq.com/cgi-bin/musicu.fcg', {
+    // 下面自己按 statusCode 判成功，非 2xx 的响应体必须读得到
+    const _requestObj2 = request('https://u.y.qq.com/cgi-bin/musicu.fcg', {
       method: 'POST',
       body: {
         comm: {
@@ -179,7 +181,7 @@ export default {
         referer: 'https://y.qq.com/',
         origin: 'https://y.qq.com',
       },
-    })
+    }, { source: 'tx', expectOk: false })
     const { body, statusCode } = await _requestObj2.promise
     // console.log('body', body)
     if (statusCode != 200 || body.code !== 0 || body.req.code !== 0) throw new Error('获取热门评论失败')

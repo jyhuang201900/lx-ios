@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { getMusicInfo } from './musicInfo'
 import { decrypt } from './utils/mrc'
 
@@ -48,13 +48,14 @@ const mrcTools = {
     }
   },
   getText(url, tryNum = 0) {
-    const requestObj = httpFetch(url, {
+    // 文本响应，且下面按 statusCode 判断成功与重试，关掉 expectOk 保留原判断
+    const requestObj = request(url, {
       headers: {
         Referer: 'https://app.c.nf.migu.cn/',
         'User-Agent': 'Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Mobile Safari/537.36',
         channel: '0146921',
       },
-    })
+    }, { source: 'mg', expectOk: false })
     return requestObj.promise.then(({ statusCode, body }) => {
       if (statusCode == 200) return body
       if (tryNum > 5 || statusCode == 404) return Promise.reject(new Error('歌词获取失败'))

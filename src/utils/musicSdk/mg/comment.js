@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import getSongId from './songId'
 import { dateFormat2 } from '../../index'
 
@@ -17,13 +17,14 @@ export default {
     if (page === 1) this.lastCommentIds.clear()
     const lastCommentId = this.lastCommentIds.get(String(page)) || ''
     if (!lastCommentId && page > 1) throw new Error('获取评论失败')
-    // const _requestObj = httpFetch(`https://music.migu.cn/v3/api/comment/listComments?targetId=${musicInfo.songId}&pageSize=${limit}&pageNo=${page}`, {
-    const _requestObj = httpFetch(`https://app.c.nf.migu.cn/MIGUM3.0/user/comment/stack/v1.0?pageSize=${limit}&queryType=1&resourceId=${musicInfo.songId}&resourceType=2&commentId=${lastCommentId}`, {
+    // const _requestObj = request(`https://music.migu.cn/v3/api/comment/listComments?targetId=${musicInfo.songId}&pageSize=${limit}&pageNo=${page}`, {
+    // 下面自己按 statusCode 判成功，关掉 expectOk 才读得到非 2xx 的响应
+    const _requestObj = request(`https://app.c.nf.migu.cn/MIGUM3.0/user/comment/stack/v1.0?pageSize=${limit}&queryType=1&resourceId=${musicInfo.songId}&resourceType=2&commentId=${lastCommentId}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
         // Referer: 'https://music.migu.cn',
       },
-    })
+    }, { source: 'mg', expectOk: false })
     const { body, statusCode } = await _requestObj.promise
     // console.log(body)
     if (statusCode != 200 || body.code !== '000000') throw new Error('获取评论失败')
@@ -41,13 +42,14 @@ export default {
       musicInfo.songId = id
     }
 
-    // const _requestObj2 = httpFetch(`https://music.migu.cn/v3/api/comment/listTopComments?targetId=${musicInfo.songId}&pageSize=${limit}&pageNo=${page}`, {
-    const _requestObj2 = httpFetch(`https://app.c.nf.migu.cn/MIGUM3.0/user/comment/stack/v1.0?pageSize=${limit}&queryType=2&resourceId=${musicInfo.songId}&resourceType=2&hotCommentStart=${(page - 1) * limit}`, {
+    // const _requestObj2 = request(`https://music.migu.cn/v3/api/comment/listTopComments?targetId=${musicInfo.songId}&pageSize=${limit}&pageNo=${page}`, {
+    // 同上：状态码自己判，保留非 2xx 的响应体可读
+    const _requestObj2 = request(`https://app.c.nf.migu.cn/MIGUM3.0/user/comment/stack/v1.0?pageSize=${limit}&queryType=2&resourceId=${musicInfo.songId}&resourceType=2&hotCommentStart=${(page - 1) * limit}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
         // Referer: 'https://music.migu.cn',
       },
-    })
+    }, { source: 'mg', expectOk: false })
     const { body, statusCode } = await _requestObj2.promise
     // console.log(body)
     if (statusCode != 200 || body.code !== '000000') throw new Error('获取热门评论失败')
@@ -57,12 +59,13 @@ export default {
   async getReplyComment(musicInfo, replyId, page = 1, limit = 10) {
     if (this._requestObj2) this._requestObj2.cancelHttp()
 
-    // const _requestObj2 = httpFetch(`https://music.migu.cn/v3/api/comment/listCommentsById?commentId=${replyId}&pageSize=${limit}&pageNo=${page}`, {
-    const _requestObj2 = httpFetch(`https://app.c.nf.migu.cn/MIGUM3.0/user/comment/stack/${replyId}/v1.0?pageSize=${limit}&queryType=2&resourceId=${musicInfo.songId}&resourceType=2&start=${(page - 1) * limit}`, {
+    // const _requestObj2 = request(`https://music.migu.cn/v3/api/comment/listCommentsById?commentId=${replyId}&pageSize=${limit}&pageNo=${page}`, {
+    // 同上：状态码自己判，保留非 2xx 的响应体可读
+    const _requestObj2 = request(`https://app.c.nf.migu.cn/MIGUM3.0/user/comment/stack/${replyId}/v1.0?pageSize=${limit}&queryType=2&resourceId=${musicInfo.songId}&resourceType=2&start=${(page - 1) * limit}`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
       },
-    })
+    }, { source: 'mg', expectOk: false })
     const { body, statusCode } = await _requestObj2.promise
     // console.log(body)
     if (statusCode != 200 || body.code !== '000000') throw new Error('获取回复评论失败')

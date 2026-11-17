@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { decodeName } from '../../index'
 
 export default {
@@ -7,7 +7,8 @@ export default {
     if (this._requestObj) this._requestObj.cancelHttp()
     if (retryNum > 2) return Promise.reject(new Error('try max num'))
 
-    const _requestObj = httpFetch('http://gateway.kugou.com/api/v3/search/hot_tab?signature=ee44edb9d7155821412d220bcaf509dd&appid=1005&clientver=10026&plat=0', {
+    // 这里要自己看状态码：下面按 statusCode/errcode 判断失败，4xx 的 body 也要能读到
+    const _requestObj = request('http://gateway.kugou.com/api/v3/search/hot_tab?signature=ee44edb9d7155821412d220bcaf509dd&appid=1005&clientver=10026&plat=0', {
       method: 'get',
       cache: null,
       headers: {
@@ -18,7 +19,7 @@ export default {
         'user-agent': 'Android9-AndroidPhone-10020-130-0-searchrecommendprotocol-wifi',
         'kg-rc': 1,
       },
-    })
+    }, { source: 'kg', expectOk: false })
     const { body, statusCode } = await _requestObj.promise
     if (statusCode != 200 || body.errcode !== 0) throw new Error('获取热搜词失败')
     // console.log(body, statusCode)

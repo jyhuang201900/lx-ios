@@ -4,11 +4,10 @@
 // https://github.com/Binaryify/NeteaseCloudMusicApi/blob/master/module/playlist_detail.js
 
 import { weapi, linuxapi } from './utils/crypto'
-import { httpFetch } from '../../request'
 import { formatPlayTime, sizeFormate, dateFormat, formatPlayCount } from '../../index'
 import musicDetailApi from './musicDetail'
 import { eapiRequest } from './utils/index'
-import { formatSingerName } from '../utils'
+import { formatSingerName, request } from '../utils'
 
 export default {
   _requestObj_tags: null,
@@ -38,7 +37,8 @@ export default {
   async handleParseId(link, retryNum = 0) {
     if (retryNum > 2) throw new Error('link try max num')
 
-    const requestObj_listDetailLink = httpFetch(link)
+    // 这里要靠 statusCode 决定是否重试，非 2xx 不能被当成异常提前抛出
+    const requestObj_listDetailLink = request(link, {}, { source: 'wy', expectOk: false })
     const { url, statusCode } = await requestObj_listDetailLink.promise
     // console.log(headers)
     if (statusCode > 400) return this.handleParseId(link, ++retryNum)
@@ -72,7 +72,7 @@ export default {
     const { id, cookie } = await this.getListId(rawId)
     if (cookie) this.cookie = cookie
 
-    const requestObj_listDetail = httpFetch('https://music.163.com/api/linux/forward', {
+    const requestObj_listDetail = request('https://music.163.com/api/linux/forward', {
       method: 'post',
       headers: {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
@@ -89,6 +89,10 @@ export default {
           s: 8,
         },
       }),
+    }, {
+      // 下面要用 statusCode 判断是否重试，非 2xx 要保留响应体交给调用方判断
+      source: 'wy',
+      expectOk: false,
     })
     const { statusCode, body } = await requestObj_listDetail.promise
     if (statusCode !== 200 || body.code !== this.successCode) return this.getListDetail(id, page, ++tryNum)
@@ -209,7 +213,7 @@ export default {
   getList(sortId, tagId, page, tryNum = 0) {
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
     if (this._requestObj_list) this._requestObj_list.cancelHttp()
-    this._requestObj_list = httpFetch('https://music.163.com/weapi/playlist/list', {
+    this._requestObj_list = request('https://music.163.com/weapi/playlist/list', {
       method: 'post',
       form: weapi({
         cat: tagId || '全部', // 全部,华语,欧美,日语,韩语,粤语,小语种,流行,摇滚,民谣,电子,舞曲,说唱,轻音乐,爵士,乡村,R&B/Soul,古典,民族,英伦,金属,朋克,蓝调,雷鬼,世界音乐,拉丁,另类/独立,New Age,古风,后摇,Bossa Nova,清晨,夜晚,学习,工作,午休,下午茶,地铁,驾车,运动,旅行,散步,酒吧,怀旧,清新,浪漫,性感,伤感,治愈,放松,孤独,感动,兴奋,快乐,安静,思念,影视原声,ACG,儿童,校园,游戏,70后,80后,90后,网络歌曲,KTV,经典,翻唱,吉他,钢琴,器乐,榜单,00后
@@ -218,7 +222,7 @@ export default {
         offset: this.limit_list * (page - 1),
         total: true,
       }),
-    })
+    }, { source: 'wy' })
     return this._requestObj_list.promise.then(({ body }) => {
       // console.log(body)
       if (body.code !== this.successCode) return this.getList(sortId, tagId, page, ++tryNum)
@@ -251,10 +255,10 @@ export default {
   getTag(tryNum = 0) {
     if (this._requestObj_tags) this._requestObj_tags.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_tags = httpFetch('https://music.163.com/weapi/playlist/catalogue', {
+    this._requestObj_tags = request('https://music.163.com/weapi/playlist/catalogue', {
       method: 'post',
       form: weapi({}),
-    })
+    }, { source: 'wy' })
     return this._requestObj_tags.promise.then(({ body }) => {
       // console.log(JSON.stringify(body))
       if (body.code !== this.successCode) return this.getTag(++tryNum)
@@ -289,10 +293,10 @@ export default {
   getHotTag(tryNum = 0) {
     if (this._requestObj_hotTags) this._requestObj_hotTags.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_hotTags = httpFetch('https://music.163.com/weapi/playlist/hottags', {
+    this._requestObj_hotTags = request('https://music.163.com/weapi/playlist/hottags', {
       method: 'post',
       form: weapi({}),
-    })
+    }, { source: 'wy' })
     return this._requestObj_hotTags.promise.then(({ body }) => {
       // console.log(JSON.stringify(body))
       if (body.code !== this.successCode) return this.getTag(++tryNum)

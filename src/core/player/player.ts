@@ -22,6 +22,7 @@ import {
   removeTempPlayList,
 } from '@/core/player/tempPlayList'
 import { getMusicUrlInfo, getPicPath, getLyricInfo } from '@/core/music'
+import { getPlayQuality } from '@/core/music/utils'
 import { requestMsg } from '@/utils/message'
 import { checkUrl, probeAudioStream } from '@/utils/request'
 import { inferQualityFromStream } from '@/utils/quality'
@@ -34,6 +35,7 @@ import { addListMusics, removeListMusics } from '@/core/list'
 import { addDislikeInfo } from '@/core/dislikeList'
 import { markTimeoutExitInteraction } from './timeoutExit'
 import { isUrlExpiredError, MAX_CONSECUTIVE_FAILURES, recordPlaybackFailure, tryAcquireUrlRetry } from './recovery'
+import { createQualityAttempt, getAvailableQualities, MAX_QUALITY_DOWNGRADES, resetQualityAttempt } from './quality'
 
 // import { checkMusicFileAvailable } from '@renderer/utils/music'
 
@@ -94,6 +96,32 @@ const diffCurrentMusicInfo = (curMusicInfo: LX.Music.MusicInfo | LX.Download.Lis
 
 let cancelDelayRetry: (() => void) | null = null
 const getMusicSource = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem): LX.Source => 'progress' in musicInfo ? musicInfo.metadata.musicInfo.source : musicInfo.source
+const getMusicDisplayName = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem): string => {
+  const info = 'progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo
+  return `${info.name} - ${info.singer}`
+}
+
+/**
+ * 给降级链定位起点：显式传入的音质优先，否则用与 `core/music/online.ts` 同一条规则
+ * （getPlayQuality：用户偏好档位作上限，再按歌曲声明可用档位取）。
+ *
+ * 只用于算「从哪一档往下退」，第一次请求仍然不带显式音质，交给 core/music 自己决定
+ * ——这样缓存命中、isRefresh 这些既有语义一点没动。本地歌曲没有档位概念，返回 null。
+ */
+const resolveRequestedQuality = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem): LX.Quality | null => {
+  const info = 'progress' in musicInfo ? musicInfo.metadata.musicInfo : musicInfo
+  if (info.source === 'local') return null
+  return getPlayQuality(settingState.setting['player.playQuality'], info)
+}
+
+// 播放成功（app_event.play）时清空这首歌的降级链。resetPlaybackFailure 在同一事件里调用
+// （core/init/player 的 setPlayStatus），这里订阅同一个事件，保证两者同一时机触发。
+// app_event 由 config/globalData 在 core/init 之前创建，模块顶层订阅是安全的。
+global.app_event.on('play', () => {
+  const musicInfo = playerState.playMusicInfo.musicInfo
+  if (!musicInfo) return
+  resetQualityAttempt(getMusicSource(musicInfo), musicInfo.id)
+})
 
 const delayRetry = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh = false, quality?: LX.Quality, allowCurrentPlayback = false): Promise<PlayUrlInfo | null> => {
   // if (cancelDelayRetry) cancelDelayRetry()
@@ -116,7 +144,11 @@ const delayRetry = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, i
     }
   })
 }
-const getMusicPlayUrl = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh = false, isRetryed = false, quality?: LX.Quality, allowCurrentPlayback = false): Promise<PlayUrlInfo | null> => {
+/**
+ * 按**单一档位**取一次播放地址（含原有的同档位重取一次）。
+ * 失败时抛错，由 getMusicPlayUrl 决定要不要降档重取。
+ */
+const fetchMusicPlayUrl = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh = false, isRetryed = false, quality?: LX.Quality, allowCurrentPlayback = false): Promise<PlayUrlInfo | null> => {
   // this.musicInfo.url = await getMusicPlayUrl(targetSong, type)
   setStatusText(global.i18n.t('player__getting_url'))
   addLoadTimeout()
@@ -154,10 +186,67 @@ const getMusicPlayUrl = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListIt
 
     if (err.message == requestMsg.tooManyRequests) return delayRetry(musicInfo, isRefresh, quality, allowCurrentPlayback)
 
-    if (!isRetryed) return getMusicPlayUrl(musicInfo, isRefresh, true, quality, allowCurrentPlayback)
+    if (!isRetryed) return fetchMusicPlayUrl(musicInfo, isRefresh, true, quality, allowCurrentPlayback)
 
     throw err
   })
+}
+
+/**
+ * 取播放地址的主入口：先按当前档位取，取不到地址就沿 QUALITY_LADDER 逐档降级重取。
+ *
+ * 只对「这个档位取不到地址」生效（与 recovery.ts 的「地址过期重取」是两件事）；
+ * 每档仍然保留原有的同档位重取一次。降到底仍失败时把最后一个错误原样抛出，
+ * 交给 setMusicUrl 的 catch → app_event.error → recoverFromPlaybackError 接手，
+ * 这里不吞错、也不替产品决定跳下一首。
+ */
+const getMusicPlayUrl = async(musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh = false, isRetryed = false, quality?: LX.Quality, allowCurrentPlayback = false): Promise<PlayUrlInfo | null> => {
+  const attempt = createQualityAttempt(getMusicSource(musicInfo), musicInfo.id)
+  const available = getAvailableQualities(musicInfo)
+  const initialQuality = quality ?? resolveRequestedQuality(musicInfo)
+  let requestedQuality = initialQuality
+  let result: PlayUrlInfo | null = null
+  let failed = false
+  let lastError: unknown = null
+
+  try {
+    result = await fetchMusicPlayUrl(musicInfo, isRefresh, isRetryed, quality, allowCurrentPlayback)
+  } catch (err) {
+    failed = true
+    lastError = err
+  }
+
+  if (failed) {
+    for (let index = 0; index < MAX_QUALITY_DOWNGRADES; index++) {
+      // 每次退让之间都在等一次网络往返：期间切歌/停止/取消，降级已经没有意义
+      if (global.lx.isPlayedStop ||
+        diffCurrentMusicInfo(musicInfo, allowCurrentPlayback) ||
+        (lastError instanceof Error && lastError.message == requestMsg.cancelRequest)) return null
+      const next = attempt.tryNext(requestedQuality, available)
+      // 没有更低的可用档，或已经降满 MAX_QUALITY_DOWNGRADES 档
+      if (next == null) break
+      console.log(`[player-quality] 取地址失败，降级重试: ${musicInfo.id} ${getMusicDisplayName(musicInfo)} ${requestedQuality ?? 'unknown'} -> ${next}`)
+      requestedQuality = next
+      try {
+        result = await fetchMusicPlayUrl(musicInfo, isRefresh, isRetryed, next, allowCurrentPlayback)
+        failed = false
+        break
+      } catch (err) {
+        lastError = err
+      }
+    }
+    // 降到底仍失败：原样抛回给上游，由 recovery 那套失败计数/过期重取收尾
+    if (failed) throw lastError as Error
+  }
+
+  if (result == null) return null
+
+  if (requestedQuality != null && requestedQuality !== initialQuality) {
+    // result.quality 就是 SDK 回给我们的档位，setMusicUrl 会把它写进 currentStreamInfo /
+    // playerActions.setStreamInfo，随后再由流码率反推纠正成实际档位
+    console.log(`[player-quality] 降级成功，实际播放音质: ${musicInfo.id} ${getMusicDisplayName(musicInfo)} ${initialQuality ?? 'unknown'} -> ${requestedQuality}`)
+  }
+  return result
 }
 
 export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem, isRefresh?: boolean, quality?: LX.Quality, allowCurrentPlayback = false) => {

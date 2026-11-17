@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { formatPlayTime, sizeFormate } from '../../index'
 
 const getSinger = (singers) => {
@@ -10,7 +10,7 @@ const getSinger = (singers) => {
 }
 
 export default (songmid) => {
-  const requestObj = httpFetch('https://u.y.qq.com/cgi-bin/musicu.fcg', {
+  const requestObj = request('https://u.y.qq.com/cgi-bin/musicu.fcg', {
     method: 'post',
     headers: {
       'User-Agent': 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
@@ -30,7 +30,7 @@ export default (songmid) => {
         },
       },
     },
-  })
+  }, { source: 'tx' })
   return requestObj.promise.then(({ body }) => {
     // console.log(body)
     if (body.code != 0 || body.req.code != 0) return Promise.reject(new Error('获取歌曲信息失败'))

@@ -9,6 +9,7 @@ import initSync from './sync'
 import initCommonState from './common'
 import { initDeeplink } from './deeplink'
 import { setApiSource } from '@/core/apiSource'
+import { refreshHealth } from '@/core/sourceHealth'
 import commonActions from '@/store/common/action'
 import settingState from '@/store/setting/state'
 import { checkUpdate } from '@/core/version'
@@ -71,6 +72,10 @@ export default async() => {
 
   void initSync(setting)
   bootLog('Sync inited.')
+
+  // 音源健康探针：挂在初始化末尾、不 await——单源上限 8 秒，阻塞启动会让首屏空转。
+  // 内部自带 24 小时缓存与全失败降级，失败只 log，不会往上抛。
+  void refreshHealth()
 
   // syncSetting()
 

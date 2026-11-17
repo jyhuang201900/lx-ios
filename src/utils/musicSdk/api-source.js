@@ -19,7 +19,6 @@ import { REQUEST_ERROR_CODES, RequestError } from './utils'
 
 const apiList = {
   // temp_api_kw,
-  // // test_api_bd: require('./bd/api-test'),
   // test_api_kg,
   // test_api_kw,
   // test_api_tx,

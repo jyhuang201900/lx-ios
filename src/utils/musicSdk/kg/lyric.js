@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { decodeLyric } from './util'
 import { decodeName } from '../../index'
 
@@ -68,7 +68,7 @@ export default {
     return parseInt(intv)
   },
   // getLyric(songInfo, tryNum = 0) {
-  //   let requestObj = httpFetch(`http://m.kugou.com/app/i/krc.php?cmd=100&keyword=${encodeURIComponent(songInfo.name)}&hash=${songInfo.hash}&timelength=${songInfo._interval || this.getIntv(songInfo.interval)}&d=0.38664927426725626`, {
+  //   let requestObj = request(`http://m.kugou.com/app/i/krc.php?cmd=100&keyword=${encodeURIComponent(songInfo.name)}&hash=${songInfo.hash}&timelength=${songInfo._interval || this.getIntv(songInfo.interval)}&d=0.38664927426725626`, {
   //     headers: {
   //       'KG-RC': 1,
   //       'KG-THash': 'expand_search_manager.cpp:852736169:451',
@@ -90,13 +90,14 @@ export default {
   //   return requestObj
   // },
   searchLyric(name, hash, time, tryNum = 0) {
-    let requestObj = httpFetch(`http://lyrics.kugou.com/search?ver=1&man=yes&client=pc&keyword=${encodeURIComponent(name)}&hash=${hash}&timelength=${time}&lrctxt=1`, {
+    // 这里要自己看状态码：下面按 statusCode 判断失败并换一次检索重试，4xx 也要能读到
+    let requestObj = request(`http://lyrics.kugou.com/search?ver=1&man=yes&client=pc&keyword=${encodeURIComponent(name)}&hash=${hash}&timelength=${time}&lrctxt=1`, {
       headers: {
         'KG-RC': 1,
         'KG-THash': 'expand_search_manager.cpp:852736169:451',
         'User-Agent': 'KuGou2012-9020-ExpandSearchManager',
       },
-    })
+    }, { source: 'kg', expectOk: false })
     requestObj.promise = requestObj.promise.then(({ body, statusCode }) => {
       if (statusCode !== 200) {
         if (tryNum > 5) return Promise.reject(new Error('歌词获取失败'))
@@ -113,13 +114,14 @@ export default {
     return requestObj
   },
   getLyricDownload(id, accessKey, fmt, tryNum = 0) {
-    let requestObj = httpFetch(`http://lyrics.kugou.com/download?ver=1&client=pc&id=${id}&accesskey=${accessKey}&fmt=${fmt}&charset=utf8`, {
+    // 这里要自己看状态码：下面按 statusCode 判断失败并重试，4xx 也要能读到
+    let requestObj = request(`http://lyrics.kugou.com/download?ver=1&client=pc&id=${id}&accesskey=${accessKey}&fmt=${fmt}&charset=utf8`, {
       headers: {
         'KG-RC': 1,
         'KG-THash': 'expand_search_manager.cpp:852736169:451',
         'User-Agent': 'KuGou2012-9020-ExpandSearchManager',
       },
-    })
+    }, { source: 'kg', expectOk: false })
     requestObj.promise = requestObj.promise.then(({ body, statusCode }) => {
       if (statusCode !== 200) {
         if (tryNum > 5) return Promise.reject(new Error('歌词获取失败'))

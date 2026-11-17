@@ -94,6 +94,7 @@
   "list_import_tip__unknown": "Unknown file type. Please try to upgrade the app to the latest version and try again.",
   "list_loading": "Loading...",
   "list_source_unavailable": "Source unavailable",
+  "source_unavailable": " (unavailable)",
   "list_multi_add_title_first_add": "Add the selected",
   "list_multi_add_title_first_move": "Move the selected",
   "list_multi_add_title_last": "songs to ...",

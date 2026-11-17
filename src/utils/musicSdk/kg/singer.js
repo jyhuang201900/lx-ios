@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 // import { decodeName, formatPlayTime, sizeFormate } from '../../index'
 // import { signatureParams } from './util'
 import { getMusicInfosByList } from './musicInfo'
@@ -17,7 +17,8 @@ export default {
   },
   async getSingerInfo(singerid) {
     if (singerid == 0) throw new Error('歌手不存在') // kg源某些歌曲在歌手没被kg收录时返回的歌手id为0
-    const requestObj = httpFetch(`http://mobiles.kugou.com/api/v5/singer/info?singerid=${singerid}`)
+    // 这里要自己看状态码：下面按 statusCode 判断失败，4xx 的 body 也要能读到
+    const requestObj = request(`http://mobiles.kugou.com/api/v5/singer/info?singerid=${singerid}`, {}, { source: 'kg', expectOk: false })
     let { body, statusCode } = await requestObj.promise
     if (statusCode !== 200) throw new Error('获取歌手信息失败')
     return {
@@ -32,7 +33,8 @@ export default {
   },
   async getSingerSongList(singerid, page, limit) {
     if (singerid == 0) throw new Error('歌手不存在') // kg源某些歌曲在歌手没被kg收录时返回的歌手id为0
-    const requestObj = httpFetch(`http://mobiles.kugou.com/api/v5/singer/song?singerid=${singerid}&page=${page}&pagesize=${limit}`)
+    // 这里要自己看状态码：下面按 statusCode 判断失败，4xx 的 body 也要能读到
+    const requestObj = request(`http://mobiles.kugou.com/api/v5/singer/song?singerid=${singerid}&page=${page}&pagesize=${limit}`, {}, { source: 'kg', expectOk: false })
     let { body, statusCode } = await requestObj.promise
     if (statusCode !== 200) throw new Error('获取歌手歌曲列表失败')
     let listData = await getMusicInfosByList(body.data.info)
@@ -47,7 +49,8 @@ export default {
   },
   async getSingerAlbumList(singerid, page, limit) {
     if (singerid == 0) throw new Error('歌手不存在') // kg源某些歌曲在歌手没被kg收录时返回的歌手id为0
-    const requestObj = httpFetch(`http://mobiles.kugou.com/api/v5/singer/song?singerid=${singerid}&page=${page}&pagesize=${limit}`)
+    // 这里要自己看状态码：下面按 statusCode 判断失败，4xx 的 body 也要能读到
+    const requestObj = request(`http://mobiles.kugou.com/api/v5/singer/song?singerid=${singerid}&page=${page}&pagesize=${limit}`, {}, { source: 'kg', expectOk: false })
     let { body, statusCode } = await requestObj.promise
     if (statusCode !== 200) throw new Error('获取歌手专辑列表失败')
     return {

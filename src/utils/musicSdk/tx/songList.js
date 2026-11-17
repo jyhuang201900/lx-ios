@@ -1,6 +1,5 @@
-import { httpFetch } from '../../request'
 import { decodeName, formatPlayTime, sizeFormate, dateFormat, formatPlayCount } from '../../index'
-import { formatSingerName } from '../utils'
+import { formatSingerName, request } from '../utils'
 
 export default {
   _requestObj_tags: null,
@@ -69,7 +68,7 @@ export default {
   getTag(tryNum = 0) {
     if (this._requestObj_tags) this._requestObj_tags.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_tags = httpFetch(this.tagsUrl)
+    this._requestObj_tags = request(this.tagsUrl, {}, { source: 'tx' })
     return this._requestObj_tags.promise.then(({ body }) => {
       if (body.code !== this.successCode) return this.getTag(++tryNum)
       return this.filterTagInfo(body.tags.data.v_group)
@@ -79,7 +78,8 @@ export default {
   getHotTag(tryNum = 0) {
     if (this._requestObj_hotTags) this._requestObj_hotTags.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_hotTags = httpFetch(this.hotTagUrl)
+    // 返回的是 HTML 页面、下面按正则解析，且自己按 statusCode 重试，非 2xx 不能被提前当异常抛出
+    this._requestObj_hotTags = request(this.hotTagUrl, {}, { source: 'tx', expectOk: false })
     return this._requestObj_hotTags.promise.then(({ statusCode, body }) => {
       if (statusCode !== 200) return this.getHotTag(++tryNum)
       return this.filterInfoHotTag(body)
@@ -118,8 +118,10 @@ export default {
   getList(sortId, tagId, page, tryNum = 0) {
     if (this._requestObj_list) this._requestObj_list.cancelHttp()
     if (tryNum > 2) return Promise.reject(new Error('try max num'))
-    this._requestObj_list = httpFetch(
+    this._requestObj_list = request(
       this.getListUrl(sortId, tagId, page),
+      {},
+      { source: 'tx' },
     )
     // console.log(this.getListUrl(sortId, tagId, page))
     return this._requestObj_list.promise.then(({ body }) => {
@@ -172,7 +174,8 @@ export default {
   async handleParseId(link, retryNum = 0) {
     if (retryNum > 2) return Promise.reject(new Error('link try max num'))
 
-    const requestObj_listDetailLink = httpFetch(link)
+    // 这里要靠 statusCode 决定是否重试，还要读 3xx 之后的 url，非 2xx 不能被当成异常提前抛出
+    const requestObj_listDetailLink = request(link, {}, { source: 'tx', expectOk: false })
     const { url, statusCode } = await requestObj_listDetailLink.promise
     // console.log(headers)
     if (statusCode > 400) return this.handleParseId(link, ++retryNum)
@@ -200,12 +203,12 @@ export default {
 
     id = await this.getListId(id)
 
-    const requestObj_listDetail = httpFetch(this.getListDetailUrl(id), {
+    const requestObj_listDetail = request(this.getListDetailUrl(id), {
       headers: {
         Origin: 'https://y.qq.com',
         Referer: `https://y.qq.com/n/yqq/playsquare/${id}.html`,
       },
-    })
+    }, { source: 'tx' })
     const { body } = await requestObj_listDetail.promise
 
     if (body.code !== this.successCode) return this.getListDetail(id, ++tryNum)
@@ -293,12 +296,12 @@ export default {
 
   search(text, page, limit = 20, retryNum = 0) {
     if (retryNum > 5) throw new Error('max retry')
-    return httpFetch(`http://c.y.qq.com/soso/fcgi-bin/client_music_search_songlist?page_no=${page - 1}&num_per_page=${limit}&format=json&query=${encodeURIComponent(text)}&remoteplace=txt.yqq.playlist&inCharset=utf8&outCharset=utf-8`, {
+    return request(`http://c.y.qq.com/soso/fcgi-bin/client_music_search_songlist?page_no=${page - 1}&num_per_page=${limit}&format=json&query=${encodeURIComponent(text)}&remoteplace=txt.yqq.playlist&inCharset=utf8&outCharset=utf-8`, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
         Referer: 'http://y.qq.com/portal/search.html',
       },
-    })
+    }, { source: 'tx' })
       .promise.then(({ body }) => {
         if (body.code != 0) return this.search(text, page, limit, ++retryNum)
         // console.log(body.data.list)

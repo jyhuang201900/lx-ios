@@ -31,6 +31,8 @@ export default () => {
   const searchInfo = useRef<SearchInfo>({ temp_source: 'kw', source: 'kw', searchType: 'music' })
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const startupSearchText = useSettingValue('common.startupSearchText')
+  // 只取挂载那一刻的值：截图流程的预置词不该在用户此后手动搜索时被重新套用。
+  const startupSearchTextRef = useRef(startupSearchText)
 
   useEffect(() => {
     void getSearchSetting().then(info => {
@@ -48,7 +50,8 @@ export default () => {
       }
       // 截图流程会预置一个关键词，让首屏直接落在"有结果"的搜索页上；
       // 正常使用中 searchText 只来自用户输入，这里不会改变原有交互。
-      const text = searchState.searchText || startupSearchText || ''
+      // 空串同样算"没输入"，所以用显式比较而不是 ??，免得用户清空搜索框后又被预置词塞回去。
+      const text = searchState.searchText === '' ? (startupSearchTextRef.current ?? '') : searchState.searchText
       headerBarRef.current?.setText(text)
       listRef.current?.loadList(text, searchInfo.current.source, searchInfo.current.searchType)
     })

@@ -94,6 +94,7 @@
   "list_import_tip__unknown": "未知的文件类型，请尝试升级到最新版本后再试",
   "list_loading": "加载中...",
   "list_source_unavailable": "音源不可用",
+  "source_unavailable": "（不可用）",
   "list_multi_add_title_first_add": "添加已选的",
   "list_multi_add_title_first_move": "移动已选的",
   "list_multi_add_title_last": "首歌曲到...",

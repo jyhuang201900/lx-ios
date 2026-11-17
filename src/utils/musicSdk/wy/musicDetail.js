@@ -1,4 +1,4 @@
-import { httpFetch } from '../../request'
+import { request } from '../utils'
 import { weapi } from './utils/crypto'
 import { formatPlayTime, sizeFormate } from '../../index'
 // https://github.com/Binaryify/NeteaseCloudMusicApi/blob/master/module/song_detail.js
@@ -93,7 +93,8 @@ export default {
   async getList(ids = [], retryNum = 0) {
     if (retryNum > 2) return Promise.reject(new Error('try max num'))
 
-    const requestObj = httpFetch('https://music.163.com/weapi/v3/song/detail', {
+    // 要用 statusCode 与 body.code 一起判断，非 2xx 需要保留响应体
+    const requestObj = request('https://music.163.com/weapi/v3/song/detail', {
       method: 'post',
       headers: {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
@@ -103,6 +104,9 @@ export default {
         c: '[' + ids.map(id => ('{"id":' + id + '}')).join(',') + ']',
         ids: '[' + ids.join(',') + ']',
       }),
+    }, {
+      source: 'wy',
+      expectOk: false,
     })
     const { body, statusCode } = await requestObj.promise
     if (statusCode != 200 || body.code !== 200) throw new Error('获取歌曲详情失败')
