@@ -233,22 +233,24 @@ jobs:
           # 就拍到模拟器桌面。这里认启动输出里的 pid，没拿到就重来，最多三次。
           launch_app() {
             local udid="$1" i out
-            for i in 1 2 3; do
-              out="$(with_timeout 90 xcrun simctl launch "$udid" "$IOS_BUNDLE_IDENTIFIER" 2>&1)"
+            for i in 1 2 3 4; do
+              out="$(with_timeout 45 xcrun simctl launch "$udid" "$IOS_BUNDLE_IDENTIFIER" 2>&1)"
               if echo "$out" | grep -qE ': [0-9]+$'; then
                 echo "$out"
                 return 0
               fi
+              # 上一页若停在播放页，进程退出会拖住下一次 launch —— 多给几秒再重来。
               echo "::warning::launch 第 $i 次没拿到 pid：$(echo "$out" | head -n 1)"
-              with_timeout 60 xcrun simctl terminate "$udid" "$IOS_BUNDLE_IDENTIFIER" >/dev/null 2>&1 || true
-              sleep 3
+              with_timeout 30 xcrun simctl terminate "$udid" "$IOS_BUNDLE_IDENTIFIER" >/dev/null 2>&1 || true
+              sleep 6
             done
-            echo "::error::app 三次都没起来：$IOS_BUNDLE_IDENTIFIER"
+            echo "::error::app 四次都没起来：$IOS_BUNDLE_IDENTIFIER"
             return 1
           }
           shoot() {
             local udid="$1" out="$2" extra="$3" settle="$4" demo="${5:-}" hist="${6:-}"
             with_timeout 60 xcrun simctl terminate "$udid" "$IOS_BUNDLE_IDENTIFIER" >/dev/null 2>&1 || true
+            sleep 2
             seed_settings "$udid" "$extra"
             [ -n "$demo" ] && seed_demo "$udid"
             [ -n "$hist" ] && seed_search_history "$udid"
@@ -364,7 +366,7 @@ jobs:
 
             # 设置子页：common.startupSettingId 是 SETTING_SCREENS 的下标，
             # 设置页冷启动时自己选中那一项，不用点按导航条。
-            shoot "$UDID" "shots/${SLUG}-20-setting-basic.png" '{"common.startupNavId":"nav_setting","common.startupSettingId":0}' 12
+            shoot "$UDID" "shots/${SLUG}-20-setting-player.png" '{"common.startupNavId":"nav_setting","common.startupSettingId":2}' 12
             shoot "$UDID" "shots/${SLUG}-21-setting-theme.png" '{"common.startupNavId":"nav_setting","common.startupSettingId":1}' 12
 
             # 进程还活着才算启动成功
@@ -426,7 +428,8 @@ jobs:
             tail -n 200 build/xcodebuild-sim.log > "$publish/xcodebuild-tail.txt"
           fi
           if [ -s build/boot.log ]; then
-            tail -n 160 build/boot.log > "$publish/boot-tail.txt"
+            tail -n 600 build/boot.log > "$publish/boot-tail.txt"
+            grep -nE "^(::warning|::error)|timed out|missing|no pid" build/boot.log > "$publish/boot-errors.txt" || true
           fi
           # 模拟器崩溃时 app 直接黑屏，报告落在 runner 的 DiagnosticReports 里
           if [ -d "$HOME/Library/Logs/DiagnosticReports" ]; then
