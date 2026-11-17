@@ -1,0 +1,2 @@
+378:::warning::iPhone 16 Pro 上没看到应用进程，附设备日志
+539:::warning::iphone-se-3rd-generation--21-setting-theme.png 只有 28068B，像是空屏，重拍一次

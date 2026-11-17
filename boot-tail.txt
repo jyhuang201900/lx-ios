@@ -1,0 +1,590 @@
+app: build/DerivedData/Build/Products/Release-iphonesimulator/LxMusicMobile.app
+[05:29:21] == xcrun simctl list devices available (max 120s)
+== Devices ==
+-- iOS 18.5 --
+    iPhone 16 Pro (4A57FB15-6E7C-49CC-BE93-450B18BD286E) (Shutdown) 
+    iPhone 16 Pro Max (41E4762F-B20D-41AC-BFA5-AE0DB661BB84) (Shutdown) 
+    iPhone 16e (328DB690-3288-4E7C-9BFA-9A095901884B) (Shutdown) 
+    iPhone 16 (341D689A-78F6-4171-9723-8609B5394AD8) (Shutdown) 
+    iPhone 16 Plus (F853CBCE-C2DF-4188-AAF4-B3F3E24815B9) (Shutdown) 
+    iPhone SE (3rd generation) (66571EB4-A450-4628-ABB9-3D215AFEDD58) (Shutdown) 
+    iPad Pro 11-inch (M4) (4958D4DC-061A-4B2E-8FCB-F5711F024581) (Shutdown) 
+    iPad Pro 13-inch (M4) (052118CF-7C93-4A8B-82B7-DFA9962FDAB2) (Shutdown) 
+    iPad (A16) (560CD563-3A24-434E-9AA6-6D016EF02D15) (Shutdown) 
+    iPad Air 13-inch (M3) (3C683F57-5CD8-44B2-880C-BFFEFBC7C35A) (Shutdown) 
+    iPad Air 11-inch (M3) (65AAFA9D-5BED-41AA-B95E-A76F19286A8B) (Shutdown) 
+    iPad Air 11-inch (M2) (8AC197DA-8AFB-4008-B892-BE4C21D57251) (Shutdown) 
+    iPad Air 13-inch (M2) (FE2DECE8-63B8-4A77-B8E5-1C4D1940D796) (Shutdown) 
+    iPad mini (A17 Pro) (A1691E65-52BF-41DF-B182-2B17CEFC96B7) (Shutdown) 
+    iPad (10th generation) (7329C2BF-DE37-4FEE-868A-478B416CB957) (Shutdown) 
+-- iOS 18.6 --
+    iPhone 16 Pro (C67F9F5E-2E67-4ACC-BB60-44A8DB0130E6) (Shutdown) 
+    iPhone 16 Pro Max (0F7CBE14-42EE-46F3-A4D0-F370B4A3D3D5) (Shutdown) 
+    iPhone 16e (08AF5DF9-7769-4A03-B452-270A53FD3EBC) (Shutdown) 
+    iPhone 16 (8FC8BB1D-7A0A-48F8-B639-7B74A77F4610) (Shutdown) 
+    iPhone 16 Plus (35C76145-757E-4FBA-9609-EFC435E61AFD) (Shutdown) 
+    iPhone SE (3rd generation) (C3630581-519B-49DA-9400-67A78DCD42C8) (Shutdown) 
+    iPad Pro 11-inch (M4) (77F1E59E-130D-4B93-895A-55BBCE876BBC) (Shutdown) 
+    iPad Pro 13-inch (M4) (DE5BA191-0219-48E4-B01B-47385071328C) (Shutdown) 
+    iPad (A16) (9BB0D925-7787-4106-B71A-AD484A9288D4) (Shutdown) 
+    iPad Air 13-inch (M3) (16E9686E-FFA3-4CBE-A7AF-FE0CFFB54D5D) (Shutdown) 
+    iPad Air 11-inch (M3) (4EC2E2B3-E3CF-4711-9A17-801DD5C3CA76) (Shutdown) 
+    iPad Air 11-inch (M2) (AC158E0E-E1A0-4A5A-8F2E-2D315823858F) (Shutdown) 
+    iPad Air 13-inch (M2) (A5E07AD7-C10C-4A8D-AFCC-4AABB5FDDDAD) (Shutdown) 
+    iPad mini (A17 Pro) (2A250684-88E3-4EDB-A21E-B7726B4C69F6) (Shutdown) 
+    iPad (10th generation) (881E8995-0461-4E8E-B017-F42A75B9D1CE) (Shutdown) 
+-- iOS 26.0 --
+    iPhone 17 Pro (25C22EBC-57CC-4272-8C91-050D3D572B32) (Shutdown) 
+    iPhone 17 Pro Max (95803967-AE3E-452F-A127-131AAC00A3FE) (Shutdown) 
+    iPhone Air (99D68128-611B-44D4-A06F-5157B11BF0BC) (Shutdown) 
+    iPhone 17 (1F9C81D1-869F-438D-9616-2472BE5F5A77) (Shutdown) 
+    iPhone 16 Pro (FC50CACD-1298-4935-ACD6-1F604E0217CA) (Shutdown) 
+    iPhone 16 Pro Max (CE8530BB-2FEC-4D03-B9D1-6DC2E6B0C3DF) (Shutdown) 
+    iPhone 16e (1D1796B0-028E-4FED-AD5C-7FEBA6D941AE) (Shutdown) 
+    iPhone 16 (1AFB8BF6-A8B2-4D78-95F9-3A0455425CBA) (Shutdown) 
+    iPhone 16 Plus (54E17A43-0D26-4F2A-A8A3-1F1F13CE79A9) (Shutdown) 
+    iPhone SE (3rd generation) (ADCAA360-5B3E-46D1-B604-46ADD143FBD9) (Shutdown) 
+    iPad Pro 13-inch (M5) (326BE850-69D0-468D-BE9F-82ACA2315CCF) (Shutdown) 
+    iPad Pro 11-inch (M5) (3E81FA92-6C7B-471E-ACE8-DEB1BC933801) (Shutdown) 
+    iPad Pro 11-inch (M4) (0C66C372-6626-40B4-9AE9-ED256711BA37) (Shutdown) 
+    iPad Pro 13-inch (M4) (2C460862-96F5-4F13-B4D1-44430DB8CE67) (Shutdown) 
+    iPad mini (A17 Pro) (94AF59C4-E64A-47E2-B5FC-FAD1A99BBD6A) (Shutdown) 
+    iPad (A16) (648126EC-3BAA-4497-8DEC-2C26C0FC062C) (Shutdown) 
+    iPad Air 13-inch (M3) (5D3D906D-D248-41EA-8D97-0F801AFB3841) (Shutdown) 
+    iPad Air 11-inch (M3) (A84145FE-B5F8-4F9A-83B8-8C10CD9179A8) (Shutdown) 
+    iPad Air 11-inch (M2) (7EEA2B4C-E33A-489F-8CE9-54A95A012A7B) (Shutdown) 
+    iPad Air 13-inch (M2) (77346208-A853-44D8-A5FD-B500FCCAF077) (Shutdown) 
+    iPad (10th generation) (EB040E2D-06C7-4ED6-8DAF-3806BA80E34D) (Shutdown) 
+-- iOS 26.1 --
+    iPhone 17 Pro (324AEBE7-7D9B-4053-B4DD-9F8134A82707) (Shutdown) 
+    iPhone 17 Pro Max (BCB27533-D210-43AE-B001-BE3F033158BC) (Shutdown) 
+    iPhone Air (846ED2AD-EB87-4B0F-9A65-00E6A822CB9E) (Shutdown) 
+    iPhone 17 (DD2C5966-4861-4552-9C50-EC1C74BD88FC) (Shutdown) 
+    iPhone 16 Pro (B14C5257-D09F-498F-977A-C7FEF383B1FC) (Shutdown) 
+    iPhone 16 Pro Max (4FD6FC0F-54E2-4861-B95B-51103D587ABA) (Shutdown) 
+    iPhone 16e (61AC349B-469C-4CFD-BAF5-3E6A7EAF5593) (Shutdown) 
+    iPhone 16 (C5E1B940-5C22-47EC-917E-BF8ABE51F416) (Shutdown) 
+    iPhone 16 Plus (D0C50032-034B-4493-A9E9-9459E4F481B9) (Shutdown) 
+    iPhone SE (3rd generation) (649B8FBD-A8D5-4CA8-B862-4322DD5DCD78) (Shutdown) 
+    iPad Pro 13-inch (M5) (F68EDA96-8019-48A5-9380-06BB81115A6D) (Shutdown) 
+    iPad Pro 11-inch (M5) (E57CC80A-38E2-4A3D-928C-86E7092A16AF) (Shutdown) 
+    iPad Pro 11-inch (M4) (9726AC26-E6F0-48DD-ADFD-04B73D808008) (Shutdown) 
+    iPad Pro 13-inch (M4) (B23C6DAE-1AD2-446F-A3E4-72FAA287D289) (Shutdown) 
+    iPad (A16) (89969594-357A-405D-9A9B-1B6F799D50F1) (Shutdown) 
+    iPad Air 13-inch (M3) (001D073F-3837-401D-A154-B2B22F077B36) (Shutdown) 
+    iPad Air 11-inch (M3) (3ACD0CEF-A8E0-4A94-8854-1D15E72A2B2F) (Shutdown) 
+    iPad Air 11-inch (M2) (B6B452C5-2B28-4772-A72D-3CF8F80C40F8) (Shutdown) 
+    iPad Air 13-inch (M2) (8C6B52C9-C68F-48F7-B131-4A7DBF40E981) (Shutdown) 
+    iPad mini (A17 Pro) (1F1A982F-A6AB-4622-A71C-08FC8732B949) (Shutdown) 
+    iPad (10th generation) (53209C6D-F710-47D6-A1FE-BCFDF2AF0F23) (Shutdown) 
+-- iOS 26.2 --
+    iPhone 17 Pro (2FEACF5E-886C-4FB8-A137-C571FBA5CF5C) (Shutdown) 
+    iPhone 17 Pro Max (17F0E734-D183-4810-AB97-F27FD9968039) (Shutdown) 
+    iPhone Air (00447DBE-32CF-4171-A4DB-0C2EAE058F02) (Shutdown) 
+    iPhone 17 (BC7CEBFB-6B90-4D7E-B85E-BB0102C99F06) (Shutdown) 
+    iPhone 16 Pro (8F571767-87A3-448E-AF82-29C992EC2D5E) (Shutdown) 
+    iPhone 16 Pro Max (FA1105A3-CFB2-45AC-B4DB-EBAC55DD946D) (Shutdown) 
+    iPhone 16e (F2D2FAF0-3DC7-43F6-8E67-CFF6C774105B) (Shutdown) 
+    iPhone 16 (309F4F0C-F632-4F5C-BB25-BD783E57455C) (Shutdown) 
+    iPhone 16 Plus (C20E3165-9F7B-4F04-88BB-CACE712B88AB) (Shutdown) 
+    iPhone SE (3rd generation) (A1285399-F2F4-46E9-8CF2-4AA227FF7EF3) (Shutdown) 
+    iPad Pro 13-inch (M5) (73C19119-B10E-4309-872E-C53EF3F0EF27) (Shutdown) 
+    iPad Pro 11-inch (M5) (F67B0B21-7494-4851-8FEA-F5FECE154B6D) (Shutdown) 
+    iPad Pro 11-inch (M4) (02E8A1AA-FFE7-472E-82B1-99CEDB718216) (Shutdown) 
+    iPad Pro 13-inch (M4) (04A9C222-F4D9-4FD4-98BE-4054EEE6F66B) (Shutdown) 
+    iPad mini (A17 Pro) (B8FDD452-636F-4559-AF6E-83AC73F482CF) (Shutdown) 
+    iPad (A16) (99B14484-E343-4170-AA2E-F738DF7FB3F2) (Shutdown) 
+    iPad Air 13-inch (M3) (697390A7-516F-4E42-BC81-BAE7B3D9899F) (Shutdown) 
+    iPad Air 11-inch (M3) (46B2C201-34BD-490F-B6CA-09A9D44428F6) (Shutdown) 
+    iPad Air 11-inch (M2) (600769A2-106D-47FC-BC82-226EB3CB9A19) (Shutdown) 
+    iPad Air 13-inch (M2) (EC963428-282D-4710-92F4-AF92774819A7) (Shutdown) 
+    iPad (10th generation) (06716521-45A3-4B83-9675-8E50641017F6) (Shutdown) 
+-- tvOS 18.5 --
+    Apple TV 4K (3rd generation) (8A666470-7235-4744-A0D3-BF7B787A23B4) (Shutdown) 
+    Apple TV 4K (3rd generation) (at 1080p) (D1836083-A89B-40A1-A3F9-A5D3F48FA5B3) (Shutdown) 
+    Apple TV (BBF1B592-5639-491F-9E78-3F8A1F5855AB) (Shutdown) 
+-- tvOS 26.1 --
+    Apple TV 4K (3rd generation) (444EF83A-F530-4748-A068-C5834E0CB751) (Shutdown) 
+    Apple TV 4K (3rd generation) (at 1080p) (1F3E23FA-3D72-46E9-BEA4-9BC00F04BACC) (Shutdown) 
+    Apple TV (B9A07B3E-DFF2-47E8-90DF-1298F1A116CF) (Shutdown) 
+-- tvOS 26.2 --
+    Apple TV 4K (3rd generation) (8250B482-246E-4864-8D6A-B33733460CF6) (Shutdown) 
+    Apple TV 4K (3rd generation) (at 1080p) (1BBF54B6-E9B1-4DFE-B245-E93E3A6B2477) (Shutdown) 
+    Apple TV (39D80D0D-E5ED-4139-A557-10D9F490C710) (Shutdown) 
+-- watchOS 11.5 --
+    Apple Watch Series 10 (46mm) (F3515276-8614-4B32-A3E1-FFC0F1D7DCD0) (Shutdown) 
+    Apple Watch Series 10 (42mm) (A9D9A831-68E3-4E86-B6C6-593A44CC49AF) (Shutdown) 
+    Apple Watch Ultra 2 (49mm) (D84F4AD3-E409-41A4-98C2-6A961D254553) (Shutdown) 
+    Apple Watch SE (44mm) (2nd generation) (F2B194B2-E61E-4E20-B330-786687C87634) (Shutdown) 
+    Apple Watch SE (40mm) (2nd generation) (639142BB-A3F5-4855-9463-D77312ADAAF1) (Shutdown) 
+-- watchOS 26.1 --
+    Apple Watch Series 11 (46mm) (28AB453A-59F3-4335-A567-1CCF8BFC1321) (Shutdown) 
+    Apple Watch Series 11 (42mm) (A241F65E-CDC8-4B1F-BC10-6F5948A4EF83) (Shutdown) 
+    Apple Watch Series 10 (46mm) (195CAA2B-1A62-40F8-90A0-88267BD71129) (Shutdown) 
+    Apple Watch Series 10 (42mm) (F6DAFEB3-88D7-4B0E-B3ED-7B38BF4A9C85) (Shutdown) 
+    Apple Watch Ultra 3 (49mm) (E93DD013-DDB9-4A78-924F-C66264DDB0D6) (Shutdown) 
+    Apple Watch Ultra 2 (49mm) (D7F17306-0CAA-47AE-B76B-56C8D8DEDDAE) (Shutdown) 
+    Apple Watch SE 3 (44mm) (C6821683-1C21-4312-BFB8-4765EDD24197) (Shutdown) 
+    Apple Watch SE 3 (40mm) (A92CF0A8-B6A9-44C3-B12F-1F387B8676BB) (Shutdown) 
+    Apple Watch SE (44mm) (2nd generation) (4FCFB866-118C-4BB8-AD18-DC6997C71E21) (Shutdown) 
+    Apple Watch SE (40mm) (2nd generation) (B11EB0F9-3FD7-4537-AA70-EB4374F720FD) (Shutdown) 
+-- watchOS 26.2 --
+    Apple Watch Series 11 (46mm) (B72BD753-B0E5-424B-A1F7-0AABCCDE44D2) (Shutdown) 
+    Apple Watch Series 11 (42mm) (DDA6B2C3-95CB-4A85-A711-644D9D79D234) (Shutdown) 
+    Apple Watch Series 10 (46mm) (F3B1DFEE-F42F-4F13-97C8-F6BB44FCD20D) (Shutdown) 
+    Apple Watch Series 10 (42mm) (3EAABCC4-95AA-49EA-B957-356C1E1C0773) (Shutdown) 
+    Apple Watch Ultra 3 (49mm) (1196EA35-F1F1-4011-84E9-45FB045AC999) (Shutdown) 
+    Apple Watch Ultra 2 (49mm) (4D815B6F-96C8-4E1D-BCE8-A57316D02595) (Shutdown) 
+    Apple Watch SE 3 (44mm) (E18BA8F7-218B-4B0B-A8DE-D35E99B00A7A) (Shutdown) 
+    Apple Watch SE 3 (40mm) (0EE398B9-9B8B-4C60-B286-687A4BA210BF) (Shutdown) 
+    Apple Watch SE (44mm) (2nd generation) (8CD49CA9-8C81-4417-87D3-926148960D7E) (Shutdown) 
+    Apple Watch SE (40mm) (2nd generation) (244A8078-0D2E-48A6-B639-C1F495598230) (Shutdown) 
+-- visionOS 2.3 --
+    Apple Vision Pro (D0F14F8F-92E2-4F22-A865-D3C15827F37B) (Shutdown) 
+-- visionOS 2.4 --
+    Apple Vision Pro (4C6D3708-4F33-4B94-8133-1FE8939E1175) (Shutdown) 
+-- visionOS 2.5 --
+    Apple Vision Pro (402E966D-7AB6-4E10-B300-697686E3727A) (Shutdown) 
+-- visionOS 26.1 --
+    Apple Vision Pro (A3A5FF05-9D8C-4AB3-AEE3-FD2FF49EF0FD) (Shutdown) 
+-- visionOS 26.2 --
+    Apple Vision Pro (644B81BA-B8E0-472D-A49B-84FF1C95498B) (Shutdown) 
+[05:29:26] == iPhone 16 Pro (4A57FB15-6E7C-49CC-BE93-450B18BD286E) -> shots/iphone-16-pro
+[05:29:27] == xcrun simctl boot 4A57FB15-6E7C-49CC-BE93-450B18BD286E (max 180s)
+[05:29:31] == xcrun simctl bootstatus 4A57FB15-6E7C-49CC-BE93-450B18BD286E -b (max 240s)
+Monitoring boot status for iPhone 16 Pro (4A57FB15-6E7C-49CC-BE93-450B18BD286E).
+[2026-11-17 05:30:09 +0000] Status=2, isTerminal=NO, Elapsed=00:39.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+		Migration Elapsed:00:28 seconds
+
+[2026-11-17 05:30:10 +0000] Status=2, isTerminal=NO, Elapsed=00:40.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+		Migration Elapsed:00:29 seconds
+
+[2026-11-17 05:30:11 +0000] Status=2, isTerminal=NO, Elapsed=00:41.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+		Migration Elapsed:00:30 seconds
+
+[2026-11-17 05:30:12 +0000] Status=2, isTerminal=NO, Elapsed=00:42.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.-0LaunchServicesMigrator (00LaunchServicesMigrator.migrator, user-agnostic)
+		Migration Elapsed:00:31 seconds
+
+[2026-11-17 05:30:15 +0000] Status=2, isTerminal=NO, Elapsed=00:46.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.securityd.KeychainMigrator (KeychainMigrator.migrator, user-agnostic)
+		Migration Elapsed:00:33 seconds
+
+[2026-11-17 05:30:16 +0000] Status=2, isTerminal=NO, Elapsed=00:47.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.managedconfiguration.migrator (MCProfile.migrator, user-agnostic)
+		Migration Elapsed:00:35 seconds
+
+[2026-11-17 05:30:17 +0000] Status=2, isTerminal=NO, Elapsed=00:47.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.managedconfiguration.migrator (MCProfile.migrator, user-agnostic)
+		Migration Elapsed:00:36 seconds
+
+[2026-11-17 05:30:17 +0000] Status=2, isTerminal=NO, Elapsed=00:47.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.managedconfiguration.migrator (MCProfile.migrator, user-agnostic)
+		Migration Elapsed:00:37 seconds
+
+[2026-11-17 05:30:18 +0000] Status=2, isTerminal=NO, Elapsed=00:48.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.managedconfiguration.migrator (MCProfile.migrator, user-agnostic)
+		Migration Elapsed:00:37 seconds
+
+[2026-11-17 05:30:20 +0000] Status=2, isTerminal=NO, Elapsed=00:51.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.WebBookmarks.migrator (WebBookmarks.migrator)
+		Migration Elapsed:00:38 seconds
+
+[2026-11-17 05:30:22 +0000] Status=2, isTerminal=NO, Elapsed=00:52.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.keyboards.migrator (KeyboardMigrator.migrator)
+		Migration Elapsed:00:40 seconds
+
+[2026-11-17 05:30:24 +0000] Status=2, isTerminal=NO, Elapsed=00:54.
+	Waiting on Data Migration
+		Reason:Running plugin com.apple.PreferencesMigrator (PreferencesMigrator.migrator)
+		Migration Elapsed:00:41 seconds
+
+[2026-11-17 05:30:25 +0000] Status=4, isTerminal=NO, Elapsed=00:55.
+	Waiting on System App
+
+[2026-11-17 05:30:26 +0000] Status=4, isTerminal=NO, Elapsed=00:56.
+	Waiting on System App
+
+[2026-11-17 05:30:30 +0000] Status=4294967295, isTerminal=YES, Elapsed=01:00.
+	Finished
+
+[05:30:31] == xcrun simctl ui 4A57FB15-6E7C-49CC-BE93-450B18BD286E appearance dark (max 60s)
+[05:31:10] == xcrun simctl status_bar 4A57FB15-6E7C-49CC-BE93-450B18BD286E override --time 9:41 --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularBars 4 (max 60s)
+[05:31:29] == xcrun simctl install 4A57FB15-6E7C-49CC-BE93-450B18BD286E build/DerivedData/Build/Products/Release-iphonesimulator/LxMusicMobile.app (max 120s)
+[05:31:58] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 90s)
+cn.toside.music.mobile: 37902
+[05:32:05] manifest ready after 1s
+[05:32:05] == xcrun simctl terminate 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 60s)
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:32:10] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 38596
+[05:32:23] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-01-home.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-01-home.png
+[05:32:26] shot iphone-16-pro-01-home.png
+[05:32:32] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-02-home-settled.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-02-home-settled.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:32:38] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 40092
+[05:32:55] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-03-play-detail.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-03-play-detail.png
+[05:32:57] shot iphone-16-pro-03-play-detail.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:33:03] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 41134
+[05:33:19] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-04-songlist.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-04-songlist.png
+[05:33:22] shot iphone-16-pro-04-songlist.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:33:26] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 42615
+[05:33:31] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-19-songlist-loading.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-19-songlist-loading.png
+[05:33:32] shot iphone-16-pro-19-songlist-loading.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:33:35] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 43468
+[05:33:48] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-05-chart.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-05-chart.png
+[05:33:51] shot iphone-16-pro-05-chart.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:33:55] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 44178
+[05:34:08] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-06-love.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-06-love.png
+[05:34:10] shot iphone-16-pro-06-love.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:34:15] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 45164
+[05:34:35] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-07-local.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-07-local.png
+[05:34:37] shot iphone-16-pro-07-local.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:34:42] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 46918
+[05:34:54] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-08-setting.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-08-setting.png
+[05:34:57] shot iphone-16-pro-08-setting.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:35:02] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 48153
+[05:35:21] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-09-search.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-09-search.png
+[05:35:22] shot iphone-16-pro-09-search.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:35:27] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 49309
+[05:35:41] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-10-home-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-10-home-dark.png
+[05:35:43] shot iphone-16-pro-10-home-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:35:47] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 50206
+[05:36:04] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-11-play-detail-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-11-play-detail-dark.png
+[05:36:07] shot iphone-16-pro-11-play-detail-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:36:12] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 51735
+[05:36:24] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-12-songlist-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-12-songlist-dark.png
+[05:36:26] shot iphone-16-pro-12-songlist-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:36:30] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 52854
+[05:36:44] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-13-chart-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-13-chart-dark.png
+[05:36:46] shot iphone-16-pro-13-chart-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:36:50] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 53559
+[05:37:01] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-14-setting-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-14-setting-dark.png
+[05:37:03] shot iphone-16-pro-14-setting-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+seed demo track
+[05:37:08] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 54428
+[05:37:23] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-15-player-song.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-15-player-song.png
+[05:37:27] shot iphone-16-pro-15-player-song.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+seed demo track
+[05:37:33] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 56271
+[05:37:50] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-16-play-detail-song.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-16-play-detail-song.png
+[05:37:56] shot iphone-16-pro-16-play-detail-song.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+seed search history
+[05:38:02] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 57406
+[05:38:16] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-17-search-history.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-17-search-history.png
+[05:38:18] shot iphone-16-pro-17-search-history.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:38:22] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 58302
+[05:38:40] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-18-search-result.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-18-search-result.png
+[05:38:41] shot iphone-16-pro-18-search-result.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:38:45] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 60256
+[05:38:59] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-20-setting-player.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-20-setting-player.png
+[05:39:03] shot iphone-16-pro-20-setting-player.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/4A57FB15-6E7C-49CC-BE93-450B18BD286E/data/Containers/Data/Application/95491151-383A-4ABC-91ED-389E36E21C2A/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:39:08] == xcrun simctl launch 4A57FB15-6E7C-49CC-BE93-450B18BD286E cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 61040
+[05:39:22] == xcrun simctl io 4A57FB15-6E7C-49CC-BE93-450B18BD286E screenshot shots/iphone-16-pro-21-setting-theme.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-16-pro-21-setting-theme.png
+[05:39:23] shot iphone-16-pro-21-setting-theme.png
+::warning::iPhone 16 Pro 上没看到应用进程，附设备日志
+getpwuid_r did not find a match for uid 501
+[05:39:26] == done iPhone 16 Pro
+[05:39:27] == iPhone SE (3rd generation) (66571EB4-A450-4628-ABB9-3D215AFEDD58) -> shots/iphone-se-3rd-generation-
+[05:39:27] == xcrun simctl boot 66571EB4-A450-4628-ABB9-3D215AFEDD58 (max 180s)
+[05:39:29] == xcrun simctl bootstatus 66571EB4-A450-4628-ABB9-3D215AFEDD58 -b (max 240s)
+Monitoring boot status for iPhone SE (3rd generation) (66571EB4-A450-4628-ABB9-3D215AFEDD58).
+Device already booted, nothing to do.
+
+[05:42:11] == xcrun simctl ui 66571EB4-A450-4628-ABB9-3D215AFEDD58 appearance dark (max 60s)
+[05:43:04] == xcrun simctl status_bar 66571EB4-A450-4628-ABB9-3D215AFEDD58 override --time 9:41 --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularBars 4 (max 60s)
+[05:43:32] == xcrun simctl install 66571EB4-A450-4628-ABB9-3D215AFEDD58 build/DerivedData/Build/Products/Release-iphonesimulator/LxMusicMobile.app (max 120s)
+[05:44:10] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 90s)
+cn.toside.music.mobile: 65805
+[05:44:46] manifest ready after 1s
+[05:44:46] == xcrun simctl terminate 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 60s)
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:44:59] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 66719
+[05:45:17] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--01-home.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--01-home.png
+[05:45:21] shot iphone-se-3rd-generation--01-home.png
+[05:45:26] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--02-home-settled.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--02-home-settled.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:45:32] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 68410
+[05:45:49] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--03-play-detail.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--03-play-detail.png
+[05:45:55] shot iphone-se-3rd-generation--03-play-detail.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:45:59] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 69930
+[05:46:15] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--04-songlist.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--04-songlist.png
+[05:46:18] shot iphone-se-3rd-generation--04-songlist.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:46:22] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 71337
+[05:46:26] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--19-songlist-loading.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--19-songlist-loading.png
+[05:46:27] shot iphone-se-3rd-generation--19-songlist-loading.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:46:38] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 72442
+[05:46:51] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--05-chart.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--05-chart.png
+[05:46:53] shot iphone-se-3rd-generation--05-chart.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:46:57] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 73708
+[05:47:09] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--06-love.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--06-love.png
+[05:47:11] shot iphone-se-3rd-generation--06-love.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:47:15] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 74929
+[05:47:27] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--07-local.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--07-local.png
+[05:47:29] shot iphone-se-3rd-generation--07-local.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:47:34] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 76613
+[05:47:46] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--08-setting.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--08-setting.png
+[05:47:47] shot iphone-se-3rd-generation--08-setting.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:47:51] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 77803
+[05:48:09] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--09-search.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--09-search.png
+[05:48:10] shot iphone-se-3rd-generation--09-search.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:48:15] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 79578
+[05:48:29] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--10-home-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--10-home-dark.png
+[05:48:31] shot iphone-se-3rd-generation--10-home-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:48:37] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 81092
+[05:48:52] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--11-play-detail-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--11-play-detail-dark.png
+[05:48:58] shot iphone-se-3rd-generation--11-play-detail-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:49:03] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 82433
+[05:49:14] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--12-songlist-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--12-songlist-dark.png
+[05:49:16] shot iphone-se-3rd-generation--12-songlist-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:49:20] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 83505
+[05:49:34] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--13-chart-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--13-chart-dark.png
+[05:49:38] shot iphone-se-3rd-generation--13-chart-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:49:45] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 84921
+[05:50:05] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--14-setting-dark.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--14-setting-dark.png
+[05:50:13] shot iphone-se-3rd-generation--14-setting-dark.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+seed demo track
+[05:50:22] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 87201
+[05:50:47] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--15-player-song.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--15-player-song.png
+[05:50:51] shot iphone-se-3rd-generation--15-player-song.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+seed demo track
+[05:51:03] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 88583
+[05:51:20] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--16-play-detail-song.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--16-play-detail-song.png
+[05:51:25] shot iphone-se-3rd-generation--16-play-detail-song.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+seed search history
+[05:51:32] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 91185
+[05:51:54] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--17-search-history.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--17-search-history.png
+[05:51:57] shot iphone-se-3rd-generation--17-search-history.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:52:01] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 92301
+[05:52:29] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--18-search-result.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--18-search-result.png
+[05:52:31] shot iphone-se-3rd-generation--18-search-result.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:52:36] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 94551
+[05:52:49] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--20-setting-player.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--20-setting-player.png
+[05:52:51] shot iphone-se-3rd-generation--20-setting-player.png
+seed settings -> /Users/runner/Library/Developer/CoreSimulator/Devices/66571EB4-A450-4628-ABB9-3D215AFEDD58/data/Containers/Data/Application/29146978-F363-4072-A5E8-8DEA516089E6/Library/Application Support/cn.toside.music.mobile/RCTAsyncLocalStorage_V1/manifest.json
+[05:52:55] == xcrun simctl launch 66571EB4-A450-4628-ABB9-3D215AFEDD58 cn.toside.music.mobile (max 45s)
+cn.toside.music.mobile: 96656
+[05:53:15] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--21-setting-theme.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--21-setting-theme.png
+::warning::iphone-se-3rd-generation--21-setting-theme.png 只有 28068B，像是空屏，重拍一次
+[05:53:26] == xcrun simctl io 66571EB4-A450-4628-ABB9-3D215AFEDD58 screenshot shots/iphone-se-3rd-generation--21-setting-theme.png (max 60s)
+Detected file type 'PNG' from extension
+Wrote screenshot to: shots/iphone-se-3rd-generation--21-setting-theme.png
+[05:53:30] shot iphone-se-3rd-generation--21-setting-theme.png
+[05:53:34] == done iPhone SE (3rd generation)
+total 97456
+drwxr-xr-x  45 runner  staff     1440 Nov 17 05:53 .
+drwxr-xr-x  42 runner  staff     1344 Nov 17 05:29 ..
+-rw-r--r--@  1 runner  staff  1880141 Nov 17 05:32 iphone-16-pro-01-home.png
+-rw-r--r--@  1 runner  staff  1880141 Nov 17 05:32 iphone-16-pro-02-home-settled.png
+-rw-r--r--@  1 runner  staff  1246153 Nov 17 05:32 iphone-16-pro-03-play-detail.png
+-rw-r--r--@  1 runner  staff  3498840 Nov 17 05:33 iphone-16-pro-04-songlist.png
+-rw-r--r--@  1 runner  staff  2113504 Nov 17 05:33 iphone-16-pro-05-chart.png
+-rw-r--r--@  1 runner  staff  1831529 Nov 17 05:34 iphone-16-pro-06-love.png
+-rw-r--r--@  1 runner  staff  1801194 Nov 17 05:34 iphone-16-pro-07-local.png
+-rw-r--r--@  1 runner  staff   699831 Nov 17 05:34 iphone-16-pro-08-setting.png
+-rw-r--r--@  1 runner  staff  1449617 Nov 17 05:35 iphone-16-pro-09-search.png
+-rw-r--r--@  1 runner  staff  1621633 Nov 17 05:35 iphone-16-pro-10-home-dark.png
+-rw-r--r--@  1 runner  staff  1107634 Nov 17 05:36 iphone-16-pro-11-play-detail-dark.png
+-rw-r--r--@  1 runner  staff  3333060 Nov 17 05:36 iphone-16-pro-12-songlist-dark.png
+-rw-r--r--@  1 runner  staff  1865117 Nov 17 05:36 iphone-16-pro-13-chart-dark.png
+-rw-r--r--@  1 runner  staff   583457 Nov 17 05:37 iphone-16-pro-14-setting-dark.png
+-rw-r--r--@  1 runner  staff  1879056 Nov 17 05:37 iphone-16-pro-15-player-song.png
+-rw-r--r--@  1 runner  staff  1353992 Nov 17 05:37 iphone-16-pro-16-play-detail-song.png
+-rw-r--r--@  1 runner  staff  1756710 Nov 17 05:38 iphone-16-pro-17-search-history.png
+-rw-r--r--@  1 runner  staff  2104962 Nov 17 05:38 iphone-16-pro-18-search-result.png
+-rw-r--r--@  1 runner  staff  3498074 Nov 17 05:33 iphone-16-pro-19-songlist-loading.png
+-rw-r--r--@  1 runner  staff   716058 Nov 17 05:39 iphone-16-pro-20-setting-player.png
+-rw-r--r--@  1 runner  staff  1104069 Nov 17 05:39 iphone-16-pro-21-setting-theme.png
+-rw-r--r--   1 runner  staff   329078 Nov 17 05:39 iphone-16-pro-device.log
+-rw-r--r--@  1 runner  staff   663360 Nov 17 05:45 iphone-se-3rd-generation--01-home.png
+-rw-r--r--@  1 runner  staff   663360 Nov 17 05:45 iphone-se-3rd-generation--02-home-settled.png
+-rw-r--r--@  1 runner  staff   389761 Nov 17 05:45 iphone-se-3rd-generation--03-play-detail.png
+-rw-r--r--@  1 runner  staff  1268654 Nov 17 05:46 iphone-se-3rd-generation--04-songlist.png
+-rw-r--r--@  1 runner  staff   761291 Nov 17 05:46 iphone-se-3rd-generation--05-chart.png
+-rw-r--r--@  1 runner  staff   652146 Nov 17 05:47 iphone-se-3rd-generation--06-love.png
+-rw-r--r--@  1 runner  staff   636443 Nov 17 05:47 iphone-se-3rd-generation--07-local.png
+-rw-r--r--@  1 runner  staff   275663 Nov 17 05:47 iphone-se-3rd-generation--08-setting.png
+-rw-r--r--@  1 runner  staff   533078 Nov 17 05:48 iphone-se-3rd-generation--09-search.png
+-rw-r--r--@  1 runner  staff   567676 Nov 17 05:48 iphone-se-3rd-generation--10-home-dark.png
+-rw-r--r--@  1 runner  staff   357893 Nov 17 05:48 iphone-se-3rd-generation--11-play-detail-dark.png
+-rw-r--r--@  1 runner  staff  1199131 Nov 17 05:49 iphone-se-3rd-generation--12-songlist-dark.png
+-rw-r--r--@  1 runner  staff   667372 Nov 17 05:49 iphone-se-3rd-generation--13-chart-dark.png
+-rw-r--r--@  1 runner  staff   221866 Nov 17 05:50 iphone-se-3rd-generation--14-setting-dark.png
+-rw-r--r--@  1 runner  staff   662164 Nov 17 05:50 iphone-se-3rd-generation--15-player-song.png
+-rw-r--r--@  1 runner  staff   538495 Nov 17 05:51 iphone-se-3rd-generation--16-play-detail-song.png
+-rw-r--r--@  1 runner  staff   602670 Nov 17 05:51 iphone-se-3rd-generation--17-search-history.png
+-rw-r--r--@  1 runner  staff   752333 Nov 17 05:52 iphone-se-3rd-generation--18-search-result.png
+-rw-r--r--@  1 runner  staff   136002 Nov 17 05:46 iphone-se-3rd-generation--19-songlist-loading.png
+-rw-r--r--@  1 runner  staff   277448 Nov 17 05:52 iphone-se-3rd-generation--20-setting-player.png
+-rw-r--r--@  1 runner  staff   332826 Nov 17 05:53 iphone-se-3rd-generation--21-setting-theme.png
