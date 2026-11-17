@@ -143,7 +143,10 @@ export default {
   successCode: '000000',
   requestBoardsObj: null,
   getBoardsData() {
-    if (this.requestBoardsObj) this._requestBoardsObj.cancelHttp()
+    // 本对象的字段名就是 requestBoardsObj（没有下划线版本），原先守卫查的是 requestBoardsObj、
+    // 取消却写成 this._requestBoardsObj：第二次进入这里时它是 undefined，取 cancelHttp 直接 TypeError，
+    // 榜单请求从此再也发不出去，所以两处统一用 requestBoardsObj
+    if (this.requestBoardsObj) this.requestBoardsObj.cancelHttp()
     this.requestBoardsObj = request('https://app.c.nf.migu.cn/pc/bmw/rank/rank-index/v1.0', {
     // this.requestBoardsObj = request('https://app.c.nf.migu.cn/MIGUM3.0/v1.0/template/rank-list/release', {
     // this.requestBoardsObj = request('https://app.c.nf.migu.cn/MIGUM2.0/v2.0/content/indexrank.do?templateVersion=8', {

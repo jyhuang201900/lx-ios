@@ -206,10 +206,12 @@ export default {
     const requestPromise = request(requestUrl, { cache: 'default' }, { source: 'kw', expectOk: false }).promise
 
     return requestPromise.then(({ statusCode, body }) => {
+      // 为什么：非 2xx 的 body 是错误页或残缺体，先按状态码退出重试，别拿坏响应去解码
+      if (statusCode !== 200) return this.getList(id, page, retryNum)
       const rawData = wbdCrypto.decodeData(body)
       // console.log(rawData)
       const data = rawData.data
-      if (statusCode !== 200 || rawData.code != 200 || !data.musiclist) return this.getList(id, page, retryNum)
+      if (rawData.code != 200 || !data.musiclist) return this.getList(id, page, retryNum)
 
       const total = parseInt(data.total)
       const list = this.filterData(data.musiclist)

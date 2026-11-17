@@ -102,7 +102,10 @@ export default {
       headers: this.defaultHeaders,
     }, { source: 'mg', expectOk: false })
     return requestObj_listDetailInfo.promise.then(({ body }) => {
-      if (body.code !== this.successCode) return this.getListDetail(id, ++tryNum)
+      // 失败重试必须回到本函数 getListDetailInfo；原先误调 this.getListDetail(id, ++tryNum)，
+      // 那个函数第二个参数是 page，会把 playlistId 当成页码传进去，重试取到的是另一个列表的数据，
+      // 于是「详情拿不到」会被错误地当成「列表为空」
+      if (body.code !== this.successCode) return this.getListDetailInfo(id, ++tryNum)
       // console.log(JSON.stringify(body))
       // console.log(body)
       const cachedDetailInfo = this.cachedDetailInfo[id] = {

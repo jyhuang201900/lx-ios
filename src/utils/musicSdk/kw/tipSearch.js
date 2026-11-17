@@ -14,7 +14,10 @@ export default {
     this.cancelTipSearch()
     // 这里要自己看状态码：非 200 直接 reject
     this.requestObj = request(`https://tips.kuwo.cn/t.s?corp=kuwo&newver=3&p2p=1&notrace=0&c=mbox&w=${encodeURIComponent(str)}&encoding=utf8&rformat=json`, {
-      Referer: 'http://www.kuwo.cn/',
+      // 为什么：Referer 只有放进 headers 才会真的发出去，写在选项顶层会被忽略，这个接口因此一直 403
+      headers: {
+        Referer: 'http://www.kuwo.cn/',
+      },
     }, { source: 'kw', expectOk: false })
     return this.requestObj.promise.then(({ body, statusCode }) => {
       if (statusCode != 200 || !body.WORDITEMS) return Promise.reject(new Error('请求失败'))

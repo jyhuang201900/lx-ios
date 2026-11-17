@@ -81,12 +81,20 @@ export default {
     if (songId) return songId
     if (songIdMap.has(songmid)) return songIdMap.get(songmid)
     if (promises.has(songmid)) return (await promises.get(songmid)).songId
+    // 这里的并发去重 key 必须是 songmid：上面按 songmid 查、下面按 songmid 删，
+    // 之前误把 Promise 对象本身当 key（promises.set(promise)），导致 has 永远命中不到、
+    // delete 也删不掉，去重完全失效，而且这个 Map 只增不减会一直涨。
     const promise = getMusicInfo(songmid)
-    promises.set(promise)
-    const info = await promise
-    songIdMap.set(songmid, info.songId)
-    promises.delete(songmid)
-    return info.songId
+    promises.set(songmid, promise)
+    try {
+      const info = await promise
+      songIdMap.set(songmid, info.songId)
+      return info.songId
+    } finally {
+      // 放在 finally 里，请求失败时也要把占位删掉：否则这条歌会永久缓存一个 rejected Promise，
+      // 之后每次 getSongId 都直接抛同一个错，连重试的机会都没有。
+      promises.delete(songmid)
+    }
   },
   async getComment(mInfo, page = 1, limit = 20) {
     if (this._requestObj) this._requestObj.cancelHttp()

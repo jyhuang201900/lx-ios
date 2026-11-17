@@ -130,7 +130,8 @@ export default {
       headers: {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
         origin: 'https://music.163.com',
-        Refere: 'http://music.163.com/',
+        // 为什么：拼成 Refere 就变成了另一个自定义头，服务端不认，等于 Referer 根本没带上
+        Referer: 'http://music.163.com/',
       },
       form: weapi({
         cursor: cursorInfo.cursor,
@@ -162,7 +163,8 @@ export default {
       headers: {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
         origin: 'https://music.163.com',
-        Refere: 'http://music.163.com/',
+        // 为什么：拼成 Refere 就变成了另一个自定义头，服务端不认，等于 Referer 根本没带上
+        Referer: 'http://music.163.com/',
       },
       form: weapi({
         rid: id,

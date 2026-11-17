@@ -125,7 +125,10 @@ export default {
     requestObj.promise = requestObj.promise.then(({ body, statusCode }) => {
       if (statusCode !== 200) {
         if (tryNum > 5) return Promise.reject(new Error('歌词获取失败'))
-        let tryRequestObj = this.getLyric(id, accessKey, fmt, ++tryNum)
+        // 重试要重打下载接口本身：原来写 this.getLyric(id, accessKey, fmt, ++tryNum)，
+        // 但本类 getLyric(songInfo, tryNum) 是"搜索+下载"的入口，第一个参数要歌曲对象；
+        // 传 id 字符串进去会让 searchLyric 拿到 undefined 的歌名/hash，重试等于用错误参数重搜一遍歌词
+        let tryRequestObj = this.getLyricDownload(id, accessKey, fmt, ++tryNum)
         requestObj.cancelHttp = tryRequestObj.cancelHttp.bind(tryRequestObj)
         return tryRequestObj.promise
       }

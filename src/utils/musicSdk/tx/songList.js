@@ -178,7 +178,9 @@ export default {
     const requestObj_listDetailLink = request(link, {}, { source: 'tx', expectOk: false })
     const { url, statusCode } = await requestObj_listDetailLink.promise
     // console.log(headers)
-    if (statusCode > 400) return this.handleParseId(link, ++retryNum)
+    // 400 本身也是错误（请求参数不对），所以边界是 >= 400；写成 > 400 会让 400 直接被当成
+    // 正常响应把 body 当 url 返回，后续正则解析必然匹配失败
+    if (statusCode >= 400) return this.handleParseId(link, ++retryNum)
     return url
   },
 
