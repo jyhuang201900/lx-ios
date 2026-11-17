@@ -5,7 +5,7 @@ import type { InputType, InputProps } from '@/components/common/Input'
 import Input from '@/components/common/Input'
 import { useTheme } from '@/store/theme/hook'
 import Text from '@/components/common/Text'
-import { Radius } from '@/theme/layout'
+import { Radius, createContentSurface } from '@/theme/layout'
 
 
 export interface InputItemProps extends InputProps {
@@ -65,11 +65,17 @@ export default memo(({ value, label, onChanged, ...props }: InputItemProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label} size={14}>{label}</Text>
+      {/**
+        * 输入框原来只有 c-control-surface 一层底。那个色是 c-primary-light-1000，
+        * 跟页面底色的可区分度是 1.00:1 —— 等于看不见。真机截图里「最大缓存大小」
+        * 下面那个 1024 就渲染成一行裸文字，没人看得出它是能改的。
+        * 描边必须跟着一起来，这正是 createContentSurface 存在的理由。
+        */}
       <Input
         value={text}
         ref={inputRef}
         onChangeText={handleSetSelectMode}
-      style={{ ...styles.input, backgroundColor: theme['c-control-surface'] }}
+        style={{ ...styles.input, ...createContentSurface(theme, { radius: Radius.control }) }}
         {...props}
         onBlur={saveValue}
        />

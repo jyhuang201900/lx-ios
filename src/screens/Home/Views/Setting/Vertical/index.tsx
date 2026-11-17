@@ -27,12 +27,13 @@ export default () => {
        * 而主题、语言、字体大小、分享方式等都在被压住的那一段之后，
        * 也就是说它们完全无法触达。
        *
-       * 底部留白给 Section 自己的 marginBottom 之外再补一段，
-       * 让最后一项滚到标签栏上方时仍有呼吸空间。
+       * 底部留白要给到浮层的高度：迷你播放条约 55（44 封面 + 上下各 6）加上
+       * 它自己到底栏的距离。只留 Gap.page(30) 时滚到底，最后一行仍然被压在
+       * 播放条下面——播放设置页的「优先播放的音质」第二行就是这么看不见的。
        */}
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: Gap.page }}
+        contentContainerStyle={{ paddingBottom: Gap.page + 60 }}
         keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}
       >
